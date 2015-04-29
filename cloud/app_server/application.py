@@ -28,10 +28,10 @@ import handler.message
 import handler.index
 import handler.device
 
-from model.user_async import UserAsyncModel
-from model.message_async import MessageAsyncModel
-from model.license_async import LicenseAsyncModel
-from model.mylicense_async import MylicenseAsyncModel
+from model.user import UserModel
+from model.message import MessageModel
+from model.license import LicenseModel
+from model.mylicense import MylicenseModel
 from model.device import DeviceInfoModel
 from model.device_log import DeviceLogModel
 from model.device_policy import DevicePolicyModel
@@ -93,26 +93,13 @@ class Application(tornado.web.Application):
 
         tornado.web.Application.__init__(self, handlers, **settings)
 
-        # Have one global connection to the blog DB across all handlers
-        self.db = torndb.Connection(
-            host = options.mysql_host, database = options.mysql_database,
-            user = options.mysql_user, password = options.mysql_password
-        )
-
         self.mongodb = motor.MotorClient('localhost', 27017).linkiome
 
-        # Have one global loader for loading models and handles
-        self.loader = Loader(self.db)
-
         # Have one global model for db query
-        self.user_model = self.loader.use("user.model")
-        self.message_model = self.loader.use("message.model")
-        self.license_model = self.loader.use("license.model")
-        self.my_license_model = self.loader.use("mylicense.model")
-        self.user_async_model = UserAsyncModel(self.mongodb)
-        self.message_async_model = MessageAsyncModel(self.mongodb)
-        self.license_async_model = LicenseAsyncModel(self.mongodb)
-        self.mylicense_async_model = MylicenseAsyncModel(self.mongodb)
+        self.user_model = UserModel(self.mongodb)
+        self.message_model = MessageModel(self.mongodb)
+        self.license_model = LicenseModel(self.mongodb)
+        self.mylicense_model = MylicenseModel(self.mongodb)
         self.device_info_model = DeviceInfoModel(self.mongodb)
         self.device_log_model = DeviceLogModel(self.mongodb)
         self.device_policy_model = DevicePolicyModel(self.mongodb)

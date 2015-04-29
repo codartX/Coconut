@@ -4,21 +4,28 @@
 #  Created by Jun Fang on 14-8-24.
 #  Copyright (c) 2014年 Jun Fang. All rights reserved.
 
-from lib.query import Query
+from tornado import gen
 
-class MylicenseModel(Query):
+class MylicenseAsyncModel():
     def __init__(self, db):
         self.db = db
-        self.table_name = 'mylicense'
-        super(MylicenseModel, self).__init__()
+        self.collection_name = 'mylicense'
     
-    def add_new_my_license(self, license_info):
-        return self.data(license_info).add()
+    @gen.coroutine
+    def add_new_my_license(self, mylicense_info):
+        result = yield self.db.mylicense.insert(mylicense_info)
+        raise gen.Return(result)
     
+    @gen.coroutine
     def get_my_license_by_license_id(self, license_id):
-        where = "license_id = '%s'" % license_id
-        return self.where(where).find()
+        result = yield self.db.mylicense.find_one({'license_id': license_id})
+        raise gen.Return(result)
     
+    @gen.coroutine
     def get_user_all_my_licenses(self, uid):
-        where = 'uid = %s' % uid
-        return self.where(where).select()
+        licenses = []
+        cursor = self.db.mylicense.find_one({'uid': uid})
+        while (yield cursor.fetch_next):
+            license = cursor.next_object()
+            licenses.append(license)
+        raise gen.Return(licenses)
