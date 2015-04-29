@@ -1,0 +1,163 @@
+{% extends 'layout.html' %}
+
+{% block css %}
+<link rel="stylesheet" type="text/css" href="/static/dashgumfree/Theme/assets/css/zabuto_calendar.css">
+<link rel="stylesheet" type="text/css" href="/static/dashgumfree/Theme/assets/js/gritter/css/jquery.gritter.css" />
+<link rel="stylesheet" type="text/css" href="/static/dashgumfree/Theme/assets/lineicons/style.css">
+{% endblock %}
+
+{% block header_script %}
+<script src="/static/dashgumfree/Theme/assets/js/chart-master/Chart.js"></script>
+{% endblock %}
+
+{% block main %}
+<!--sidebar-->
+<aside>
+    <div id="sidebar"  class="nav-collapse ">
+        <!-- sidebar menu start-->
+        <ul class="sidebar-menu" id="nav-accordion">
+            
+            <p class="centered"><a href="/u/{{ current_user.username or current_user.uid }}"><img src="/static/avatar/s_{{ current_user.avatar or 'default.png' }}?t={{ gen_random() }}" class="img-circle" width="60"></a></p>
+            <h5 class="centered">{{current_user.username}}</h5>
+            
+            <li class="mt">
+                <a class="active" href="/">
+                    <i class="fa fa-dashboard"></i>
+                    <span>Overview</span>
+                </a>
+            </li>
+            
+            <li class="mt">
+                <a class="active" href="/device/list">
+                    <i class="fa fa-dashboard"></i>
+                    <span>Devices</span>
+                </a>
+            </li>
+        </ul>
+        <!-- sidebar menu end-->
+    </div>
+</aside>
+<!--sidebar end-->
+
+<!--main content-->
+<section id="main-content">
+    <section class="wrapper site-min-height">
+		<h3><i class="fa fa-angle-right"></i> {{device.name}} </h3>
+		{{ errors|dump_errors }}
+		{{ messages|dump_messages }}
+            <div class="row mt">
+                <a class="btn btn-primary" href="/device_policy/list" role="button">Device Policy</a>
+                <div class="col-lg-12">
+                    {% for object in device.objects %}
+                    <div class="form-panel">
+                        <h4 class="mb"><i class="fa fa-angle-right"></i> {{object}} </h4>
+                            <form class="form-horizontal style-form" action='' method="POST">
+                                {% if device.objects[object].resources%}
+                                    {% for resource in device.objects[object].resources%}
+                                        {% if 'schema' in device.objects[object].resources[resource] %}
+                                            <div class="form-group">
+                                                <label class="col-sm-2 col-sm-2 control-label">{{resource}}</label>
+                                                <div class="col-sm-10">
+                                                    {% if device.objects[object].resources[resource].schema.Type == 'String' %}
+                                                        {% if device.objects[object].resources[resource].schema['Access Type'] == 'ReadOnly'%}
+                                                        <input type="text" class="form-control" name={{object}}_{{resource}} value={{device.objects[object].resources[resource].value}} readonly>
+                                                        <span class="help-block">{{device.objects[object].resources[resource].schema['Description']}}</span>
+                                                        {% else %}
+                                                        <input type="text" class="form-control" name={{object}}_{{resource}} value={{device.objects[object].resources[resource].value}}>
+                                                        <a href="/device_stats/{{device.device_id}}/{{object}}/{{resource}}" data-toggle="modal">History Stats</a>
+                                                        <span class="help-block">{{device.objects[object].resources[resource].schema['Description']}}</span>
+                                                        {% endif %}
+                                                    {% elif device.objects[object].resources[resource].schema.Type == 'Integer' %}
+                                                        {% if device.objects[object].resources[resource].schema['Access Type'] == 'ReadOnly'%}
+                                                        <input type="text" class="form-control" name={{object}}_{{resource}} value={{device.objects[object].resources[resource].value}} readonly>
+                                                        <span class="help-block">{{device.objects[object].resources[resource].schema['Description']}}</span>
+                                                        {% else %}
+                                                        <input type="text" class="form-control" name={{object}}_{{resource}} value={{device.objects[object].resources[resource].value}}>
+                                                        <a href="/device_stats/{{device.device_id}}/{{object}}/{{resource}}" data-toggle="modal">History Stats</a>
+                                                        <span class="help-block">{{device.objects[object].resources[resource].schema['Description']}}</span>
+                                                        {% endif %}
+                                                    {% elif device.objects[object].resources[resource].schema.Type == 'Float' %}
+                                                        {% if device.objects[object].resources[resource].schema['Access Type'] == 'ReadOnly'%}
+                                                        <input type="text" class="form-control" name={{object}}_{{resource}} value={{device.objects[object].resources[resource].value}} readonly>
+                                                        <span class="help-block">{{device.objects[object].resources[resource].schema['Description']}}</span>
+                                                        {% else %}
+                                                        <input type="text" class="form-control" name={{object}}_{{resource}} value={{device.objects[object].resources[resource].value}}>
+                                                        <a href="/device_stats/{{device.device_id}}/{{object}}/{{resource}}" data-toggle="modal">History Stats</a>
+                                                        <span class="help-block">{{device.objects[object].resources[resource].schema['Description']}}</span>
+                                                        {% endif %}
+                                                    {% elif device.objects[object].resources[resource].schema.Type == 'Boolean' %}
+                                                        <input type='hidden' value='false' name={{object}}_{{resource}}>
+                                                        {% if device.objects[object].resources[resource].value == True %}
+                                                            {% if device.objects[object].resources[resource].schema['Access Type'] == 'ReadOnly'%}
+                                                            <input name={{object}}_{{resource}} type="checkbox" checked value="true" data-toggle="switch" readOnly/>
+                                                            {% else %}
+                                                            <input name={{object}}_{{resource}} type="checkbox" checked value="true" data-toggle="switch"/>
+                                                            <a href="/device_stats/{{device.device_id}}/{{object}}/{{resource}}" data-toggle="modal">History Stats</a>
+                                                            {% endif %}
+                                                        {% else %}
+                                                            {% if device.objects[object].resources[resource].schema['Access Type'] == 'ReadOnly'%}
+                                                            <input name={{object}}_{{resource}} type="checkbox" value="true" data-toggle="switch" readOnly/>
+                                                            {% else %}
+                                                            <input name={{object}}_{{resource}} type="checkbox" value="true" data-toggle="switch"/>
+                                                            <a href="/device_stats/{{device.device_id}}/{{object}}/{{resource}}" data-toggle="modal">History Stats</a>
+                                                            {% endif %}
+                                                        {% endif %}
+                                                    {% else device.objects[object].resources[resource].schema.Type == 'Enum' %}
+                                                        {% if device.objects[object].resources[resource].schema['Access Type'] == 'ReadOnly' %}
+                                                        <input type="hidden" name={{object}}_{{resource}} value={{device.objects[object].resources[resource].value}} />
+                                                        <select class="form-control" name={{object}}_{{resource}} disabled="disabled">
+                                                        {% else %}
+                                                        <select class="form-control" name={{object}}_{{resource}}>
+                                                        {% endif %}
+                                                            {% for item in device.objects[object].resources[resource].schema['Range or Enumeration'] %}
+                                                                {% if device.objects[object].resources[resource].value == item %}
+                                                                <option value={{item}} selected>{{item}}</option>
+                                                                {% else %}
+                                                                <option value={{item}}>{{item}}</option>
+                                                                {% endif %}
+                                                            {% endfor %}
+                                                        </select>
+                                                        {% if device.objects[object].resources[resource].schema['Access Type'] = 'ReadWrite' %}
+                                                        <a href="/device_stats/{{device.device_id}}/{{object}}/{{resource}}" data-toggle="modal">History Stats</a>
+                                                        {% endif %}
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        {% endif %}
+                                    {% endfor %}
+                                {% endif %}
+                                {{ xsrf_form_html() }}
+                            </form>
+                        </div>
+                        {% endfor %}
+		            </div>
+		        </div>
+    </section><! --/wrapper -->
+</section>
+<!--main content end-->
+{% endblock %}
+
+{% block script %}
+<script src="/static/dashgumfree/Theme/assets/js/chart-master/Chart.js"></script>
+<script src="/static/dashgumfree/Theme/assets/js/bootstrap-switch.js"></script>
+<script src="/static/dashgumfree/Theme/assets/js/form-component.js"></script>
+<script src="/static/dashgumfree/Theme/assets/js/jquery.tagsinput.js"></script>
+<script type="text/javascript">
+jQuery(document).ready(function() {
+    // Support for AJAX loaded modal window.
+    // Focuses on first input textbox after it loads the window.
+    $('[data-toggle="modal"]').click(function(e) {
+                                                       e.preventDefault();
+                                                       var url = $(this).attr('href');
+                                                       if (url.indexOf('#') == 0) {
+                                                       $(url).modal('open');
+                                                       } else {
+                                                       $.get(url, function(data) {
+                                                             $('<div class="modal hide fade">' + data + '</div>').modal();
+                                                             }).success(function() { $('input:text:visible:first').focus(); });
+                                                       }
+                                                });
+});
+
+</script>
+{% endblock%}

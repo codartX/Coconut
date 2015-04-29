@@ -1,0 +1,6 @@
+insert into license (license_id, password) values ("abcd1234", "123456");
+insert into license (license_id, password) values ("abcd1235", "123456");
+insert into license (license_id, password) values ("abcd1236", "123456");
+insert into license (license_id, password) values ("abcd1237", "123456");
+insert into license (license_id, password) values ("abcd1238", "123456");
+insert into license (license_id, password) values ("abcd1239", "123456");

@@ -1,0 +1,76 @@
+{% extends 'layout.html' %}
+
+{% block css %}
+<link rel="stylesheet" type="text/css" href="/static/dashgumfree/Theme/assets/css/zabuto_calendar.css">
+<link rel="stylesheet" type="text/css" href="/static/dashgumfree/Theme/assets/js/gritter/css/jquery.gritter.css" />
+<link rel="stylesheet" type="text/css" href="/static/dashgumfree/Theme/assets/lineicons/style.css">
+{% endblock %}
+        
+{% block main %}
+<!--sidebar-->
+<aside>
+    <div id="sidebar"  class="nav-collapse ">
+        <!-- sidebar menu start-->
+        <ul class="sidebar-menu" id="nav-accordion">
+            
+            <p class="centered"><a href="/u/{{ current_user.username or current_user.uid }}"><img src="/static/avatar/s_{{ current_user.avatar or 'default.png' }}?t={{ gen_random() }}" class="img-circle" width="60"></a></p>
+            <h5 class="centered">{{current_user.username}}</h5>
+            
+            <li class="mt">
+                <a href="/">
+                    <i class="fa fa-dashboard"></i>
+                    <span>Overview</span>
+                </a>
+            </li>
+            
+            <li class="mt">
+                <a class="active" href="/device/list">
+                    <i class="fa fa-dashboard"></i>
+                    <span>Devices</span>
+                </a>
+            </li>
+
+        </ul>
+        <!-- sidebar menu end-->
+    </div>
+</aside>
+<!--sidebar end-->
+
+<!--main content-->
+<section id="main-content">
+    <section class="wrapper site-min-height">
+        <div class="row mt">
+            <div class="col-lg-12">
+                <div class="form-panel">
+                    <h4 class="mb"><i class="fa fa-angle-right"></i> Add Policy</h4>
+                    {{ errors|dump_errors }}
+                    {{ messages|dump_messages }}
+                    <form class="form-horizontal style-form" action='' method="POST">
+                        <div class="form-group">
+                            <label class="col-sm-2 col-sm-2 control-label">Conditions</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" name="device_class">
+                                <span class="help-block">Device Class ID</span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 col-sm-2 control-label">Actions</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" name="device_id">
+                                <span class="help-block">Device ID</span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-lg-12">
+                                <button type="submit" class="btn btn-theme">Submit</button>
+                            </div>
+                        </div>
+                        {{ xsrf_form_html() }}
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section><! --/wrapper -->
+</section>
+<!--main content end-->
+{% endblock %}

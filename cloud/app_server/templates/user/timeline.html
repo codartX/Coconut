@@ -1,0 +1,46 @@
+{% extends 'layout.html' %}
+
+{% block css %}
+<link rel="stylesheet" type="text/css" href="/static/css/timeline.css" /> 
+{% endblock %}
+
+{% block main %}
+<div class="row clearfix">
+    <div class="col-md-3 column">
+    </div>
+    <div class="col-md-6 column">
+        <div class="page-header">
+            <h1 id="timeline">Timeline</h1>
+        </div>
+        {% for activity in activities.list%}
+        <ul class="timeline">
+            <li>
+                <div class="timeline-badge"><i class="glyphicon glyphicon-check"></i></div>
+                <div class="timeline-panel">
+                    <div class="timeline-heading">
+                        <h4 class="timeline-title">{{activity.title}}</h4>
+                        <p><small class="text-muted"><i class="glyphicon glyphicon-time"></i> {{ activity.time|pretty_date }} </small></p>
+                    </div>
+                    {% if activity.picture != "" %}
+                    <img src="/static/images/{{ activity.picture }}?t={{ gen_random() }}" alt="" class="" />
+                    {% endif %}
+                    <div class="timeline-body">
+                        <p>{{activity.content}}</p>
+                        <hr>
+                        <div class="btn-group">
+                            <a class="btn btn-info" type="button" href="/activity/{{activity.id}}">Details »</a>
+                        </div>
+                    </div>
+                </div>
+            </li>
+        </ul>
+        {% endfor %}
+        {% if activities.page.pages > 1 %}
+        <div class="pagination">
+            {{ activities.page|pagination(request.uri) }}
+        </div>
+        {% endif %}
+    </div>
+    <div class="col-md-3 column">
+    </div>
+{% endblock %}

@@ -1,0 +1,81 @@
+device_info
+
+{
+    'device_id':<device id>,
+    'owner_id':<owner_id>,
+    'device_manager_id':<device manager id>,
+    'server_node':<server node ip/host>,
+    'name':<name>,
+    'objects':{
+        <obj_name>:{
+            'id':<ipso_obj_id>,
+            'resources':{
+                <resource_name>:{
+                    'id':<resource_id>,
+                    'value':<value>
+                },
+                ...
+            }
+        },
+        ...
+    },
+    'timestamp':<timestamp>,
+}
+
+
+policy
+
+{
+    'policy_id':<id>,
+
+    'device_id':<device_id>,
+
+    'condition':[
+        #condition1
+        {
+            'resource': <device_id/object_name/resource_name>,
+            'op':<equal/greater than/less than>,
+            'value':<value>,
+        },
+        {
+            'time':<expire time>,
+            'interval':<interval time>
+        },
+        ...
+    ],
+
+    'action':[
+        {
+            'operation':<set>,
+            'resource':<object_name/resource_name>,
+            'value':<value>
+        },
+        {
+            'operation':<message>,
+            'level':<level>,
+            'msg':<msg>
+        }
+        ...
+    ]
+
+}
+
+device manager license
+
+{
+    'license_id':<license_id>,
+    'password':<password>,
+    'owner_id':<user_id>
+
+}
+
+device log
+
+{
+    'device_id':<device_id>,
+    'level':<log_level>,
+    'log':<msg>,
+    'timestamp':<timestamp>,
+    'checked':<checked>,
+
+}

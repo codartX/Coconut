@@ -1,0 +1,8 @@
+tornado
+torndb
+python-memcached
+mysql-python
+pymongo
+json
+jsonschema
+tornadorpc

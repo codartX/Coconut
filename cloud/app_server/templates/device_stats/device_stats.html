@@ -1,0 +1,90 @@
+<div class="modal-header">
+    <a class="close" data-dismiss="modal">&times;</a>
+    <h3>{{component}}/{{attribute}}</h3>
+</div>
+<div class="modal-body">
+    <div class="row mt">
+        <div class="col-lg-12">
+            <div class="col-lg-6">
+                <div class="content-panel">
+                    <div class="panel-body text-center">
+                        <canvas id="{{attribute}}"></canvas>
+                        <script>
+                        {% if schema.type == "number" or schema.type == "integer" %}
+                            var datetime_list = []
+                            for ( i in {{stats['timestamp']}} ) {
+                                var date = new Date({{device_stats[key]['timestamp']}}[i]*1000);
+                                var hours = date.getHours();
+                                var minutes = date.getMinutes();
+                                var seconds = date.getSeconds();
+                                datetime_list.unshift(hours + ':' + minutes + ':' + seconds);
+                            }
+                            var lineChartData = {
+                                labels : datetime_list,
+                                datasets : [
+                                        {
+                                        fillColor : "rgba(151,187,205,0.5)",
+                                        strokeColor : "rgba(151,187,205,1)",
+                                        pointColor : "rgba(151,187,205,1)",
+                                        pointStrokeColor : "#fff",
+                                        data : {{stats['data']}}
+                                        }
+                                        ]
+                                        
+                            };
+                            new Chart(document.getElementById("{{attribute}}").getContext("2d")).Line(lineChartData);
+                        {% elif 'enum' in schema %}
+                            var enum_list = {};
+                            var i = 0;
+                            for ( ;i < {{stats['data']|length}}; i++ ) {
+                                if ({{stats['data']|tojson}}[i] in enum_list) {
+                                    enum_list[{{stats['data']|tojson}}[i]] += 1;
+                                } else {
+                                    enum_list[{{stats['data']|tojson}}[i]] = 1;
+                                }
+                            }
+                            var pieData = [];
+                            var data;
+                            var base_color = 0x1abc9c;
+                            i = 0;
+                            for (item in enum_list) {
+                                data = {};
+                                data.value = enum_list[item];
+                                data.color = "#" + (base_color+200 * i).toString(16);
+                                i++;
+                                pieData.unshift(data);
+                            }
+                            new Chart(document.getElementById("{{attribute}}").getContext("2d")).Pie(pieData);
+                        {% else schema.type == "boolean" %}
+                            var list = {"true": 0, "false": 0};
+                            var i = 0;
+                            for ( ;i < {{stats['data']|length}}; i++ ) {
+                                if ({{stats['data']|tojson}}[i] == true) {
+                                    list["true"] += 1;
+                                } else {
+                                    list["false"] += 1;
+                                }
+                            }
+                            var pieData = [];
+                            var data;
+                            var base_color = 0x1abc9c;
+                            i = 0;
+                            for (item in list) {
+                                data = {};
+                                data.value = enum_list[item];
+                                data.color = "#" + (base_color+200 * i).toString(16);
+                                i++;
+                                pieData.unshift(data);
+                            }
+                            new Chart(document.getElementById("{{attribute}}").getContext("2d")).Pie(pieData);
+                        {% endif %}
+                        </script>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <a class="btn" data-dismiss="modal">Close</a>
+</div>

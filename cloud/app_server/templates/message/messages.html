@@ -1,0 +1,57 @@
+{% extends 'layout.html' %}
+
+{% block stylesheet %}
+    <link rel="stylesheet" href="/static/css/codehilite.css" />
+{% endblock %}
+
+{% block javascript %}
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
+        });
+    </script>
+    <script type="text/javascript" src="https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+{% endblock %}
+
+{% block main %}
+    <div class="notifications container-box">
+        <div class="ui-header">
+            <span class="bread-nav"> 通知</span>
+        </div>
+
+        <div class="ui-content">
+            {% for notification in notifications.list %}
+                <div class="notification-item">
+                    <a href="/u/{{ notification.trigger_username }}">
+                        <img src="/static/avatar/m_{{ notification.trigger_avatar or 'default.png' }}" alt="" class="avatar" />
+                    </a>
+                    <div class="main">
+                        {% if notification.involved_type == 0 %}
+                            <span class="title"><a href="/u/{{ notification.trigger_username }}">{{ notification.trigger_username }}</a> 在 <a href="/t/{{ notification.involved_topic_id }}">{{ notification.involved_topic_title }}</a> 中提到了你</span>
+                        {% elif notification.involved_type == 1 %}
+                            <span class="title"><a href="/u/{{ notification.trigger_username }}">{{ notification.trigger_username }}</a> 回复了你的主题 <a href="/t/{{ notification.involved_topic_id }}">{{ notification.involved_topic_title }}</a></span>
+                        {% elif notification.involved_type == 2 %}
+                            <span class="title"><a href="/u/{{ notification.trigger_username }}">{{ notification.trigger_username }}</a> 邀请您参加 <a href="/activity/{{ notification.involved_activity_id }}">{{ notification.involved_activity_title }}</a></span>
+                        {% endif %}
+                        <div class="content">{{ notification.content|markdown|content_process }}</div>
+                    </div>
+                </div>
+            {% endfor %}
+
+            {% if notifications.page.total == 0 %}
+                <div class="pl10 pr10">
+                    <div class="alert mt20">
+                        您没有收到通知。
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="ui-footer">
+            <div class="pagination">
+                {{ notifications.page|pagination(request.uri) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+

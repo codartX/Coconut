@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% block body %}
+
+      <!-- **********************************************************************************************************************************************************
+      MAIN CONTENT
+      *********************************************************************************************************************************************************** -->
+
+	  <div id="login-page">
+	  	<div class="container">
+	  	
+		      <form class="form-login" id="register_form" action="" method="POST">
+		        <h2 class="form-login-heading">注册</h2>
+                        {{ errors|dump_errors }}
+		        <div class="login-wrap">
+		            <input type="text" class="form-control" name="username" placeholder="用户名" autofocus>
+		            <br>
+		            <input type="text" class="form-control" name="email" placeholder="Email">
+		            <br>
+		            <input type="password" class="form-control" name="password" placeholder="密码">
+		            <br>
+		            <input type="password" class="form-control" name="password_confirm" placeholder="密码确认">
+		            <br>
+		            <button class="btn btn-theme btn-block" type="submit"><i class="fa fa-lock"></i> 注册 </button>
+		            <hr>
+		        </div>
+                        {{ xsrf_form_html() }}
+		      </form>	  	
+	  	
+	  	</div>
+	  </div>
+{% endblock%}
+
+{% block script %}
+
+    <!--BACKSTRETCH-->
+    <!-- You can use an image of whatever size. This script will stretch to fit in any screen size.-->
+    <script type="text/javascript" src="/static/dashgumfree/Theme/assets/js/jquery.backstretch.min.js"></script>
+    <script>
+        $.backstretch("/static/dashgumfree/Theme/assets/img/login-bg.jpg", {speed: 500});
+    </script>
+
+{% endblock %}
+

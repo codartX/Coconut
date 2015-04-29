@@ -1,0 +1,196 @@
+{% extends 'layout.html' %}
+
+{% block main %}
+<!--sidebar-->
+<aside>
+    <div id="sidebar"  class="nav-collapse ">
+        <!-- sidebar menu start-->
+        <ul class="sidebar-menu" id="nav-accordion">
+            
+            <p class="centered"><a href="/u/{{ current_user.username or current_user.uid }}"><img src="/static/avatar/s_{{ current_user.avatar or 'default.png' }}?t={{ gen_random() }}" class="img-circle" width="60"></a></p>
+            <h5 class="centered">{{current_user.username}}</h5>
+            
+            <li class="mt">
+                <a href="/">
+                    <i class="fa fa-dashboard"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            
+            <li class="sub-menu">
+                <a href="javascript:;" >
+                    <i class="fa fa-desktop"></i>
+                    <span>Devices</span>
+                </a>
+                <ul class="sub">
+                    <li><a  href="/device/add">Add Device Manager</a></li>
+                    {% for license_id in current_user.devices %}
+                    {% for device in current_user.devices[license_id] %}
+                    <li><a  href="/device/{{device.device_id}}">{{device.name}}</a></li>
+                    {% endfor %}
+                    {% endfor %}
+                </ul>
+            </li>
+            
+        </ul>
+        <!-- sidebar menu end-->
+    </div>
+</aside>
+<!--sidebar end-->
+
+<!--main content-->
+<section id="main-content">
+    <section class="wrapper site-min-height">
+		<div class="row mt">
+		    <div class="col-lg-12">
+		        <div class="form-panel">
+		            <h4 class="mb"><i class="fa fa-angle-right"></i> User Settings</h4>
+		            {{ errors|dump_errors }}
+		            {{ messages|dump_messages }}
+		            <form class="form-horizontal style-form" action='' method="POST">
+		                <div class="form-group">
+		                    <label class="col-sm-2 col-sm-2 control-label">Username</label>
+		                    <div class="col-sm-10">
+		                        <input type="text" class="form-control" name="username" value={{user_info.username}} readonly>
+                            </div>
+		                </div>
+		                <div class="form-group">
+		                    <label class="col-sm-2 col-sm-2 control-label">Avatar</label>
+		                    <div class="col-sm-10">
+		                        <img src="/static/avatar/m_{{ user_info.avatar or 'default.png' }}?t={{ gen_random() }}" alt="" class=""/>
+		                        <a href="/setting/avatar" class="btn btn-theme">Setting Avatar</a>
+		                    </div>
+		                </div>
+		                <div class="form-group">
+		                    <label class="col-sm-2 col-sm-2 control-label">Email</label>
+		                    <div class="col-sm-10">
+		                        <input type="text" class="form-control" name="email" value={{user_info.email}}>
+		                            </div>
+		                </div>
+		                <div class="form-group">
+		                    <label class="col-sm-2 col-sm-2 control-label">Location</label>
+		                    <div class="col-sm-10">
+		                        <input type="text" class="form-control" name="location" value={{user_info.location}}>
+                                <input id="lat" name="lat" type="hidden" value="{{user_info.lat}}"/>
+                                <input id="lng" name="lng" type="hidden" value="{{user_info.lng}}"/>
+                            </div>
+		                </div>
+		                <div class="form-group">
+		                    <label class="col-sm-2 col-sm-2 control-label">Self Intro</label>
+		                    <div class="col-sm-10">
+		                        <textarea class="form-control" name="self_intro">{{user_info.self_intro}}</textarea>
+		                    </div>
+		                </div>
+		                <div class="form-group">
+		                    <div class="col-lg-12">
+		                        <button type="submit" class="btn btn-theme">Submit</button>
+		                        <a href="/setting/password" class="btn btn-theme">Setting Password</a>
+		                    </div>
+		                </div>
+		                {{ xsrf_form_html() }}
+		            </form>
+		        </div>
+		    </div>
+		</div>
+    </section><! --/wrapper -->
+</section>
+{% endblock %}
+
+{% block javascript %}
+<script language="javascript" src="http://webapi.amap.com/maps?v=1.3&key=2555c84c822aaab30e5dddedb35fd2a9"></script>
+<script type="text/javascript">
+var mapObj; 
+var geo_decode_done = true;
+var form_need_submit = false;
+var marker = new Array(); 
+var windowsArr = new Array();  
+function origMapInit() {  
+    mapObj = new AMap.Map("iCenter", {
+        view: new AMap.View2D({
+        center:new AMap.LngLat(parseFloat($("#lng").val()), parseFloat($("#lat").val())), //地图中心点
+        zoom:13  //地图显示的缩放级别
+        })
+    });   
+    addmarker(0, parseFloat($("#lng").val()), parseFloat($("#lat").val())); 
+}   
+function mapInit() {  
+    mapObj = new AMap.Map("iCenter");   
+}   
+function geocoder() { 
+    var MGeocoder; 
+    //加载地理编码插件 
+    mapObj.plugin(["AMap.Geocoder"], function() {         
+        MGeocoder = new AMap.Geocoder({  
+            //city:"010", //城市，默认：“全国” 
+            //radius:1000 //范围，默认：500 
+        }); 
+        //返回地理编码结果  
+        AMap.event.addListener(MGeocoder, "complete", geocoder_CallBack);  
+        //地理编码 
+        MGeocoder.getLocation($("#location").val());  
+    }); 
+}   
+function addmarker(i, lng, lat) { 
+    var lngX = lng; 
+    var latY = lat; 
+    var markerOption = { 
+        map:mapObj,                  
+        icon:"http://webapi.amap.com/images/"+(i+1)+".png",   
+        position:new AMap.LngLat(lngX, latY) 
+    };             
+    var mar = new AMap.Marker(markerOption);   
+    marker.push(new AMap.LngLat(lngX, latY)); 
+   
+    var infoWindow = new AMap.InfoWindow({   
+        content:$("#address").val(),  
+        autoMove:true,  
+        size:new AMap.Size(150,0),   
+        offset:{x:0,y:-30} 
+    });   
+    windowsArr.push(infoWindow);   
+       
+    var aa = function(e){infoWindow.open(mapObj,mar.getPosition());};   
+    AMap.event.addListener(mar,"click",aa);   
+} 
+//地理编码返回结果展示    
+function geocoder_CallBack(data){ 
+    //地理编码结果数组 
+    var geocode = new Array(); 
+    geocode = data.geocodes;   
+    if (geocode.length > 0) {
+        addmarker(0, geocode[0].location.getLng(), geocode[0].location.getLat()); 
+        mapObj.setFitView();    
+        $("#location").val(geocode[0].formattedAddress);   
+        $("#lng").val(geocode[0].location.getLng());   
+        $("#lat").val(geocode[0].location.getLat());   
+        geo_decode_done = true;
+        if (form_need_submit == true) {
+            $("#setting_form").submit()
+	}
+    }
+}    
+jQuery(document).ready(function() {
+    origMapInit();
+    $("#location").change(function(){ 
+        if (mapObj) {
+            mapObj.destroy();
+        }
+        if ($("#address").val()=="") {
+            geo_decode_done = true;
+            $("#lng").val("");   
+            $("#lat").val("");   
+        } else {
+            geo_decode_done = false;
+            mapInit();
+            geocoder();
+        }
+    });
+    $("#checkall").click(function(){ 
+        if (geo_decode_done == false) {
+            form_need_submit = true;
+            return false;
+        }
+    });
+});
+</script>
+{% endblock %}
