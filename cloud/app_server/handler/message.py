@@ -32,12 +32,12 @@ class ListHandler(BaseHandler):
         page = int(self.get_argument('p', '1'))
         template_variables['user_info'] = user_info
 
-        template_variables['messages_count'] = self.message_async_model.get_user_unread_message_count(user_info['_id']);
-        template_variables['messages'] = self.message_async_model.get_user_all_messages(user_info['_id'], current_page = page)
+        template_variables['messages_count'] = self.message_model.get_user_unread_message_count(user_info['_id']);
+        template_variables['messages'] = self.message_model.get_user_all_messages(user_info['_id'], current_page = page)
         template_variables['gen_random'] = gen_random
 
         # mark user unread messages as read
-        self.message_async_model.mark_user_unread_message_as_read(user_info['uid'])
+        self.message_model.mark_user_unread_message_as_read(user_info['uid'])
 
         self.render('message/messages.html', **template_variables)
 

@@ -53,24 +53,15 @@ class BaseHandler(tornado.web.RequestHandler):
     @property
     def mc(self):
         return self.application.mc
-
-    #@gen.coroutine
-    #def get_current_user(self):
-    #    user_id = self.get_secure_cookie('user')
-    #    if not user_id: return None
-    #    user_info = yield self.application.user_async_model.get_user_by_uid(user_id)
-    #    if not user_info: return None
-    #
-    #    user_info['messages_count'] = yield self.application.message_async_model.get_user_unread_messages_count(user_id)
-    #    user_info['messages'] = yield self.application.message_async_model.get_user_all_unread_messages(user_id, current_page = 1)
-    #
-    #    return user_info
     
     def get_current_user(self):
         user_json = self.get_secure_cookie('linkiome_user')
         if not user_json:
             return None
         return tornado.escape.json_decode(user_json)
+
+    def update_current_user(self, user_info):
+        self.set_secure_cookie('linkiome_user', tornado.escape.json_encode(user_info))
 
     def render(self, template_name, **template_vars):
         html = self.render_string(template_name, **template_vars)

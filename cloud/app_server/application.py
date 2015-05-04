@@ -103,7 +103,7 @@ class Application(tornado.web.Application):
         self.device_info_model = DeviceInfoModel(self.mongodb)
         self.device_log_model = DeviceLogModel(self.mongodb)
         self.device_policy_model = DevicePolicyModel(self.mongodb)
-        self.device_info_history_model = DeviceInfoHistoryModel(self.mongodb)
+        self.device_stats_model = DeviceStatsModel(self.mongodb)
 
         # Have one global session controller
         self.session_manager = SessionManager(settings["cookie_secret"], ["127.0.0.1:11211"], 0)

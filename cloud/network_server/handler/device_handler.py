@@ -224,7 +224,27 @@ class WebSocketHandler(websocket.WebSocketHandler):
                     })
 
     def device_message(self, device_id, parameters):
-        logging.info('device_message')
+        logging.info('new message, client id:%s', self.id)
+        
+        is_device_exist = yield self.application.device_info_model.device_exist(device_id)
+        if not is_device_exist:
+            logging.error('Device not exist')
+            raise gen.Return([error.DEVICE_NON_EXIST])
+        
+        #Validate parameters
+        #TODO
+        
+        try:
+            timestamp = parameters[2]
+        except IndexError:
+            timestamp = time.time()
+        
+        result = yield self.application.device_log_model.new_device_log(device_id, parameters[0], parameters[1], timestamp)
+
+        #TODO check result
+        
+        #success response
+        raise gen.Return([error.SUCCESS])
 
     def device_auth(self, device_id, parameters):
         logging.info('device_auth')

@@ -186,7 +186,7 @@ Direction: device/gw-->cloud
 
 Request:
 parameters:
-    [<msg_level>, <msg_str>
+    [<msg_level>, <msg_str>, <timestamp>]
 
 Response:
 parameters:

@@ -18,11 +18,11 @@ import tornado.ioloop
 import tornado.options
 import tornado.web
 
-import handler.device_monitor
-import handler.device_config_rpc
+import handler.device_handler
+import handler.app_rpc_handler
 import model.device_info
 import model.device_log
-import model.device_info_history
+import model.device_stats
 
 from tornado.options import define, options
 
@@ -34,9 +34,9 @@ define('server_node', default = '127.0.0.1:9999', help = 'server node')
 class Application(tornado.web.Application):
     def __init__(self):
         handlers = [
-            (r'/device_config', handler.device_config_rpc.DeviceConfigHandler),
-            (r'/device_policy', handler.device_config_rpc.DeviceSetPolicyHandler),
-            (r'/device_monitor', handler.device_monitor.WebSocketHandler),
+            (r'/app_rpc', handler.app_rpc_handler.DeviceConfigHandler),
+            (r'/device_policy', handler.app_rpc_handler.DeviceSetPolicyHandler),
+            (r'/device_monitor', handler.device_handler.WebSocketHandler),
         ]
 
         tornado.web.Application.__init__(self, handlers)
@@ -47,9 +47,9 @@ class Application(tornado.web.Application):
 
         # Have one global model for db query
         self.device_info_model = model.device_info.DeviceInfoModel(self.mongodb)
-        self.device_info_model = model.device_log.DeviceLogModel(self.mongodb)
+        self.device_log_model = model.device_log.DeviceLogModel(self.mongodb)
         self.device_policy_model = model.device_policy.DevicePolicyModel(self.mongodb)
-        self.device_info_history_model = model.device_info_history.DeviceInfoHistoryModel(self.mongodb)
+        self.device_stats_model = model.device_stats.DeviceInfoHistoryModel(self.mongodb)
 
         # Have one global memcache controller
         self.mc = memcache.Client(['127.0.0.1:11211'])

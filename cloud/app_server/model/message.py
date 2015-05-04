@@ -6,7 +6,7 @@
 
 from tornado import gen
 
-class MessageAsyncModel():
+class MessageModel():
     def __init__(self, db):
         self.db = db
         self.collection_name = "message"

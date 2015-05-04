@@ -6,7 +6,7 @@
 
 from tornado import gen
 
-class LicenseAsyncModel():
+class LicenseModel():
     def __init__(self, db):
         self.db = db
         self.collection_name = 'license'

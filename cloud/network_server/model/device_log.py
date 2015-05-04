@@ -14,13 +14,13 @@ class DeviceLogModel():
     @gen.coroutine
     def new_device_log(self, device_id, level, log, timestamp):
         result = yield self.db.device_log.insert({'device_id': device_id, 'level': level,
-                                             'log': log, 'timestamp': timestamp, 'checked': false})
+                                             'log': log, 'timestamp': timestamp, 'checked': False})
         raise gen.Return(result)
     
     @gen.coroutine
     def get_unchecked_log(self, device_id):
         logs = []
-        cursor = self.db.device_log.find({'$and': [{'device_id': device_id}, {'checked': false}])
+        cursor = self.db.device_log.find({'$and': [{'device_id': device_id}, {'checked': False}])
         while (yield cursor.fetch_next):
             log = cursor.next_object()
             logs.append(log)

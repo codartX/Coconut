@@ -1,8 +1,5 @@
 1. create database and then init mongdb database 
-
-    ```
     shell> mongo
-
     mongo> use linkiome;
     mongo> exit
 

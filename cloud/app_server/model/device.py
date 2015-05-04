@@ -47,6 +47,12 @@ class DeviceModel():
         raise gen.Return(device_manager_id)
     
     @gen.coroutine
+    def get_device_owner_id(self, device_id):
+        owner_id = yield self.db.device.find_one({'device_id': device_id},
+                                                          {'_id': 0, 'owner_id': 1})
+        raise gen.Return(owner_id)
+    
+    @gen.coroutine
     def get_device_object(self, device_id, object_name):
         object = yield self.db.device.find_one({
                                                 '$and': [

@@ -26,11 +26,11 @@ device_info
 policy
 
 {
-    'policy_id':<id>,
+    '_id':<id>,//auto generated
 
     'device_id':<device_id>,
 
-    'condition':[
+    'conditions':[
         #condition1
         {
             'resource': <device_id/object_name/resource_name>,
@@ -44,7 +44,7 @@ policy
         ...
     ],
 
-    'action':[
+    'actions':[
         {
             'operation':<set>,
             'resource':<object_name/resource_name>,

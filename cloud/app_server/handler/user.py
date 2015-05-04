@@ -28,15 +28,16 @@ from lib.geohash import *
 
 @gen.coroutine
 def do_login(self, user_id):
-    user_info = yield self.application.user_async_model.get_user_by_uid(user_id)
+    user_info = yield self.application.user_model.get_user_by_uid(user_id)
     user_info['_id'] = str(user_info['_id'])
     self.session['uid'] = user_info['_id']
     self.session['username'] = user_info['username']
     self.session['email'] = user_info['email']
     self.session['password'] = user_info['password']
     self.session.save()
-    user_info['messages_count'] = yield self.application.message_async_model.get_user_unread_messages_count(user_id)
-    self.set_secure_cookie('linkiome_user', tornado.escape.json_encode(user_info))
+    user_info['messages_count'] = yield self.application.message_model.get_user_unread_messages_count(user_id)
+    user_info['devices'] = yield self.application.device_model.get_user_all_devices(user_id)
+    self.update_cookie(user_info)
 
 def do_logout(self):
     # destroy sessions
@@ -80,7 +81,7 @@ class SettingHandler(BaseHandler):
 
         # validate duplicated
         if form.email.data != self.current_user['email']:
-            duplicated_email = yield self.application.user_async_model.get_user_by_email(form.email.data)
+            duplicated_email = yield self.application.user_model.get_user_by_email(form.email.data)
             if(duplicated_email):
                 template_variables['errors']['duplicated_email'] = [u'所填邮箱已经被注册过']
                 self.get(template_variables)
@@ -89,7 +90,7 @@ class SettingHandler(BaseHandler):
 
         # continue while validate succeed
         user_info = self.current_user
-        update_result = yield self.application.user_async_model.set_user_base_info_by_uid(user_info['_id'], {
+        update_result = yield self.application.user_model.set_user_base_info_by_uid(user_info['_id'], {
             'email': form.email.data,
             'location': form.location.data,
             'geohash': geohash_prefix,
@@ -140,7 +141,7 @@ class SettingAvatarHandler(BaseHandler):
         avatar_96x96.save('./static/avatar/b_%s.png' % avatar_name, 'PNG')
         avatar_48x48.save('./static/avatar/m_%s.png' % avatar_name, 'PNG')
         avatar_32x32.save('./static/avatar/s_%s.png' % avatar_name, 'PNG')
-        updated = yield self.application.user_async_model.set_user_base_info_by_uid(user_id, {'avatar': '%s.png' % avatar_name,
+        updated = yield self.application.user_model.set_user_base_info_by_uid(user_id, {'avatar': '%s.png' % avatar_name,
                                                                         'updated': time.strftime('%Y-%m-%d %H:%M:%S')})
 
         template_variables['success_message'] = [u'用户头像更新成功']
@@ -161,7 +162,7 @@ class SettingAvatarFromGravatarHandler(BaseHandler):
         urllib.urlretrieve(avatar_96x96, './static/avatar/b_%s.png' % avatar_name)
         urllib.urlretrieve(avatar_48x48, './static/avatar/m_%s.png' % avatar_name)
         urllib.urlretrieve(avatar_32x32, './static/avatar/s_%s.png' % avatar_name)
-        updated = yield self.application.user_async_model.set_user_base_info_by_uid(user_id, {'avatar': '%s.png' % avatar_name,
+        updated = yield self.application.user_model.set_user_base_info_by_uid(user_id, {'avatar': '%s.png' % avatar_name,
                                                                         'updated': time.strftime('%Y-%m-%d %H:%M:%S')})
 
         template_variables['success_message'] = [u'用户头像更新成功']
@@ -204,7 +205,7 @@ class SettingPasswordHandler(BaseHandler):
             return
 
         # continue while validate succeed
-        updated = yield self.application.user_async_model.set_user_base_info_by_uid(user_id, {'password': secure_new_password,
+        updated = yield self.application.user_model.set_user_base_info_by_uid(user_id, {'password': secure_new_password,
                                                                         'updated': time.strftime('%Y-%m-%d %H:%M:%S')})
 
         template_variables['messages']['success_message'] = [u'您的用户密码已更新']
@@ -228,7 +229,7 @@ class ForgotPasswordHandler(BaseHandler):
             }))
 
         # validate the post value
-        user_info = yield self.application.user_async_model.get_user_by_email(form.email_reset_pwd.data)
+        user_info = yield self.application.user_model.get_user_by_email(form.email_reset_pwd.data)
 
         if(not user_info):
             self.write(lib.jsonp.print_JSON({
@@ -241,7 +242,7 @@ class ForgotPasswordHandler(BaseHandler):
 
         new_password = uuid.uuid1().hex
         new_secure_password = hashlib.sha1(new_password).hexdigest()
-        update_result = yield self.application.user_async_model.set_user_password_by_uid(user_info['_id'], new_secure_password)
+        update_result = yield self.application.user_model.set_user_password_by_uid(user_info['_id'], new_secure_password)
 
         # send password reset link to user
         mail_title = u'找回密码'
@@ -275,12 +276,12 @@ class LoginHandler(BaseHandler):
 
         # continue while validate succeed
         secure_password = hashlib.sha1(form.password.data).hexdigest()
-        user_info = yield self.application.user_async_model.get_user_by_email_and_password(form.email.data, secure_password)
+        user_info = yield self.application.user_model.get_user_by_email_and_password(form.email.data, secure_password)
         
         if(user_info):
             yield do_login(self, user_info['_id'])
             # update `last_login`
-            updated = yield self.application.user_async_model.set_user_base_info_by_uid(user_info['_id'],
+            updated = yield self.application.user_model.set_user_base_info_by_uid(user_info['_id'],
                                                                                         {'last_login': time.strftime('%Y-%m-%d %H:%M:%S')})
             self.redirect(self.get_argument('next', '/'))
             return
@@ -310,8 +311,8 @@ class RegisterHandler(BaseHandler):
             return
 
         # validate duplicated
-        duplicated_email = yield self.application.user_async_model.get_user_by_email(form.email.data)
-        duplicated_username = yield self.application.user_async_model.get_user_by_username(form.username.data)
+        duplicated_email = yield self.application.user_model.get_user_by_email(form.email.data)
+        duplicated_username = yield self.application.user_model.get_user_by_username(form.username.data)
 
         if(duplicated_email or duplicated_username):
             template_variables['errors'] = {}
@@ -342,7 +343,7 @@ class RegisterHandler(BaseHandler):
             'created': time.strftime('%Y-%m-%d %H:%M:%S')
         }
         
-        user_id = yield self.application.user_async_model.add_new_user(user_info)
+        user_id = yield self.application.user_model.add_new_user(user_info)
         
         if(user_id):
             yield do_login(self, user_id)
@@ -360,9 +361,9 @@ class ProfileHandler(BaseHandler):
     @gen.coroutine
     def get(self, user, template_variables = {}):
         if(re.match(r'^\d+$', user)):
-            user_info = yield self.application.user_async_model.get_user_by_uid(user)
+            user_info = yield self.application.user_model.get_user_by_uid(user)
         else:
-            user_info = yield self.application.user_async_model.get_user_by_username(user)
+            user_info = yield self.application.user_model.get_user_by_username(user)
 
         if not user_info:
             self.write_error(404)

@@ -6,7 +6,7 @@
 
 from tornado import gen
 
-class UserAsyncModel():
+class UserModel():
     def __init__(self, db):
         self.db = db
         self.collection_name = 'user'

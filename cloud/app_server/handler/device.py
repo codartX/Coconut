@@ -23,13 +23,9 @@ class DeviceListHandler(BaseHandler):
     def get(self, template_variables = {}):
         user_info = self.current_user
         template_variables['user_info'] = user_info
-        devices = yield self.application.device_info_model.get_user_all_devices(user_info['_id'])
-        
-        template_variables['user_info']['devices'] = devices
         template_variables['gen_random'] = gen_random
         
         self.render('device/device_list.html', **template_variables)
-
 
 class DeviceAddHandler(BaseHandler):
     @tornado.web.authenticated
@@ -53,11 +49,11 @@ class DeviceAddHandler(BaseHandler):
             self.get(template_variables)
             return
         
-        result = yield self.application.device_info_model.device_exist(device_id)
-        if result:
-            template_variables['errors']['device_already_added'] = ['Device already added']
-            self.get(template_variables)
-            return
+        for device in user_info['devices']:
+            if device['_id'] == device_id:
+                template_variables['errors']['device_already_added'] = ['Device already added']
+                self.get(template_variables)
+                return
         
         # continue while validate succeed
         new_device = {
@@ -68,7 +64,11 @@ class DeviceAddHandler(BaseHandler):
         
         result = yield self.application.device_info_model.new_device(new_device)
         
-        self.redirect(self.get_argument('next', '/'))
+        # update current user
+        user_info['devices'].append(new_device)
+        update_current_user(user_info)
+        
+        self.redirect(self.get_argument('next', '/device/list'))
 
 class DeviceViewHandler(BaseHandler):
     @tornado.web.authenticated
@@ -78,10 +78,11 @@ class DeviceViewHandler(BaseHandler):
         user_info = self.current_user
         template_variables['user_info'] = user_info
         
+        # get from database, avoid inconsistent
         device = yield self.application.device_info_model.get_device(device_id)
-        
         if not device:
-            self.write_error(404)
+            template_variables['errors']['no_device'] = ['No such device']
+            self.render('device/device_detail.html', **template_variables)
             return
         
         template_variables['device'] = device
@@ -100,6 +101,7 @@ class DeviceViewHandler(BaseHandler):
         device_id = long(device_id)
         template_variables['errors']={}
         
+        # get from database, avoid inconsistent
         device = yield self.application.device_info_model.get_device(device_id)
         if not device:
             template_variables['errors']['no_device'] = ['No such device']
@@ -144,7 +146,7 @@ class DeviceViewHandler(BaseHandler):
                                 config[object][resource].value = value
                                 device.objects[object][resource].value = value
 
-        url = 'http://' + device['server_node'] + '/device_config'
+        url = 'http://' + device['server_node'] + '/app_rpc_handler'
         
         params = {
                   'device_manager_id': device['device_manager_id'],
