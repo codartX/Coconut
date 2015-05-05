@@ -20,7 +20,7 @@ class DeviceStatsViewHandler(BaseHandler):
     
         if device['_id'] != device_id:
             template_variables['errors']['no_device'] = ['No such device']
-            self.render('device/device_stats.html', **template_variables)
+            self.render('device_stats/stats_detail.html', **template_variables)
             return
         
         template_variables['device'] = device
@@ -43,4 +43,4 @@ class DeviceStatsViewHandler(BaseHandler):
         template_variables['resource'] = resource
         
         template_variables['gen_random'] = gen_random
-        self.render('device/device_stats.html', **template_variables)
+        self.render('device_stats/stats_detail.html', **template_variables)

@@ -33,7 +33,7 @@ class DevicePolicyListHandler(BaseHandler):
         
         template_variables['gen_random'] = gen_random
         
-        self.render('device/policy_list.html', **template_variables)
+        self.render('device_policy/policy_list.html', **template_variables)
 
 class DevicePolicyAddHandler(BaseHandler):
     @tornado.web.authenticated
@@ -41,7 +41,7 @@ class DevicePolicyAddHandler(BaseHandler):
         user_info = self.current_user
         template_variables['user_info'] = user_info
         template_variables['gen_random'] = gen_random
-        self.render('device/policy_add.html', **template_variables)
+        self.render('device_policy/policy_add.html', **template_variables)
     
     @tornado.web.authenticated
     @gen.coroutine
@@ -63,7 +63,7 @@ class DevicePolicyAddHandler(BaseHandler):
     
         if device['_id'] != device_id:
             template_variables['errors']['no_device'] = ['No such device']
-            self.render('device/policy_add.html', **template_variables)
+            self.render('device_policy/policy_add.html', **template_variables)
         
         # continue while validate succeed
         new_policy = {
@@ -87,13 +87,13 @@ class DevicePolicyViewHandler(BaseHandler):
         
         if not policy:
             template_variables['errors']['invalid_policy_id'] = ['Invalid Policy ID']
-            self.render('device/policy_view.html', **template_variables)
+            self.render('device_policy/policy_detail.html', **template_variables)
             return
         
         template_variables['policy'] = policy
         
         template_variables['gen_random'] = gen_random
-        self.render('device/policy_view.html', **template_variables)
+        self.render('device_policy/policy_detail.html', **template_variables)
 
     @tornado.web.authenticated
     @gen.coroutine

@@ -1,3 +1,24 @@
+user
+
+{
+    '_id':<uid>, //auto generated
+    'username':<nickname>,
+    'nickname'<nickname>,
+    'email':<email>,
+    'password':<password>,
+    'avatar':<avatar>,
+}
+
+message
+
+{
+    'to_uid':<to_uid>,
+    'from_uid':<from_uid>,
+    'content':<content>,
+    'status':<status>,
+    'created_time':<timestamp>,
+}
+
 device_info
 
 {
@@ -67,6 +88,13 @@ device manager license
     'password':<password>,
     'owner_id':<user_id>
 
+}
+
+mylicense
+
+{
+    'license_id':<license_id>,
+    'uid':<uid>,
 }
 
 device log
