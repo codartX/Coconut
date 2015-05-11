@@ -39,7 +39,7 @@ void resource_instance_free(resource_instance_t *instance)
     res_subscriber_t *subscriber = NULL, *tmp = NULL;
 
     if (instance) {
-        subscriber = instance->list;
+        subscriber = instance->sub_list;
         while(subscriber) {
             tmp = subscriber->next;
             subscriber_free(subscriber);
@@ -81,8 +81,8 @@ int32_t resource_add_subscriber(resource_instance_t *res_instance, res_subscribe
         return FAIL;
     }
 
-    res_sub->next = res_instance->list;
-    res_instance->list = res_sub;
+    res_sub->next = res_instance->sub_list;
+    res_instance->sub_list = res_sub;
     res_sub->parent_res = res_instance;
     
     subscriber_timer_start(res_sub);
@@ -98,15 +98,15 @@ int32_t resource_remove_subscriber(resource_instance_t *res_instance, uip_ip6add
         return FAIL;
     }
 
-    cur = res_instance->list;
+    cur = res_instance->sub_list;
     while(cur) {
-        if(!memcmp(&sub->ip6_addr, ip_addr, sizeof(uip_ip6addr_t))) {
+        if(!memcmp(&cur->ip6_addr, ip_addr, sizeof(uip_ip6addr_t))) {
             if (!pre) {
-                res_instance->list = sub->next;
+                res_instance->sub_list = cur->next;
             } else {
                 pre->next = cur->next;
             }
-            subscriber_free(sub); 
+            subscriber_free(cur); 
             return SUCCESS;
         }
         pre = cur;
@@ -118,14 +118,14 @@ int32_t resource_remove_subscriber(resource_instance_t *res_instance, uip_ip6add
 
 int8_t resource_value_compare(resource_instance_t *res_instance, resource_value_u *value)
 {
-    if (res_instance->resource_type.type == String) {
-        return strcmp(value->string_value , res_instance->string_value);
-    } else if (res_instance->resource_type.type == Boolean) {
-        return (value->bool_value - res_instance->bool_value);
-    } else if (res_instance->resource_type.type == Integer){
-        return (value->int_value - res_instance->int_value);
-    } else if (res_instance->resource_type.type == Float) {
-        return (value->float_value - res_instance->float_value);
+    if (res_instance->resource_type->type == String) {
+        return strcmp(value->string_value, res_instance->value.string_value);
+    } else if (res_instance->resource_type->type == Boolean) {
+        return (value->boolean_value - res_instance->value.boolean_value);
+    } else if (res_instance->resource_type->type == Integer){
+        return (value->int_value - res_instance->value.int_value);
+    } else if (res_instance->resource_type->type == Float) {
+        return (value->float_value - res_instance->value.float_value);
     }
     
     return 0;

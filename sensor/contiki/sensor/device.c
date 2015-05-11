@@ -42,7 +42,7 @@ void device_deinit()
     }
     g_device.policy_list = NULL;
 
-    memset(g_device.device_id, device_id, DEV_ID_SIZE);
+    memset(g_device.device_id, 0x0, DEV_ID_SIZE);
 
     return;
 }
@@ -62,7 +62,7 @@ int32_t device_insert_object(object_instance_t *object)
         object->next = g_device.obj_list;
         g_device.obj_list = object;
         g_device.timestamp = (uint32_t)time(NULL);
-        object->parent_dev = &g_device
+        object->parent_dev = &g_device;
         return SUCCESS;
     }
 
@@ -76,7 +76,7 @@ int32_t device_remove_object(uint8_t *object_name)
     if (object_name) {
         cur = g_device.obj_list;
         while(cur) {
-            if(strncmp(tmp->name, object_name, MAX_OBJECT_NAME_LEN) == 0) {
+            if(strncmp(cur->name, object_name, MAX_OBJECT_NAME_LEN) == 0) {
                 if (!pre) {
                     g_device.obj_list = cur->next;
                 } else {

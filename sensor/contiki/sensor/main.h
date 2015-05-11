@@ -6,14 +6,20 @@
 #ifndef _MAIN_H
 #define _MAIN_H
 
+#include <stdint.h>
+#include "net/uip.h"
+
+#define DEBUG DEBUG_PRINT
+#include "net/uip-debug.h"
+
 #define SUCCESS    1
 #define FAIL       0
+
+#define DEV_ID_SIZE         8
 
 #define MAX_PAYLOAD_LEN		80
 
 extern uint8_t buf[MAX_PAYLOAD_LEN];
-
-#define PRINTF    
 
 void send_msg(uint8_t *data, uint32_t len, uip_ipaddr_t *peer_ipaddr);
 

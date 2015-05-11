@@ -51,7 +51,7 @@ typedef struct _resource_instance_t {
     resource_value_u value;
     get_resource_value_func get_func;
     set_resource_value_func set_func;
-    res_subscriber_t *list; 
+    res_subscriber_t *sub_list; 
 } resource_instance_t;
 
 extern resource_type_t resource_types[];

@@ -81,9 +81,9 @@ int32_t object_instance_remove_resource(object_instance_t *object, uint8_t *reso
     if (object && resource_name) {
         cur = object->res_list;
         while(cur) {
-            if(strncmp(tmp->name, resource_name, MAX_RESOURCE_NAME_LEN) == 0) {
+            if(strncmp(cur->name, resource_name, MAX_RESOURCE_NAME_LEN) == 0) {
                 if (!pre) {
-                    object->list = cur->next;
+                    object->res_list = cur->next;
                 } else {
                     pre->next = cur->next;
                 }
@@ -106,7 +106,7 @@ resource_instance_t *object_instance_find_resource(object_instance_t *object, ui
     resource_instance_t *tmp = NULL;
 
     if (object && resource_name) {
-        tmp = object->list;
+        tmp = object->res_list;
         while(tmp) {
             if(strncmp(tmp->name, resource_name, MAX_RESOURCE_NAME_LEN) == 0) {
                 return tmp;

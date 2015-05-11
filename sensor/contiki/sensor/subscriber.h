@@ -6,7 +6,6 @@
 #ifndef _SUBSCRIBER_H
 #define _SUBSCRIBER_H
 
-#include "contiki.h"
 #include "net/uip.h"
 #include "main.h"
 
@@ -33,7 +32,7 @@ typedef struct _res_subscriber_t {
     void *parent_res;
     uip_ip6addr_t ip6_addr;
     uint8_t device_id[DEV_ID_SIZE];
-    unsigned uint8_t condition_type;
+    uint8_t condition_type;
     condition_t condition;
     struct ctimer timer;
 } res_subscriber_t;

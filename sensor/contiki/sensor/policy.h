@@ -8,8 +8,8 @@
 
 #include "net/uip.h"
 #include "main.h"
-#include "object.h"
 #include "subscriber.h"
+#include "object.h"
 
 #define POLICY_COND_TYPE_RESOURCE       0
 #define POLICY_COND_TYPE_EXPIRE_TIME    1
@@ -19,10 +19,10 @@ typedef struct _policy_cond_t {
     struct _policy_cond_t *next;
     uint8_t type;
     uip_ip6addr_t ip6_addr;
-    uint8_t device_id[8];
+    uint8_t device_id[DEV_ID_SIZE];
     uint8_t obj_name[MAX_OBJECT_NAME_LEN];
     uint8_t res_name[MAX_RESOURCE_NAME_LEN];
-    union condition_u cond; 
+    condition_t cond; 
 } policy_cond_t;
 
 #define POLICY_ACTION_RESOURCE    0

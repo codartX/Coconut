@@ -21,6 +21,9 @@ policy_cond_t *dev_policy_cond_alloc()
 
 void dev_policy_cond_free(policy_cond_t *cond)
 {
+    if (cond->cond.value) {
+        free(cond->cond.value);
+    }
     free(cond); 
 }
 
@@ -41,8 +44,8 @@ int32_t dev_policy_cond_resource_init(policy_cond_t *cond, uip_ip6addr_t *ip6_ad
     cond->obj_name[MAX_OBJECT_NAME_LEN-1] = '\0';
     strncpy(cond->res_name, res_name, MAX_RESOURCE_NAME_LEN-1);
     cond->res_name[MAX_RESOURCE_NAME_LEN-1] = '\0';
-    cond->cond.value.operation = op;
-    cond->cond.value.value = value;
+    cond->cond.operation = op;
+    cond->cond.value = value;
 
     return SUCCESS;
 }
@@ -55,7 +58,7 @@ int32_t dev_policy_cond_expire_time_init(policy_cond_t *cond, uint32_t exp_times
 
     cond->next = NULL;
     cond->type = POLICY_COND_TYPE_EXPIRE_TIME;
-    cond->cond.expire.expire_time = exp_timestamp;
+    cond->cond.expire_time = exp_timestamp;
 
     return SUCCESS;
 }
@@ -68,8 +71,7 @@ int32_t dev_policy_cond_periodic_init(policy_cond_t *cond, uint32_t start_timest
 
     cond->next = NULL;
     cond->type = POLICY_COND_TYPE_PERIODIC;
-    cond->cond.period.start_time = start_timestamp;
-    cond->cond.period.period = interval;
+    cond->cond.period = interval;
 
     return SUCCESS;
 }

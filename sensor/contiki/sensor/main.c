@@ -5,27 +5,23 @@
 #include "contiki.h"
 #include "lib/random.h"
 #include "sys/ctimer.h"
-#include "net/uip.h"
 #include "net/uip-ds6.h"
 #include "net/uip-udp-packet.h"
 #include "sys/ctimer.h"
 #include <stdio.h>
 #include <string.h>
 #include "dev/adc-sensor.h"
-
-#define UDP_CLIENT_PORT 8765
-#define UDP_SERVER_PORT 5678
-
-#define DEBUG DEBUG_PRINT
-#include "net/uip-debug.h"
-
 #include "cJSON.h"
-
 #include "main.h"
 #include "device.h"
 #include "object.h"
 #include "message.h"
 #include "device_profile.h"
+
+#define UDP_CLIENT_PORT 8765
+#define UDP_SERVER_PORT 5678
+
+#define UIP_IP_BUF   ((struct uip_ip_hdr *)&uip_buf[UIP_LLH_LEN])
 
 static uint8_t msg_buf[MAX_PAYLOAD_LEN];
 uint8_t buf[MAX_PAYLOAD_LEN];
@@ -64,13 +60,13 @@ void send_msg_to_gateway(uint8_t *data, uint32_t len)
 static void
 message_handler(void)
 {
-    uint32_t8_t *data, *parameters;
-    uint32_t16_t msg_id;
+    uint8_t *data, *parameters;
+    //uint16_t msg_id;
     msg_method_e method;
     int32_t len = 0, type, i = 0;
-    cJSON *root, *node, *node1, *node2, *node3;    
-    object_instance_t *obj;
-    resource_instance_t *res;
+    //cJSON *root, *node, *node1, *node2, *node3;    
+    //object_instance_t *obj;
+    //resource_instance_t *res;
     
     if(uip_newdata()) {
         len = uip_datalen();
@@ -130,8 +126,8 @@ message_handler(void)
 static void
 print_local_addresses(void)
 {
-    int32_t i;
-    uint32_t8_t state;
+    uint32_t i;
+    uint8_t state;
 
     PRINTF("Client IPv6 addresses: ");
     for(i = 0; i < UIP_DS6_ADDR_NB; i++) {

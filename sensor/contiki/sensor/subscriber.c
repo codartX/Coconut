@@ -7,12 +7,13 @@
 #include "subscriber.h"
 #include "message.h"
 #include "resource.h"
+#include <time.h>
 
 static void timeout_handler(void *arg)
 {
     uint32_t len = 0;
     res_subscriber_t *sub = (res_subscriber_t *)arg;
-    resource_instance_t res = sub->parent_res;
+    resource_instance_t *res = sub->parent_res;
     bool flag = false;
     resource_value_u value;
     
@@ -22,12 +23,12 @@ static void timeout_handler(void *arg)
     
     res->get_func(&value);
     
-    if (sub->condition_type = CONDITION_TYPE_VALUE) {
-        if (sub->operation == EQUAL) {
-            if (resource_value_compare(res, &value) = 0) {
+    if (sub->condition_type == CONDITION_TYPE_VALUE) {
+        if (sub->condition.operation == EQUAL) {
+            if (resource_value_compare(res, &value) == 0) {
                 flag = true;
             }
-        } else if (sub->operation == GREATER) {
+        } else if (sub->condition.operation == GREATER) {
             if (resource_value_compare(res, &value) > 0) {
                 flag = true;
             }
@@ -36,15 +37,15 @@ static void timeout_handler(void *arg)
                 flag = true;
             }
         }
-    } else if (sub->condition_type = CONDITION_TYPE_VALUE_CHANGE) {
-        if (res->resource_type.type == Float) {
-            if ((value.float_value - res->value.float_value) > ((resource_value_u *)sub->condition->value)->float_value ||
-                (res->value.float_value - value.float_value) > ((resource_value_u *)sub->condition->value)->float_value) {
+    } else if (sub->condition_type == CONDITION_TYPE_VALUE_CHANGE) {
+        if (res->resource_type->type == Float) {
+            if ((value.float_value - res->value.float_value) > ((resource_value_u *)sub->condition.value)->float_value ||
+                (res->value.float_value - value.float_value) > ((resource_value_u *)sub->condition.value)->float_value) {
                 flag = true;
             }
-        } else if (es->resource_type.type == Integer) {
-            if ((value.int_value - res->value.int_value) > ((resource_value_u *)sub->condition->value)->int_value ||
-                (res->value.int_value - value.int_value) > ((resource_value_u *)sub->condition->value)->int_value) {
+        } else if (res->resource_type->type == Integer) {
+            if ((value.int_value - res->value.int_value) > ((resource_value_u *)sub->condition.value)->int_value ||
+                (res->value.int_value - value.int_value) > ((resource_value_u *)sub->condition.value)->int_value) {
                 flag = true;
             }
         }

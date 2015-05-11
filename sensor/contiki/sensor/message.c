@@ -5,9 +5,12 @@
 
 #include <malloc.h>
 #include <string.h>
+#include <stdio.h>
 #include "net/uip.h"
+#include "device.h"
 #include "message.h"
 #include "resource.h"
+#include <time.h>
 
 static inline uint16_t get_new_msg_id()
 {
@@ -68,20 +71,20 @@ uint32_t create_report_msg(uint8_t *buf, uint32_t len, resource_instance_t *reso
     }
     
     header_len = build_msg_header(buf, len, TYPE_REQUEST, METHOD_REPORT);
-    if (resource->type == Integer) {
-        parameters_len = sprintf(buf + header_len, "[[[%s, [[%s, %d]]]], %d]", resource->parent_obj->name,
-                                 resource->name, resource->value.integer_value);
-    } else if (resource->type == Boolean) {
+    if (resource->resource_type->type == Integer) {
+        parameters_len = sprintf(buf + header_len, "[[[%s, [[%s, %d]]]], %d]", ((object_instance_t *)resource->parent_obj)->name,
+                                 resource->name, resource->value.int_value, time(NULL));
+    } else if (resource->resource_type->type == Boolean) {
         if (resource->value.boolean_value) {
-            parameters_len = sprintf(buf + header_len, "[[[%s, [[%s, True]]]], %d]", resource->parent_obj->name, resource->name);
+            parameters_len = sprintf(buf + header_len, "[[[%s, [[%s, True]]]], %d]", ((object_instance_t *)resource->parent_obj)->name, resource->name, time(NULL));
         } else {
-            parameters_len = sprintf(buf + header_len, "[[[%s, [[%s, False]]]], %d]", resource->parent_obj->name, resource->name);
+            parameters_len = sprintf(buf + header_len, "[[[%s, [[%s, False]]]], %d]", ((object_instance_t *)resource->parent_obj)->name, resource->name, time(NULL));
         }
-    } else if (resource->type == Float) {
-        parameters_len = sprintf(buf + header_len, "[[[%s, [[%s, %f]]]], %d]", resource->parent_obj->name,
-                                 resource->name, resource->value.float_value);
-    } else if (resource->type == String) {
-        parameters_len = sprintf(buf + header_len, "[[[%s, [[%s, %s]]]], %d]", resource->parent_obj->name,
+    } else if (resource->resource_type->type == Float) {
+        parameters_len = sprintf(buf + header_len, "[[[%s, [[%s, %f]]]], %d]", ((object_instance_t *)resource->parent_obj)->name,
+                                 resource->name, resource->value.float_value, time(NULL));
+    } else if (resource->resource_type->type == String) {
+        parameters_len = sprintf(buf + header_len, "[[[%s, [[%s, %s]]]], %d]", ((object_instance_t *)resource->parent_obj)->name,
                                  resource->name, resource->value.string_value);
     } else {
         return 0;
@@ -101,34 +104,34 @@ uint32_t create_new_device_msg(uint8_t *buf, uint32_t len)
     data_len = build_msg_header(buf, len, TYPE_REQUEST, METHOD_NEW_DEVICE);
     ptr = buf + data_len;
     
-    data_len = sprintf(ptr, "[%s,[", g_device.name);
+    data_len = sprintf(ptr, "[%s,[", g_device.device_name);
     ptr += data_len;
     
     while (obj) {
-        data_len = sprintf(ptr, "[%d,%s,[", g_device.name);
+        data_len = sprintf(ptr, "[%d,%s,[", obj->object_id, obj->name);
         ptr += data_len;
         
         res = obj->res_list;
         while (res) {
-            data_len = sprintf(ptr, "[%d,%s,", g_device.name);
+            data_len = sprintf(ptr, "[%d,%s,", res->resource_type->resource_id, res->name);
             ptr += data_len;
             
-            if (res->resource_type.type == String) {
+            if (res->resource_type->type == String) {
                 data_len = sprintf(ptr, "%s", res->value.string_value);
-            } else if (res->resource_type.type == Boolean) {
-                if (res->value.bool_value) {
+            } else if (res->resource_type->type == Boolean) {
+                if (res->value.boolean_value) {
                     data_len = sprintf(ptr, "True");
                 } else {
                     data_len = sprintf(ptr, "False");
                 }
-            } else if (res->resource_type.type == Float) {
+            } else if (res->resource_type->type == Float) {
                 data_len = sprintf(ptr, "%f", res->value.float_value);
             } else {
                 data_len = sprintf(ptr, "%d", res->value.int_value);
             }
             ptr += data_len;
             
-            data_len = sprintf(ptr, "],", g_device.name);
+            data_len = sprintf(ptr, "],");
             ptr += data_len;
             
             res = res->next;

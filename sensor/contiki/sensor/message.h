@@ -5,6 +5,8 @@
 #ifndef _MESSAGE_H
 #define _MESSAGE_H
 
+#include "resource.h"
+
 #define MESSAGE_VERSION    0
 
 typedef enum _msg_type_e {
