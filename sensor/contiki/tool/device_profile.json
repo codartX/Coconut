@@ -1,0 +1,32 @@
+{
+   "device_name": "test_dev",
+   "device_id": 1234,
+   "objects": [
+       {
+           "object_name": "test_obj",
+           "object_id": 4321,
+           "resources": [
+               {
+                   "resource_name": "test_res1",
+                   "resource_id": 5100,
+                   "value": "abc",
+                   "get_func": "NULL",
+                   "set_func": "NULL"
+               }
+           ]
+       },
+       {
+           "object_name": "test_res2",
+           "object_id": 4322,
+           "resources": [
+               {
+                   "resource_name": "test_res2",
+                   "resource_id": 5108,
+                   "value": 2468,
+                   "get_func": "NULL",
+                   "set_func": "NULL"
+               }
+           ]
+       }
+   ]
+}

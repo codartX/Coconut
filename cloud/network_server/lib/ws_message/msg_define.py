@@ -9,27 +9,29 @@ TYPE_ALL = [
             ]
 
 # Method
-METHOD_NEW                             = 0
-METHOD_INFO                            = 1
-METHOD_GET_INFO                        = 2
-METHOD_CONFIG                          = 3
-METHOD_UPGRADE                         = 4
-METHOD_RELOAD                          = 5
-METHOD_MESSAGE                         = 6
-METHOD_AUTH                            = 7
-METHOD_SET_POLICY                      = 8
-METHOD_GET_POLICY                      = 9
-METHOD_UNSET_POLICY                    = 10
-METHOD_SUBSCRIBE                       = 11
-METHOD_UNSUBSCRIBE                     = 12
+METHOD_NEW_DEVICE                      = 0
+METHOD_GET_CONFIG                      = 1
+METHOD_GET_RESOURCES                   = 2
+METHOD_SET_RESOURCES                   = 3
+METHOD_REPORT                          = 4
+METHOD_UPGRADE                         = 5
+METHOD_RELOAD                          = 6
+METHOD_LOG                             = 7
+METHOD_AUTH                            = 8
+METHOD_SET_POLICY                      = 9
+METHOD_GET_POLICY                      = 10
+METHOD_UNSET_POLICY                    = 11
+METHOD_SUBSCRIBE                       = 12
+METHOD_UNSUBSCRIBE                     = 13
 METHOD_ALL = [
-              METHOD_NEW,
-              METHOD_INFO,
-              METHOD_GET_INFO,
-              METHOD_CONFIG,
+              METHOD_NEW_DEVICE,
+              METHOD_GET_CONFIG,
+              METHOD_GET_RESOURCES,
+              METHOD_SET_RESOURCES,
+              METHOD_REPORT,
               METHOD_UPGRADE,
               METHOD_RELOAD,
-              METHOD_MESSAGE,
+              METHOD_LOG,
               METHOD_AUTH,
               METHOD_SET_POLICY,
               METHOD_GET_POLICY,

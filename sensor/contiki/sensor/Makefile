@@ -5,7 +5,7 @@ HAVE_BANKING=1
 UIP_CONF_IPV6=1
 UIP_CONF_RPL=1
 
-PROJECT_SOURCEFILES += device_api.c device.c object.c resource.c subscriber.c message.c cJSON.c policy.c publisher.c
+PROJECT_SOURCEFILES += device_api.c device.c object.c resource.c subscriber.c message.c cJSON.c policy.c 
 
 include $(CONTIKI)/Makefile.include
 

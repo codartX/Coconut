@@ -20,7 +20,7 @@ import utils as u
     Type: message type, Request(0)/Response(1)
     Message ID: message id in specific session
     Device ID: device mac address, etc  //it could only be existed in gateway<->server message define, device to device don't need.
-    Method:<new_device(0)/info(1)/get_info(2)/config(3)/upgrade(4)/reload(5)/message(6)/
+    Method:<new_device(0)/get_resources(1)/set_resources(2)/report(3)/upgrade(4)/reload(5)/message(6)/
             device_auth(7)/set_policy(8)/get_policy(9)/unset_policy(10)/subscribe(11)/unsubscribe(12)>
     Parameters: parameters for method
     
@@ -312,7 +312,8 @@ def build_message(msgtype, session_id ,message_id, device_id, method, parameters
     message += u.int2buf(message_id,2)
     message += device_id
     message += [method]
-    message += parameters
+    if parameters:
+        message += parameters
     
     return message
 

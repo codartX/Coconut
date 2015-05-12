@@ -29,6 +29,7 @@ class WebSocketHandler(websocket.WebSocketHandler):
         
         is_device_exist = yield self.application.device_info_model.device_exist(device_id)
         if is_device_exist:
+            #TODO, maybe send config to the device
             logging.error('Device already exist')
             raise gen.Return([error.DEVICE_DUPLICATE])
 
@@ -51,15 +52,31 @@ class WebSocketHandler(websocket.WebSocketHandler):
         parameters['device_id'] = device_id
         device_info['device_manager_id'] = self.id
         device_info['server_node'] = self.application.server_node
-        result = yield self.application.device_info_model.new_device(parameters)
+        result = yield self.application.device_info_model.new_device(device_info)
         #TODO check result
         
         #success response
         raise gen.Return([error.SUCCESS])
     
+    def device_info_format(self, device_info):
+        #re-format device info json, compress data
+        return
+    
     @gen.coroutine
-    def device_info(self, device_id, parameters):
-        logging.info('device_info, client id:%s', self.id)
+    def device_get_config(self, device_id, parameters):
+        logging.info('device_get_config, client id:%s', self.id)
+        
+        device_info = yield self.application.device_info_model.get_device(device_id)
+        
+        if not device_info:
+            logging.error('No such device')
+            raise gen.Return([error.DEVICE_NON_EXIST])
+        
+        raise gen.Return([error.SUCCESS, device_info_format(device_info)])
+    
+    @gen.coroutine
+    def device_report(self, device_id, parameters):
+        logging.info('device_report, client id:%s', self.id)
     
         device_info = yield self.application.device_info_model.get_device(device_id)
                                                         
@@ -98,16 +115,47 @@ class WebSocketHandler(websocket.WebSocketHandler):
         #success response
         raise gen.Return([error.SUCCESS])
     
-    def device_get_info(self, device_id, parameters):
-        logging.info('device_get_info')
+    @gen.coroutine
+    def device_log(self, device_id, parameters):
+        logging.info('device_log, client id:%s', self.id)
+        
+        is_device_exist = yield self.application.device_info_model.device_exist(device_id)
+        if not is_device_exist:
+            logging.error('Device not exist')
+            raise gen.Return([error.DEVICE_NON_EXIST])
+        
+        #Validate parameters
+        #TODO
+        
+        try:
+            timestamp = parameters[2]
+        except IndexError:
+            timestamp = time.time()
+        
+        result = yield self.application.device_log_model.new_device_log(device_id, parameters[0], parameters[1], timestamp)
+
+        #TODO check result
+        
+        #success response
+        raise gen.Return([error.SUCCESS])
+
+    @gen.coroutine
+    def device_auth(self, device_id, parameters):
+        logging.info('device_auth')
+
+    #############################################################
+
+    @gen.coroutine
+    def device_get_resources(self,device_manager_id, device_id, parameters, callback):
+        logging.info('device_get_resources')
         device_manager_id = yield self.application.device_info_model.get_device_manager_id(device_id)
         
         if device_manager_id:
             if device_manager_id == self.id:
                 retval = self.send_message(msgtype = d.TYPE_REQUEST,
                                            device_id = device_id,
-                                           method = d.METHOD_GET_INFO,
-                                           parameters = json.dumps(device_config, separators=(',',':')),
+                                           method = d.METHOD_GET_RESOURCES,
+                                           parameters = json.dumps(parameters, separators=(',',':')),
                                            callback = callback)
                     
                 if not retval:
@@ -129,8 +177,8 @@ class WebSocketHandler(websocket.WebSocketHandler):
                      })
     
     @gen.coroutine
-    def device_config(self, device_manager_id, device_id, device_config, callback):
-        logging.info('config_device,device_manager_id:%s device id:%lu device config:%s',
+    def device_set_resources(self, device_manager_id, device_id, parameters, callback):
+        logging.info('device_set_resources,device_manager_id:%s device id:%lu device config:%s',
                      device_manager_id, device_id, str(device_config))
 
         device_manager_id = yield self.application.device_info_model.get_device_manager_id(device_id)
@@ -139,8 +187,8 @@ class WebSocketHandler(websocket.WebSocketHandler):
             if device_manager_id == self.id:
                 retval = self.send_message(msgtype = d.TYPE_REQUEST,
                                            device_id = device_id,
-                                           method = d.METHOD_CONFIG,
-                                           parameters = json.dumps(device_config, separators=(',',':')),
+                                           method = d.METHOD_SET_RESOURCES,
+                                           parameters = json.dumps(parameters, separators=(',',':')),
                                            callback = callback)
             
                 if not retval:
@@ -161,7 +209,8 @@ class WebSocketHandler(websocket.WebSocketHandler):
                         'message': 'Device do not exist'
                     })
 
-    def device_get_policy(self, device_id, parameters):
+    @gen.coroutine
+    def device_get_policy(self, device_manager_id, device_id, policy, callback):
         logging.info('device_get_policy')
         device_manager_id = yield self.application.device_info_model.get_device_manager_id(device_id)
         
@@ -170,7 +219,7 @@ class WebSocketHandler(websocket.WebSocketHandler):
                 retval = self.send_message(msgtype = d.TYPE_REQUEST,
                                            device_id = device_id,
                                            method = d.METHOD_GET_POLICY,
-                                           parameters = json.dumps(device_config, separators=(',',':')),
+                                           parameters = json.dumps(policy, separators=(',',':')),
                                            callback = callback)
                     
                 if not retval:
@@ -223,31 +272,38 @@ class WebSocketHandler(websocket.WebSocketHandler):
                          'message': 'Device do not exist'
                     })
 
-    def device_message(self, device_id, parameters):
-        logging.info('new message, client id:%s', self.id)
-        
-        is_device_exist = yield self.application.device_info_model.device_exist(device_id)
-        if not is_device_exist:
-            logging.error('Device not exist')
-            raise gen.Return([error.DEVICE_NON_EXIST])
-        
-        #Validate parameters
-        #TODO
-        
-        try:
-            timestamp = parameters[2]
-        except IndexError:
-            timestamp = time.time()
-        
-        result = yield self.application.device_log_model.new_device_log(device_id, parameters[0], parameters[1], timestamp)
-
-        #TODO check result
-        
-        #success response
-        raise gen.Return([error.SUCCESS])
-
-    def device_auth(self, device_id, parameters):
-        logging.info('device_auth')
+    @gen.coroutine
+    def device_discover(self, device_id):
+        logging.info('config_device,device_manager_id:%s device id:%lu device config:%s',
+        device_manager_id, device_id, str(device_config))
+            
+        device_manager_id = yield self.application.device_info_model.get_device_manager_id(device_id)
+                     
+        if device_manager_id:
+            if device_manager_id == self.id:
+                retval = self.send_message(msgtype = d.TYPE_REQUEST,
+                                           device_id = device_id,
+                                           method = d.METHOD_NEW_DEVICE,
+                                           parameters = [],
+                                           callback = None)
+                                 
+                if not retval:
+                    callback({
+                             'result': error.INVALID_TRANSACTION_ID,
+                             'message': 'Transaction ID error'
+                             })
+                                         
+            else:
+                callback({
+                         'result': error.PERMISSION_DENY,
+                         'message': 'Permission deny'
+                         })
+                                         
+        else:
+            callback({
+                     'result': error.DEVICE_NON_EXIST,
+                     'message': 'Device do not exist'
+                     })
 
     def get_msg_id(self):
         self.transaction_id += 1
@@ -320,16 +376,12 @@ class WebSocketHandler(websocket.WebSocketHandler):
         if msg_type == d.TYPE_REQUEST:
             #request
             result = None
-            if method == d.METHOD_NEW:
+            if method == d.METHOD_NEW_DEVICE:
                 result = yield self.device_new(device_id, parameters)
-            elif method == d.METHOD_INFO:
-                result = yield self.device_info(device_id, parameters)
-            elif method == d.METHOD_GET_INFO:
-                result = yield self.device_get_info(device_id, parameters)
-            elif method == d.METHOD_GET_POLICY:
-                result = yield self.device_get_policy(device_id, parameters)
-            elif method == d.METHOD_MESSAGE:
-                result = yield self.device_message(device_id, parameters)
+            elif method == d.METHOD_GET_CONFIG:
+                result = yield self.device_get_config(device_id, parameters)
+            elif method == d.METHOD_LOG:
+                result = yield self.device_log(device_id, parameters)
             elif method == d.METHOD_AUTH:
                 result = yield self.device_auth(device_id, parameters)
             else:

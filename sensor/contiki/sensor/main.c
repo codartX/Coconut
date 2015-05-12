@@ -16,43 +16,19 @@
 #define UDP_CLIENT_PORT 8765
 #define UDP_SERVER_PORT 5678
 
-#define UDP_EXAMPLE_ID  190
-
 #define DEBUG DEBUG_PRINT
 #include "net/uip-debug.h"
 
 #include "cJSON.h"
 
+#include "main.h"
 #include "device.h"
 #include "object.h"
 #include "message.h"
+#include "device_profile.h"
 
-#ifndef PERIOD
-#define PERIOD 60
-//#define PERIOD 20
-#endif
-
-#define MANUFACTURER    "Cisco"
-#define MODEL           "N1"
-
-//should not define but read from config or somewhere
-#define SERIAL          "ABCDEF012345"
-#define HW_VERSION      "1.0"
-#define SW_VERSION      "1.0"
-
-#define TEMPERATURE_VALUE_MIN   -40.0
-#define TEMPERATURE_VALUE_MAX   50.0
-
-#define TEMPERATURE_SENSOR_OBJ_NAME    "Temperature Sensor"
-
-#define START_INTERVAL		(15 * CLOCK_SECOND)
-#define SEND_INTERVAL		(PERIOD * CLOCK_SECOND)
-#define SEND_TIME		(random_rand() % (SEND_INTERVAL))
-
-#define MAX_PAYLOAD_LEN		80
-
-static char msg_buf[MAX_PAYLOAD_LEN];
-static char buf[MAX_PAYLOAD_LEN];
+static uint8_t msg_buf[MAX_PAYLOAD_LEN];
+uint8_t buf[MAX_PAYLOAD_LEN];
 
 static struct uip_udp_conn *client_conn;
 static uip_ipaddr_t server_ipaddr;
@@ -62,28 +38,27 @@ static uip_ipaddr_t server_ipaddr;
 PROCESS(udp_client_process, "UDP client process");
 AUTOSTART_PROCESSES(&udp_client_process);
 /*---------------------------------------------------------------------------*/
-static void send_config_response(uint16_t seq, int retcode)
+void send_msg(uint8_t *data, uint32_t len, uip_ipaddr_t *peer_ipaddr)
 {
-  //memset(buf, 0x0, MAX_PAYLOAD_LEN);
-  //buf[0] = 0x40;
-  //buf[1] = 2;
-  //*((uint16_t *) &buf[2]) = seq;
-  //*((uint32_t *) &buf[4]) = UIP_HTONL(device_class);
-  //memcpy(&buf[8], device_id, 8);
-  //*((uint8_t *) &buf[16]) = 0;
-  //sprintf(&buf[17], "{\"retcode\":%d}", retcode);
-  //PRINTF("send to %x:%x response msg, len:%d\n", 
-  //       server_ipaddr.u8[sizeof(server_ipaddr.u8) - 2],
-  //       server_ipaddr.u8[sizeof(server_ipaddr.u8) - 1],
-  //       strlen(&buf[17]) + 17);
-  //uip_udp_packet_sendto(client_conn, buf, strlen(&buf[17]) + 17,
-  //                      &server_ipaddr, UIP_HTONS(UDP_SERVER_PORT));
+    uip_udp_packet_sendto(client_conn, data, len,
+                          peer_ipaddr, UIP_HTONS(UDP_SERVER_PORT));
+    
+    return;
 }
+
+void send_msg_to_gateway(uint8_t *data, uint32_t len)
+{
+    uip_udp_packet_sendto(client_conn, data, len,
+                          &server_ipaddr, UIP_HTONS(UDP_SERVER_PORT));
+    
+    return;
+}
+
 /*---------------------------------------------------------------------------*/
 static void
-send_subscribe(uip_ipaddr_t *peer_ipaddr, int port, char *parameters)
+send_subscribe(uip_ipaddr_t *peer_ipaddr, int32_t port, uint8_t *parameters)
 {
-    int len = 0;
+    int32_t len = 0;
 
     len = build_msg(msg_buf, MAX_PAYLOAD_LEN, TYPE_REQUEST, METHOD_SUBSCRIBE, parameters);
 
@@ -96,7 +71,7 @@ static void
 send_new()
 {
     float temperature; 
-    int len;
+    int32_t len;
     cJSON *root = NULL, *node = NULL, *node1 = NULL, *node2 = NULL;
     object_instance_t *obj = NULL;
     resource_instance_t *res = NULL;
@@ -170,7 +145,7 @@ send_new()
 
             switch (res->resource_type->type) {
                 case Integer:
-                    node1 = cJSON_CreateNumber(res->value.int_value);
+                    node1 = cJSON_CreateNumber(res->value.int32_t_value);
                     if(!node1) {
                         cJSON_Delete(root);
                         return;
@@ -211,7 +186,7 @@ send_new()
     }
 
     len = build_msg(msg_buf, MAX_PAYLOAD_LEN, TYPE_REQUEST, 
-                    METHOD_INFO, cJSON_Print(root));
+                    METHOD_INFO, cJSON_Print32_t(root));
 
     cJSON_Delete(root);
 
@@ -220,101 +195,12 @@ send_new()
 }
 /*---------------------------------------------------------------------------*/
 static void
-send_info()
-{
-    //cJSON *root = NULL, *node = NULL, *node1 = NULL;
-    /* Sensor Values */
-    float temperature; 
-    int len;
-
-    temperature = get_temperature();
-
-    //root = cJSON_CreateArray();
-    //if(!root) {
-    //    return;
-    //}
-
-    ////objects list
-    //node = cJSON_CreateArray();
-    //if(!node) {
-    //    cJSON_Delete(root);
-    //    return;
-    //}
-    //cJSON_AddItemToArray(root, node); 
-
-    ////add timestamp
-    //node1 = cJSON_CreateNumber(time());
-    //if(!node1) {
-    //    cJSON_Delete(root);
-    //    return;
-    //}
-    //cJSON_AddItemToArray(root, node1); 
-
-    ////object
-    //node1 = cJSON_CreateArray();
-    //if(!node1) {
-    //    cJSON_Delete(root);
-    //    return;
-    //}
-    //cJSON_AddItemToArray(node, node1); 
-
-    ////object name
-    //node = cJSON_CreateString(TEMPERATURE_SENSOR_OBJ_NAME);
-    //if(!node) {
-    //    cJSON_Delete(root);
-    //    return;
-    //}
-    //cJSON_AddItemToArray(node1, node); 
-
-    ////resources list
-    //node = cJSON_CreateArray();
-    //if(!node) {
-    //    cJSON_Delete(root);
-    //    return;
-    //}
-    //cJSON_AddItemToArray(node1, node); 
-
-    ////resource
-    //node1 = cJSON_CreateArray();
-    //if(!node1) {
-    //    cJSON_Delete(root);
-    //    return;
-    //}
-    //cJSON_AddItemToArray(node, node1); 
-
-    ////resource name
-    //node = cJSON_CreateString("temperature value");
-    //if(!node) {
-    //    cJSON_Delete(root);
-    //    return;
-    //}
-    //cJSON_AddItemToArray(node1, node); 
-
-    ////resource value
-    //node = cJSON_CreateNumber(temperature);
-    //if(!node) {
-    //    cJSON_Delete(root);
-    //    return;
-    //}
-    //cJSON_AddItemToArray(node1, node); 
-
-    //len = build_msg(msg_buf, MAX_PAYLOAD_LEN, TYPE_REQUEST, METHOD_INFO, cJSON_Print(root));
-
-    //cJSON_Delete(root);
-
-    sprintf(buf, "[[%s, [\"temperature value\", %d]]]", TEMPERATURE_SENSOR_OBJ_NAME, temperature);
-    len = build_msg(msg_buf, MAX_PAYLOAD_LEN, TYPE_REQUEST, METHOD_INFO, buf);
-    uip_udp_packet_sendto(client_conn, msg_buf, len,
-                          &server_ipaddr, UIP_HTONS(UDP_SERVER_PORT));
-}
-/*---------------------------------------------------------------------------*/
-static void
 message_handler(void)
 {
-    uint8_t *data, *parameters;
-    uint16_t msg_id;
+    uint32_t8_t *data, *parameters;
+    uint32_t16_t msg_id;
     msg_method_e method;
-    int len = 0, type, i = 0;
+    int32_t len = 0, type, i = 0;
     cJSON *root, *node, *node1, *node2, *node3;    
     object_instance_t *obj;
     resource_instance_t *res;
@@ -363,10 +249,10 @@ message_handler(void)
                                         if (res && res->resource_type->access_type == ReadWrite) {
                                             switch(res->resource_type->type) {
                                                 case Integer:
-                                                    res->value.int_value = node3->next->valueint;
+                                                    res->value.int32_t_value = node3->next->valueint32_t;
                                                     break;
                                                 case Boolean:
-                                                    res->value.boolean_value = node3->next->valueint;
+                                                    res->value.boolean_value = node3->next->valueint32_t;
                                                     break;
                                                 case Float:
                                                     res->value.float_value = node3->next->valuefloat;
@@ -404,7 +290,7 @@ message_handler(void)
                         case METHOD_INFO:
                             parameters = get_msg_parameters(data);
                             root = cJSON_Parse(parameters);
-                            if (root->valueint == RETCODE_DEVICE_NOT_REGISTER) {
+                            if (root->valueint32_t == RETCODE_DEVICE_NOT_REGISTER) {
                                 //send new device register
                                 send_new();
                             }
@@ -423,8 +309,8 @@ message_handler(void)
 static void
 print_local_addresses(void)
 {
-    int i;
-    uint8_t state;
+    int32_t i;
+    uint32_t8_t state;
 
     PRINTF("Client IPv6 addresses: ");
     for(i = 0; i < UIP_DS6_ADDR_NB; i++) {
@@ -473,35 +359,8 @@ set_global_address(void)
 #endif
 }
 /*---------------------------------------------------------------------------*/
-/*---------------------------------------------------------------------------*/
-void device_create()
-{
-    object_instance_t *obj_instance = NULL;
-    float temperature;
-
-    device_init(uip_lladdr.addr);
-    obj_instance = new_device_info_object(MANUFACTURER, MODEL, SERIAL, 
-                                               HW_VERSION, SW_VERSION);
-    if (obj_instance) {
-        device_insert_object(obj_instance); 
-    }
-
-    temperature = get_temperature();
-    obj_instance = new_temperature_object(TEMPERATURE_SENSOR_OBJ_NAME, 
-                                               temperature, 
-                                               TEMPERATURE_VALUE_MIN, 
-                                               TEMPERATURE_VALUE_MAX, 
-                                               "C");
-    if (obj_instance) {
-        device_insert_object(obj_instance); 
-    }
-}
-
-/*---------------------------------------------------------------------------*/
 PROCESS_THREAD(udp_client_process, ev, data)
 {
-    static struct etimer periodic;
-
     PROCESS_BEGIN();
 
     PROCESS_PAUSE();
@@ -513,13 +372,13 @@ PROCESS_THREAD(udp_client_process, ev, data)
     print_local_addresses();
 
     /*create device, and init*/
-    device_create();
+    create_device();
 
     /* new connection with remote host */
     client_conn = udp_new(NULL, UIP_HTONS(UDP_SERVER_PORT), NULL); 
     if(client_conn == NULL) {
-      PRINTF("No UDP connection available, exiting the process!\n");
-      PROCESS_EXIT();
+        PRINTF("No UDP connection available, exiting the process!\n");
+        PROCESS_EXIT();
     }
     udp_bind(client_conn, UIP_HTONS(UDP_CLIENT_PORT)); 
 
@@ -528,18 +387,11 @@ PROCESS_THREAD(udp_client_process, ev, data)
     PRINTF(" local/remote port %u/%u\n",
           UIP_HTONS(client_conn->lport), UIP_HTONS(client_conn->rport));
 
-    etimer_set(&periodic, (4 * CLOCK_SECOND));
     while(1) {
-      PROCESS_YIELD();
-      if(ev == tcpip_event) {
-          message_handler();
-      }
-      
-      if(etimer_expired(&periodic)) {
-        etimer_set(&periodic, (4 * CLOCK_SECOND));
-        //ctimer_set(&backoff_timer, SEND_TIME, send_packet, NULL);
-        send_info();
-      }
+        PROCESS_YIELD();
+        if(ev == tcpip_event) {
+            message_handler();
+        }
     }
 
     PROCESS_END();

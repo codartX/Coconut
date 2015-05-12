@@ -13,13 +13,14 @@ typedef enum _msg_type_e {
 } msg_type_e;
 
 typedef enum _msg_method_e {
-    METHOD_NEW = 0,
-    METHOD_INFO,
-    METHOD_GET_INFO,
-    METHOD_CONFIG,
+    METHOD_NEW_DEVICE = 0,
+    METHOD_GET_CONFIG,
+    METHOD_GET_RESOURCES,
+    METHOD_SET_RESOURCES,
+    METHOD_REPORT,
     METHOD_UPGRADE,
     METHOD_RELOAD,
-    METHOD_MESSAGE,
+    METHOD_LOG,
     METHOD_AUTH,
     METHOD_SET_POLICY,
     METHOD_GET_POLICY,
@@ -37,16 +38,16 @@ typedef enum _retcode_e {
 } retcode_e; 
 
 typedef struct _msg_header_t {
-    char version:2;
-    char msg_type:6;
-    char method;
-    short msg_id;
-    char device_id[8];
-    char parameters[0];
+    uint8_t  version:2;
+    uint8_t  msg_type:6;
+    uint8_t  method;
+    uint16_t msg_id;
+    uint8_t  device_id[8];
+    uint8_t  parameters[0];
 } msg_header_t;
 
-int build_msg(char *buf, int len, msg_type_e msg_type, 
-              msg_method_e method, char *parameters);
+uint32_t build_msg(uint8_t *buf, uint32_t len, msg_type_e msg_type, 
+                   msg_method_e method, uint8_t *parameters);
 
 #define get_msg_con(payload) (((msg_header_t *)payload)->con) 
 
@@ -60,6 +61,6 @@ int build_msg(char *buf, int len, msg_type_e msg_type,
 
 #define get_msg_parameters(payload) (((msg_header_t *)payload)->parameters) 
 
-int new_device_msg();
+int32_t new_device_msg();
 
 #endif

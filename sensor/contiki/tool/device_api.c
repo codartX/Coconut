@@ -4,8 +4,20 @@
  */ 
 
 #include "dev/adc-sensor.h"
+#include "device_api.h"
 
-float get_temperature()
+/**
+ #define MAX_RESOURCE_STR_VALUE_LEN 32
+ 
+ typedef union _resource_value_u {
+     int32_t int_value;
+     uint8_t boolean_value;
+     float float_value;
+     uint8_t string_value[MAX_RESOURCE_STR_VALUE_LEN];
+ } resource_value_u;
+ **/
+
+float get_temperature(void *arg)
 {
     /* Sensor Values */
     static int rv;

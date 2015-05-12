@@ -24,13 +24,13 @@ void dev_policy_cond_free(policy_cond_t *cond)
     free(cond); 
 }
 
-int dev_policy_cond_resource_init(policy_cond_t *cond, uip_ip6addr_t *ip6_addr, 
-                                 char *device_id, char *obj_name, 
-                                 char *res_name, enum operation_e op, 
+int32_t dev_policy_cond_resource_init(policy_cond_t *cond, uip_ip6addr_t *ip6_addr, 
+                                 uint8_t *device_id, uint8_t *obj_name, 
+                                 uint8_t *res_name, enum operation_e op, 
                                  resource_value_u *value)
 {
     if (!cond) {
-        return 0;
+        return FAIL;
     }
 
     cond->next = NULL;
@@ -44,26 +44,26 @@ int dev_policy_cond_resource_init(policy_cond_t *cond, uip_ip6addr_t *ip6_addr,
     cond->cond.value.operation = op;
     cond->cond.value.value = value;
 
-    return 1; 
+    return SUCCESS;
 }
 
-int dev_policy_cond_expire_time_init(policy_cond_t *cond, int exp_timestamp)
+int32_t dev_policy_cond_expire_time_init(policy_cond_t *cond, uint32_t exp_timestamp)
 {
     if (!cond) {
-        return 0;
+        return FAIL;
     }
 
     cond->next = NULL;
     cond->type = POLICY_COND_TYPE_EXPIRE_TIME;
     cond->cond.expire.expire_time = exp_timestamp;
 
-    return 1;
+    return SUCCESS;
 }
 
-int dev_policy_cond_periodic_init(policy_cond_t *cond, int start_timestamp, int interval)
+int32_t dev_policy_cond_periodic_init(policy_cond_t *cond, uint32_t start_timestamp, uint32_t interval)
 {
     if (!cond) {
-        return 0;
+        return FAIL;
     }
 
     cond->next = NULL;
@@ -71,7 +71,7 @@ int dev_policy_cond_periodic_init(policy_cond_t *cond, int start_timestamp, int 
     cond->cond.period.start_time = start_timestamp;
     cond->cond.period.period = interval;
 
-    return 1;
+    return SUCCESS;
 }
 
 policy_action_t *dev_policy_action_alloc()
@@ -92,11 +92,11 @@ void dev_policy_action_free(policy_action_t *action)
     free(action);
 }
 
-int dev_policy_action_resource_init(policy_action_t *action, resource_instance_t *res, 
-                                    resource_value_u *value)
+int32_t dev_policy_action_resource_init(policy_action_t *action, resource_instance_t *res, 
+                                        resource_value_u *value)
 {
     if (!action) {
-        return 0;
+        return FAIL;
     }
 
     action->next = NULL;
@@ -104,13 +104,13 @@ int dev_policy_action_resource_init(policy_action_t *action, resource_instance_t
     action->action.resource_op.res = res;
     memcpy(&action->action.resource_op.value, value, sizeof(resource_value_u));
 
-    return 1;
+    return SUCCESS;
 }
 
-int dev_policy_action_message_init(policy_action_t *action, int level, char *message)
+int32_t dev_policy_action_message_init(policy_action_t *action, uint32_t level, uint8_t *message)
 {
     if (!action) {
-        return 0;
+        return FAIL;
     }
 
     action->next = NULL;
@@ -118,7 +118,7 @@ int dev_policy_action_message_init(policy_action_t *action, int level, char *mes
     action->action.message.level = level;
     memcpy(action->action.message.msg, message, POLICY_ACTION_MESSAGE_LEN);
 
-    return 1;
+    return SUCCESS;
 }
 
 dev_policy_t *dev_policy_alloc()
@@ -156,27 +156,27 @@ void dev_policy_free(dev_policy_t *policy)
     free(policy);
 }
 
-int dev_policy_init(dev_policy_t *policy, int policy_id)
+int32_t dev_policy_init(dev_policy_t *policy, uint32_t policy_id)
 {
     policy->policy_id = policy_id;
     policy->cond_list = NULL;
     policy->action_list = NULL;
 
-    return 1;
+    return SUCCESS;
 }
 
-int dev_policy_add_cond(dev_policy_t *policy, policy_cond_t *cond)
+int32_t dev_policy_add_cond(dev_policy_t *policy, policy_cond_t *cond)
 {
     cond->next = policy->cond_list;
     policy->cond_list = cond;
 
-    return 1; 
+    return SUCCESS;
 }
 
-int dev_policy_add_action(dev_policy_t *policy, policy_action_t *action)
+int32_t dev_policy_add_action(dev_policy_t *policy, policy_action_t *action)
 {
     action->next = policy->action_list;
     policy->action_list = action;
 
-    return 1;
+    return SUCCESS;
 }
