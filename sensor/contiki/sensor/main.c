@@ -40,159 +40,26 @@ AUTOSTART_PROCESSES(&udp_client_process);
 /*---------------------------------------------------------------------------*/
 void send_msg(uint8_t *data, uint32_t len, uip_ipaddr_t *peer_ipaddr)
 {
+    uip_ipaddr_copy(&client_conn->ripaddr, peer_ipaddr);
     uip_udp_packet_sendto(client_conn, data, len,
                           peer_ipaddr, UIP_HTONS(UDP_SERVER_PORT));
+    uip_create_unspecified(&client_conn->ripaddr);
     
     return;
 }
 
 void send_msg_to_gateway(uint8_t *data, uint32_t len)
 {
+    uip_ipaddr_copy(&client_conn->ripaddr, &server_ipaddr);
     uip_udp_packet_sendto(client_conn, data, len,
                           &server_ipaddr, UIP_HTONS(UDP_SERVER_PORT));
+    uip_create_unspecified(&client_conn->ripaddr);
     
     return;
 }
 
 /*---------------------------------------------------------------------------*/
-static void
-send_subscribe(uip_ipaddr_t *peer_ipaddr, int32_t port, uint8_t *parameters)
-{
-    int32_t len = 0;
 
-    len = build_msg(msg_buf, MAX_PAYLOAD_LEN, TYPE_REQUEST, METHOD_SUBSCRIBE, parameters);
-
-    uip_udp_packet_sendto(client_conn, msg_buf, len,
-                          peer_ipaddr, UIP_HTONS(port));
-    
-}
-/*---------------------------------------------------------------------------*/
-static void
-send_new()
-{
-    float temperature; 
-    int32_t len;
-    cJSON *root = NULL, *node = NULL, *node1 = NULL, *node2 = NULL;
-    object_instance_t *obj = NULL;
-    resource_instance_t *res = NULL;
-
-    temperature = get_temperature();
-
-    root = cJSON_CreateArray();
-    if(!root) {
-        return;
-    }
-
-    //objects list
-    node = cJSON_CreateArray();
-    if(!node) {
-        cJSON_Delete(root);
-        return;
-    }
-    cJSON_AddItemToArray(root, node); 
-
-    obj = g_device.obj_list;
-    while (obj) {
-        //object id
-        node1 = cJSON_CreateNumber(obj->object_id);
-        if(!node1) {
-            cJSON_Delete(root);
-            return;
-        }
-        cJSON_AddItemToArray(node, node1); 
-        
-        //object name
-        node1 = cJSON_CreateString(obj->name);
-        if(!node1) {
-            cJSON_Delete(root);
-            return;
-        }
-        cJSON_AddItemToArray(node, node1); 
-        
-        //resource list
-        node1 = cJSON_CreateArray();
-        if(!node1) {
-            cJSON_Delete(root);
-            return;
-        }
-        cJSON_AddItemToArray(node, node1); 
-        
-        res = obj->list;
-        while (res) {
-             //resource
-             node2 = cJSON_CreateArray();
-             if(!node2) {
-                 cJSON_Delete(root);
-                 return;
-             }
-             cJSON_AddItemToArray(node1, node2); 
-             
-            //resource id
-            node1 = cJSON_CreateNumber(res->resource_type->resource_id);
-            if(!node1) {
-                cJSON_Delete(root);
-                return;
-            }
-            cJSON_AddItemToArray(node2, node1); 
-            
-            //resource name
-            node1 = cJSON_CreateString(res->name);
-            if(!node1) {
-                cJSON_Delete(root);
-                return;
-            }
-            cJSON_AddItemToArray(node2, node1); 
-
-            switch (res->resource_type->type) {
-                case Integer:
-                    node1 = cJSON_CreateNumber(res->value.int32_t_value);
-                    if(!node1) {
-                        cJSON_Delete(root);
-                        return;
-                    }
-                    cJSON_AddItemToArray(node2, node1); 
-                    break;
-                case Boolean:
-                    node1 = cJSON_CreateNumber(res->value.boolean_value);
-                    if(!node1) {
-                        cJSON_Delete(root);
-                        return;
-                    }
-                    cJSON_AddItemToArray(node2, node1); 
-                    break;
-                case Float:
-                    node1 = cJSON_CreateNumber(res->value.float_value);
-                    if(!node1) {
-                        cJSON_Delete(root);
-                        return;
-                    }
-                    cJSON_AddItemToArray(node2, node1); 
-                    break;
-                case String:
-                    node1 = cJSON_CreateString(res->value.string_value);
-                    if(!node1) {
-                        cJSON_Delete(root);
-                        return;
-                    }
-                    cJSON_AddItemToArray(node2, node1); 
-                    break;
-                default:
-                    cJSON_Delete(root);
-                    return;
-            }        
-        }
-
-        obj = obj->next;
-    }
-
-    len = build_msg(msg_buf, MAX_PAYLOAD_LEN, TYPE_REQUEST, 
-                    METHOD_INFO, cJSON_Print32_t(root));
-
-    cJSON_Delete(root);
-
-    uip_udp_packet_sendto(client_conn, msg_buf, len,
-                          &server_ipaddr, UIP_HTONS(UDP_SERVER_PORT));
-}
 /*---------------------------------------------------------------------------*/
 static void
 message_handler(void)
@@ -205,7 +72,6 @@ message_handler(void)
     object_instance_t *obj;
     resource_instance_t *res;
     
-
     if(uip_newdata()) {
         len = uip_datalen();
         data = uip_appdata;
@@ -215,69 +81,21 @@ message_handler(void)
         }
         PRINTF("\n");
         if (len >= sizeof(msg_header_t)) {
-            msg_id = get_msg_id(data);
-            //PRINTF("seq:%d\n", seq);
-            //PRINTF("device id:");
-            //for (i = 0; i < 8; i++) {
-            //  PRINTF("%x ", data[8 + i]);
-            //}
-            //PRINTF("\n");
-            //PRINTF("my device id:");
-            //for (i = 0; i < 8; i++) {
-            //  PRINTF("%x ", device_id[i]);
-            //}
-            //PRINTF("\n");
             if ( memcmp(get_msg_device_id(data), uip_lladdr.addr, 8) == 0) {
                 if (get_msg_type(data) == TYPE_REQUEST) {
                     //request
                     method = get_msg_method(data);
                     switch(method){
-                        case METHOD_CONFIG:
-                            parameters = get_msg_parameters(data);
-                            root = cJSON_Parse(parameters);
-                            node = root->child;
-                            while(node) {
-                                //object
-                                node1 = node->child; 
-                                obj = device_find_object(node1->valuestring); 
-                                if (obj) {
-                                    //resource
-                                    node2 = node1->next->child;
-                                    while(node2) {
-                                        node3 = node2->child;
-                                        res = object_instance_find_resource(obj, node3->valuestring); 
-                                        if (res && res->resource_type->access_type == ReadWrite) {
-                                            switch(res->resource_type->type) {
-                                                case Integer:
-                                                    res->value.int32_t_value = node3->next->valueint32_t;
-                                                    break;
-                                                case Boolean:
-                                                    res->value.boolean_value = node3->next->valueint32_t;
-                                                    break;
-                                                case Float:
-                                                    res->value.float_value = node3->next->valuefloat;
-                                                    break;
-                                                case String:
-                                                    strncpy(res->value.string_value, 
-                                                            node3->next->valuestring, 
-                                                            MAX_RESOURCE_STR_VALUE_LEN-1);
-                                                    res->value.string_value[MAX_RESOURCE_STR_VALUE_LEN-1] = '\0';
-                                                    break;
-                                                default:
-                                                    break;
-                                            }
-                                        }
-                                        node2 = node2->next; 
-                                    }
-                                }
-                                node = node->next;
-                            }
-                            //send response
+                        case METHOD_NEW_DEVICE:
                             break;
-                        case METHOD_GET_INFO:
-                            break; 
+                        case METHOD_SET_RESOURCES:
+                            break;
+                        case METHOD_GET_RESOURCES:
+                            break;
                         case METHOD_SET_POLICY:
-                            break; 
+                            break;
+                        case METHOD_GET_POLICY:
+                            break;
                         case METHOD_RELOAD:
                             break; 
                         default:
@@ -287,18 +105,21 @@ message_handler(void)
                     //TODO: response
                     method = get_msg_method(data);
                     switch(method){
-                        case METHOD_INFO:
-                            parameters = get_msg_parameters(data);
-                            root = cJSON_Parse(parameters);
-                            if (root->valueint32_t == RETCODE_DEVICE_NOT_REGISTER) {
-                                //send new device register
-                                send_new();
+                        case METHOD_NEW_DEVICE:
+                            len = create_new_device_msg(buf, MAX_PAYLOAD_LEN);
+                            if (len > 0) {
+                                send_msg(buf, len, &UIP_IP_BUF->srcipaddr);
                             }
+                            break;
+                        case METHOD_GET_CONFIG:
                             break;
                         default:
                             return;
                     }
-                } 
+                }
+                if (len > 0) {
+                
+                }
             } else {
                 PRINTF("It is not for me\n");
             }

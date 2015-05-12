@@ -67,32 +67,126 @@ uint32_t create_report_msg(uint8_t *buf, uint32_t len, resource_instance_t *reso
         return 0;
     }
     
-    msg_len = build_msg_header(buf, len, TYPE_REQUEST, METHOD_REPORT);
+    header_len = build_msg_header(buf, len, TYPE_REQUEST, METHOD_REPORT);
     if (resource->type == Integer) {
-        parameters_len = sprintf(buf + msg_len, "[[[%s, [[%s, %d]]]], %d]", resource->parent_obj->name,
+        parameters_len = sprintf(buf + header_len, "[[[%s, [[%s, %d]]]], %d]", resource->parent_obj->name,
                                  resource->name, resource->value.integer_value);
     } else if (resource->type == Boolean) {
         if (resource->value.boolean_value) {
-            parameters_len = sprintf(buf + msg_len, "[[[%s, [[%s, True]]]], %d]", resource->parent_obj->name, resource->name);
+            parameters_len = sprintf(buf + header_len, "[[[%s, [[%s, True]]]], %d]", resource->parent_obj->name, resource->name);
         } else {
-            parameters_len = sprintf(buf + msg_len, "[[[%s, [[%s, False]]]], %d]", resource->parent_obj->name, resource->name);
+            parameters_len = sprintf(buf + header_len, "[[[%s, [[%s, False]]]], %d]", resource->parent_obj->name, resource->name);
         }
     } else if (resource->type == Float) {
-        parameters_len = sprintf(buf + msg_len, "[[[%s, [[%s, %f]]]], %d]", resource->parent_obj->name,
+        parameters_len = sprintf(buf + header_len, "[[[%s, [[%s, %f]]]], %d]", resource->parent_obj->name,
                                  resource->name, resource->value.float_value);
     } else if (resource->type == String) {
-        parameters_len = sprintf(buf + msg_len, "[[[%s, [[%s, %s]]]], %d]", resource->parent_obj->name,
+        parameters_len = sprintf(buf + header_len, "[[[%s, [[%s, %s]]]], %d]", resource->parent_obj->name,
                                  resource->name, resource->value.string_value);
     } else {
         return 0;
     }
         
-    return (header_len + parameters_len - 1);
+    return (header_len + parameters_len);
 
 }
 
 uint32_t create_new_device_msg(uint8_t *buf, uint32_t len)
 {
+    uint32_t data_len = 0;
+    uint8_t *ptr = buf;
+    object_instance_t *obj = g_device.obj_list;
+    resource_instance_t *res = NULL;
+    
+    data_len = build_msg_header(buf, len, TYPE_REQUEST, METHOD_NEW_DEVICE);
+    ptr = buf + data_len;
+    
+    data_len = sprintf(ptr, "[%s,[", g_device.name);
+    ptr += data_len;
+    
+    while (obj) {
+        data_len = sprintf(ptr, "[%d,%s,[", g_device.name);
+        ptr += data_len;
+        
+        res = obj->res_list;
+        while (res) {
+            data_len = sprintf(ptr, "[%d,%s,", g_device.name);
+            ptr += data_len;
+            
+            if (res->resource_type.type == String) {
+                data_len = sprintf(ptr, "%s", res->value.string_value);
+            } else if (res->resource_type.type == Boolean) {
+                if (res->value.bool_value) {
+                    data_len = sprintf(ptr, "True");
+                } else {
+                    data_len = sprintf(ptr, "False");
+                }
+            } else if (res->resource_type.type == Float) {
+                data_len = sprintf(ptr, "%f", res->value.float_value);
+            } else {
+                data_len = sprintf(ptr, "%d", res->value.int_value);
+            }
+            ptr += data_len;
+            
+            data_len = sprintf(ptr, "],", g_device.name);
+            ptr += data_len;
+            
+            res = res->next;
+        }
+        ptr--;//backward 1 char, remove ','
+        
+        data_len = sprintf(ptr, "],");
+        ptr += data_len;
+        
+        obj = obj->next;
+    }
+    ptr--;//backward 1 char, remove ','
+    
+    data_len = sprintf(ptr, "],%d]", g_device.timestamp);
+    ptr += data_len;
+    
+    return (ptr - buf);
+}
 
+uint32_t create_get_config_msg(uint8_t *buf, uint32_t len)
+{
+    uint32_t data_len = 0;
+    
+    data_len = build_msg_header(buf, len, TYPE_REQUEST, METHOD_GET_CONFIG);
+    
+    return data_len;
+}
+
+uint32_t create_log_msg(uint8_t *buf, uint32_t len, uint8_t level, uint8_t *log)
+{
+    uint32_t header_len = 0, parameters_len = 0;
+    
+    header_len = build_msg_header(buf, len, TYPE_REQUEST, METHOD_LOG);
+    
+    parameters_len = sprintf(buf + header_len, "[%d,%s]", level, log);
+    
+    return (header_len + parameters_len - 1);
+}
+
+uint32_t create_subscribe_msg(uint8_t *buf, uint32_t len, uint8_t *parameters)
+{
+    uint32_t header_len = 0, parameters_len = 0;
+    
+    header_len = build_msg_header(buf, len, TYPE_REQUEST, METHOD_SUBSCRIBE);
+    
+    parameters_len = sprintf(buf + header_len, "%s", parameters);
+    
+    return (header_len + parameters_len);
+}
+
+uint32_t create_unsubscribe_msg(uint8_t *buf, uint32_t len, uint8_t *obj_name, uint8_t *res_name)
+{
+    uint32_t header_len = 0, parameters_len = 0;
+    
+    header_len = build_msg_header(buf, len, TYPE_REQUEST, METHOD_SUBSCRIBE);
+    
+    parameters_len = sprintf(buf + header_len, "[[%s,[%s]]]", obj_name, res_name);
+    
+    return (header_len + parameters_len);
 }
 

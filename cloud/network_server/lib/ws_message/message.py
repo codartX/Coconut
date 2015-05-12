@@ -34,6 +34,7 @@ Direction: device/gw-->cloud
 Request:
 parameters:
 [
+    <device_name>,
     [
         [
             <obj_id>, 
@@ -225,7 +226,7 @@ parameters:
             [
                 [0(type 0), <device id>, <obj>,<res>,<op>,<value>],
                 [1(type 1), <exp_time>],
-                [2(type 2), <start_time>, <interval>]
+                [2(type 2), <interval>]
             ]
             ...
         ],
@@ -285,11 +286,13 @@ parameters:
 [
     [
         <obj>,
-        <res>,
         [
-            [0(type 0), <op>, <value>],
-            [1(type 1), <exp_time>],
-            [2(type 2), <start_time>, <interval>]
+            <res>,
+            [
+                [0(type 0), <op>, <value>],
+                [1(type 1), <exp_time>],
+                [2(type 2), <interval>]
+            ]
         ]
     ],
     ...
