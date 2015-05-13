@@ -41,7 +41,7 @@ DEVICE_INIT_BLOCK ="""\
     object_instance_t *obj_instance = NULL;
     resource_value_u value;
        
-    retval = device_init("<device_id>");
+    retval = device_init("<device_id>", "<device_name>");
     if (retval == FAIL) {
         PRINTF("device init fail\\n");
         return;
