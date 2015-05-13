@@ -62,7 +62,7 @@ void dev_policy_cond_free(policy_cond_t *cond);
 int32_t dev_policy_cond_resource_init(policy_cond_t *cond, uip_ip6addr_t *ip6_addr, 
                                       uint8_t *device_id, uint8_t *obj_name, 
                                       uint8_t *res_name, enum operation_e op, 
-                                      resource_value_u *value);
+                                      cond_value_u *value);
 
 int32_t dev_policy_cond_expire_time_init(policy_cond_t *cond, uint32_t exp_timestamp);
 

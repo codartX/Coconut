@@ -11,7 +11,7 @@ device_t g_device;
 
 int32_t device_init(uint8_t *device_id)
 {
-    if (device_id && device_name) {
+    if (device_id) {
         memcpy(g_device.device_id, device_id, DEV_ID_SIZE);
         g_device.obj_list = NULL;
         g_device.policy_list = NULL;

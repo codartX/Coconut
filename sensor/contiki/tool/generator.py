@@ -145,24 +145,6 @@ def main(argv):
             if resource['resource_id'] in ipso_resources.IPSO_RESOURCES:
                 f.write(RESOURCE_ALLOC_BLOCK)
 
-                resource_desc = ipso_resources.IPSO_RESOURCES[resource['resource_id']] 
-                if resource_desc['Type'] == 'String':
-                    f.write('    strcpy(value.string_value, "' + str(resource['value']) + '");\n')
-                elif resource_desc['Type'] == 'Float':
-                    f.write('    value.float_value = ' + str(float(resource['value'])) + ';\n')
-                elif resource_desc['Type'] == 'Integer':
-                    f.write('    value.int_value = ' + str(int(resource['value'])) + ';\n')
-                elif resource_desc['Type'] == 'Boolean':
-                    if resource['value']:
-                        f.write('    value.bool_value = true;\n')
-                    else:
-                        f.write('    value.bool_value = false;\n')
-
-                if not 'resource_name' in resource:
-                    resource_name = ipso_resources.IPSO_RESOURCES[resource['resource_id']]['Resource Name']
-                else:
-                    resource_name = resource['resource_name']
-
                 if not 'get_func' in resource:
                     get_func = 'NULL'
                 else:
@@ -172,6 +154,31 @@ def main(argv):
                     set_func = 'NULL'
                 else:
                     set_func = resource['set_func']
+
+                resource_desc = ipso_resources.IPSO_RESOURCES[resource['resource_id']] 
+
+                if get_func != 'NULL':
+                    f.write('    ' + get_func +'(&value);\n')
+                     
+                elif resource['value']:
+                    if resource_desc['Type'] == 'String':
+                        f.write('    strcpy(value.string_value, "' + str(resource['value']) + '");\n')
+                    elif resource_desc['Type'] == 'Float':
+                        f.write('    value.float_value = ' + str(float(resource['value'])) + ';\n')
+                    elif resource_desc['Type'] == 'Integer':
+                        f.write('    value.int_value = ' + str(int(resource['value'])) + ';\n')
+                    elif resource_desc['Type'] == 'Boolean':
+                        if resource['value']:
+                            f.write('    value.bool_value = true;\n')
+                        else:
+                            f.write('    value.bool_value = false;\n')
+                else:
+                    print 'No value!'
+
+                if not 'resource_name' in resource:
+                    resource_name = ipso_resources.IPSO_RESOURCES[resource['resource_id']]['Resource Name']
+                else:
+                    resource_name = resource['resource_name']
 
                 replacements = {
                                    '<resource_id>': str(resource['resource_id']), 

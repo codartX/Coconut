@@ -7,35 +7,35 @@
            "resources": [
                {
                    "resource_id": 5105,
-                   "value": "Temperature Sensor",
+                   "value": "Temperature Sensor"
                },
                {
                    "resource_id": 5100,
-                   "value": "Cisco",
+                   "value": "Cisco"
                },
                {
                    "resource_id": 5101,
-                   "value": "NHK1",
+                   "value": "NHK1"
                },
                {
                    "resource_id": 5102,
-                   "value": "01",
+                   "value": "01"
                },
                {
                    "resource_id": 5103,
-                   "value": "01",
+                   "value": "01"
                },
                {
                    "resource_id": 5104,
-                   "value": "e23344fa11",
+                   "value": "e23344fa11"
                },
                {
                    "resource_id": 5106,
-                   "value": "Battery",
+                   "value": "Battery"
                },
                {
                    "resource_id": 5107,
-                   "value": 5,
+                   "value": 5
                }
            ]
        },
@@ -46,19 +46,19 @@
                {
                    "resource_name": "Temperature",
                    "resource_id": 5700,
-                   "get_func": "get_temperature",
+                   "get_func": "get_temperature"
                },
                {
                    "resource_id": 5701,
-                   "value": "C",
+                   "value": "C"
                },
                {
                    "resource_id": 5601,
-                   "value": -20.0,
+                   "value": -20.0
                },
                {
                    "resource_id": 5602,
-                   "value": 50.0,
+                   "value": 50.0
                }
            ]
        }

@@ -8,6 +8,7 @@
 
 #include <stdint.h>
 #include "net/uip.h"
+#include "device_profile.h"
 
 #define DEBUG DEBUG_PRINT
 #include "net/uip-debug.h"

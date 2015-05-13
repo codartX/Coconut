@@ -104,7 +104,10 @@ uint32_t create_new_device_msg(uint8_t *buf, uint32_t len, msg_type_e msg_type)
     data_len = build_msg_header(buf, len, msg_type, METHOD_NEW_DEVICE);
     ptr = buf + data_len;
     
-    data_len = sprintf(ptr, "[%s,[", g_device.device_name);
+    data_len = sprintf(ptr, "[\"%2x%2x%2x%2x%2x%2x%2x%2x\",[", 
+                       g_device.device_id[0], g_device.device_id[1], g_device.device_id[2],
+                       g_device.device_id[3], g_device.device_id[4], g_device.device_id[5],
+                       g_device.device_id[6], g_device.device_id[7]);
     ptr += data_len;
     
     while (obj) {

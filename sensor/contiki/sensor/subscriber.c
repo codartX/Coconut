@@ -80,12 +80,6 @@ res_subscriber_t *subscriber_alloc()
 
 void subscriber_free(res_subscriber_t *subscriber)
 {
-    if (subscriber->condition_type == CONDITION_TYPE_VALUE) {
-        if (subscriber->condition.value) {
-            free(subscriber->condition.value);
-        }
-    }
- 
     ctimer_stop(&subscriber->timer);
     
     free(subscriber);
@@ -122,7 +116,8 @@ int32_t subscriber_expire_type_init(res_subscriber_t *subscriber, uip_ip6addr_t 
 }
 
 int32_t subscriber_value_type_init(res_subscriber_t *subscriber, uip_ip6addr_t *addr, 
-                                   uint8_t *device_id, enum operation_e operation, resource_value_u *value)
+                                   uint8_t *device_id, enum operation_e operation, 
+                                   cond_value_u *value)
 {
     if (!subscriber) {
         return FAIL;
@@ -132,13 +127,13 @@ int32_t subscriber_value_type_init(res_subscriber_t *subscriber, uip_ip6addr_t *
     memcpy(subscriber->device_id, device_id, DEV_ID_SIZE);
     subscriber->condition_type = CONDITION_TYPE_VALUE;
     subscriber->condition.operation = operation;
-    memcpy(&subscriber->condition.value, value, sizeof(resource_value_u));
+    memcpy(&subscriber->condition.value, value, sizeof(cond_value_u));
 
     return SUCCESS;
 }
 
 int32_t subscriber_value_chaneg_type_init(res_subscriber_t *subscriber, uip_ip6addr_t *addr, 
-                                          uint8_t *device_id, resource_value_u *value)
+                                          uint8_t *device_id, cond_value_u *value)
 {
     if (!subscriber) {
         return FAIL;
@@ -147,7 +142,7 @@ int32_t subscriber_value_chaneg_type_init(res_subscriber_t *subscriber, uip_ip6a
     memcpy(&(subscriber->ip6_addr), addr, sizeof(uip_ip6addr_t));
     memcpy(subscriber->device_id, device_id, DEV_ID_SIZE);
     subscriber->condition_type = CONDITION_TYPE_VALUE_CHANGE;
-    memcpy(&subscriber->condition.value, value, sizeof(resource_value_u));
+    memcpy(&subscriber->condition.value, value, sizeof(cond_value_u));
 
     return SUCCESS;
 }

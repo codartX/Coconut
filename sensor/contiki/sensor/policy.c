@@ -21,16 +21,13 @@ policy_cond_t *dev_policy_cond_alloc()
 
 void dev_policy_cond_free(policy_cond_t *cond)
 {
-    if (cond->cond.value) {
-        free(cond->cond.value);
-    }
     free(cond); 
 }
 
 int32_t dev_policy_cond_resource_init(policy_cond_t *cond, uip_ip6addr_t *ip6_addr, 
                                  uint8_t *device_id, uint8_t *obj_name, 
                                  uint8_t *res_name, enum operation_e op, 
-                                 resource_value_u *value)
+                                 cond_value_u *value)
 {
     if (!cond) {
         return FAIL;
@@ -45,7 +42,7 @@ int32_t dev_policy_cond_resource_init(policy_cond_t *cond, uip_ip6addr_t *ip6_ad
     strncpy(cond->res_name, res_name, MAX_RESOURCE_NAME_LEN-1);
     cond->res_name[MAX_RESOURCE_NAME_LEN-1] = '\0';
     cond->cond.operation = op;
-    cond->cond.value = value;
+    memcpy(&cond->cond.value, value, sizeof(cond_value_u));
 
     return SUCCESS;
 }
