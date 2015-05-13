@@ -15,7 +15,7 @@ void create_device()
     object_instance_t *obj_instance = NULL;
     resource_value_u value;
        
-    retval = device_init("1234");
+    retval = device_init("1234", "test_dev");
     if (retval == FAIL) {
         PRINTF("device init fail\n");
         return;
@@ -35,7 +35,7 @@ void create_device()
         return;
     }
 
-    strcpy(value.string_value, abc);
+    strcpy(value.string_value, "abc");
     if (!resource_instance_init(res_instance, "test_res1", 5100, 
                                 &value, NULL, NULL)) {
         device_deinit();

@@ -132,7 +132,7 @@ def main(argv):
 
                 resource_desc = ipso_resources.IPSO_RESOURCES[resource['resource_id']] 
                 if resource_desc['Type'] == 'String':
-                    f.write('    strcpy(value.string_value, ' + str(resource['value']) + ');\n')
+                    f.write('    strcpy(value.string_value, "' + str(resource['value']) + '");\n')
                 elif resource_desc['Type'] == 'Float':
                     f.write('    value.float_value = ' + str(float(resource['value'])) + ';\n')
                 elif resource_desc['Type'] == 'Integer':
