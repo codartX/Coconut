@@ -63,7 +63,7 @@ uint32_t build_msg(uint8_t *buf, uint32_t len, msg_type_e msg_type,
 
 #define get_msg_parameters(payload) (((msg_header_t *)payload)->parameters) 
 
-uint32_t create_new_device_msg(uint8_t *buf, uint32_t len);
+uint32_t create_new_device_msg(uint8_t *buf, uint32_t len, msg_type_e msg_type);
 
 uint32_t create_report_msg(uint8_t *buf, uint32_t len, resource_instance_t *resource);
 

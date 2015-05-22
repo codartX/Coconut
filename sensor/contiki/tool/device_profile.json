@@ -23,7 +23,7 @@
                    "resource_name": "test_res2",
                    "resource_id": 5108,
                    "value": 2468,
-                   "get_func": "NULL",
+                   "get_func": "get_temperature",
                    "set_func": "NULL"
                }
            ]

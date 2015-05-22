@@ -5,19 +5,9 @@
 
 #include "dev/adc-sensor.h"
 #include "device_api.h"
+#include "main.h"
 
-/**
- #define MAX_RESOURCE_STR_VALUE_LEN 32
- 
- typedef union _resource_value_u {
-     int32_t int_value;
-     uint8_t boolean_value;
-     float float_value;
-     uint8_t string_value[MAX_RESOURCE_STR_VALUE_LEN];
- } resource_value_u;
- **/
-
-float get_temperature(void *arg)
+int32_t get_temperature(resource_value_u *value)
 {
     /* Sensor Values */
     static int rv;
@@ -32,7 +22,7 @@ float get_temperature(void *arg)
      */
     sensor = sensors_find(ADC_SENSOR);
     if(!sensor) {
-        return -273.15;
+        return FAIL;
     }
     //leds_on(LEDS_RED);
     /*
@@ -50,11 +40,12 @@ float get_temperature(void *arg)
      */
     rv = sensor->value(ADC_SENSOR_TYPE_TEMP);
     if(rv == -1) {
-        return -273.15;
+        return FAIL;
     }
     sane = 25 + ((rv - 1480) / 4.5);
     dec = sane;
     frac = sane - dec;
     //PRINTF("  Temp=%d.%02u C (%d)\n", dec, (unsigned int)(frac*100), rv);
-    return sane;
+    value->float_value = sane;
+    return SUCCESS;
 }

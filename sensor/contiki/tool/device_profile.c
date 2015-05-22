@@ -63,7 +63,7 @@ void create_device()
 
     value.int_value = 2468;
     if (!resource_instance_init(res_instance, "test_res2", 5108, 
-                                &value, NULL, NULL)) {
+                                &value, get_temperature, NULL)) {
         device_deinit();
         return;
     }

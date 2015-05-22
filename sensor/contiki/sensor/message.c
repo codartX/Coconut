@@ -94,14 +94,14 @@ uint32_t create_report_msg(uint8_t *buf, uint32_t len, resource_instance_t *reso
 
 }
 
-uint32_t create_new_device_msg(uint8_t *buf, uint32_t len)
+uint32_t create_new_device_msg(uint8_t *buf, uint32_t len, msg_type_e msg_type)
 {
     uint32_t data_len = 0;
     uint8_t *ptr = buf;
     object_instance_t *obj = g_device.obj_list;
     resource_instance_t *res = NULL;
     
-    data_len = build_msg_header(buf, len, TYPE_REQUEST, METHOD_NEW_DEVICE);
+    data_len = build_msg_header(buf, len, msg_type, METHOD_NEW_DEVICE);
     ptr = buf + data_len;
     
     data_len = sprintf(ptr, "[%s,[", g_device.device_name);

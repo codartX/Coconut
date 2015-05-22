@@ -55,6 +55,51 @@ void send_msg_to_gateway(uint8_t *data, uint32_t len)
 }
 
 /*---------------------------------------------------------------------------*/
+static discover_request_handler()
+{
+    uint32_t len = 0;
+    
+    len = create_new_device_msg(buf, MAX_PAYLOAD_LEN, TYPE_RESPONSE);
+    if (len > 0) {
+        send_msg(buf, len, &UIP_IP_BUF->srcipaddr);
+    }
+}
+
+/*---------------------------------------------------------------------------*/
+static void
+set_resources_request_handler()
+{
+
+}
+
+/*---------------------------------------------------------------------------*/
+static void
+get_resources_request_handler()
+{
+
+}
+
+/*---------------------------------------------------------------------------*/
+static void
+set_policy_request_handler()
+{
+    
+}
+
+/*---------------------------------------------------------------------------*/
+static void
+get_policy_request_handler()
+{
+    
+}
+
+/*---------------------------------------------------------------------------*/
+static void
+reload_request_handler()
+{
+    
+}
+
 
 /*---------------------------------------------------------------------------*/
 static void
@@ -83,16 +128,22 @@ message_handler(void)
                     method = get_msg_method(data);
                     switch(method){
                         case METHOD_NEW_DEVICE:
+                            discover_request_handler();
                             break;
                         case METHOD_SET_RESOURCES:
+                            set_resources_request_handler();
                             break;
                         case METHOD_GET_RESOURCES:
+                            get_resources_request_handler();
                             break;
                         case METHOD_SET_POLICY:
+                            set_policy_request_handler();
                             break;
                         case METHOD_GET_POLICY:
+                            get_policy_request_handler();
                             break;
                         case METHOD_RELOAD:
+                            reload_request_handler();
                             break; 
                         default:
                             return;
@@ -102,10 +153,6 @@ message_handler(void)
                     method = get_msg_method(data);
                     switch(method){
                         case METHOD_NEW_DEVICE:
-                            len = create_new_device_msg(buf, MAX_PAYLOAD_LEN);
-                            if (len > 0) {
-                                send_msg(buf, len, &UIP_IP_BUF->srcipaddr);
-                            }
                             break;
                         case METHOD_GET_CONFIG:
                             break;

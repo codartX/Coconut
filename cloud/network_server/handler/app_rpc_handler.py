@@ -18,12 +18,12 @@ from device_monitor import clients
 
 import lib.error_defines as error
 
-class DeviceConfigHandler(JSONRPCHandler):
+class AppRPCHandler(JSONRPCHandler):
     @async
-    def DeviceConfig(self, device_manager_id, device_id, device_config):
+    def DeviceSetResources(self, device_manager_id, device_id, device_config):
         """
         """
-        logging.info("DeviceConfig rpc call, device_manager_id:%s device_id:%lu device_config:%s",
+        logging.info("DeviceSetResources rpc call, device_manager_id:%s device_id:%lu device_config:%s",
                      device_manager_id, device_id, str(device_config))
         if device_manager_id in clients:
             clients[device_manager_id]["object"].device_config(device_manager_id, device_id,
@@ -35,16 +35,11 @@ class DeviceConfigHandler(JSONRPCHandler):
                                   "message": "Device is not connected"
                                   })
 
-    def _handle_response(self, response):
-        logging.info("Response rpc:%s", response)
-        self.result(response)
-
-class DeviceSetPolicyHandler(JSONRPCHandler):
     @async
-    def DeviceConfig(self, device_manager_id, device_id, policy):
+    def DeviceSetPolicy(self, device_manager_id, device_id, policy):
         """
         """
-        logging.info("DeviceConfig rpc call, device_manager_id:%s device_id:%lu policy:%s",
+        logging.info("DeviceSetPolicy rpc call, device_manager_id:%s device_id:%lu policy:%s",
                      device_manager_id, device_class, device_id, str(policy))
         if device_manager_id in clients:
             clients[device_manager_id]["object"].device_set_policy(device_manager_id, device_id,

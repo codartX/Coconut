@@ -34,8 +34,7 @@ define('server_node', default = '127.0.0.1:9999', help = 'server node')
 class Application(tornado.web.Application):
     def __init__(self):
         handlers = [
-            (r'/app_rpc', handler.app_rpc_handler.DeviceConfigHandler),
-            (r'/device_policy', handler.app_rpc_handler.DeviceSetPolicyHandler),
+            (r'/app_rpc', handler.app_rpc_handler.AppRPCHandler),
             (r'/device_monitor', handler.device_handler.WebSocketHandler),
         ]
 

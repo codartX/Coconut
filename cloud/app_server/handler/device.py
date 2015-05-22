@@ -146,7 +146,7 @@ class DeviceViewHandler(BaseHandler):
                                 config[object][resource].value = value
                                 device.objects[object][resource].value = value
 
-        url = 'http://' + device['server_node'] + '/app_rpc_handler'
+        url = 'http://' + device['server_node'] + '/app_rpc'
         
         params = {
                   'device_manager_id': device['device_manager_id'],
@@ -158,7 +158,7 @@ class DeviceViewHandler(BaseHandler):
         
         body = json.dumps({
                            'jsonrpc': '2.0',
-                           'method': 'DeviceConfig',
+                           'method': 'DeviceSetResources',
                            'params': params,
                            'id': uuid.uuid4().hex,
                           });
