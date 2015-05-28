@@ -122,7 +122,7 @@ int32_t subscriber_expire_type_init(res_subscriber_t *subscriber, uip_ip6addr_t 
 }
 
 int32_t subscriber_value_type_init(res_subscriber_t *subscriber, uip_ip6addr_t *addr, 
-                                   uint8_t *device_id, enum operation_e operation, void *value)
+                                   uint8_t *device_id, enum operation_e operation, resource_value_u *value)
 {
     if (!subscriber) {
         return FAIL;
@@ -132,13 +132,13 @@ int32_t subscriber_value_type_init(res_subscriber_t *subscriber, uip_ip6addr_t *
     memcpy(subscriber->device_id, device_id, DEV_ID_SIZE);
     subscriber->condition_type = CONDITION_TYPE_VALUE;
     subscriber->condition.operation = operation;
-    subscriber->condition.value = value;
+    memcpy(&subscriber->condition.value, value, sizeof(resource_value_u));
 
     return SUCCESS;
 }
 
 int32_t subscriber_value_chaneg_type_init(res_subscriber_t *subscriber, uip_ip6addr_t *addr, 
-                                          uint8_t *device_id, void *value)
+                                          uint8_t *device_id, resource_value_u *value)
 {
     if (!subscriber) {
         return FAIL;
@@ -147,7 +147,7 @@ int32_t subscriber_value_chaneg_type_init(res_subscriber_t *subscriber, uip_ip6a
     memcpy(&(subscriber->ip6_addr), addr, sizeof(uip_ip6addr_t));
     memcpy(subscriber->device_id, device_id, DEV_ID_SIZE);
     subscriber->condition_type = CONDITION_TYPE_VALUE_CHANGE;
-    subscriber->condition.value = value;
+    memcpy(&subscriber->condition.value, value, sizeof(resource_value_u));
 
     return SUCCESS;
 }

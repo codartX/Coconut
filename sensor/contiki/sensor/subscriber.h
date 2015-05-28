@@ -8,6 +8,7 @@
 
 #include "net/uip.h"
 #include "main.h"
+#include "resource.h"
 
 #define CONDITION_TYPE_PERIOD          0
 #define CONDITION_TYPE_EXPIRE          1
@@ -24,7 +25,7 @@ typedef struct _condition_t {
     uint32_t period;
     uint32_t expire_time;
     enum operation_e operation;
-    void *value;
+    resource_value_u value;
 } condition_t;
 
 typedef struct _res_subscriber_t {
@@ -48,10 +49,10 @@ int32_t subscriber_expire_type_init(res_subscriber_t *subscriber, uip_ip6addr_t 
                                     uint8_t *device_id, uint32_t expire_time);
 
 int32_t subscriber_value_type_init(res_subscriber_t *subscriber, uip_ip6addr_t *addr, 
-                                   uint8_t *device_id, enum operation_e operation, void *value);
+                                   uint8_t *device_id, enum operation_e operation, resource_value_u *value);
 
 int32_t subscriber_value_change_type_init(res_subscriber_t *subscriber, uip_ip6addr_t *addr, 
-                                          uint8_t *device_id, void *value);
+                                          uint8_t *device_id, resource_value_u *value);
 
 void subscriber_timer_start(res_subscriber_t *subscriber);
 

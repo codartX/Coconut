@@ -9,11 +9,10 @@
 
 device_t g_device;
 
-int32_t device_init(uint8_t *device_id, uint8_t *device_name)
+int32_t device_init(uint8_t *device_id)
 {
     if (device_id && device_name) {
         memcpy(g_device.device_id, device_id, DEV_ID_SIZE);
-        strcpy(g_device.device_name, device_name);
         g_device.obj_list = NULL;
         g_device.policy_list = NULL;
         g_device.timestamp = (uint32_t)time(NULL);

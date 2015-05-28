@@ -11,7 +11,7 @@
 #include "subscriber.h"
 
 #define MAX_RESOURCE_NAME_LEN 64
-#define MAX_RESOURCE_STR_VALUE_LEN 32
+#define MAX_RESOURCE_STR_VALUE_LEN 64
 
 typedef enum _resource_access_type {
     ReadOnly,

@@ -8,6 +8,7 @@ import sys
 import getopt
 import json
 import ipso_resources
+import ipso_objects
 
 #copy right block
 
@@ -15,6 +16,8 @@ COPY_RIGHT_BLOCK ="""\
 /*
  *  Created by Jun Fang on 14-11-24.
  *  Copyright (c) 2014年 Jun Fang. All rights reserved.
+ *
+ *  Don't modify this file, auto generated.
  */
 
 """
@@ -41,7 +44,7 @@ DEVICE_INIT_BLOCK ="""\
     object_instance_t *obj_instance = NULL;
     resource_value_u value;
        
-    retval = device_init("<device_id>", "<device_name>");
+    retval = device_init("<device_id>");
     if (retval == FAIL) {
         PRINTF("device init fail\\n");
         return;
@@ -119,11 +122,23 @@ def main(argv):
     f.write(FUNC_NAME_BLOCK)
     f.write('{\n')
 
-    replacements = {'<device_id>': str(json_data['device_id']), '<device_name>': str(json_data['device_name'])}
+    replacements = {'<device_id>': str(json_data['device_id'])}
     f.write(replace_all(DEVICE_INIT_BLOCK, replacements))
 
     for object in json_data['objects']:
-        replacements = {'<object_id>': str(object['object_id']), '<object_name>': str(object['object_name'])}
+        if not 'object_id' in object:
+            print 'No object id'
+            return
+        
+        if not 'object_name' in object:
+            if not object['object_id'] in ipso_resources.IPSO_OBJECTS:
+                print 'No object name'
+                return
+            object_name = ipso_objects.IPSO_OBJECTS[object['object_id']]['Object Name']
+        else:
+            object_name = object['object_name']
+
+        replacements = {'<object_id>': str(object['object_id']), '<object_name>': str(object_name)}
         f.write(replace_all(OBJECT_BLOCK, replacements))
 
         for resource in object['resources']:
@@ -143,15 +158,32 @@ def main(argv):
                     else:
                         f.write('    value.bool_value = false;\n')
 
+                if not 'resource_name' in resource:
+                    resource_name = ipso_resources.IPSO_RESOURCES[resource['resource_id']]['Resource Name']
+                else:
+                    resource_name = resource['resource_name']
+
+                if not 'get_func' in resource:
+                    get_func = 'NULL'
+                else:
+                    get_func = resource['get_func']
+        
+                if not 'set_func' in resource or resource_desc['Access Type'] == 'ReadOnly':
+                    set_func = 'NULL'
+                else:
+                    set_func = resource['set_func']
+
                 replacements = {
                                    '<resource_id>': str(resource['resource_id']), 
-                                   '<resource_name>': str(resource['resource_name']),
-                                   '<get_func>': str(resource['get_func']),
-                                   '<set_func>': str(resource['set_func']),
+                                   '<resource_name>': str(resource_name),
+                                   '<get_func>': str(get_func),
+                                   '<set_func>': str(set_func),
                                }
                 f.write(replace_all(RESOURCE_ADD_BLOCK, replacements)) 
 
     f.write('}\n')
+    f.flush()
+    f.close()
 
 if __name__ == "__main__":
     main(sys.argv[1:])

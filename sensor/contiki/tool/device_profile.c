@@ -1,6 +1,8 @@
 /*
  *  Created by Jun Fang on 14-11-24.
  *  Copyright (c) 2014年 Jun Fang. All rights reserved.
+ *
+ *  Don't modify this file, auto generated.
  */
 
 #include "main.h"

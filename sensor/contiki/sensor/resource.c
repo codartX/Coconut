@@ -62,7 +62,11 @@ int32_t resource_instance_init(resource_instance_t *instance, uint8_t *name, uin
             strncpy(instance->name, name, MAX_RESOURCE_NAME_LEN);
             instance->resource_type = resource_type;
             instance->next = NULL;
-            memcpy(&(instance->value), value, sizeof(resource_value_u));
+            if (value) {
+                memcpy(&(instance->value), value, sizeof(resource_value_u));
+            } else {
+                memset(&(instance->value), 0x0, sizeof(resource_value_u))
+            }
             instance->get_func = get_func;
             instance->set_func = set_func;
             return SUCCESS;

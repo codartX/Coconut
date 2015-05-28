@@ -11,11 +11,8 @@
 #include "object.h"
 #include "resource.h"
 
-#define MAX_DEV_NAME_LEN    64
-
 typedef struct _device_t {
     uint8_t device_id[DEV_ID_SIZE];
-    uint8_t device_name[MAX_DEV_NAME_LEN];
     object_instance_t *obj_list;
     dev_policy_t *policy_list; 
     uint32_t timestamp;
@@ -23,7 +20,7 @@ typedef struct _device_t {
 
 extern device_t g_device;
 
-int32_t device_init(uint8_t *device_id, uint8_t *device_name);
+int32_t device_init(uint8_t *device_id);
 
 void device_deinit();
 
