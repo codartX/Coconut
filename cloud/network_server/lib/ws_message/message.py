@@ -29,12 +29,13 @@ import utils as u
 """
 new_device:
 
-Direction: device/gw-->cloud
+Direction: device/gw<-->cloud
+
+If send new device message to device by request, just same function as discover device, empty parameters
 
 Request:
 parameters:
 [
-    <device_name>,
     [
         [
             <obj_id>, 
@@ -57,9 +58,9 @@ parameters:
 """
 
 """
-info:
+report:
 
-Direction: device/gw-->cloud
+Direction: device/gw-->cloud device<->device
 
 Request:
 parameters:
@@ -87,9 +88,9 @@ parameters:
 """
 
 """
-get_info:
+get_resources:
 
-Direction: device/gw<-->cloud
+Direction: device/gw<--cloud
 
 Request:
 parameters:
@@ -128,7 +129,7 @@ parameters:
 """
 
 """
-config:
+set resources:
 
 Direction: cloud-->device/gw
 
@@ -287,12 +288,11 @@ parameters:
     [
         <obj>,
         [
-            <res>,
             [
-                [0(type 0), <op>, <value>],
-                [1(type 1), <exp_time>],
-                [2(type 2), <interval>]
-            ]
+                <res>,
+                [2(type 2), <op>, <value>]/[1(type 1), <exp_time>]/[0(type 0), <interval>]/[3(type 3), <value>]
+            ],
+            ...
         ]
     ],
     ...
@@ -301,6 +301,29 @@ parameters:
 Response:
 parameters:
     [<retcode>,<msg_str>]
+"""
+
+"""
+unsubscribe:
+    
+Direction: cloud/device-->device
+    
+Request:
+parameters:
+[
+    [
+        <obj>,
+        [
+            <res>,
+            ...
+        ]
+    ],
+    ...
+]
+    
+Response:
+parameters:
+[<retcode>,<msg_str>]
 """
 
 def build_message(msgtype, session_id ,message_id, device_id, method, parameters = []):

@@ -20,7 +20,7 @@
 
 #define MAX_PAYLOAD_LEN		80
 
-extern uint8_t buf[MAX_PAYLOAD_LEN];
+extern uint8_t output_buf[MAX_PAYLOAD_LEN];
 
 void send_msg(uint8_t *data, uint32_t len, uip_ipaddr_t *peer_ipaddr);
 

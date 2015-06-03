@@ -52,10 +52,10 @@ static void timeout_handler(void *arg)
     }
     
     if (flag) {
-        len = create_report_msg(buf, MAX_PAYLOAD_LEN, sub->parent_res);
+        len = create_report_msg(output_buf, MAX_PAYLOAD_LEN, sub->parent_res);
     
         if (len) {
-            send_msg(buf, len, &sub->ip6_addr);
+            send_msg(output_buf, len, &sub->ip6_addr);
         }
     }
  
@@ -163,7 +163,7 @@ void subscriber_timer_start(res_subscriber_t *subscriber)
         if (subscriber->condition.period) {
             sec = subscriber->condition.period;
         } else {
-            return;
+            sec = CONDITION_VALUE_CHECK_PERIOD_DEFAULT;
         }
     }
         

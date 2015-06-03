@@ -14,6 +14,8 @@
 #define CONDITION_TYPE_VALUE           2
 #define CONDITION_TYPE_VALUE_CHANGE    3
 
+#define CONDITION_VALUE_CHECK_PERIOD_DEFAULT    3
+
 enum operation_e {
     EQUAL = 0,
     GREATER  ,

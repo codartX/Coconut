@@ -79,6 +79,38 @@ int32_t resource_instance_init(resource_instance_t *instance, uint8_t *name, uin
     return FAIL;
 }
 
+int8_t get_resource_value(resource_instance_t *res, resource_value_u *value)
+{
+    if (!res || !value) {
+        return FAIL;
+    }
+    
+    if (res->get_func) {
+        res->get_func(res, value);
+        //update
+        memcpy(&res->value, value, sizeof(resource_value_u));
+    } else {
+        memcpy(value, &res->value, sizeof(resource_value_u));
+    }
+    
+    return SUCCESS;
+}
+
+int8_t set_resource_value(resource_instance_t *res, resource_value_u *value)
+{
+    if (!res || !value) {
+        return FAIL;
+    }
+    
+    if (res->set_func) {
+        res->set_func(res, value);
+    }
+    
+    memcpy(&res->value, value, sizeof(resource_value_u));
+    
+    return SUCCESS;
+}
+
 int32_t resource_add_subscriber(resource_instance_t *res_instance, res_subscriber_t *res_sub)
 {
     if (!res_instance || !res_sub) {

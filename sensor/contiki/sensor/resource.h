@@ -71,4 +71,8 @@ int32_t resource_remove_subscriber(resource_instance_t *res_instance, uip_ip6add
 
 int8_t resource_value_compare(resource_instance_t *res_instance, resource_value_u *value);
 
+int8_t get_resource_value(resource_instance_t *res, resource_value_u *value);
+
+int8_t set_resource_value(resource_instance_t *res, resource_value_u *value);
+
 #endif
