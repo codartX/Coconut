@@ -68,6 +68,87 @@ static discover_request_handler()
 static void
 report_request_handler(uint8_t *device_id, uint8_t *parameters)
 {
+    cJSON *root = NULL, *sub = NULL, sub1 = NULL, sub2 = NULL, sub3 = NULL;
+    uint32_t i = 0, j = 0;
+    object_instance_t *obj = NULL;
+    resource_instance_t *res = NULL;
+    resource_value_u value;
+    retcode_e retcode = RETCODE_SUCCESS;
+    
+    if (!parameters) {
+        return;
+    }
+    
+    root = cJSON_Parse(parameters);
+    
+    if (!root) {
+        return;
+    }
+    
+    for (;i < cJSON_GetArraySize(root); i++) {
+        //object
+        sub = cJSON_GetArrayItem(root, i);
+        if (!sub) {
+            return;
+        }
+        
+        sub1 = cJSON_GetArrayItem(sub, 0);
+        if (!sub1) {
+            return;
+        }
+        
+        obj = device_find_object(sub1->valuestring);
+        if(!obj) {
+            continue;
+        }
+        
+        //resources
+        sub1 = cJSON_GetArrayItem(sub, 1);
+        if (!sub1) {
+            continue;
+        }
+        
+        for (j = 0; j < cJSON_GetArraySize(sub1); j++) {
+            sub2 = cJSON_GetArrayItem(sub1, j);
+            if (!sub2) {
+                continue;
+            }
+            
+            sub3 = cJSON_GetArrayItem(sub2, 0);
+            if (!sub3) {
+                continue;
+            }
+            
+            res = object_instance_find_resource(obj, sub3->valuestring);
+            if (!res) {
+                continue;
+            }
+            
+            sub3 = cJSON_GetArrayItem(sub2, 1);
+            if (!sub3) {
+                continue;
+            }
+            
+            if (res->resource_type.type == Integer ||
+                res->resource_type.type == Boolean) {
+                value.int_value = sub3->valueint;
+            } else if (res->resource_type.type == Float) {
+                value.float_value = sub3->valuefloat;
+            } else if (res->resource_type.type == String) {
+                strcpy(value.string_value, sub3->valuestring);
+            } else {
+                continue;
+            }
+            
+            set_resource_value(res, &value);
+        }
+        
+    }
+    
+    sprintf(output_buf, "[%d]", retcode);
+    send_msg(output_buf, strlen(output_buf), &UIP_IP_BUF->srcipaddr);
+    
+    return;
 
 }
 
