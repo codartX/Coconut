@@ -86,7 +86,7 @@ int8_t get_resource_value(resource_instance_t *res, resource_value_u *value)
     }
     
     if (res->get_func) {
-        res->get_func(res, value);
+        res->get_func(value);
         //update
         memcpy(&res->value, value, sizeof(resource_value_u));
     } else {
@@ -103,7 +103,7 @@ int8_t set_resource_value(resource_instance_t *res, resource_value_u *value)
     }
     
     if (res->set_func) {
-        res->set_func(res, value);
+        res->set_func(value);
     }
     
     memcpy(&res->value, value, sizeof(resource_value_u));

@@ -132,7 +132,7 @@ int32_t subscriber_value_type_init(res_subscriber_t *subscriber, uip_ip6addr_t *
     return SUCCESS;
 }
 
-int32_t subscriber_value_chaneg_type_init(res_subscriber_t *subscriber, uip_ip6addr_t *addr, 
+int32_t subscriber_value_change_type_init(res_subscriber_t *subscriber, uip_ip6addr_t *addr, 
                                           uint8_t *device_id, cond_value_u *value)
 {
     if (!subscriber) {

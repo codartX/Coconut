@@ -54,7 +54,8 @@ void send_msg_to_gateway(uint8_t *data, uint32_t len)
 }
 
 /*---------------------------------------------------------------------------*/
-static discover_request_handler()
+static void 
+discover_request_handler()
 {
     uint32_t len = 0;
     
@@ -68,7 +69,7 @@ static discover_request_handler()
 static void
 report_request_handler(uint8_t *device_id, uint8_t *parameters)
 {
-    cJSON *root = NULL, *sub = NULL, sub1 = NULL, sub2 = NULL, sub3 = NULL;
+    cJSON *root = NULL, *sub = NULL, *sub1 = NULL, *sub2 = NULL, *sub3 = NULL;
     uint32_t i = 0, j = 0;
     object_instance_t *obj = NULL;
     resource_instance_t *res = NULL;
@@ -129,12 +130,12 @@ report_request_handler(uint8_t *device_id, uint8_t *parameters)
                 continue;
             }
             
-            if (res->resource_type.type == Integer ||
-                res->resource_type.type == Boolean) {
+            if (res->resource_type->type == Integer ||
+                res->resource_type->type == Boolean) {
                 value.int_value = sub3->valueint;
-            } else if (res->resource_type.type == Float) {
+            } else if (res->resource_type->type == Float) {
                 value.float_value = sub3->valuefloat;
-            } else if (res->resource_type.type == String) {
+            } else if (res->resource_type->type == String) {
                 strcpy(value.string_value, sub3->valuestring);
             } else {
                 continue;
@@ -156,7 +157,7 @@ report_request_handler(uint8_t *device_id, uint8_t *parameters)
 static void
 set_resources_request_handler(uint8_t *parameters)
 {
-    cJSON *root = NULL, *sub = NULL, sub1 = NULL, sub2 = NULL, sub3 = NULL;
+    cJSON *root = NULL, *sub = NULL, *sub1 = NULL, *sub2 = NULL, *sub3 = NULL;
     uint32_t i = 0, j = 0;
     object_instance_t *obj = NULL;
     resource_instance_t *res = NULL;
@@ -217,12 +218,12 @@ set_resources_request_handler(uint8_t *parameters)
                 continue;
             }
             
-            if (res->resource_type.type == Integer ||
-                res->resource_type.type == Boolean) {
+            if (res->resource_type->type == Integer ||
+                res->resource_type->type == Boolean) {
                 value.int_value = sub3->valueint;
-            } else if (res->resource_type.type == Float) {
+            } else if (res->resource_type->type == Float) {
                 value.float_value = sub3->valuefloat;
-            } else if (res->resource_type.type == String) {
+            } else if (res->resource_type->type == String) {
                 strcpy(value.string_value, sub3->valuestring);
             } else {
                 continue;
@@ -244,7 +245,7 @@ set_resources_request_handler(uint8_t *parameters)
 static void
 get_resources_request_handler(uint8_t *parameters)
 {
-    cJSON *root = NULL, *sub = NULL, sub1 = NULL, sub2 = NULL;
+    cJSON *root = NULL, *sub = NULL, *sub1 = NULL, *sub2 = NULL;
     uint32_t i = 0, j = 0;
     object_instance_t *obj = NULL;
     resource_instance_t *res = NULL;
@@ -305,20 +306,20 @@ get_resources_request_handler(uint8_t *parameters)
                 continue;
             }
             
-            if (res->resource_type.type == Integer) {
+            if (res->resource_type->type == Integer) {
                 sprintf(ptr, "[%s, %d],", sub2->valuestring, value.int_value);
                 ptr = ptr + strlen(ptr);
-            } else if (res->resource_type.type == Boolean) {
+            } else if (res->resource_type->type == Boolean) {
                 if (value.int_value) {
                     sprintf(ptr, "[%s, true],", sub2->valuestring);
                 } else {
                     sprintf(ptr, "[%s, false],", sub2->valuestring);
                 }
                 ptr = ptr + strlen(ptr);
-            } else if (res->resource_type.type == Float) {
+            } else if (res->resource_type->type == Float) {
                 sprintf(ptr, "[%s, %f],", sub2->valuestring, value.float_value);
                 ptr = ptr + strlen(ptr);
-            } else if (res->resource_type.type == String) {
+            } else if (res->resource_type->type == String) {
                 sprintf(ptr, "[%s, %s],", sub2->valuestring, value.string_value);
                 ptr = ptr + strlen(ptr);
             } else {
@@ -371,15 +372,15 @@ reload_request_handler()
 static void
 subscribe_request_handler(uint8_t *device_id, uint8_t *parameters)
 {
-    cJSON *root = NULL, *sub = NULL, sub1 = NULL, sub2 = NULL, sub3 = NULL, sub4 = NULL;
+    cJSON *root = NULL, *sub = NULL, *sub1 = NULL, *sub2 = NULL, *sub3 = NULL, *sub4 = NULL;
     uint32_t i = 0, j = 0;
     object_instance_t *obj = NULL;
     resource_instance_t *res = NULL;
     resource_value_u value;
     retcode_e retcode = RETCODE_SUCCESS;
-    res_subscriber_t *sub = NULL;
+    res_subscriber_t *subscriber = NULL;
     cond_value_u cond_value;
-    operation_e op;
+    enum operation_e op;
     
     if (!parameters) {
         return;
@@ -440,22 +441,22 @@ subscribe_request_handler(uint8_t *device_id, uint8_t *parameters)
             if (sub4) {
                 if (sub4->valueint == CONDITION_TYPE_PERIOD) {
                     sub4 = cJSON_GetArrayItem(sub3, 1);
-                    if (sub4 & sub4->valueint > 0) {
-                        sub = subscriber_alloc();
-                        if (sub) {
-                            subscriber_period_type_init(sub, &UIP_IP_BUF->srcipaddr, device_id, sub4->valueint);
-                            resource_add_subscriber(res, sub);
-                            subscriber_timer_start(sub);
+                    if (sub4 && sub4->valueint > 0) {
+                        subscriber = subscriber_alloc();
+                        if (subscriber) {
+                            subscriber_period_type_init(subscriber, &UIP_IP_BUF->srcipaddr, device_id, sub4->valueint);
+                            resource_add_subscriber(res, subscriber);
+                            subscriber_timer_start(subscriber);
                         }
                     }
                 } else if (sub4->valueint == CONDITION_TYPE_EXPIRE) {
                     sub4 = cJSON_GetArrayItem(sub3, 1);
-                    if (sub4 & sub4->valueint > 0) {
-                        sub = subscriber_alloc();
-                        if (sub) {
-                            subscriber_expire_type_init(sub, &UIP_IP_BUF->srcipaddr, device_id, sub4->valueint);
-                            resource_add_subscriber(res, sub);
-                            subscriber_timer_start(sub);
+                    if (sub4 && sub4->valueint > 0) {
+                        subscriber = subscriber_alloc();
+                        if (subscriber) {
+                            subscriber_expire_type_init(subscriber, &UIP_IP_BUF->srcipaddr, device_id, sub4->valueint);
+                            resource_add_subscriber(res, subscriber);
+                            subscriber_timer_start(subscriber);
                         }
                     }
                 } else if (sub4->valueint == CONDITION_TYPE_VALUE) {
@@ -475,11 +476,11 @@ subscribe_request_handler(uint8_t *device_id, uint8_t *parameters)
                             }
                         }
                         
-                        sub = subscriber_alloc();
-                        if (sub) {
-                            subscriber_value_type_init(sub, &UIP_IP_BUF->srcipaddr, device_id, op, cond_value);
-                            resource_add_subscriber(res, sub);
-                            subscriber_timer_start(sub);
+                        subscriber = subscriber_alloc();
+                        if (subscriber) {
+                            subscriber_value_type_init(subscriber, &UIP_IP_BUF->srcipaddr, device_id, op, &cond_value);
+                            resource_add_subscriber(res, subscriber);
+                            subscriber_timer_start(subscriber);
                         }
                     }
                 } else if (sub4->valueint == CONDITION_TYPE_VALUE_CHANGE) {
@@ -493,11 +494,11 @@ subscribe_request_handler(uint8_t *device_id, uint8_t *parameters)
                             continue;
                         }
                         
-                        sub = subscriber_alloc();
-                        if (sub) {
-                            subscriber_value_change_type_init(sub, &UIP_IP_BUF->srcipaddr, device_id, &cond_value);
-                            resource_add_subscriber(res, sub);
-                            subscriber_timer_start(sub);
+                        subscriber = subscriber_alloc();
+                        if (subscriber) {
+                            subscriber_value_change_type_init(subscriber, &UIP_IP_BUF->srcipaddr, device_id, &cond_value);
+                            resource_add_subscriber(res, subscriber);
+                            subscriber_timer_start(subscriber);
                         }
                     }
                 } else {
@@ -520,7 +521,7 @@ subscribe_request_handler(uint8_t *device_id, uint8_t *parameters)
 static void
 unsubscribe_request_handler(uint8_t *parameters)
 {
-    cJSON *root = NULL, *sub = NULL, sub1 = NULL, sub2 = NULL;
+    cJSON *root = NULL, *sub = NULL, *sub1 = NULL, *sub2 = NULL;
     uint32_t i = 0, j = 0;
     object_instance_t *obj = NULL;
     resource_instance_t *res = NULL;
@@ -611,7 +612,7 @@ message_handler(void)
                     method = get_msg_method(data);
                     switch(method){
                         case METHOD_NEW_DEVICE:
-                            discover_request_handler(get_msg_parameters(data));
+                            discover_request_handler();
                             break;
                         case METHOD_REPORT:
                             report_request_handler(get_msg_device_id(data), get_msg_parameters(data));
