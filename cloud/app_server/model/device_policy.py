@@ -19,12 +19,17 @@ class DevicePolicyModel():
     
     @gen.coroutine
     def policy_exist(self, device_id, policy_id):
-        result = yield self.db.device_policy.find_one('$and': [{'device_id': device_id}, {'_id': policy_id}]).limit(1).size()
+        result = yield self.db.device_policy.find_one('$and': [{'device_id': device_id}, {'policy_id': policy_id}]).limit(1).size()
         raise gen.Return(result)
     
     @gen.coroutine
     def get_policy_by_id(self, id):
         policy = yield self.db.device_policy.find_one({'_id': id})
+        raise gen.Return(device)
+    
+    @gen.coroutine
+    def get_policy(self, device_id, policy_id):
+        policy = yield self.db.device_policy.find_one('$and': [{'device_id': device_id}, {'policy_id': policy_id}])
         raise gen.Return(device)
     
     @gen.coroutine
@@ -37,7 +42,7 @@ class DevicePolicyModel():
         raise gen.Return(policys)
     
     @gen.coroutine
-    def update_policy(self, policy_id, policy):
-        result = yield self.db.device_policy.update({'_id': policy_id},
+    def update_policy(self, device_id, policy_id, policy):
+        result = yield self.db.device_policy.update('$and': [{'device_id': device_id}, {'policy_id': policy_id}],
                                                     {'$set': policy})
         raise gen.Return(result)

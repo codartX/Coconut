@@ -40,7 +40,7 @@ void delete_session(sensor_session *session)
     }
 }
 
-sensor_session *find_session(uint32_t device_class, char *device_id)
+sensor_session *find_session(uint8_t *device_id)
 {
     sensor_session *s = header;
     while (s) {

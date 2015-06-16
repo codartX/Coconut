@@ -17,15 +17,15 @@ b. Session key: each sensor in same network share one session key, used to encry
 c. Username/password: Burned in sensor, used to auth
 
 2). Process
-
-Sensor                                           Gateway                   Cloud(network server)
+                                                            websocket(tls)
+Sensor                                           Gateway <--------------->Cloud(network server)
    |                                               |                         |
    | Join Req                                      |                         |
    | (username&password encrypted by sensor key)   |  Join Req               |
    |---------------------------------------------->|------------------------>|
    |                                               |                         |Get sensor key from database,
    |                                               |                         |decode username/password,
-   |                                               |  Join Resp              |Validate
+   |                                               |  Join Resp              |Validate, send sensor key to gateway
    |                                               |<------------------------|
    |                                               |If success,              |
    |                                               |send session key         |

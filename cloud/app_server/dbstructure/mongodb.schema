@@ -43,6 +43,15 @@ device_info
     'timestamp':<timestamp>,
 }
 
+device_key
+
+{
+    'device_id':<device_id>,
+    'key':<key>,
+    'iv':<iv>,
+    'password':<password>
+}
+
 
 policy
 

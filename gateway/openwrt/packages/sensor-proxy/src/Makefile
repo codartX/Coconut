@@ -4,17 +4,17 @@ ODIR=.
 
 LIBS += -lm -lnopoll
 
-_DEPS = session.h ws-client.h cJSON.h 
+_DEPS = session.h ws-client.h cJSON.h message.h
 DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
 
-_OBJ = session.o ws-client.o cJSON.o udp-server.o 
+_OBJ = session.o ws-client.o cJSON.o sensor_proxy.o message.o
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
 
 $(ODIR)/%.o: %.c $(DEPS)
 	$(CC) -c -o $@ $< $(CFLAGS)
 
-zigbee_agent: $(OBJ)
+sensor_proxy: $(OBJ)
 	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)
 
 .PHONY: clean

@@ -18,6 +18,9 @@ import lib.ws_message.msg_define as d
 import lib.error_defines as error
 import lib.utils
 
+from Crypto.Cipher import AES
+from binascii import b2a_hex, a2b_hex
+
 clients = dict()
 
 MAX_TRANSACTION_ID = 1 << 16
@@ -27,16 +30,24 @@ class WebSocketHandler(websocket.WebSocketHandler):
     def device_new(self, device_id, parameters):
         logging.info('new_device, client id:%s', self.id)
         
-        is_device_exist = yield self.application.device_info_model.device_exist(device_id)
-        if is_device_exist:
+        device_info = yield self.application.device_info_model.get_device(device_id)
+        if not device_info:
             #TODO, maybe send config to the device
-            logging.error('Device already exist')
-            raise gen.Return([error.DEVICE_DUPLICATE])
+            logging.error('Device not added')
+            raise gen.Return([error.PERMISSION_DENY])
+
+        license = clients[self.id]['license']
+        
+        if license['owner_id'] != device_info['owner_id']:
+            logging.error('Device not yours')
+            raise gen.Return([error.PERMISSION_DENY])
 
         #Validate parameters
         #TODO
         
-        device_info = {}
+        if device_info['objects']:
+            logging.error('Device already registered')
+            raise gen.Return([error.DEVICE_DUPLICATE])
         
         device_info['objects'] = {}
         for object in parameters[0]:
@@ -72,6 +83,11 @@ class WebSocketHandler(websocket.WebSocketHandler):
             logging.error('No such device')
             raise gen.Return([error.DEVICE_NON_EXIST])
         
+        license = clients[self.id]['license']
+        if license['owner_id'] != device_info['owner_id']:
+            logging.error('Device not yours')
+            raise gen.Return([error.PERMISSION_DENY])
+        
         raise gen.Return([error.SUCCESS, device_info_format(device_info)])
     
     @gen.coroutine
@@ -83,6 +99,11 @@ class WebSocketHandler(websocket.WebSocketHandler):
         if not device_info:
             logging.error('No such device')
             raise gen.Return([error.DEVICE_NON_EXIST])
+
+        license = clients[self.id]['license']
+        if license['owner_id'] != device_info['owner_id']:
+            logging.error('Device not yours')
+            raise gen.Return([error.PERMISSION_DENY])
         
         #TODO validate parameters
         new_objects = device_info.objects
@@ -97,6 +118,7 @@ class WebSocketHandler(websocket.WebSocketHandler):
             device_info['timestamp'] = time.time()
 
         #write to mongodb
+        #TODO check device manager owner with device owner
         device_info['device_manager_id'] = self.id
         device_info['server_node'] = self.application.server_node
         device_info['objects'] = new_objects
@@ -119,10 +141,15 @@ class WebSocketHandler(websocket.WebSocketHandler):
     def device_log(self, device_id, parameters):
         logging.info('device_log, client id:%s', self.id)
         
-        is_device_exist = yield self.application.device_info_model.device_exist(device_id)
-        if not is_device_exist:
+        device_info = yield self.application.device_info_model.get_device(device_id)
+        if not device_info:
             logging.error('Device not exist')
             raise gen.Return([error.DEVICE_NON_EXIST])
+        
+        license = clients[self.id]['license']
+        if license['owner_id'] != device_info['owner_id']:
+            logging.error('Device not yours')
+            raise gen.Return([error.PERMISSION_DENY])
         
         #Validate parameters
         #TODO
@@ -142,6 +169,29 @@ class WebSocketHandler(websocket.WebSocketHandler):
     @gen.coroutine
     def device_auth(self, device_id, parameters):
         logging.info('device_auth')
+        device_info = yield self.application.device_info_model.get_device(device_id)
+        if not device_info:
+            logging.error('Device not exist')
+            raise gen.Return([error.DEVICE_NON_EXIST])
+        
+        license = clients[self.id]['license']
+        if license['owner_id'] != device_info['owner_id']:
+            logging.error('Device not yours')
+            raise gen.Return([error.PERMISSION_DENY])
+        
+        device_key = yield self.application.device_key_model.get_device_key(device_id)
+        if not device_key:
+            logging.error('Device key not exist')
+            raise gen.Return([error.DECODE_FAIL])
+
+        cryptor = AES.new(device_key['key'], AES.MODE_CBC)
+        password_decoded = cryptor.decrypt(parameters)
+        
+        if password_decoded == device_key['password']:
+            raise gen.Return([error.SUCCESS, device_key['key'], device_key['iv']])
+        else:
+            logging.error('Device key invalid')
+            raise gen.Return([error.INVALID_PASSWORD])
 
     #############################################################
 
@@ -345,9 +395,12 @@ class WebSocketHandler(websocket.WebSocketHandler):
         self.session = {}
         self.transaction_id = 0
         self.stream.set_nodelay(True)
-        #TODO validate id
+        
+        license = get_license(self.id)
+        if not license:
+            close()
         logging.info('New client connected, id:%s', str(self.id))
-        clients[self.id] = {'id': self.id, 'object': self}
+        clients[self.id] = {'id': self.id, 'object': self, 'license': license}
     
     @gen.coroutine
     def on_message(self, message):

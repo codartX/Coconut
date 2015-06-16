@@ -6,35 +6,35 @@
 
 from tornado import gen
 
-class DeviceModel():
+class DeviceInfoModel():
     def __init__(self, db):
         self.db = db
-        self.collection_name = 'device'
+        self.collection_name = 'device_info'
     
     @gen.coroutine
     def new_device(self, device):
-        result = yield self.db.device.insert(device)
+        result = yield self.db.device_info.insert(device)
         raise gen.Return(result)
     
     @gen.coroutine
     def device_exist(self, device_id):
-        result = yield self.db.device.find_one({'device_id': device_id}).limit(1).size()
+        result = yield self.db.device_info.find_one({'device_id': device_id}).limit(1).size()
         raise gen.Return(result)
     
     @gen.coroutine
     def get_device_by_id(self, id):
-        device = yield self.db.device.find_one({'_id': id})
+        device = yield self.db.device_info.find_one({'_id': id})
         raise gen.Return(device)
     
     @gen.coroutine
     def get_device(self, device_id):
-        device = yield self.db.device.find_one({'device_id': device_id})
+        device = yield self.db.device_info.find_one({'device_id': device_id})
         raise gen.Return(device)
     
     @gen.coroutine
     def get_user_all_devices(self, uid):
         devices = []
-        cursor = self.db.device.find({'owner_id': uid})
+        cursor = self.db.device_info.find({'owner_id': uid})
         while (yield cursor.fetch_next):
             device = cursor.next_object()
             devices.append(device)
@@ -42,19 +42,19 @@ class DeviceModel():
     
     @gen.coroutine
     def get_device_manager_id(self, device_id):
-        device_manager_id = yield self.db.device.find_one({'device_id': device_id},
+        device_manager_id = yield self.db.device_info.find_one({'device_id': device_id},
                                                                {'_id': 0, 'device_manager_id': 1})
         raise gen.Return(device_manager_id)
     
     @gen.coroutine
     def get_device_owner_id(self, device_id):
-        owner_id = yield self.db.device.find_one({'device_id': device_id},
-                                                          {'_id': 0, 'owner_id': 1})
+        owner_id = yield self.db.device_info.find_one({'device_id': device_id},
+                                                      {'_id': 0, 'owner_id': 1})
         raise gen.Return(owner_id)
     
     @gen.coroutine
     def get_device_object(self, device_id, object_name):
-        object = yield self.db.device.find_one({
+        object = yield self.db.device_info.find_one({
                                                 '$and': [
                                                          {'device_id': device_id},
                                                          {'objects.' + str(object_name): { '$exists': True }},
@@ -65,7 +65,7 @@ class DeviceModel():
     
     @gen.coroutine
     def get_device_resource(self, device_id, object_name, resource_name):
-        resource = yield self.db.device.find_one({
+        resource = yield self.db.device_info.find_one({
                                                  '$and': [
                                                           {'device_id': device_id},
                                                           {'objects.' + str(object_name) + str(resource_name): { '$exists': True }},
@@ -76,6 +76,6 @@ class DeviceModel():
     
     @gen.coroutine
     def update_device(self, device_id, device_info):
-        result = yield self.db.device.update({'device_id': device_id},
+        result = yield self.db.device_info.update({'device_id': device_id},
                                              {'$set': device_info})
         raise gen.Return(result)

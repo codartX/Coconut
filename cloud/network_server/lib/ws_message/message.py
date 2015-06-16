@@ -202,13 +202,13 @@ Direction: device/gw-->cloud
 
 Request:
 parameters:
-{
-    "key":<key>
-}
+[
+    <key>//encode by sensor key
+]
 
 Response:
 parameters:
-    [<retcode>,<msg_str>]
+    [<retcode>, <session key>, <session iv>] //key and iv both encoded by sensor key
 """
 
 """

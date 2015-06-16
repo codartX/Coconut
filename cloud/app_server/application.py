@@ -100,6 +100,7 @@ class Application(tornado.web.Application):
         self.message_model = MessageModel(self.mongodb)
         self.license_model = LicenseModel(self.mongodb)
         self.mylicense_model = MylicenseModel(self.mongodb)
+        self.device_key_model = model.device_key.DeviceKeyModel(self.mongodb)
         self.device_info_model = DeviceInfoModel(self.mongodb)
         self.device_log_model = DeviceLogModel(self.mongodb)
         self.device_policy_model = DevicePolicyModel(self.mongodb)

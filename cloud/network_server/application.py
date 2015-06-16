@@ -45,6 +45,7 @@ class Application(tornado.web.Application):
         self.mongodb = motor.MotorClient('localhost', 27017).linkiome
 
         # Have one global model for db query
+        self.device_key_model = model.device_key.DeviceKeyModel(self.mongodb)
         self.device_info_model = model.device_info.DeviceInfoModel(self.mongodb)
         self.device_log_model = model.device_log.DeviceLogModel(self.mongodb)
         self.device_policy_model = model.device_policy.DevicePolicyModel(self.mongodb)
