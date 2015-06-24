@@ -198,14 +198,28 @@ class WebSocketHandler(websocket.WebSocketHandler):
     @gen.coroutine
     def device_get_resources(self,device_manager_id, device_id, parameters, callback):
         logging.info('device_get_resources')
-        device_manager_id = yield self.application.device_info_model.get_device_manager_id(device_id)
         
+        #re-format
+        config = []
+        if parameters:
+            for object in parameters:
+                config.append([object, []])
+                for resource in parameters[object]:
+                    config[-1][1].append([resource, parameters[object][resource]])
+        else:
+            callback({
+                         'result': error.INVALID_RESOURCE,
+                         'message': 'Invalid parameters'
+                     })
+    
+        device_manager_id = yield self.application.device_info_model.get_device_manager_id(device_id)
+    
         if device_manager_id:
             if device_manager_id == self.id:
                 retval = self.send_message(msgtype = d.TYPE_REQUEST,
                                            device_id = device_id,
                                            method = d.METHOD_GET_RESOURCES,
-                                           parameters = json.dumps(parameters, separators=(',',':')),
+                                           parameters = json.dumps(config),
                                            callback = callback)
                     
                 if not retval:
@@ -231,6 +245,19 @@ class WebSocketHandler(websocket.WebSocketHandler):
         logging.info('device_set_resources,device_manager_id:%s device id:%lu device config:%s',
                      device_manager_id, device_id, str(device_config))
 
+        #re-format
+        config = []
+        if parameters:
+            for object in parameters:
+                config.append([object, []])
+                for resource in parameters[object]:
+                    config[-1][1].append([resource, parameters[object][resource]])
+        else:
+            callback({
+                         'result': error.INVALID_RESOURCE,
+                         'message': 'Invalid parameters'
+                     })
+
         device_manager_id = yield self.application.device_info_model.get_device_manager_id(device_id)
         
         if device_manager_id:
@@ -238,7 +265,7 @@ class WebSocketHandler(websocket.WebSocketHandler):
                 retval = self.send_message(msgtype = d.TYPE_REQUEST,
                                            device_id = device_id,
                                            method = d.METHOD_SET_RESOURCES,
-                                           parameters = json.dumps(parameters, separators=(',',':')),
+                                           parameters = json.dumps(config),
                                            callback = callback)
             
                 if not retval:

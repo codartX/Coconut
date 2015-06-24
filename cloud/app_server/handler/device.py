@@ -16,6 +16,7 @@ from tornado import gen
 from tornado.httpclient import AsyncHTTPClient
 import uuid
 from lib.ipso.ipso_resources import IPSO_RESOURCES
+import lib.error_defines as error
 
 class DeviceListHandler(BaseHandler):
     @tornado.web.authenticated
@@ -42,22 +43,30 @@ class DeviceAddHandler(BaseHandler):
         
         user_info = self.current_user
         # validate the fields
-        device_id = long(self.get_argument('device_id', 0))
+        device_id = self.get_argument('device_id', 0)
+        serial_number = self.get_argument('serial_number', 0)
         
-        if device_id == 0:
-            template_variables['errors']['invalid_device'] = ['Invalid device']
+        if not device_id or not serial_number:
+            template_variables['errors']['invalid_device_id_or_serial_number'] = ['Invalid device id or serial number']
             self.get(template_variables)
             return
         
         for device in user_info['devices']:
-            if device['_id'] == device_id:
+            if device['device_id'] == device_id:
                 template_variables['errors']['device_already_added'] = ['Device already added']
                 self.get(template_variables)
                 return
         
+        device = yield self.application.device_info_model.get_device(device_id)
+        if device:
+            template_variables['errors']['device_already_added_by_others'] = ['Device already added by others']
+            self.get(template_variables)
+            return
+        
         # continue while validate succeed
         new_device = {
             'device_id': device_id,
+            'serial_number': serial_number
             'owner_id': user_info['_id'],
             'objects': {}
         }
@@ -74,7 +83,6 @@ class DeviceViewHandler(BaseHandler):
     @tornado.web.authenticated
     @gen.coroutine
     def get(self, device_id, template_variables = {}):
-        device_id = long(device_id)
         user_info = self.current_user
         template_variables['user_info'] = user_info
         
@@ -113,15 +121,19 @@ class DeviceViewHandler(BaseHandler):
                 if 'id' in device.objects[object].resources[resource]:
                     resource_id = device.objects[object].resources[resource].id
                     if IPSO_RESOURCES[resource_id]['Access Type'] == 'ReadWrite':
-                        resource_type = IPSO_RESOURCES[resource_id].Type
+                        resource_type = IPSO_RESOURCES[resource_id]['Type']
                         value = self.get_argument(object + '_' + resource, None)
                         if value:
+                            if device.objects[object][resource].value == value:
+                                continue
+                            if not config[object]:
+                                config[object] = {}
                             if resource_type == 'boolean':
                                 if value =='true':
-                                    config[object][resource].value = True
+                                    config[object][resource] = True
                                 else:
-                                    config[object][resource].value = False
-                                device.objects[object][resource].value = config[object][resource].value
+                                    config[object][resource] = False
+                                device.objects[object][resource].value = config[object][resource]
                             elif resource_type == 'number':
                                 try:
                                     number = float(value)
@@ -130,7 +142,7 @@ class DeviceViewHandler(BaseHandler):
                                     yield self.get(device_id, template_variables)
                                     return
 
-                                config[object][resource].value = number
+                                config[object][resource] = number
                                 device.objects[object][resource].value = number
                             elif attribute['type'] == 'integer':
                                 try:
@@ -140,11 +152,20 @@ class DeviceViewHandler(BaseHandler):
                                     yield self.get(device_id, template_variables)
                                     return
                             
-                                config[object][resource].value = number
+                                config[object][resource] = number
                                 device.objects[object][resource].value = number
                             else:
-                                config[object][resource].value = value
+                                config[object][resource] = value
                                 device.objects[object][resource].value = value
+
+        if not config:
+            yield self.get(device_id, template_variables)
+            return
+
+        if not device['server_node']:
+            template_variables['errors']['server_node_error'] = 'Device not found'
+            yield self.get(device_id, template_variables)
+            return
 
         url = 'http://' + device['server_node'] + '/app_rpc'
         
@@ -173,8 +194,8 @@ class DeviceViewHandler(BaseHandler):
             template_variables['errors']['config_fail'] = ['Configure failed.' + 'Error:' + response.error]
         else:
             result_json = json.loads(response.body)
-            if 'result' in result_json and 'retcode' in result_json['result'] and result_json['result']['retcode'] == 0:
-                yield self.application.device_info_model.update_device(device_id, {'components': device.components})
+            if 'result' in result_json and result_json['result'] == error.SUCCESS:
+                yield self.application.device_info_model.update_device(device_id, {'objects': device['objects']})
             else:
                 if 'message' in result_json:
                     logging.info('config fail,%s', result_json['error_message'])

@@ -30,27 +30,35 @@ void generate_key()
     return
 }
 
-uint8_t string_to_hex(uint8_t *hexstring, uint8_t *hex_val, uint8_t len)
+void string_to_hex(uint8_t *hexstring, uint8_t *hex_val, uint8_t len)
 {
     uint8_t *pos = hexstring;
-    uint8_t i, len1;
-    
-    if (len < strlen(hexstring)) {
-        len1 = len;
-    } else {
-        len1 = strlen(hexstring);
-    }
+    uint8_t i;
         
     /* WARNING: no sanitization or error-checking whatsoever */
-    for(i = 0; i < len1; i++) {
+    for(i = 0; i < len; i++) {
         sscanf(pos, "%2hhx", &val[i]);
         pos += 2 * sizeof(uint8_t);
     }
         
-    return len1;
+    return;
 }
 
-int websocket_write (const char *content, int length) 
+void hex_to_string(uint8_t *string, uint8_t *hex_val, uint8_t len)
+{
+    uint8_t *pos = string;
+    uint8_t i;
+    
+    /* WARNING: no sanitization or error-checking whatsoever */
+    for(i = 0; i < len1; i++) {
+        sprintf(pos, "%2hhx", &val[i]);
+        pos += 2 * sizeof(uint8_t);
+    }
+    
+    return;
+}
+
+int websocket_write (const char *content, int length)
 {
     // FIRST PART: normal send operation
     uint8_t tries = 0;
@@ -135,11 +143,12 @@ reconnect:
 
 int main(int argc,char *argv[])  
 {  
-    int32_t sock,len, len1, len2, i = 0;
+    int32_t sock,len, len1, len2, i = 0, retcode;
     struct sockaddr_in6 addr;  
     uint8_t addr_len;
     uint8_t msg[1024];
-    uint8_t buf[256];
+    uint8_t buf[512];
+    uint8_t buf1[512];
     cJSON *root = NULL, *node = NULL, *node1 = NULL, *node2 = NULL;
     uint8_t *device_id = NULL;
     sensor_session *session = NULL;
@@ -206,38 +215,68 @@ int main(int argc,char *argv[])
                 } else {
                     printf("new session malloc fail\n");
                 }
-            } else {
+            } else if (session->auth_flag == true) {
                 session->addr = addr;
-                if (get_msg_method(ws_msg_payload) == METHOD_AUTH) {
-                    root  = cJSON_Parse(get_msg_parameters(ws_msg_payload));
+                if (get_msg_method(msg) == METHOD_AUTH) {
+                    root  = cJSON_Parse(get_msg_parameters(msg));
                     if (root) {
                         node = cJSON_GetArrayItem(root, 0);
                         if (node) {
-                            len1 = string_to_hex(node1->valuestring, buf, 256);
+                            string_to_hex(node1->valuestring, buf, strlen(node1->valuestring));
                             
                             EVP_CIPHER_CTX_init(e_ctx);
                             EVP_EncryptInit_ex(e_ctx, EVP_aes_128_cbc(), NULL, session->key, session->iv);
                             EVP_CIPHER_CTX_init(d_ctx);
                             EVP_DecryptInit_ex(d_ctx, EVP_aes_128_cbc(), NULL, session->key, session->iv);
-                                    
-                            if(!EVP_EncryptUpdate(&e_ctx, buf, &len1, session_key, 128)) {
-                                /* Error */
-                                return 0;
+                            
+                            flags = false;
+                            retcode = RETCODE_ENCODE_DECODE_FAIL;
+                            
+                            if(EVP_DecryptUpdate(&e_ctx, buf1, &len1, buf, strlen(node1->valuestring))) {
+                                if (EVP_DecryptFinal_ex(&e_ctx, buf1 + len1, &len2)) {
+                                    if(memcmp(buf1, session->password, len1 + len2)) {
+                                        retcode = RETCODE_AUTH_FAIL;
+                                        goto send_msg;
+                                    }
+                                }
                             }
-                            /* Buffer passed to EVP_EncryptFinal() must be after data just
-                             * encrypted to avoid overwriting it.
-                             */
-                            if(!EVP_EncryptFinal_ex(&e_ctx, buf + len1, &len2)) {
-                                /* Error */
-                                return 0;
-                            }
-                            len1 += len2;
-                            sprintf(buf, "[0,%s,%s]");
+                            
+                            if(EVP_EncryptUpdate(&e_ctx, buf, &len1, session_key, 128)) {
+                                if (EVP_EncryptFinal_ex(&e_ctx, buf + len1, &len2)) {
+                                    hex_to_string(buf1, buf, len1);
+                                    sprintf(msg + sizeof(msg_header_t), "[0,%s,", buf1);
+                                    len = sizeof(msg_header_t) + strlen(msg + sizeof(msg_header_t));
                                     
-                            memcpy(msg, ws_msg_payload, sizeof(msg_header_t));
+                                    if(EVP_EncryptUpdate(&e_ctx, buf, &len1, session_iv, 128)) {
+                                        if (EVP_EncryptFinal_ex(&e_ctx, buf + len1, &len2)) {
+                                            hex_to_string(buf1, buf, len1);
+                                            sprintf(msg + len, "%s]", buf1);
+                                            len += strlen(msg + len);
+                                            flags = true;
+                                        }
+                                    }
+                                }
+                            }
+send_msg:
+                            if (!flags) {
+                                sprintf(msg + sizeof(msg_header_t), "[%d]", retcode);
+                                len = sizeof(msg_header_t) + strlen(msg + sizeof(msg_header_t));
+                            }
+
+                            get_msg_type(msg) = TYPE_RESPONSE;
+                            
+                            if(sendto(sock, msg, len, 0,
+                                      (struct sockaddr *)&session->addr,
+                                      sizeof(struct sockaddr_in6)) < 0){
+                                printf("send error\n");
+                            }
+                            
+                            goto websocket_handle;
                         }
                     }
                 }
+            } else {
+                session->addr = addr;
             }
             
             /* send content text(utf-8) */
@@ -250,6 +289,7 @@ int main(int argc,char *argv[])
             }
         }
 
+websocket_handle:
         //get msg from ws server
         ws_msg = nopoll_conn_get_msg(g_ws_conn);
         if (ws_msg) {
@@ -263,6 +303,7 @@ int main(int argc,char *argv[])
                 device_id = get_msg_device_id(ws_msg_payload);
                 session = find_session(device_id);
                 if (session) {
+                    memcpy(msg, ws_msg_payload, len);
                     if (get_msg_method(ws_msg_payload) == METHOD_AUTH) {
                         root  = cJSON_Parse(get_msg_parameters(ws_msg_payload));
                         if (root) {
@@ -277,25 +318,35 @@ int main(int argc,char *argv[])
                                         node1 = cJSON_GetArrayItem(root, 3);
                                         if (node1 && strlen(node1->valuestring) == DEVICE_PWD_SIZE) {
                                             string_to_hex(node1->valuestring, session->pwd, DEVICE_PWD_SIZE);
+                                            session->auth_flag = true;
                                             
                                             EVP_CIPHER_CTX_init(e_ctx);
                                             EVP_EncryptInit_ex(e_ctx, EVP_aes_128_cbc(), NULL, session->key, session->iv);
                                         
-                                            if(!EVP_EncryptUpdate(&e_ctx, buf, &len1, session_key, 128)) {
-                                                /* Error */
-                                                return 0;
+                                            flags = false;
+                                            retcode = RETCODE_ENCODE_DECODE_FAIL;
+                                            
+                                            if(EVP_EncryptUpdate(&e_ctx, buf, &len1, session_key, 128)) {
+                                                if (EVP_EncryptFinal_ex(&e_ctx, buf + len1, &len2)) {
+                                                    hex_to_string(buf1, buf, len1);
+                                                    sprintf(msg + sizeof(msg_header_t), "[0,%s,", buf1);
+                                                    len = sizeof(msg_header_t) + strlen(msg + sizeof(msg_header_t));
+                                                    
+                                                    if(EVP_EncryptUpdate(&e_ctx, buf, &len1, session_iv, 128)) {
+                                                        if (EVP_EncryptFinal_ex(&e_ctx, buf + len1, &len2)) {
+                                                            hex_to_string(buf1, buf, len1);
+                                                            sprintf(msg + len, "%s]", buf1);
+                                                            len += strlen(msg + len);
+                                                            flags = true;
+                                                        }
+                                                    }
+                                                }
                                             }
-                                            /* Buffer passed to EVP_EncryptFinal() must be after data just
-                                             * encrypted to avoid overwriting it.
-                                             */
-                                            if(!EVP_EncryptFinal_ex(&e_ctx, buf + len1, &len2)) {
-                                                /* Error */
-                                                return 0;
+                                            
+                                            if (!flags) {
+                                                sprintf(msg + sizeof(msg_header_t), "[%d]", retcode);
+                                                len = sizeof(msg_header_t) + strlen(msg + sizeof(msg_header_t));
                                             }
-                                            len1 += len2;
-                                            sprintf(buf, "[0,%s,%s]");
-                                        
-                                            memcpy(msg, ws_msg_payload, sizeof(msg_header_t));
                                         }
                                     }
                                 }
@@ -303,7 +354,7 @@ int main(int argc,char *argv[])
                         }
                     }
                     printf("find session, send response msg\n");
-                    if(sendto(sock, ws_msg_payload, len, 0,
+                    if(sendto(sock, msg, len, 0,
                                 (struct sockaddr *)&session->addr,
                                 sizeof(struct sockaddr_in6)) < 0){
                         printf("send error\n");
@@ -312,6 +363,7 @@ int main(int argc,char *argv[])
                     //TODO:send error to server
                 }  
             }
+message_done:
             /* unref message */
             nopoll_msg_unref (ws_msg);
         }

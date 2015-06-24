@@ -23,6 +23,7 @@ device_info
 
 {
     'device_id':<device id>,
+    'serial_number':<serial_number>,
     'owner_id':<owner_id>,
     'device_manager_id':<device manager id>,
     'server_node':<server node ip/host>,

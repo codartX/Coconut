@@ -18,6 +18,7 @@ typedef struct _sensor_session {
     uint8_t device_id[DEVICE_ID_SIZE];
     struct sockaddr_in6 addr;  
     struct _sensor_session *next;
+    uint8_t auth_flag;
     uint8_t key[DEVICE_KEY_SIZE];
     uint8_t iv[DEVICE_KEY_SIZE];
     uint8_t pwd[DEVICE_PWD_SIZE];

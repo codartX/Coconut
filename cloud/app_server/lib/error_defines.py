@@ -5,14 +5,7 @@
 #  Copyright (c) 2014年 Jun Fang. All rights reserved.
 
 #retcode define
-#0: success
-#1: database error
-#2: device does not exist
-#3: invalid resource
-#4: invalid message format
-#5: transaction id error
-#6: permission deny
-#7: schema validate fail
+
 
 SUCCESS                = 0
 
@@ -28,10 +21,8 @@ INVALID_TRANSACTION_ID = 5
 
 PERMISSION_DENY        = 6
 
-SCHEMA_VALIDATE_FAIL   = 7
+DEVICE_DUPLICATE       = 7
 
-DEVICE_DUPLICATE       = 8
+ENCODE_DECODE_FAIL     = 8
 
-DECODE_FAIL            = 9
-
-INVALID_PASSWORD       = 10
+AUTH_FAIL              = 9
