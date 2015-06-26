@@ -66,7 +66,7 @@ class DeviceAddHandler(BaseHandler):
         # continue while validate succeed
         new_device = {
             'device_id': device_id,
-            'serial_number': serial_number
+            'serial_number': serial_number,
             'owner_id': user_info['_id'],
             'objects': {}
         }
@@ -204,5 +204,4 @@ class DeviceViewHandler(BaseHandler):
                 template_variables['errors']['config_fail'] = ['Configure failed.']
 
         yield self.get(device_id, template_variables)
-
 

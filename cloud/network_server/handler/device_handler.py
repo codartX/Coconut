@@ -15,7 +15,7 @@ from tornado import gen
 import time
 import lib.ws_message.message as m
 import lib.ws_message.msg_define as d
-import lib.error_defines as error
+import lib.errorDefines as error
 import lib.utils
 
 from Crypto.Cipher import AES
@@ -224,21 +224,21 @@ class WebSocketHandler(websocket.WebSocketHandler):
                     
                 if not retval:
                     callback({
-                                'result': error.INVALID_TRANSACTION_ID,
-                                'message': 'Transaction ID error'
+                                 'result': error.INVALID_TRANSACTION_ID,
+                                 'message': 'Transaction ID error'
                             })
         
-            else:
-                callback({
-                             'result': error.PERMISSION_DENY,
-                             'message': 'Permission deny'
-                         })
+                else:
+                    callback({
+                                 'result': error.PERMISSION_DENY,
+                                 'message': 'Permission deny'
+                            })
             
             else:
-            callback({
-                         'result': error.DEVICE_NON_EXIST,
-                         'message': 'Device do not exist'
-                     })
+                callback({
+                             'result': error.DEVICE_NON_EXIST,
+                             'message': 'Device do not exist'
+                        })
     
     @gen.coroutine
     def device_set_resources(self, device_manager_id, device_id, parameters, callback):
@@ -405,7 +405,7 @@ class WebSocketHandler(websocket.WebSocketHandler):
         device_id_buf = lib.utils.number2buf(device_id,8)
         
         msg = m.build_message(msgtype = msgtype,
-                              message_id = msg_id
+                              message_id = msg_id,
                               device_id = device_id_buf,
                               method = method,
                               parameters = parameters)

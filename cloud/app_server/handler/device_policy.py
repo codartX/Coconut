@@ -50,18 +50,18 @@ class DevicePolicyAddHandler(BaseHandler):
         
         user_info = self.current_user
         
-        device_id = long(self.get_argument('device_id', 0))
+        device_id = self.get_argument('device_id', '')
         
-        if device_id == 0:
+        if not device_id:
             template_variables['errors']['invalid_device'] = ['Invalid device']
             self.get(template_variables)
             return
         
         for device in user_info['devices']:
-            if device['_id'] == device_id:
+            if device['device_id'] == device_id:
                 break
     
-        if device['_id'] != device_id:
+        if device['device_id'] != device_id:
             template_variables['errors']['no_device'] = ['No such device']
             self.render('device_policy/policy_add.html', **template_variables)
         
@@ -107,7 +107,6 @@ class DevicePolicyViewHandler(BaseHandler):
             self.get(policy_id, template_variables)
         
         updated_policy = {
-            'device_id': policy['device_id'],
             'conditions': [],
             'actions': []
         }
@@ -116,4 +115,33 @@ class DevicePolicyViewHandler(BaseHandler):
         
         self.redirect(self.get_argument('next', '/device_policy/' + policy_id))
 
+class DevicePolicyRemoveHandler(BaseHandler):
+    @tornado.web.authenticated
+    @gen.coroutine
+    def post(self, template_variables = {}):
+        template_variables['errors']={}
+        
+        user_info = self.current_user
+        
+        policy_id = self.get_argument('policy_id', '')
+        
+        if not policy_id:
+            self.write('Invalid policy id')
+            return
 
+        policy = yield self.application.device_policy_model.get_policy_by_id(policy_id)
+        if not policy:
+            self.write('Policy not exist')
+            return
+        
+        for device in user_info['devices']:
+            if device['device_id'] == policy['device_id']:
+                break
+    
+        if device['device_id'] != policy['device_id']:
+            self.write('Policy is not yours')
+            return
+        
+        result = yield self.application.device_policy_model.remove_policy(policy_id)
+        
+        self.redirect(self.get_argument('next', '/device_policy/list'))

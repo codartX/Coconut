@@ -14,9 +14,9 @@ import json
 import lib.jsonp
 import jsonschema
 
-from device_monitor import clients
+from device_handler import clients
 
-import lib.error_defines as error
+import lib.errorDefines as error
 
 class AppRPCHandler(JSONRPCHandler):
     @async

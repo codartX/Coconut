@@ -21,8 +21,3 @@ class DeviceKeyModel():
         device_key = yield self.db.device_key.find_one({'device_id': device_id})
         raise gen.Return(device_key)
     
-    @gen.coroutine
-    def get_device_password(self, device_id):
-        device_password = yield self.db.device_key.find_one({'device_id': device_id})
-        raise gen.Return(device_password)
-    

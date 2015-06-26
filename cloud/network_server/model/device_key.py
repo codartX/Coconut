@@ -20,5 +20,4 @@ class DeviceKeyModel():
     def get_device_key(self, device_id):
         device_key = yield self.db.device_key.find_one({'device_id': device_id})
         raise gen.Return(device_key)
-
     

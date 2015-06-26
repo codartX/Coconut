@@ -367,7 +367,7 @@ def parse_message(message):
 
     returnVal['method'] = message[13]
 
-    if len(message) > 13
+    if len(message) > 13:
         returnVal['parameters'] = message[14:]
     else:
         returnVal['parameters'] = []

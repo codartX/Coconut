@@ -20,7 +20,7 @@ class DeviceLogModel():
     @gen.coroutine
     def get_unchecked_log(self, device_id):
         logs = []
-        cursor = self.db.device_log.find({'$and': [{'device_id': device_id}, {'checked': False}])
+        cursor = self.db.device_log.find({'$and': [{'device_id': device_id}, {'checked': False}]})
         while (yield cursor.fetch_next):
             log = cursor.next_object()
             logs.append(log)

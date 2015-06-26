@@ -23,6 +23,7 @@ import handler.app_rpc_handler
 import model.device_info
 import model.device_log
 import model.device_stats
+import model.device_key
 
 from tornado.options import define, options
 
@@ -48,8 +49,8 @@ class Application(tornado.web.Application):
         self.device_key_model = model.device_key.DeviceKeyModel(self.mongodb)
         self.device_info_model = model.device_info.DeviceInfoModel(self.mongodb)
         self.device_log_model = model.device_log.DeviceLogModel(self.mongodb)
-        self.device_policy_model = model.device_policy.DevicePolicyModel(self.mongodb)
-        self.device_stats_model = model.device_stats.DeviceInfoHistoryModel(self.mongodb)
+        self.device_stats_model = model.device_stats.DeviceStatsModel(self.mongodb)
+        self.device_key_model = model.device_key.DeviceKeyModel(self.mongodb)
 
         # Have one global memcache controller
         self.mc = memcache.Client(['127.0.0.1:11211'])
@@ -59,10 +60,11 @@ def main():
                         format='%(levelname)-8s %(message)s')
     
     tornado.options.parse_command_line()
-    http_server = tornado.httpserver.HTTPServer(Application(), ssl_options = {
-                                                'certfile': 'path-to-crt-file',
-                                                'keyfile': 'path-to-key-file',
-                                                })
+    #http_server = tornado.httpserver.HTTPServer(Application(), ssl_options = {
+    #                                            'certfile': 'path-to-crt-file',
+    #                                            'keyfile': 'path-to-key-file',
+    #                                            })
+    http_server = tornado.httpserver.HTTPServer(Application())
     http_server.listen(options.port)
     
     tornado.ioloop.IOLoop.instance().start()

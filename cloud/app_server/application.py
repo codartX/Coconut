@@ -27,15 +27,18 @@ import handler.user
 import handler.message
 import handler.index
 import handler.device
+import handler.device_policy
+import handler.device_stats
 
 from model.user import UserModel
 from model.message import MessageModel
 from model.license import LicenseModel
 from model.mylicense import MylicenseModel
-from model.device import DeviceInfoModel
+from model.device_info import DeviceInfoModel
 from model.device_log import DeviceLogModel
 from model.device_policy import DevicePolicyModel
-from model.device_stats import DeviceInfoHistoryModel
+from model.device_stats import DeviceStatsModel
+from model.device_key import DeviceKeyModel
 
 from tornado.options import define, options
 from lib.loader import Loader
@@ -79,12 +82,12 @@ class Application(tornado.web.Application):
             (r"/device/add", handler.device.DeviceAddHandler),
             (r"/device/list", handler.device.DeviceListHandler),
             (r"/device/([0-9]+)", handler.device.DeviceViewHandler),
-            (r"/device/remove/([0-9]+)", handler.device.DeviceRemoveHandler),
-            (r"/device_stats/([0-9]+)/(.*)/(.*)", handler.device.DeviceStatsViewHandler),
-            (r"/device_policy/add", handler.device.DevicePolicyAddHandler),
-            (r"/device_policy/list", handler.device.DevicePolicyListHandler),
-            (r"/device_policy/([0-9]+)", handler.device.DevicePolicyViewHandler),
-            (r"/device_policy/remove/([0-9]+)", handler.device.DevicePolicyRemoveHandler),
+            #(r"/device/remove/([0-9]+)", handler.device.DeviceRemoveHandler),
+            (r"/device_stats/([0-9]+)/(.*)/(.*)", handler.device_stats.DeviceStatsViewHandler),
+            (r"/device_policy/add", handler.device_policy.DevicePolicyAddHandler),
+            (r"/device_policy/list", handler.device_policy.DevicePolicyListHandler),
+            (r"/device_policy/([0-9]+)", handler.device_policy.DevicePolicyViewHandler),
+            (r"/device_policy/remove/([0-9]+)", handler.device_policy.DevicePolicyRemoveHandler),
 
             (r"/(favicon\.ico)", tornado.web.StaticFileHandler, dict(path = settings["static_path"])),
             (r"/(sitemap.*$)", tornado.web.StaticFileHandler, dict(path = settings["static_path"])),
@@ -100,7 +103,7 @@ class Application(tornado.web.Application):
         self.message_model = MessageModel(self.mongodb)
         self.license_model = LicenseModel(self.mongodb)
         self.mylicense_model = MylicenseModel(self.mongodb)
-        self.device_key_model = model.device_key.DeviceKeyModel(self.mongodb)
+        self.device_key_model = DeviceKeyModel(self.mongodb)
         self.device_info_model = DeviceInfoModel(self.mongodb)
         self.device_log_model = DeviceLogModel(self.mongodb)
         self.device_policy_model = DevicePolicyModel(self.mongodb)
