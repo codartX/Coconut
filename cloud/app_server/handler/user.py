@@ -36,8 +36,8 @@ def do_login(self, user_id):
     self.session['password'] = user_info['password']
     self.session.save()
     user_info['messages_count'] = yield self.application.message_model.get_user_unread_messages_count(user_id)
-    user_info['devices'] = yield self.application.device_model.get_user_all_devices(user_id)
-    self.update_cookie(user_info)
+    user_info['devices'] = yield self.application.device_info_model.get_user_all_devices(user_id)
+    self.update_current_user(user_info)
 
 def do_logout(self):
     # destroy sessions
