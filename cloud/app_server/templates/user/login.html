@@ -1,106 +1,52 @@
-{% extends 'base.html' %}
-{% block body %}
-
-<!-- **********************************************************************************************************************************************************
-MAIN CONTENT
-*********************************************************************************************************************************************************** -->
-
-<div id="login-page">
-	<div class="container">
-		
-		<form class="form-login" action="/login" method="POST">
-			<h2 class="form-login-heading">登陆</h2>
-			{{ errors|dump_errors }}
-			<div class="login-wrap">
-				<input type="text" class="form-control" name="email" placeholder="Email" autofocus>
-				<br>
-				<input type="password" class="form-control" name="password" placeholder="密码">
-				<label class="checkbox">
-					<span class="pull-right">
-						<a data-toggle="modal" href="login.html#myModal"> 忘记密码</a>
-						
-					</span>
-				</label>
-				<button class="btn btn-theme btn-block" type="submit"><i class="fa fa-lock"></i> 登陆(apifan@gmail.com/demo123)</button>
-				<hr>
-				
-				<div class="registration">
-					<a class="" href="/register">
-						注册账户
-					</a>
-				</div>
-				
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>DevOOPS</title>
+		<meta name="description" content="description">
+		<meta name="author" content="Evgeniya">
+		<meta name="keyword" content="keywords">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link href="../plugins/bootstrap/bootstrap.css" rel="stylesheet">
+		<link href="http://netdna.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.css" rel="stylesheet">
+		<link href='http://fonts.googleapis.com/css?family=Righteous' rel='stylesheet' type='text/css'>
+		<link href="../css/style_v1.css" rel="stylesheet">
+		<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+		<!--[if lt IE 9]>
+				<script src="http://getbootstrap.com/docs-assets/js/html5shiv.js"></script>
+				<script src="http://getbootstrap.com/docs-assets/js/respond.min.js"></script>
+		<![endif]-->
+	</head>
+<body>
+<div class="container-fluid">
+	<div id="page-login" class="row">
+		<div class="col-xs-12 col-md-4 col-md-offset-4 col-sm-6 col-sm-offset-3">
+			<div class="text-right">
+				<a href="/register" class="txt-default">Need an account?</a>
 			</div>
-			<!-- Modal -->
-			<div aria-hidden="true" aria-labelledby="myModalLabel" role="dialog" tabindex="-1" id="myModal" class="modal fade">
-				<div class="modal-dialog">
-					<div class="modal-content">
-						<div class="modal-header">
-							<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-							<h4 class="modal-title">忘记密码 ?</h4>
+			<div class="box">
+				<div class="box-content">
+					<form class="form-horizontal" role="form" action="" method="POST">
+						<div class="text-center">
+							<h3 class="page-header">LinkIoMe Login Page</h3>
 						</div>
-						<div class="modal-body">
-							<div id="error_msg"></div>
-							<p>输入Email地址，重置密码</p>
-							<input type="text" id="email_reset_pwd" placeholder="Email" autocomplete="off" class="form-control placeholder-no-fix">
-							
+						<div class="form-group">
+							<label class="control-label">Username</label>
+							<input type="text" class="form-control" name="username" />
 						</div>
-						<div class="modal-footer">
-							<button data-dismiss="modal" class="btn btn-default" type="button">取消</button>
-							<button class="btn btn-theme" id="modal_submit" type="button">提交</button>
+						<div class="form-group">
+							<label class="control-label">Password</label>
+							<input type="password" class="form-control" name="password" />
 						</div>
-					</div>
+						<div class="text-center">
+							<button class="btn btn-primary" type="submit">Sign in</a>
+						</div>
+						{{ xsrf_form_html() }}
+					</form>
 				</div>
 			</div>
-			<!-- modal -->
-			{{ xsrf_form_html() }}
-		</form>	  	
-		
+		</div>
 	</div>
 </div>
-{% endblock%}
-
-{% block script %}
-
-<!--BACKSTRETCH-->
-<!-- You can use an image of whatever size. This script will stretch to fit in any screen size.-->
-<script type="text/javascript" src="/static/dashgumfree/Theme/assets/js/jquery.backstretch.min.js"></script>
-<script>
-$.backstretch("/static/dashgumfree/Theme/assets/img/login-bg.jpg", {speed: 500});
-</script>
-<script type="text/javascript">
-function getCookie(name) {
-	var r = document.cookie.match("\\b" + name + "=([^;]*)\\b");
-	return r ? r[1] : undefined;
-}
-
-
-jQuery(document).ready(function() {
-	$("#modal_submit").click(function(e){
-                console.log($("#email_reset_pwd").val());
-		var data;
-                var alert;
-
-		$.ajax({
-			type: "POST",
-			url: "/forgot",
-			data: {"email_reset_pwd":$("#email_reset_pwd").val(), "_xsrf":getCookie("_xsrf")},
-			success: function(msg){
-				data = JSON.parse(msg);
-				if(!data.success) {
-					alert = "<div class=\"alert alert-success alert-dismissable\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-hidden=\"true\">×</button><strong>"+data.message+"</strong></div>";
-					$("#error_msg").prepend(alert);
-				} else {
-					$("#inviteModal").modal('hide');
-				}
-			},
-			error: function(){
-				alert = "<div class=\"alert alert-success alert-dismissable\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-hidden=\"true\">×</button><strong>"+"发送失败"+"</strong></div>";
-				$("#error_msg").prepend(alert);
-			}
-		});
-	});
-});
-</script>
-{% endblock %}
-
+</body>
+</html>
