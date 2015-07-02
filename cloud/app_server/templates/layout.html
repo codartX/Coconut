@@ -1,64 +1,120 @@
-{% extends 'base.html' %}
-{% block body %}
-<section id="container" >
-    <!-- **********************************************************************************************************************************************************
-     TOP BAR CONTENT & NOTIFICATIONS
-     *********************************************************************************************************************************************************** -->
-    <!--header start-->
-    <header class="header black-bg">
-        <div class="sidebar-toggle-box">
-            <div class="fa fa-bars tooltips" data-placement="right" data-original-title="Toggle Navigation"></div>
-        </div>
-        <!--logo start-->
-        <a href="/" class="logo"><b>LinkIoMe</b></a>
-        <!--logo end-->
-        <div class="nav notify-row" id="top_menu">
-            <!--  notification start -->
-            <ul class="nav top-menu">
-                <!-- inbox dropdown start-->
-                <li id="header_inbox_bar" class="dropdown">
-                    <a data-toggle="dropdown" class="dropdown-toggle" href="index.html#">
-                        <i class="fa fa-envelope-o"></i>
-                        <span class="badge bg-theme">{{ current_user.messages_count }}</span>
-                    </a>
-                    <ul class="dropdown-menu extended inbox">
-                        <div class="notify-arrow notify-arrow-green"></div>
-                        <li>
-                            <p class="green">You have {{ current_user.messages_count }} new messages</p>
-                        </li>
-                        <li>
-                            <a href="/messages">所有消息</a>
-                        </li>
-                    </ul>
-                </li>
-                <!-- inbox dropdown end -->
-            </ul>
-            <!--  notification end -->
-        </div>
-        <div class="top-menu">
-            <ul class="nav pull-right top-menu">
-                <li><a class="logout" href="/logout">Logout</a></li>
-            </ul>
-            <ul class="nav pull-right top-menu">
-                <li><a class="logout" href="/setting">Setting</a></li>
-            </ul>
-        </div>
-    </header>
-    <!--header end-->
-    {% block main %}
-    {% endblock %}
-    <!--main content end-->
-    <!--footer start-->
-    <!--
-     <footer class="site-footer">
-     <div class="text-center">
-     2014 - Copyright
-     <a href="/" class="go-top">
-     <i class="fa fa-angle-up"></i>
-     </a>
-     </div>
-     </footer>
-     -->
-    <!--footer end-->
-</section>
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>LinkIoMe</title>
+		<meta name="description" content="description">
+		<meta name="author" content="LinkIoMe">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link href="static/plugins/bootstrap/bootstrap.css" rel="stylesheet">
+		<link href="static/plugins/jquery-ui/jquery-ui.min.css" rel="stylesheet">
+		<link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+		<link href='http://fonts.googleapis.com/css?family=Righteous' rel='stylesheet' type='text/css'>
+		<link href="static/plugins/fancybox/jquery.fancybox.css" rel="stylesheet">
+		<link href="static/plugins/fullcalendar/fullcalendar.css" rel="stylesheet">
+		<link href="static/plugins/xcharts/xcharts.min.css" rel="stylesheet">
+		<link href="static/plugins/select2/select2.css" rel="stylesheet">
+		<link href="static/plugins/justified-gallery/justifiedGallery.css" rel="stylesheet">
+		<link href="static/css/style_v1.css" rel="stylesheet">
+		<link href="static/plugins/chartist/chartist.min.css" rel="stylesheet">
+		<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+		<!--[if lt IE 9]>
+				<script src="http://getbootstrap.com/docs-assets/js/html5shiv.js"></script>
+				<script src="http://getbootstrap.com/docs-assets/js/respond.min.js"></script>
+		<![endif]-->
+		{% block css %}
+		{% endblock %}
+		{% block head_script %}
+		{% endblock %}  
+	</head>
+<body>
+<!--Start Header-->
+<header class="navbar">
+	<div class="container-fluid expanded-panel">
+		<div class="row">
+			<div id="logo" class="col-xs-12 col-sm-2">
+				<a href="/">LinkIoMe</a>
+			</div>
+			<div id="top-panel" class="col-xs-12 col-sm-10">
+				<div class="row">
+					<div class="col-xs-8 col-sm-4">
+						<div id="search">
+							<input type="text" placeholder="search"/>
+							<i class="fa fa-search"></i>
+						</div>
+					</div>
+					<div class="col-xs-4 col-sm-8 top-panel-right">
+						<ul class="nav navbar-nav pull-right panel-menu">
+							<li class="hidden-xs">
+								<a href="/messages">
+									<i class="fa fa-envelope"></i>
+									<span class="badge">{{ current_user.messages_count }}</span>
+								</a>
+							</li>
+							<li class="dropdown">
+								<a href="#" class="dropdown-toggle account" data-toggle="dropdown">
+									<div class="avatar">
+										<img src="static/img/avatar.jpg" class="img-circle" alt="avatar" />
+									</div>
+									<i class="fa fa-angle-down pull-right"></i>
+									<div class="user-mini pull-right">
+										<span class="welcome">Welcome,</span>
+										<span>{{ current_user.username }}</span>
+									</div>
+								</a>
+								<ul class="dropdown-menu">
+									<li>
+										<a href="/u/{{ current_user.username or current_user.uid}}">
+											<i class="fa fa-user"></i>
+											<span>Profile</span>
+										</a>
+									</li>
+									<li>
+										<a href="/messages">
+											<i class="fa fa-envelope"></i>
+											<span>Messages</span>
+										</a>
+									</li>
+									<li>
+										<a href="/setting">
+											<i class="fa fa-cog"></i>
+											<span>Settings</span>
+										</a>
+									</li>
+									<li>
+										<a href="/logout">
+											<i class="fa fa-power-off"></i>
+											<span>Logout</span>
+										</a>
+									</li>
+								</ul>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</header>
+<!--End Header-->
+<!--Start Container-->
+<div id="main" class="container-fluid">
+{% block main %}
 {% endblock %}
+</div>
+<!--End Container-->
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<!--<script src="http://code.jquery.com/jquery.js"></script>-->
+<script src="static/plugins/jquery/jquery.min.js"></script>
+<script src="static/plugins/jquery-ui/jquery-ui.min.js"></script>
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<script src="static/plugins/bootstrap/bootstrap.min.js"></script>
+<script src="static/plugins/justified-gallery/jquery.justifiedGallery.min.js"></script>
+<script src="static/plugins/tinymce/tinymce.min.js"></script>
+<script src="static/plugins/tinymce/jquery.tinymce.min.js"></script>
+<!-- All functions for this theme + document.ready processing -->
+<script src="static/js/devoops.js"></script>
+{% block script %}
+{% endblock %}
+</body>
+</html>

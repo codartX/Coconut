@@ -31,10 +31,6 @@ class IndexHandler(BaseHandler):
     def get(self, template_variables = {}):
         user_info = self.current_user
         template_variables['user_info'] = user_info
-        devices = yield self.application.device_info_model.get_user_all_devices(user_info['_id'])
-        
-        template_variables['user_info']['devices'] = devices
-        template_variables['gen_random'] = gen_random
         
         self.render('index.html', **template_variables)
 
