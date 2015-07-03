@@ -1,44 +1,26 @@
 {% extends 'layout.html' %}
 
-{% block css %}
-<link rel="stylesheet" type="text/css" href="/static/dashgumfree/Theme/assets/css/zabuto_calendar.css">
-<link rel="stylesheet" type="text/css" href="/static/dashgumfree/Theme/assets/js/gritter/css/jquery.gritter.css" />
-<link rel="stylesheet" type="text/css" href="/static/dashgumfree/Theme/assets/lineicons/style.css">
-{% endblock %}
-
 {% block main %}
-<!--sidebar-->
-<aside>
-    <div id="sidebar"  class="nav-collapse ">
-        <!-- sidebar menu start-->
-        <ul class="sidebar-menu" id="nav-accordion">
-            
-            <p class="centered"><a href="/u/{{ current_user.username or current_user.uid }}"><img src="/static/avatar/s_{{ current_user.avatar or 'default.png' }}?t={{ gen_random() }}" class="img-circle" width="60"></a></p>
-            <h5 class="centered">{{current_user.username}}</h5>
-            
-            <li class="mt">
+<div class="row">
+    <div id="sidebar-left" class="col-xs-2 col-sm-2">
+        <ul class="nav main-menu">
+            <li>
                 <a href="/">
                     <i class="fa fa-dashboard"></i>
-                    <span>Overview</span>
+                    <span class="hidden-xs">Dashboard</span>
                 </a>
             </li>
-            
-            <li class="sub-menu">
-                <a class="active" href="/device/list">
-                    <i class="fa fa-dashboard"></i>
-                    <span>Devices</span>
+            <li>
+                <a href="/device/list">
+                    <i class="fa fa-list"></i>
+                    <span class="hidden-xs">Devices</span>
                 </a>
             </li>
         </ul>
-        <!-- sidebar menu end-->
     </div>
-</aside>
-<!--sidebar end-->
-
-<!--main content-->
-<section id="main-content">
-    <section class="wrapper site-min-height">
-	<div class="row">
+    <!--Start Content-->
+    <div id="content" class="col-xs-12 col-sm-10">
+        <div class="row">
             <div class="col-lg-12 main-chart">
                 {% set i = 0 %}
                 {% if user_info.devices %}
