@@ -29,8 +29,7 @@ void delete_session(sensor_session *session)
     sensor_session *prev = header;
 
     while(s) {
-        if (s->device_class == session->device_class &&
-            memcmp(s->device_id, session->device_id, 8) == 0) {
+        if (memcmp(s->device_id, session->device_id, 8) == 0) {
             prev->next = s->next;
             free(s);
             if (s == header) {
@@ -44,8 +43,7 @@ sensor_session *find_session(uint8_t *device_id)
 {
     sensor_session *s = header;
     while (s) {
-        if (device_class == s->device_class && 
-            memcmp(device_id, s->device_id, 8) == 0) {
+        if (memcmp(device_id, s->device_id, 8) == 0) {
             return s;
         }
         s = s->next;

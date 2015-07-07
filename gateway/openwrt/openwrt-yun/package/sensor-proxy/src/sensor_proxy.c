@@ -5,14 +5,16 @@
 
 #include <unistd.h>  
 #include <stdio.h>  
+#include <stdbool.h>
 #include <arpa/inet.h>  
 #include <sys/socket.h>  
 #include <string.h> 
-#include <openssl/aes.h>
 #include "cJSON.h"
 #include "session.h"
 #include "ws-client.h"
 #include "message.h"
+#include <openssl/evp.h>
+#include <openssl/aes.h>
 
 #define LOCALPORT 5678 
 #define LICENSE_ID "abcd1234" 
@@ -27,7 +29,7 @@ void generate_key()
     RAND_bytes(session_key, sizeof(session_key));
     RAND_bytes(session_iv, sizeof(session_iv));
     
-    return
+    return;
 }
 
 void string_to_hex(uint8_t *hexstring, uint8_t *hex_val, uint8_t len)
@@ -37,7 +39,7 @@ void string_to_hex(uint8_t *hexstring, uint8_t *hex_val, uint8_t len)
         
     /* WARNING: no sanitization or error-checking whatsoever */
     for(i = 0; i < len; i++) {
-        sscanf(pos, "%2hhx", &val[i]);
+        sscanf(pos, "%2hhx", &hex_val[i]);
         pos += 2 * sizeof(uint8_t);
     }
         
@@ -50,8 +52,8 @@ void hex_to_string(uint8_t *string, uint8_t *hex_val, uint8_t len)
     uint8_t i;
     
     /* WARNING: no sanitization or error-checking whatsoever */
-    for(i = 0; i < len1; i++) {
-        sprintf(pos, "%2hhx", &val[i]);
+    for(i = 0; i < len; i++) {
+        sprintf(pos, "%2hhx", &hex_val[i]);
         pos += 2 * sizeof(uint8_t);
     }
     
@@ -224,17 +226,17 @@ int main(int argc,char *argv[])
                         if (node) {
                             string_to_hex(node1->valuestring, buf, strlen(node1->valuestring));
                             
-                            EVP_CIPHER_CTX_init(e_ctx);
-                            EVP_EncryptInit_ex(e_ctx, EVP_aes_128_cbc(), NULL, session->key, session->iv);
-                            EVP_CIPHER_CTX_init(d_ctx);
-                            EVP_DecryptInit_ex(d_ctx, EVP_aes_128_cbc(), NULL, session->key, session->iv);
+                            EVP_CIPHER_CTX_init(&e_ctx);
+                            EVP_EncryptInit_ex(&e_ctx, EVP_aes_128_cbc(), NULL, session->key, session->iv);
+                            EVP_CIPHER_CTX_init(&d_ctx);
+                            EVP_DecryptInit_ex(&d_ctx, EVP_aes_128_cbc(), NULL, session->key, session->iv);
                             
                             flags = false;
                             retcode = RETCODE_ENCODE_DECODE_FAIL;
                             
                             if(EVP_DecryptUpdate(&e_ctx, buf1, &len1, buf, strlen(node1->valuestring))) {
                                 if (EVP_DecryptFinal_ex(&e_ctx, buf1 + len1, &len2)) {
-                                    if(memcmp(buf1, session->password, len1 + len2)) {
+                                    if(memcmp(buf1, session->pwd, len1 + len2)) {
                                         retcode = RETCODE_AUTH_FAIL;
                                         goto send_msg;
                                     }
@@ -320,8 +322,8 @@ websocket_handle:
                                             string_to_hex(node1->valuestring, session->pwd, DEVICE_PWD_SIZE);
                                             session->auth_flag = true;
                                             
-                                            EVP_CIPHER_CTX_init(e_ctx);
-                                            EVP_EncryptInit_ex(e_ctx, EVP_aes_128_cbc(), NULL, session->key, session->iv);
+                                            EVP_CIPHER_CTX_init(&e_ctx);
+                                            EVP_EncryptInit_ex(&e_ctx, EVP_aes_128_cbc(), NULL, session->key, session->iv);
                                         
                                             flags = false;
                                             retcode = RETCODE_ENCODE_DECODE_FAIL;

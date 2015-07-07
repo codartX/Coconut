@@ -5,6 +5,9 @@
 #ifndef _MESSAGE_H
 #define _MESSAGE_H
 
+#include <stdint.h>
+#include "session.h"
+
 #define MESSAGE_VERSION    0
 
 typedef enum _msg_type_e {
@@ -47,20 +50,23 @@ typedef struct _msg_header_t {
     uint8_t  msg_type:6;
     uint8_t  method;
     uint16_t msg_id;
-    uint8_t  device_id[8];
+    uint8_t  device_id[DEVICE_ID_SIZE];
     uint8_t  parameters[0];
 } msg_header_t;
 
 #define MSG_HEAD_LEN    sizeof(msg_header_t)
 
+uint32_t build_msg_header(uint8_t *buf, uint32_t len, msg_type_e msg_type,
+                          msg_method_e method, uint8_t *device_id);
+
 uint32_t build_msg(uint8_t *buf, uint32_t len, msg_type_e msg_type,
-                   msg_method_e method, uint8_t *parameters);
+                   msg_method_e method, uint8_t *device_id, uint8_t *parameters);
 
 #define get_msg_con(payload) (((msg_header_t *)payload)->con)
 
-#define get_msg_type(payload) (msg_type_e)(((msg_header_t *)payload)->msg_type)
+#define get_msg_type(payload) (((msg_header_t *)payload)->msg_type)
 
-#define get_msg_method(payload) (msg_method_e)(((msg_header_t *)payload)->method)
+#define get_msg_method(payload) (((msg_header_t *)payload)->method)
 
 #define get_msg_id(payload) (((msg_header_t *)payload)->msg_id)
 

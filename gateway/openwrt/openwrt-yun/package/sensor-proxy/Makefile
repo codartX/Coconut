@@ -1,20 +1,20 @@
 include $(TOPDIR)/rules.mk
 
-PKG_NAME:=cloudzigbee
+PKG_NAME:=sensor-proxy
 PKG_VERSION:=0.1
 PKG_RELEASE:=1
 
 include $(INCLUDE_DIR)/package.mk
 
-define Package/cloudzigbee
+define Package/sensor-proxy
   SECTION:=net
   CATEGORY:=Network
-  DEPENDS:=+nopoll libcoap
-  TITLE:=Cloud Zigbee Agent
+  DEPENDS:=+nopoll +libopenssl
+  TITLE:=Cloud Sensor Proxy
 endef
 
-define Package/cloudzigbee/description
-  A Cloud based Zigbee management agent
+define Package/sensor-proxy/description
+  A Cloud based sensor proxy
 endef
 
 define Build/Prepare
@@ -27,9 +27,9 @@ endef
 
 TARGET_CFLAGS += $(FPIC)
 
-define Package/cloudzigbee/install
+define Package/sensor-proxy/install
 	$(INSTALL_DIR) $(1)/bin
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/zigbee_agent $(1)/bin
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/sensor-proxy $(1)/bin
 endef
 
-$(eval $(call BuildPackage,cloudzigbee))
+$(eval $(call BuildPackage,sensor-proxy))

@@ -14,20 +14,20 @@ define Package/libcoap
 endef
 
 define Build/Configure
-        $(call Build/Configure/Default)
+	$(call Build/Configure/Default)
 endef
 
 define Build/InstallDev
-        $(INSTALL_DIR) $(1)/usr/include/libcoap/
-        $(CP) $(PKG_BUILD_DIR)/*.h $(1)/usr/include/libcoap/
-
-        $(INSTALL_DIR) $(1)/usr/lib
-        $(CP) $(PKG_BUILD_DIR)/libcoap.a $(1)/usr/lib/
+	$(INSTALL_DIR) $(1)/usr/include/libcoap/
+	$(CP) $(PKG_BUILD_DIR)/*.h $(1)/usr/include/libcoap/
+	
+	$(INSTALL_DIR) $(1)/usr/lib
+	$(CP) $(PKG_BUILD_DIR)/libcoap.a $(1)/usr/lib/
 endef
 
 define Package/libcoap/install
-        $(INSTALL_DIR) $(1)/usr/lib/
-        $(CP) $(PKG_BUILD_DIR)/libcoap.a $(1)/usr/lib/
+	$(INSTALL_DIR) $(1)/usr/lib/
+	$(CP) $(PKG_BUILD_DIR)/libcoap.a $(1)/usr/lib/
 endef
 
 $(eval $(call BuildPackage,libcoap))
