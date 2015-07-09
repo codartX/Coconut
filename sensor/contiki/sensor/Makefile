@@ -1,5 +1,5 @@
 all: main 
-CONTIKI=../../../../contiki-sensinode/
+CONTIKI=../../../contiki-sensinode/
 
 HAVE_BANKING=1
 UIP_CONF_IPV6=1
