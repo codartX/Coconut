@@ -1,8 +1,10 @@
-src-svn packages https://github.com/arduino/openwrt-packages-yun/trunk
-src-svn xwrt http://x-wrt.googlecode.com/svn/trunk/package
-src-svn luci https://github.com/openwrt/luci/branches/luci-0.11/
-src-git routing git://github.com/openwrt-routing/packages.git;for-12.09.x
-src-git alljoyn https://git.allseenalliance.org/gerrit/core/openwrt_feed;attitude_adjustment
+src-git packages https://github.com/openwrt/packages.git;for-14.07
+src-git luci https://github.com/openwrt/luci.git;luci-0.12
+src-git routing https://github.com/openwrt-routing/packages.git;for-14.07
+src-git telephony http://git.openwrt.org/feed/telephony.git;for-14.07
+src-git management https://github.com/openwrt-management/packages.git;for-14.07
+src-git oldpackages http://git.openwrt.org/14.07/packages.git
+#src-svn xwrt http://x-wrt.googlecode.com/svn/trunk/package
 #src-svn phone svn://svn.openwrt.org/openwrt/feeds/phone
 #src-svn efl svn://svn.openwrt.org/openwrt/feeds/efl
 #src-svn xorg svn://svn.openwrt.org/openwrt/feeds/xorg

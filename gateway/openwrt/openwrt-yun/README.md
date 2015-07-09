@@ -1,77 +1,199 @@
-# OpenWrt Yún
+# Vanilla OpenWrt for Arduino Yún
 
-This is a custom version of OpenWrt, targeted to the Arduino Yún. Some of its core packages, including the kernel and uboot, are derived from Linino.
+## Description
 
-## How to build
+This is my port of a vanilla [OpenWrt](https://openwrt.org) for [Arduino
+Yún](http://arduino.cc/en/Main/ArduinoBoardYun?from=Products.ArduinoYUN). It's unofficial and meant for developers,
+testers and advanced users.
 
-### Prerequites
+Current version is [Barrier Breaker (14.07)](https://forum.openwrt.org/viewtopic.php?pid=242292#p242292).
 
-In order to successfully build it, you need to setup a [Debian](https://www.debian.org/) computer with at least 30G of free disk space: we use Debian Wheezy. Using a virtual machine is suggested: you can make one with either [VirtualBox](https://www.virtualbox.org/) or [KVM](http://www.linux-kvm.org/page/Main_Pag).
+## Disclaimer
 
-Once the Debian computer is ready, log in via SSH, then type:
+**Flash this at your own risk, I take no responsibility for your device! Flashing will VOID your warranty!**
 
-```bash
-wget https://raw.githubusercontent.com/arduino/openwrt-yun/master/FIRST_SETUP_debian_wheezy.sh
-chmod +x FIRST_SETUP_debian_wheezy.sh
-sudo ./FIRST_SETUP_debian_wheezy.sh
+## What's included
+
+- The default OpenWrt packages plus `block-mount` and `e2fsprogs` for easy extrooting.
+- Yún specific patches from [arduino/openwrt-yun](https://github.com/arduino/openwrt-yun).
+
+Note: this build does not include [`LuCI`](http://wiki.openwrt.org/doc/howto/luci.essentials), but it can be installed later, [see below](#installing-luci).
+
+## License
+
+See:
+- [LICENSE](blob/master/LICENSE)
+- [OpenWrt license](http://wiki.openwrt.org/about/license)
+- [OpenWrt Yún license](https://github.com/arduino/openwrt-yun/blob/master/LICENSE)
+
+## Downloads
+
+See [the releases page](https://github.com/ljani/openwrt-yun/releases).
+
+## Flashing with TFTP
+
+I'd suggest you to do the initial flashing using TFTP, because it teaches you how to restore the original if anything goes wrong.  To do this, familiarize yourself with [the original instructions](http://arduino.cc/en/Tutorial/YunUBootReflash), but use the binaries from the [releases](https://github.com/ljani/testing/releases) page.
+
+Short summary, run these commands over the serial:
+
+```
+setenv serverip 192.168.3.1;
+setenv ipaddr 192.168.3.2;
+
+tftp 0x80060000 openwrt-ar71xx-generic-yun-kernel.bin;
+erase 0x9fea0000 +0x140000;
+cp.b $fileaddr 0x9fea0000 $filesize;
+
+tftp 0x80060000 openwrt-ar71xx-generic-yun-rootfs-squashfs.bin;
+erase 0x9f050000 +0xe50000;
+cp.b $fileaddr 0x9f050000 $filesize;
+
+bootm 0x9fea0000;
 ```
 
-Wait until all the prerequisites get installed.
+## Flashing with sysupgrade
 
-### Cloning the repo and setting up a download folder
+If you're coming from the original the magic signature won't probably match, so please use the `--force` option. Again
+refer to [the original guide](http://arduino.cc/en/Tutorial/YunSysupgrade) (section `Upgrading Using the Terminal`).
 
-While building, a lot of software will be downloaded. In order to avoid downloading it each time you run a build, store it to a separate folder
+Summary:
 
-```bash
-mkdir -p ~/DOWNLOAD
+```
+sysupgrade -v -n --force openwrt-ar71xx-generic-yun-squashfs-sysupgrade.bin
 ```
 
-To clone the repository using git SSH, make sure you [have your public SSH key in your github profile](https://help.github.com/articles/generating-ssh-keys) and execute:
+## Restoring the original image
 
-```bash
-git clone git@github.com:arduino/openwrt-yun.git
+Follow [the reflashing guide](http://arduino.cc/en/Tutorial/YunUBootReflash), but skip flashing `u-boot`.
+
+## Tips
+
+### Extroot
+
+[Original guide](http://wiki.openwrt.org/doc/howto/extroot).
+
+Short summary:
+```
+# Format the SD card
+mkfs.ext4 /dev/sda1
+
+# Optionally copy the current configuration:
+mount /dev/sda1 /mnt
+tar -C /overlay -cvf - . | tar -C /mnt -xf -
+sync
+umount /mnt
+
+# Check the UUID by running
+block info
+
+# Edit fstab to something like this, change the UUID though:
+cat /etc/config/fstab
+config 'global'
+        option  anon_swap       '0'
+        option  anon_mount      '0'
+        option  auto_swap       '1'
+        option  auto_mount      '1'
+        option  delay_root      '5'
+        option  check_fs        '0'
+
+config 'mount'
+        option target           '/overlay'
+        option uuid             '4626e87b-20dd-4e94-b8ae-1752419e902b'
+        option fstype           'ext4'
+        option options          'noatime,dev,exec,suid,rw'
+        option enabled          '1'
+        option enabled_fsck     '1'
 ```
 
-However if you can't use git SSH you can instead clone the repository over HTTPS by executing:
+### WiFi
 
-```bash
-git clone https://github.com/arduino/openwrt-yun.git
-````
+[Original info](http://wiki.openwrt.org/doc/uci/wireless)
 
-### Building
+Short summary:
+```
+# Here's my config:
+cat /etc/config/network
+config interface 'loopback'
+        option ifname 'lo'
+        option proto 'static'
+        option ipaddr '127.0.0.1'
+        option netmask '255.0.0.0'
 
-Now start the build process
+config globals 'globals'
+        option ula_prefix 'fd7e:56fd:e086::/48'
 
-```bash
+config interface 'lan'
+        option proto 'dhcp'
+        option hostname 'yun'
+
+config interface 'wan'
+        option ifname 'eth1'
+        option proto 'dhcp'
+
+config interface 'wan6'
+        option ifname '@wan'
+        option proto 'dhcpv6'
+
+root@yun:/# cat /etc/config/wireless
+config wifi-device  radio0
+        option type     mac80211
+        option channel  auto
+        option hwmode   11g
+        option path     'platform/ar933x_wmac'
+        option htmode   HT40+
+        option country  '00'
+
+config wifi-iface
+        option device           'radio0'
+        option network          'lan'
+        option mode             'sta'
+        option ssid             'MySSID'
+        option encryption       'psk2'
+        option key              'MyKey123'
+```
+
+### Installing LuCI
+
+[Original guide](http://wiki.openwrt.org/doc/howto/luci.essentials).
+
+Short summary:
+```
+opkg update
+opkg install luci
+/etc/init.d/uhttpd enable
+/etc/init.d/uhttpd start
+ifconfig
+```
+
+Go to http://ip.address.assigned.by.dhcp/ and follow the instructions.
+
+## Compiling
+
+[Original guide](http://wiki.openwrt.org/doc/howto/build).
+
+```
+# Install the dependencies mentioned in the original guide and then continue from here:
+git clone https://github.com/ljani/openwrt-yun.git
 cd openwrt-yun
-DL_FOLDER=~/DOWNLOAD ./build.sh
+./scripts/feeds update -a
+./scripts/feeds install -a
+make menuconfig
+# And select Arduino Yún
+make defconfig
+make
+ls bin/ar71xx
 ```
 
-If you have more than one CPU, you can speed the build process up by specifying a number of concurrent jobs equal to the number of CPUs plus 1. For example, if you have 4 CPUs, use command `DL_FOLDER=~/DOWNLOAD MAKE_JOBS=5 ./build.sh`. If left unspecified, the default value of 2 is used.
+## TODO
 
-### Continuing an interrupted build
+- [ ] Cleanup the Yún patches
+- [ ] Port/rewrite the Yún specific packages such as flashing sketches from the web UI
 
-For some reasons, you may need to interrupt the build. Maybe it was an error, maybe you run out of time. To resume compiling, DO NOT use the `build.sh` script as it will wipe out all the previously done work. Instead use
+## Links
 
-```bash
-MAKE_JOBS=5 nice -n 10 make -j $MAKE_JOBS V=s
-```
+Discussion via [the Yún forum](http://forum.arduino.cc/index.php?topic=284023.0).
 
-Change the value of `MAKE_JOBS` to the number of your cores + 1. My pc has 4 cores, so I set it to 5.
+## Thanks
 
-### Building the image only, skipping all optional packages
-
-Add `BUILD_BASE_ONLY=Yes` at the beggining of the command. Example: `BUILD_BASE_ONLY=Yes DL_FOLDER=~/DOWNLOAD ./build.sh`.
-
-
-### Troubleshooting
-
-There is a variety of reasons for the build process to fail. If you're unable to understand why it failed, resume compiling with the following command:
-
-```bash
-nice -n 10 nohup make -j 1 V=s &
-```
-
-This will create a `nohup.out` file with the whole output of the compilation, errors included. Please paste the content of that file on http://pastebin.com/ or zip and attach that file on a new topic on the 
-[arduino forum](http://forum.arduino.cc/index.php?board=93.0).
-
+- [OpenWrt](https://openwrt.org)
+- [OpenWrt Yún maintainers](https://github.com/arduino/openwrt-yun)
