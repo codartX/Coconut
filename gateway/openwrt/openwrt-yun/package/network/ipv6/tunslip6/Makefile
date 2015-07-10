@@ -10,7 +10,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=contiki
-PKG_VERSION:=2.5
+PKG_VERSION:=2.7
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).zip
 PKG_SOURCE_URL:=http://downloads.sourceforge.net/project/contiki/Contiki/Contiki%20$(PKG_VERSION)/

@@ -6,6 +6,8 @@
 #ifndef _CRYPTO_H
 #define _CRYPTO_H
 
+#include "main.h"
+
 #define DEVICE_KEY_SIZE    32
 
 typedef struct _network_shared_key_t {
@@ -84,14 +86,12 @@ typedef struct _security_header_t {
     uint8_t  key_version;//0=cloud public key, >0 version of shared key
     uint16_t seq;
     uint16_t len;
-    uint8_t  payload[0];
 } security_header_t;
 
 typedef struct _security_handshake_msg_t {
     security_header_t security_header;
-    uint8_t device_id[DEVICE_ID_SIZE];
+    uint8_t device_id[DEV_ID_SIZE];
     uint8_t random_num[DEVICE_KEY_SIZE];
-    uint8_t data[0];
 } security_handshake_msg_t;
 
 typedef struct _security_error_msg_t {

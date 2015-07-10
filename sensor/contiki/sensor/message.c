@@ -198,24 +198,4 @@ uint32_t create_unsubscribe_msg(uint8_t *buf, uint32_t len, uint8_t *obj_name, u
     return (header_len + parameters_len);
 }
 
-uint32_t create_auth_msg(uint8_t *buf, uint32_t len)
-{
-    uint32_t header_len = 0, parameters_len = 0;
-    uint32_t pwd;
-    uint16_t version;
-    
-    header_len = build_msg_header(buf, len, TYPE_REQUEST, METHOD_AUTH);
-    
-    if (!get_password_encrypted_by_network_shared_key(&pwd, &version)) {
-        if (!get_password_encrypted_by_public_key(&pwd)) {
-            return 0;
-        }
-    }
-    
-    parameters_len = sprintf(buf + header_len, "[%d, %d, %d]", version, pwd, random_rand());
-    
-    return (header_len + parameters_len);
-
-}
-
 
