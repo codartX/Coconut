@@ -192,7 +192,7 @@ int main(int argc,char *argv[])
     while(1) {  
         bzero(msg, sizeof(msg));  
         len = recvfrom(sock, msg, sizeof(msg), 0, (struct sockaddr *)&addr, (socklen_t*)&addr_len);  
-        if (len > MSG_HEAD_LEN) {
+        if (len > 0 && len > MSG_HEAD_LEN) {
             inet_ntop(AF_INET6, &addr.sin6_addr, buf, sizeof(buf));  
             printf("message from ip %s\n", buf);  
             printf("Received message, len:%d\n", len);  
