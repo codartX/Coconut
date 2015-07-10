@@ -423,7 +423,7 @@ class WebSocketHandler(websocket.WebSocketHandler):
         self.transaction_id = 0
         self.stream.set_nodelay(True)
         
-        license = get_license(self.id)
+        license = self.application.license_model.get_license(self.id)
         if not license:
             close()
         logging.info('New client connected, id:%s', str(self.id))

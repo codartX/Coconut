@@ -45,16 +45,16 @@ class DeviceManagerAddHandler(BaseHandler):
         
         user_info = self.current_user
         # validate the fields
-        license_id = self.get_argument('id', None)
+        license_id = self.get_argument('license_id', '')
         password = self.get_argument('password', '')
         
-        if license_id == None:
+        if not license_id:
             template_variables['errors']['invalid_license'] = ['Invalid license']
             self.get(template_variables)
             return
         
-        license = yield self.license_model.get_license(license_id, password)
-        if not license:
+        count = yield self.license_model.license_valid(license_id, password)
+        if not count:
             template_variables['errors']['incorrect_license_or_password'] = ['Incorrect license or password']
             self.get(template_variables)
             return
@@ -65,8 +65,8 @@ class DeviceManagerAddHandler(BaseHandler):
             'license_id': license_id,
         }
         
-        license_index = yield self.mylicense_model.add_new_my_license(my_license_info)
+        license_index = yield self.application.mylicense_model.add_new_my_license(my_license_info)
         
-    self.redirect(self.get_argument('next', '/'))
+        self.redirect(self.get_argument('next', '/'))
 
 

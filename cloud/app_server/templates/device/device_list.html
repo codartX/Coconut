@@ -1,52 +1,53 @@
 {% extends 'layout.html' %}
-
+        
 {% block main %}
 <div class="row">
-    <div id="sidebar-left" class="col-xs-2 col-sm-2">
-        <ul class="nav main-menu">
-            <li>
-                <a href="/">
-                    <i class="fa fa-dashboard"></i>
-                    <span class="hidden-xs">Dashboard</span>
-                </a>
-            </li>
-            <li>
-                <a href="/device/list">
-                    <i class="fa fa-list"></i>
-                    <span class="hidden-xs">Devices</span>
-                </a>
-            </li>
-        </ul>
-    </div>
-    <!--Start Content-->
-    <div id="content" class="col-xs-12 col-sm-10">
-        <div class="row">
-            <div class="col-lg-12">
-                {% set i = 0 %}
-                {% if user_info.devices %}
-                    {% for device in user_info.devices %}
-                        {% if i%4 == 0 %}
-                        <div class="row mtbox">
-                        {% endif %}
-                            <a href="/device/{{device.device_id}}">
-                                <div class="col-md-2 col-sm-2 col-md-offset-2 box0">
-                                    <div class="box1">
-                                        <span class="li_stack"></span>
-                                        <h4>{{device.name}}</h4>
-                                    </div>
-                                    <p></p>
-                                </div>
-                            </a>
-                        {% if i%4 == 1 or i == user_info.devices|length - 1 %}
-                        </div><!-- /row mt -->
-                        {% endif %}
-                        {% set i = i + 1 %}
-                    {% endfor %}
-                {% endif %}
-            </div>
+	<div id="sidebar-left" class="col-xs-2 col-sm-2">
+		<ul class="nav main-menu">
+			<li>
+				<a href="/">
+					<i class="fa fa-dashboard"></i>
+					<span class="hidden-xs">Dashboard</span>
+				</a>
+			</li>
+			<li>
+				<a href="/device/list">
+					<i class="fa fa-list"></i>
+					<span class="hidden-xs">Devices</span>
+				</a>
+			</li>
+		</ul>
 	</div>
-    </section><!--/wrapper -->
-</section>
-<!--main content end-->
+	<!--Start Content-->
+	<div id="content" class="col-xs-12 col-sm-10">
+		<div class="row">
+			<div id="breadcrumb" class="col-xs-12">
+				<ol class="breadcrumb pull-left">
+					<li><a href="/device/list">Device List</a></li>
+				</ol>
+			</div>
+		</div>
+		{% set i = 0 %}
+		{% if user_info.devices %}
+			{% for device in user_info.devices %}
+				{% if i%4 == 0 %}
+				<div class="row mtbox">
+				{% endif %}
+					<a href="/device/{{device.device_id}}">
+						<div class="col-md-2 col-sm-2 col-md-offset-2 box0">
+							<div class="box1">
+								<span class="li_stack"></span>
+								<h4>{{device.name}}</h4>
+							</div>
+							<p></p>
+						</div>
+					</a>
+				{% if i%4 == 1 or i == user_info.devices|length - 1 %}
+				</div><!-- /row mt -->
+				{% endif %}
+				{% set i = i + 1 %}
+			{% endfor %}
+		{% endif %}
+	</div>
+</div>
 {% endblock %}
-
