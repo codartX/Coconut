@@ -17,6 +17,7 @@
 #include "message.h"
 #include "device_profile.h"
 #include "crypto.h"
+#include "device-fs.h"
 
 #define COCONUT_UDP_CLIENT_PORT 8765
 #define COCONUT_UDP_SERVER_PORT 5678
@@ -70,7 +71,7 @@ discover_request_handler()
 
 /*---------------------------------------------------------------------------*/
 static void
-register_response_handler()
+register_response_handler(uint8_t *parameters)
 {
     cJSON *root = NULL, *sub = NULL;
     
@@ -635,11 +636,11 @@ message_handler(void)
         /*Decrypt data*/
         security_header = uip_appdata;
         if (security_header->content_type == SECURITY_SERVER_HELLO) {
-            security_server_hello_msg_t *msg = uip_appdata;
+            security_server_hello_msg_t *msg = (security_server_hello_msg_t *)uip_appdata;
             if (msg->master_key_version != get_master_key()->version) {
                 return;
             }
-            len1 = decrypt_data_by_master_key(msg + sizeof(security_server_hello_msg_t), len, tmp_buf);
+            len1 = decrypt_data_by_master_key(uip_appdata + sizeof(security_server_hello_msg_t), msg->security_header.len + 1, tmp_buf);
             if (len1 == DEVICE_KEY_SIZE) {
                 if (set_network_shared_key(tmp_buf, security_header->key_version)) {
                     auth_success = 1;
@@ -648,7 +649,7 @@ message_handler(void)
             
             return;
         } else if(security_header->content_type == SECURITY_ERROR) {
-            i = *((uint32_t *)security_header->data);
+            i = *((uint32_t *)(security_header + sizeof(security_header_t)));
             PRINTF("Security Error:%d", i);
             if (i == SECURITY_ERROR_INVALID_KEY_VERSION || i == SECURITY_ERROR_DECRYPT_ERROR) {
                 shared_key = get_network_shared_key();
@@ -754,7 +755,7 @@ set_server_address(void)
     uip_ds6_addr_t *g_addr = NULL;
  
     while (g_addr == NULL) {
-        g_addr = uip_ds6_get_global(PREFERRED);
+        g_addr = uip_ds6_get_global(ADDR_PREFERRED);
     }
     
     uip_ip6addr(&server_ipaddr, g_addr->ipaddr.u16[0], g_addr->ipaddr.u16[1], g_addr->ipaddr.u16[2],
@@ -777,9 +778,11 @@ PROCESS_THREAD(coconut_sensor_process, ev, data)
 
     print_local_addresses();
     
+    device_fs_init(); 
+
     if (crypto_init()) {
         PRINTF("Crypto init fail\n");
-        return;
+        PROCESS_EXIT();
     }
 
     /*create device, and init*/
