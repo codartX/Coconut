@@ -27,6 +27,7 @@ import handler.user
 import handler.message
 import handler.index
 import handler.device
+import handler.device_manager
 import handler.device_policy
 import handler.device_stats
 
@@ -80,6 +81,7 @@ class Application(tornado.web.Application):
             (r"/logout", handler.user.LogoutHandler),
             (r"/register", handler.user.RegisterHandler),
             #(r"/messages", handler.message.MessagesHandler),
+            (r"/device_manager/add", handler.device_manager.DeviceManagerAddHandler),
             (r"/device/add", handler.device.DeviceAddHandler),
             (r"/device/list", handler.device.DeviceListHandler),
             (r"/device/([0-9]+)", handler.device.DeviceViewHandler),

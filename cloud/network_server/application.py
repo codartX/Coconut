@@ -24,6 +24,7 @@ import model.device_info
 import model.device_log
 import model.device_stats
 import model.device_key
+import model.license
 
 from tornado.options import define, options
 
@@ -51,6 +52,7 @@ class Application(tornado.web.Application):
         self.device_log_model = model.device_log.DeviceLogModel(self.mongodb)
         self.device_stats_model = model.device_stats.DeviceStatsModel(self.mongodb)
         self.device_key_model = model.device_key.DeviceKeyModel(self.mongodb)
+        self.license_model = model.license.LicenseModel(self.mongodb)
 
         # Have one global memcache controller
         self.mc = memcache.Client(['127.0.0.1:11211'])
