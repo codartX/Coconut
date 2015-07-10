@@ -101,7 +101,7 @@ typedef struct _security_error_msg_t {
 
 uint32_t get_password(uint8_t **pwd);
 
-uint32_t get_password_encrypted_by_public_key(uint32_t **pwd);
+uint32_t get_password_encrypted_by_public_key(uint8_t *pwd);
 
 uint32_t encrypt_data_by_network_shared_key(uint8_t *data, uint16_t len, uint8_t *enc_buf);
 
@@ -118,3 +118,4 @@ uint32_t decrypt_data_by_master_key(uint8_t *data, uint16_t len, uint8_t *dec_bu
 uint8_t crypto_init();
 
 #endif
+

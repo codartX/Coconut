@@ -7,6 +7,9 @@
 #include "main.h"
 #include "device.h"
 #include "aes.h"
+#include "cfs/cfs.h"
+#include "cfs/cfs-coffee.h"
+#include "lib/random.h"
 
 static network_shared_key_t network_shared_key;
 
@@ -23,7 +26,7 @@ uint32_t get_password(uint8_t **pwd)
     return DEVICE_KEY_SIZE;
 }
 
-uint32_t get_password_encrypted_by_public_key(uint32_t *pwd)
+uint32_t get_password_encrypted_by_public_key(uint8_t *pwd)
 {
     int32_t fd;
     uint32_t len = 0;
@@ -101,8 +104,8 @@ uint8_t generate_master_key()
         return FAIL;
     }
     
-    for (i = 0; i < DEVICE_PWD_SIZE; i++) {
-        master_key.master_key = pwd[i]^master_key.random_num[i];
+    for (i = 0; i < DEVICE_KEY_SIZE; i++) {
+        master_key.master_key[i] = pwd[i]^master_key.random_num[i];
     }
     
     return SUCCESS;
@@ -136,14 +139,14 @@ uint32_t create_security_client_hello_msg(uint8_t *buf)
     msg->security_header.seq = g_seq_num++;
     master_key.seq_num = msg->security_header.seq;//update master seq
     memcpy(msg->device_id, g_device.device_id, DEV_ID_SIZE);
-    memcpy(msg->random_num, , DEVICE_KEY_SIZE);
+    memcpy(msg->random_num, master_key.random_num, DEVICE_KEY_SIZE);
 
-    if (network_shared_key->used) {
+    if (network_shared_key.used) {
         get_password(&pwd);
         if (!pwd) {
             return 0;
         }
-        security_header->key_version = network_shared_key->version;
+        msg->security_header.key_version = network_shared_key.version;
         len = encrypt_data_by_network_shared_key(pwd, DEVICE_KEY_SIZE, buf + sizeof(security_handshake_msg_t));
         if (!len) {
             return 0;
@@ -153,9 +156,9 @@ uint32_t create_security_client_hello_msg(uint8_t *buf)
         if (!len) {
             return 0;
         }
-        security_header->key_version = 0;
+        msg->security_header.key_version = 0;
     }
-    security_header->len = len + DEVICE_KEY_SIZE + DEV_ID_SIZE;
+    msg->security_header.len = len + DEVICE_KEY_SIZE + DEV_ID_SIZE;
     
     return sizeof(security_handshake_msg_t) + len;
 }
@@ -175,4 +178,5 @@ uint8_t crypto_init()
 
     return SUCCESS;
 }
+
 
