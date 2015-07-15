@@ -1,32 +1,15 @@
 {% extends 'layout.html' %}
 {% block main %}
 <div class="row">
-	<div id="sidebar-left" class="col-xs-2 col-sm-2">
-		<ul class="nav main-menu">
-			<li>
-				<a href="/" class="active">
-					<i class="fa fa-dashboard"></i>
-					<span class="hidden-xs">Dashboard</span>
-				</a>
-			</li>
-			<li>
-				<a href="/device/list">
-					<i class="fa fa-list"></i>
-					<span class="hidden-xs">Devices</span>
-				</a>
-			</li>
-		</ul>
-	</div>
-	<!--Start Content-->
-	<div id="content" class="col-xs-12 col-sm-10">
-		<div class="row">
-			<div id="breadcrumb" class="col-xs-12">
-				<ol class="breadcrumb pull-left">
-					<li><a href="/">Dashboard</a></li>
-				</ol>
-			</div>
-		</div>
-	</div>
-	<!--End Content-->
+  <div class="col-sm-3 col-md-2 sidebar">
+    <ul class="nav nav-sidebar">
+      <li class="active"><a href="/">Overview <span class="sr-only">(current)</span></a></li>
+      <li><a href="/device/list">Devices</a></li>
+    </ul>
+  </div>
+  <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+    <h1 class="page-header">Overview</h1>
+
+  </div>
 </div>
 {% endblock %}
