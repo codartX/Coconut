@@ -73,4 +73,6 @@ uint32_t create_get_config_msg(uint8_t *buf, uint32_t len);
 
 uint32_t create_log_msg(uint8_t *buf, uint32_t len, uint8_t level, uint8_t *log);
 
+uint32_t create_auth_msg(uint8_t *buf, uint32_t len);
+
 #endif

@@ -203,12 +203,14 @@ Direction: device/gw-->cloud
 Request:
 parameters:
 [
-    <key>//encode by sensor key
+    <version>, //0==public key, >0 means version of network shared key
+    <password>,//encrypted by key
+    <random_number>
 ]
 
 Response:
 parameters:
-    [<retcode>, <session key>, <session iv>] //key and iv both encoded by sensor key
+    [<retcode>, <version>, <network shared key>//encrypted by master key]
 """
 
 """

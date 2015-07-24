@@ -17,6 +17,7 @@
 #include "object.h"
 #include "message.h"
 #include "device_profile.h"
+#include "crypto.h"
 
 #define UDP_CLIENT_PORT 8765
 #define UDP_SERVER_PORT 5678
@@ -27,11 +28,15 @@ uint8_t output_buf[MAX_PAYLOAD_LEN];
 
 static struct uip_udp_conn *client_conn;
 static uip_ipaddr_t server_ipaddr;
-//static coap_packet_t coap_request;
+
+uint8_t auth_success = 0;
+uint8_t reg_success = 0;
+
+#define SEND_INTERVAL 5 * CLOCK_SECOND
 
 /*---------------------------------------------------------------------------*/
-PROCESS(udp_client_process, "UDP client process");
-AUTOSTART_PROCESSES(&udp_client_process);
+PROCESS(coconut_sensor_process, "Coconut sensor process");
+AUTOSTART_PROCESSES(&coconut_sensor_process);
 /*---------------------------------------------------------------------------*/
 void send_msg(uint8_t *data, uint32_t len, uip_ipaddr_t *peer_ipaddr)
 {
@@ -63,6 +68,30 @@ discover_request_handler()
     if (len > 0) {
         send_msg(output_buf, len, &UIP_IP_BUF->srcipaddr);
     }
+}
+
+/*---------------------------------------------------------------------------*/
+static void
+register_response_handler()
+{
+    cJSON *root = NULL, *sub = NULL;
+    
+    if (!parameters) {
+        return;
+    }
+    
+    root = cJSON_Parse(parameters);
+    
+    if (!root) {
+        return;
+    }
+    
+    sub = cJSON_GetArrayItem(root, 0);
+    if (sub && sub->valueint == RETCODE_SUCCESS) {
+        reg_success = 1;
+    }
+
+    return;
 }
 
 /*---------------------------------------------------------------------------*/
@@ -587,6 +616,74 @@ unsubscribe_request_handler(uint8_t *parameters)
 
 /*---------------------------------------------------------------------------*/
 static void
+auth_response_handler(uint8_t *parameters)
+{
+    cJSON *root = NULL, *sub = NULL;
+    network_shared_key_t *shared_key;
+    uint8_t shared_key_enc[32];
+    
+    if (!parameters) {
+        return;
+    }
+    
+    root = cJSON_Parse(parameters);
+    
+    if (!root) {
+        return;
+    }
+    
+    sub = cJSON_GetArrayItem(root, 0);
+    if (!sub) {
+        return;
+    }
+    if (sub->valueint != RETCODE_SUCCESS) {
+        PRINTF("Auth fail, retcode:%d\n", sub->valueint);
+        return;
+    }
+    
+    sub = cJSON_GetArrayItem(root, 1);
+    if (!sub) {
+        return;
+    }
+    
+    version = (uint16_t) sub->valueint;
+    
+    shared_key = get_network_shared_key();
+    if (shared_key) {
+        if (shared_key->used && shared_key->version == version) {
+            auth_success = 1;
+            return;
+        }
+        
+        sub = cJSON_GetArrayItem(root, 2);
+        if (!sub) {
+            return;
+        }
+        
+        if (strlen(sub->valuestring) != 64) {
+            PRINTF("Invalid key length\n");
+        }
+        
+        string2hex(sub->valuestring, 64, shared_key_enc);
+        
+        /*Decrypt shared key*/
+        if (decrypt_data_by_master_key(shared_key_enc, 32, shared_key->key)) {
+        
+            shared_key->version = version;
+        
+            shared_key->used = 1;
+        
+            save_network_shared_key(shared_key);
+        } else {
+            PRINTF("Network shared key decrypted fail\n");
+        }
+    }
+    
+    return;
+}
+
+/*---------------------------------------------------------------------------*/
+static void
 message_handler(void)
 {
     uint8_t *data, *parameters;
@@ -649,8 +746,12 @@ message_handler(void)
                     method = get_msg_method(data);
                     switch(method){
                         case METHOD_NEW_DEVICE:
+                            register_response_handler(get_msg_parameters(data));
                             break;
                         case METHOD_GET_CONFIG:
+                            break;
+                        case METHOD_AUTH:
+                            auth_response_handler(get_msg_parameters(data));
                             break;
                         default:
                             return;
@@ -688,48 +789,38 @@ print_local_addresses(void)
 }
 /*---------------------------------------------------------------------------*/
 static void
-set_global_address(void)
+set_server_address(void)
 {
-    uip_ipaddr_t ipaddr;
-
-    uip_ip6addr(&ipaddr, 0xaaaa, 0, 0, 0, 0, 0, 0, 0);
-    uip_ds6_set_addr_iid(&ipaddr, &uip_lladdr);
-    uip_ds6_addr_add(&ipaddr, 0, ADDR_AUTOCONF);
-
-/* The choice of server address determines its 6LoPAN header compression.
- * (Our address will be compressed Mode 3 since it is derived from our link-local address)
- * Obviously the choice made here must also be selected in udp-server.c.
- *
- * For correct Wireshark decoding using a sniffer, add the /64 prefix to the 6LowPAN protocol preferences,
- * e.g. set Context 0 to aaaa::.  At present Wireshark copies Context/128 and then overwrites it.
- * (Setting Context 0 to aaaa::1111:2222:3333:4444 will report a 16 bit compressed address of aaaa::1111:22ff:fe33:xxxx)
- *
- * Note the IPCMV6 checksum verification depends on the correct uncompressed addresses.
- */
+    uip_ds6_addr_t *g_addr = NULL;
  
-#if 1
-/* Mode 1 - 64 bits inline */
-    uip_ip6addr(&server_ipaddr, 0xaaaa, 0, 0, 0, 0, 0, 0, 1);
-#elif 0
-/* Mode 2 - 16 bits inline */
-    uip_ip6addr(&server_ipaddr, 0xaaaa, 0, 0, 0, 0, 0x00ff, 0xfe00, 1);
-#else
-/* Mode 3 - derived from server link-local (MAC) address */
-    uip_ip6addr(&server_ipaddr, 0xaaaa, 0, 0, 0, 0x0250, 0xc2ff, 0xfea8, 0xcd1a); //redbee-econotag
-#endif
+    while (g_addr == NULL) {
+        g_addr = uip_ds6_get_global(PREFERRED);
+    }
+    
+    uip_ip6addr(&server_ipaddr, g_addr->ipaddr.u16[0], g_addr->ipaddr.u16[1], g_addr->ipaddr.u16[2],
+                g_addr->ipaddr.u16[3], 0, 0, 0, 1);
+    
 }
 /*---------------------------------------------------------------------------*/
 PROCESS_THREAD(udp_client_process, ev, data)
 {
+    static struct etimer et;
+    uint32_t len;
+    
     PROCESS_BEGIN();
 
     PROCESS_PAUSE();
 
-    set_global_address();
+    set_server_address();
     
     PRINTF("UDP client process started\n");
 
     print_local_addresses();
+    
+    if (crypto_init()) {
+        PRINTF("Crypto init fail\n");
+        return;
+    }
 
     /*create device, and init*/
     create_device();
@@ -747,8 +838,27 @@ PROCESS_THREAD(udp_client_process, ev, data)
     PRINTF(" local/remote port %u/%u\n",
           UIP_HTONS(client_conn->lport), UIP_HTONS(client_conn->rport));
 
+    etimer_set(&et, SEND_INTERVAL);
+    
     while(1) {
         PROCESS_YIELD();
+        if(etimer_expired(&et)) {
+            if (!auth_success) {
+                /*send auth*/
+                etimer_restart(&et);
+                len = create_auth_msg(output_buf, MAX_PAYLOAD_LEN);
+                if (len){
+                    send_msg_to_gateway(output_buf, len);
+                }
+            } else if (!reg_success) {
+                /*send register*/
+                etimer_restart(&et);
+                len = create_new_device_msg(output_buf, MAX_PAYLOAD_LEN, TYPE_REQUEST);
+                if (len){
+                    send_msg_to_gateway(output_buf, len);
+                }
+            }
+        }
         if(ev == tcpip_event) {
             message_handler();
         }
