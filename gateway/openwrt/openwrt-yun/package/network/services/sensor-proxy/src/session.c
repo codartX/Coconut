@@ -51,3 +51,15 @@ sensor_session *find_session(uint8_t *device_id)
     return NULL;
 }
 
+sensor_session *find_session_by_addr(sockaddr_in6 addr)
+{
+    sensor_session *s = header;
+    while (s) {
+        if (memcmp(addr, s->addr, sizeof(sockaddr_in6)) == 0) {
+            return s;
+        }
+        s = s->next;
+    }
+    return NULL;
+}
+

@@ -8,9 +8,9 @@
 
 #include <arpa/inet.h>  
 
-#define DEVICE_KEY_SIZE    128
+#define DEVICE_KEY_SIZE    32
 
-#define DEVICE_PWD_SIZE    128
+#define DEVICE_PWD_SIZE    32
 
 #define DEVICE_ID_SIZE    8
 
@@ -19,9 +19,9 @@ typedef struct _sensor_session {
     struct sockaddr_in6 addr;  
     struct _sensor_session *next;
     uint8_t auth_flag;
-    uint8_t key[DEVICE_KEY_SIZE];
-    uint8_t iv[DEVICE_KEY_SIZE];
+    uint8_t random[DEVICE_KEY_SIZE];
     uint8_t pwd[DEVICE_PWD_SIZE];
+    uint8_t master_key[DEVICE_KEY_SIZE];
 } sensor_session;
 
 sensor_session *new_session();
@@ -29,5 +29,7 @@ sensor_session *new_session();
 void delete_session(sensor_session *session);
 
 sensor_session *find_session(uint8_t *device_id);
+
+sensor_session *find_session_by_addr(sockaddr_in6 addr);
 
 #endif

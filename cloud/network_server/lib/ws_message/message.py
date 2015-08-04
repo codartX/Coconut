@@ -198,19 +198,18 @@ parameters:
 """
 device_auth:
 
-Direction: device/gw-->cloud
+Direction: gw<-->cloud
 
 Request:
 parameters:
 [
-    <version>, //0==public key, >0 means version of network shared key
-    <password>,//encrypted by key
-    <random_number>
+    <encrypted or not>, //0=plaintext, 1=encrypted
+    <password>//encrypted by key
 ]
 
 Response:
 parameters:
-    [<retcode>, <version>, <network shared key>//encrypted by master key]
+    [<retcode>, <password>//plaintext]
 """
 
 """

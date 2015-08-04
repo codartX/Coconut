@@ -15,50 +15,18 @@
 #include "message.h"
 #include <openssl/evp.h>
 #include <openssl/aes.h>
+#include <pthread.h>
+#include "auth_thread.h"
+#include "utils.h"
 
-#define LOCALPORT 5678 
+#define MAIN_SOCKET_PORT 5678 
+#define AUTH_SOCKET_PORT 4567
 #define LICENSE_ID "abcd1234" 
+
+#define MAX_MSG_LEN    512
 
 noPollCtx  *g_ws_ctx;
 noPollConn *g_ws_conn;
-uint8_t session_key[128];
-uint8_t session_iv[128];
-
-void generate_key()
-{
-    RAND_bytes(session_key, sizeof(session_key));
-    RAND_bytes(session_iv, sizeof(session_iv));
-    
-    return;
-}
-
-void string_to_hex(uint8_t *hexstring, uint8_t *hex_val, uint8_t len)
-{
-    uint8_t *pos = hexstring;
-    uint8_t i;
-        
-    /* WARNING: no sanitization or error-checking whatsoever */
-    for(i = 0; i < len; i++) {
-        sscanf(pos, "%2hhx", &hex_val[i]);
-        pos += 2 * sizeof(uint8_t);
-    }
-        
-    return;
-}
-
-void hex_to_string(uint8_t *string, uint8_t *hex_val, uint8_t len)
-{
-    uint8_t *pos = string;
-    uint8_t i;
-    
-    /* WARNING: no sanitization or error-checking whatsoever */
-    for(i = 0; i < len; i++) {
-        sprintf(pos, "%2hhx", &hex_val[i]);
-        pos += 2 * sizeof(uint8_t);
-    }
-    
-    return;
-}
 
 int websocket_write (const char *content, int length)
 {
@@ -95,6 +63,7 @@ int websocket_write (const char *content, int length)
 void websocket_connect()
 {
     uint8_t url[64];
+    uint8_t i = 1;
 
     if (g_ws_conn) {
         nopoll_conn_close (g_ws_conn);
@@ -108,7 +77,7 @@ void websocket_connect()
 
     snprintf(url, sizeof(url), "/device_monitor?Id=%s", LICENSE_ID);
     //create websocket client
-    while (1) {
+    while (i) {
         /* create context */
         g_ws_ctx = create_ctx();
         
@@ -139,35 +108,32 @@ reconnect:
         nopoll_ctx_unref (g_ws_ctx);
         g_ws_conn = NULL;
         g_ws_ctx = NULL;
-        sleep(10);
+        i--;
     }  
 }
 
 int main(int argc,char *argv[])  
 {  
-    int32_t sock,len, len1, len2, i = 0, retcode;
+    int32_t sock, len, len1, len2, i = 0, retcode;
     struct sockaddr_in6 addr;  
     uint8_t addr_len;
-    uint8_t msg[1024];
-    uint8_t buf[512];
-    uint8_t buf1[512];
+    uint8_t msg[MAX_MSG_LEN];
+    uint8_t buf[MAX_MSG_LEN];
+    uint8_t buf1[MAX_MSG_LEN];
     cJSON *root = NULL, *node = NULL, *node1 = NULL, *node2 = NULL;
     uint8_t *device_id = NULL;
     sensor_session *session = NULL;
     noPollMsg  *ws_msg = NULL;
     uint8_t *ws_msg_payload = NULL;
-    int32_t flags;
-    AES_KEY wctx;
-    EVP_CIPHER_CTX e_ctx;
-    EVP_CIPHER_CTX d_ctx;
-  
+    
     generate_key();
     
+    /*main socket*/
     if ((sock = socket(AF_INET6,SOCK_DGRAM, 0)) < 0) {  
         perror("error:");  
         return(1);  
     } else {  
-        printf("socket:%d created\n", sock);  
+        printf("main socket:%d created\n", sock);
     }  
   
     flags = fcntl(sock, F_GETFL);
@@ -177,121 +143,253 @@ int main(int argc,char *argv[])
     addr_len=sizeof(struct sockaddr_in6);  
     bzero(&addr,sizeof(addr));  
     addr.sin6_family=AF_INET6;  
-    addr.sin6_port=htons(LOCALPORT);  
+    addr.sin6_port=htons(MAIN_SOCKET_PORT);
     addr.sin6_addr=in6addr_any;  
   
     if (bind(sock, (struct sockaddr *)&addr, sizeof(addr)) < 0) {  
-        perror("connect");  
+        perror("main socket connect");
         return(1);  
     } else {  
-        printf("bind ok. Local port:%d\n", LOCALPORT);  
+        printf("main socket bind ok. Local port:%d\n", LOCALPORT);
     }
 
     websocket_connect();
+    
+    if (crypto_init()) {
+        printf("Crypto init fail\n");
+        return (1);
+    }
 
-    while(1) {  
-        bzero(msg, sizeof(msg));  
-        len = recvfrom(sock, msg, sizeof(msg), 0, (struct sockaddr *)&addr, (socklen_t*)&addr_len);  
-        if (len > 0 && len > MSG_HEAD_LEN) {
-            inet_ntop(AF_INET6, &addr.sin6_addr, buf, sizeof(buf));  
-            printf("message from ip %s\n", buf);  
-            printf("Received message, len:%d\n", len);  
-            printf("message:");
-            for(i = 0; i < len; i++) {
-                printf("%x ", msg[i]);
-            }
-            printf("\n");
-            device_id = get_msg_device_id(msg);
-            printf("device id:%x:%x:%x:%x:%x:%x:%x:%x\n", 
-                   device_id[0],device_id[1],device_id[2],device_id[3],
-                   device_id[4],device_id[5],device_id[6],device_id[7]);
+    while(1) {
+        /*auth message*/
+        len = recvfrom(sock, msg, sizeof(msg), 0, (struct sockaddr *)&addr, (socklen_t*)&addr_len);
+        if (len > 0 && len > sizeof(security_header_t)) {
+            security_header_t *security_header= (security_header_t *)msg;
             
-            //Don't support token and options
-            session = find_session(device_id);
-            if (session == NULL) {
-                session = new_session();
-                if (session) {
-                    printf("new session\n");
-                    memcpy(session->device_id, device_id, DEVICE_ID_SIZE);
-                    session->addr = addr;
-                } else {
-                    printf("new session malloc fail\n");
-                }
-            } else if (session->auth_flag == true) {
-                session->addr = addr;
-                if (get_msg_method(msg) == METHOD_AUTH) {
-                    root  = cJSON_Parse(get_msg_parameters(msg));
-                    if (root) {
-                        node = cJSON_GetArrayItem(root, 0);
-                        if (node) {
-                            string_to_hex(node1->valuestring, buf, strlen(node1->valuestring));
-                            
-                            EVP_CIPHER_CTX_init(&e_ctx);
-                            EVP_EncryptInit_ex(&e_ctx, EVP_aes_128_cbc(), NULL, session->key, session->iv);
-                            EVP_CIPHER_CTX_init(&d_ctx);
-                            EVP_DecryptInit_ex(&d_ctx, EVP_aes_128_cbc(), NULL, session->key, session->iv);
-                            
-                            flags = false;
-                            retcode = RETCODE_ENCODE_DECODE_FAIL;
-                            
-                            if(EVP_DecryptUpdate(&e_ctx, buf1, &len1, buf, strlen(node1->valuestring))) {
-                                if (EVP_DecryptFinal_ex(&e_ctx, buf1 + len1, &len2)) {
-                                    if(memcmp(buf1, session->pwd, len1 + len2)) {
-                                        retcode = RETCODE_AUTH_FAIL;
-                                        goto send_msg;
-                                    }
-                                }
-                            }
-                            
-                            if(EVP_EncryptUpdate(&e_ctx, buf, &len1, session_key, 128)) {
-                                if (EVP_EncryptFinal_ex(&e_ctx, buf + len1, &len2)) {
-                                    hex_to_string(buf1, buf, len1);
-                                    sprintf(msg + sizeof(msg_header_t), "[0,%s,", buf1);
-                                    len = sizeof(msg_header_t) + strlen(msg + sizeof(msg_header_t));
-                                    
-                                    if(EVP_EncryptUpdate(&e_ctx, buf, &len1, session_iv, 128)) {
-                                        if (EVP_EncryptFinal_ex(&e_ctx, buf + len1, &len2)) {
-                                            hex_to_string(buf1, buf, len1);
-                                            sprintf(msg + len, "%s]", buf1);
-                                            len += strlen(msg + len);
-                                            flags = true;
-                                        }
-                                    }
-                                }
-                            }
-send_msg:
-                            if (!flags) {
-                                sprintf(msg + sizeof(msg_header_t), "[%d]", retcode);
-                                len = sizeof(msg_header_t) + strlen(msg + sizeof(msg_header_t));
-                            }
-
-                            get_msg_type(msg) = TYPE_RESPONSE;
-                            
-                            if(sendto(sock, msg, len, 0,
-                                      (struct sockaddr *)&session->addr,
-                                      sizeof(struct sockaddr_in6)) < 0){
-                                printf("send error\n");
-                            }
-                            
-                            goto websocket_handle;
-                        }
+            /*check version*/
+            if (security_header->version != SECURITY_VERSION) {
+                printf("Security version error\n");
+                continue;
+            }
+            
+            if (security_header->content_type == SECURITY_CLIENT_HELLO) {
+                security_handshake_msg_t *handshake_msg = (security_handshake_msg_t *)msg;
+                
+                session = find_session_by_addr(addr);
+                if (session == NULL) {
+                    session = new_session();
+                    if (session) {
+                        printf("new session\n");
+                        session->addr = addr;
+                        session->auth_flag = false;
+                    } else {
+                        printf("new session malloc fail\n");
+                        continue;
                     }
                 }
-            } else {
-                session->addr = addr;
-            }
-            
-            /* send content text(utf-8) */
-            len1 = websocket_write(msg, len);
-            if (len1 != len) {
-                printf("ERROR: total len:%d, send %d\n", len, len1);
-                //TODO: send error to sensor
-            } else {
-                printf("send success\n");
+                
+                /*Decrypt*/
+                if (handshake_msg->security_header.key_version == 0) {
+                    sprintf(buf1, "[1,\"");//1 means encrypted, 0=plaintext
+                    hex_to_string(buf1 + 4, handshake_msg->data,
+                                  len - sizeof(security_handshake_msg_t));
+                    sprintf(buf1 + 4 + 2*(len - sizeof(security_handshake_msg_t)), "\"]");
+                    memcpy(session->random, security_header->random_num, DEVICE_KEY_SIZE);
+                    len1 = build_msg(buf, MAX_MSG_LEN, TYPE_REQUEST, METHOD_AUTH, security_header->device_id, buf1);
+                    len2 = websocket_write(buf, len1);
+                    if (len2 != len1) {
+                        printf("ERROR: websocket send total len:%d, send %d\n", len1, len2);
+                        //send error to sensor
+                        len1 = create_security_error_msg(buf1, SECURITY_ERROR_SERVER_ERROR,
+                                                         handshake_msg->security_header.key_version);
+                        if (len1 > 0) {
+                            if(sendto(sock, buf1, len1, 0,
+                                      (struct sockaddr *)&session->addr,
+                                      sizeof(struct sockaddr_in6)) < 0) {
+                                printf("Send security error msg fail\n");
+                            }
+                        } else {
+                            printf("Create security error msg fail\n");
+                        }
+                    } else {
+                        printf("auth send success\n");
+                    }
+                } else if (handshake_msg->security_header.key_version == get_current_network_shared_key_version()) {
+                    if (session->auth_flag == false) {
+                        //should be public key
+                        len1 = create_security_error_msg(buf1, SECURITY_ERROR_INVALID_KEY_VERSION, 0);
+                        if (len1 > 0) {
+                            if(sendto(sock, buf1, len1, 0,
+                                      (struct sockaddr *)&session->addr,
+                                      sizeof(struct sockaddr_in6)) < 0) {
+                                printf("Send security error msg fail\n");
+                            }
+                        } else {
+                            printf("Create security error msg fail\n");
+                        }
+                    } else {
+                        //Decrypt by shared key
+                        len1 = decrypt(handshake_msg->data, len - sizeof(security_handshake_msg_t), buf);
+                        if (len1 = 0) {
+                            printf("Decrypted error\n");
+                            len1 = create_security_error_msg(buf1, SECURITY_ERROR_DECRYPT_ERROR,
+                                                             handshake_msg->security_header.key_version);
+                            if (len1 > 0) {
+                                if(sendto(sock, buf1, len1, 0,
+                                          (struct sockaddr *)&session->addr,
+                                          sizeof(struct sockaddr_in6)) < 0) {
+                                    printf("Send security error msg fail\n");
+                                }
+                            } else {
+                                printf("Create security error msg fail\n");
+                            }
+                            goto WS_MESSAGE_HANDLE;
+                        }
+                        
+                        if (len1 != DEVICE_PWD_SIZE || memcmp(session->pwd, buf, DEVICE_PWD_SIZE)) {
+                            len1 = create_security_error_msg(buf1, SECURITY_ERROR_INVALID_PWD,
+                                                             handshake_msg->security_header.key_version);
+                            if (len1 > 0) {
+                                if(sendto(sock, buf1, len1, 0,
+                                          (struct sockaddr *)&session->addr,
+                                          sizeof(struct sockaddr_in6)) < 0) {
+                                    printf("Send security error msg fail\n");
+                                }
+                            } else {
+                                printf("Create security error msg fail\n");
+                            }
+                            goto WS_MESSAGE_HANDLE;
+                        }
+                    
+                        if (session->auth_flag == true) {
+                            len1 = create_security_server_hello_msg(buf1, session);
+                            if (len1 > 0) {
+                                if(sendto(sock, buf1, len1, 0,
+                                          (struct sockaddr *)&session->addr,
+                                          sizeof(struct sockaddr_in6)) < 0) {
+                                    printf("Send security server hello msg fail\n");
+                                }
+                            } else {
+                                printf("Create security server hello msg fail\n");
+                            }
+                        } else {
+                            sprintf(buf1, "[0,\"");//1 means encrypted, 0=plaintext
+                            hex_to_string(buf1 + 4, buf, len1);
+                            sprintf(buf1 + 4 + 2*len1, "\"]");
+                            memcpy(session->random, security_header->random_num, DEVICE_KEY_SIZE);
+                            len1 = build_msg(buf, MAX_MSG_LEN, TYPE_REQUEST, METHOD_AUTH,
+                                             security_header->device_id, buf1);
+                            len2 = websocket_write(buf, len1);
+                            if (len2 != len1) {
+                                printf("ERROR: websocket send total len:%d, send %d\n", len1, len2);
+                                //send error to sensor
+                                len1 = create_security_error_msg(buf1, SECURITY_ERROR_SERVER_ERROR,
+                                                                 handshake_msg->security_header.key_version);
+                                if (len1 > 0) {
+                                    if(sendto(sock, buf1, len1, 0,
+                                              (struct sockaddr *)&session->addr,
+                                              sizeof(struct sockaddr_in6)) < 0) {
+                                        printf("Send security error msg fail\n");
+                                    }
+                                } else {
+                                    printf("Create security error msg fail\n");
+                                }
+                            } else {
+                                printf("auth send success\n");
+                            }
+                        }
+                    }
+                } else {
+                    len1 = create_security_error_msg(buf1, SECURITY_ERROR_INVALID_KEY_VERSION,
+                                                     get_current_network_shared_key_version());
+                    if (len1 > 0) {
+                        if(sendto(sock, buf1, len1, 0,
+                                  (struct sockaddr *)&session->addr,
+                                  sizeof(struct sockaddr_in6)) < 0) {
+                            printf("Send security error msg fail\n");
+                        }
+                    } else {
+                        printf("Create security error msg fail\n");
+                    }
+                }
+            } else if (security_header->content_type == SECURITY_DATA) {
+                session = find_session_by_addr(addr);
+                if (session == NULL) {
+                    printf("Session not found\n");
+                    len1 = create_security_error_msg(buf1, SECURITY_ERROR_SESSION_NOT_FOUND,
+                                                     handshake_msg->security_header.key_version);
+                    if (len1 > 0) {
+                        if(sendto(sock, buf1, len1, 0,
+                                  (struct sockaddr *)&session->addr,
+                                  sizeof(struct sockaddr_in6)) < 0) {
+                            printf("Send security error msg fail\n");
+                        }
+                    } else {
+                        printf("Create security error msg fail\n");
+                    }
+                    goto WS_MESSAGE_HANDLE;
+                }
+                
+                if (security_header->key_version == get_current_network_shared_key_version()) {
+                    len1 = decrypt(security_header->data, len - sizeof(security_header_t), buf);
+                    if (len1 = 0) {
+                        printf("Decrypted error\n");
+                        len1 = create_security_error_msg(buf1, SECURITY_ERROR_DECRYPT_ERROR,
+                                                         handshake_msg->security_header.key_version);
+                        if (len1 > 0) {
+                            if(sendto(sock, buf1, len1, 0,
+                                      (struct sockaddr *)&session->addr,
+                                      sizeof(struct sockaddr_in6)) < 0) {
+                                printf("Send security error msg fail\n");
+                            }
+                        } else {
+                            printf("Create security error msg fail\n");
+                        }
+                        goto WS_MESSAGE_HANDLE;
+                    }
+                    len2 = websocket_write(buf, len1);
+                    if (len2 != len1) {
+                        printf("ERROR: websocket send total len:%d, send %d\n", len1, len2);
+                        //send error to sensor
+                        len1 = create_security_error_msg(buf1, SECURITY_ERROR_SERVER_ERROR,
+                                                         handshake_msg->security_header.key_version);
+                        if (len1 > 0) {
+                            if(sendto(sock, buf1, len1, 0,
+                                      (struct sockaddr *)&session->addr,
+                                      sizeof(struct sockaddr_in6)) < 0) {
+                                printf("Send security error msg fail\n");
+                            }
+                        } else {
+                            printf("Create security error msg fail\n");
+                        }
+                    } else {
+                        printf("data send success\n");
+                    }
+                } else {
+                    len1 = create_security_error_msg(buf1, SECURITY_ERROR_INVALID_KEY_VERSION,
+                                                     get_current_network_shared_key_version());
+                    if (len1 > 0) {
+                        if(sendto(sock, buf1, len1, 0,
+                                  (struct sockaddr *)&session->addr,
+                                  sizeof(struct sockaddr_in6)) < 0) {
+                            printf("Send security error msg fail\n");
+                        }
+                    } else {
+                        printf("Create security error msg fail\n");
+                    }
+                }
             }
         }
 
-websocket_handle:
+        
+WS_MESSAGE_HANDLE:
+        if (!nopoll_conn_is_ok(g_ws_conn)) {
+            printf ("ERROR: Expected to find proper client connection status, but found error..\n");
+            websocket_connect();
+            if (!nopoll_conn_is_ok(g_ws_conn)) {
+                continue;
+            }
+        }
         //get msg from ws server
         ws_msg = nopoll_conn_get_msg(g_ws_conn);
         if (ws_msg) {
@@ -312,67 +410,69 @@ websocket_handle:
                             node = cJSON_GetArrayItem(root, 0);
                             if (node && node->valueint == 0) {
                                 node1 = cJSON_GetArrayItem(root, 1);
-                                if (node1 && strlen(node1->valuestring) == DEVICE_KEY_SIZE) {
-                                    string_to_hex(node1->valuestring, session->key, DEVICE_KEY_SIZE);
-                                    node1 = cJSON_GetArrayItem(root, 2);
-                                    if (node1 && strlen(node1->valuestring) == DEVICE_KEY_SIZE) {
-                                        string_to_hex(node1->valuestring, session->iv, DEVICE_KEY_SIZE);
-                                        node1 = cJSON_GetArrayItem(root, 3);
-                                        if (node1 && strlen(node1->valuestring) == DEVICE_PWD_SIZE) {
-                                            string_to_hex(node1->valuestring, session->pwd, DEVICE_PWD_SIZE);
+                                if (node1 && strlen(node1->valuestring) == 2*DEVICE_KEY_SIZE) {
+                                    string_to_hex(node1->valuestring, session->pwd, DEVICE_KEY_SIZE);
+                                    len1 = create_security_server_hello_msg(buf1, session);
+                                    if (len1 > 0) {
+                                        if(sendto(sock, buf1, len1, 0,
+                                                  (struct sockaddr *)&session->addr,
+                                                  sizeof(struct sockaddr_in6)) < 0) {
+                                            printf("Send security server hello msg fail\n");
+                                        } else {
                                             session->auth_flag = true;
-                                            
-                                            EVP_CIPHER_CTX_init(&e_ctx);
-                                            EVP_EncryptInit_ex(&e_ctx, EVP_aes_128_cbc(), NULL, session->key, session->iv);
-                                        
-                                            flags = false;
-                                            retcode = RETCODE_ENCODE_DECODE_FAIL;
-                                            
-                                            if(EVP_EncryptUpdate(&e_ctx, buf, &len1, session_key, 128)) {
-                                                if (EVP_EncryptFinal_ex(&e_ctx, buf + len1, &len2)) {
-                                                    hex_to_string(buf1, buf, len1);
-                                                    sprintf(msg + sizeof(msg_header_t), "[0,%s,", buf1);
-                                                    len = sizeof(msg_header_t) + strlen(msg + sizeof(msg_header_t));
-                                                    
-                                                    if(EVP_EncryptUpdate(&e_ctx, buf, &len1, session_iv, 128)) {
-                                                        if (EVP_EncryptFinal_ex(&e_ctx, buf + len1, &len2)) {
-                                                            hex_to_string(buf1, buf, len1);
-                                                            sprintf(msg + len, "%s]", buf1);
-                                                            len += strlen(msg + len);
-                                                            flags = true;
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                            
-                                            if (!flags) {
-                                                sprintf(msg + sizeof(msg_header_t), "[%d]", retcode);
-                                                len = sizeof(msg_header_t) + strlen(msg + sizeof(msg_header_t));
-                                            }
                                         }
                                     }
                                 }
+                            } else {
+                                len1 = create_security_error_msg(buf1, node->valueint, 0);
+                                if (len1 > 0) {
+                                    if(sendto(sock, buf1, len1, 0,
+                                              (struct sockaddr *)&session->addr,
+                                              sizeof(struct sockaddr_in6)) < 0) {
+                                        printf("Send security error msg fail\n");
+                                    }
+                                } else {
+                                    printf("Create security error msg fail\n");
+                                }
                             }
                         }
-                    }
-                    printf("find session, send response msg\n");
-                    if(sendto(sock, msg, len, 0,
-                                (struct sockaddr *)&session->addr,
-                                sizeof(struct sockaddr_in6)) < 0){
-                        printf("send error\n");
+                    } else {
+                        len1 = encrypt(ws_msg_payload, len, buf);
+                        if (len1) {
+                            len2 = create_security_data_msg(buf1, buf, len1);
+                            if (len2) {
+                                printf("find session, send response msg\n");
+                                if(sendto(sock, msg, len, 0,
+                                          (struct sockaddr *)&session->addr,
+                                          sizeof(struct sockaddr_in6)) < 0){
+                                    printf("send error\n");
+                                }
+                            } else {
+                                printf("Create security data message fail\n");
+                            }
+                        } else {
+                            printf("Encrypt ws message fail\n");
+                        }
                     }
                 } else {
-                    //TODO:send error to server
-                }  
+                    //send error to server
+                    msg_header_t *msg_header = (msg_header_t *)buf1;
+                    memcpy(buf1, ws_msg_payload, len);
+                    msg_header->msg_type = TYPE_RESPONSE;
+                    sprintf(msg_header->parameters, "[%d]", RETCODE_DEVICE_CONNECT_ERROR);
+                    len1 = sizeof(msg_header_t) + strlen(msg_header->parameters);
+                    len2 = websocket_write(buf1, len1);
+                    if (len2 != len1) {
+                        printf("ERROR: websocket send error, total len:%d, send %d\n", len1, len2);
+                    }
+                }
             }
 message_done:
             /* unref message */
             nopoll_msg_unref (ws_msg);
         }
-        if (!nopoll_conn_is_ok(g_ws_conn)) {
-            printf ("ERROR: Expected to find proper client connection status, but found error..\n");
-            websocket_connect();
-        }
-        sleep(1);
     }
+    sleep(1);
+    //pthread_join( auth_thread_id, NULL);
+    exit(EXIT_SUCCESS);
 }  

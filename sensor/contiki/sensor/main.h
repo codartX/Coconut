@@ -13,12 +13,16 @@
 #define DEBUG DEBUG_PRINT
 #include "net/uip-debug.h"
 
+#define UIP_IP_BUF   ((struct uip_ip_hdr *)&uip_buf[UIP_LLH_LEN])
+
 #define SUCCESS    1
 #define FAIL       0
 
 #define DEV_ID_SIZE         8
 
 #define MAX_PAYLOAD_LEN		80
+
+extern uint8_t auth_success;
 
 extern uint8_t output_buf[MAX_PAYLOAD_LEN];
 

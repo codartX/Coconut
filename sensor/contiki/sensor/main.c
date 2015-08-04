@@ -10,7 +10,6 @@
 #include "sys/ctimer.h"
 #include <stdio.h>
 #include <string.h>
-#include "dev/adc-sensor.h"
 #include "cJSON.h"
 #include "main.h"
 #include "device.h"
@@ -19,10 +18,8 @@
 #include "device_profile.h"
 #include "crypto.h"
 
-#define UDP_CLIENT_PORT 8765
-#define UDP_SERVER_PORT 5678
-
-#define UIP_IP_BUF   ((struct uip_ip_hdr *)&uip_buf[UIP_LLH_LEN])
+#define COCONUT_UDP_CLIENT_PORT 8765
+#define COCONUT_UDP_SERVER_PORT 5678
 
 uint8_t output_buf[MAX_PAYLOAD_LEN];
 
@@ -42,7 +39,7 @@ void send_msg(uint8_t *data, uint32_t len, uip_ipaddr_t *peer_ipaddr)
 {
     uip_ipaddr_copy(&client_conn->ripaddr, peer_ipaddr);
     uip_udp_packet_sendto(client_conn, data, len,
-                          peer_ipaddr, UIP_HTONS(UDP_SERVER_PORT));
+                          peer_ipaddr, UIP_HTONS(COCONUT_UDP_SERVER_PORT));
     uip_create_unspecified(&client_conn->ripaddr);
     
     return;
@@ -52,7 +49,7 @@ void send_msg_to_gateway(uint8_t *data, uint32_t len)
 {
     uip_ipaddr_copy(&client_conn->ripaddr, &server_ipaddr);
     uip_udp_packet_sendto(client_conn, data, len,
-                          &server_ipaddr, UIP_HTONS(UDP_SERVER_PORT));
+                          &server_ipaddr, UIP_HTONS(COCONUT_UDP_SERVER_PORT));
     uip_create_unspecified(&client_conn->ripaddr);
     
     return;
@@ -613,86 +610,13 @@ unsubscribe_request_handler(uint8_t *parameters)
     return;
 
 }
-
-/*---------------------------------------------------------------------------*/
-static void
-auth_response_handler(uint8_t *parameters)
-{
-    cJSON *root = NULL, *sub = NULL;
-    network_shared_key_t *shared_key;
-    uint8_t shared_key_enc[32];
-    
-    if (!parameters) {
-        return;
-    }
-    
-    root = cJSON_Parse(parameters);
-    
-    if (!root) {
-        return;
-    }
-    
-    sub = cJSON_GetArrayItem(root, 0);
-    if (!sub) {
-        return;
-    }
-    if (sub->valueint != RETCODE_SUCCESS) {
-        PRINTF("Auth fail, retcode:%d\n", sub->valueint);
-        return;
-    }
-    
-    sub = cJSON_GetArrayItem(root, 1);
-    if (!sub) {
-        return;
-    }
-    
-    version = (uint16_t) sub->valueint;
-    
-    shared_key = get_network_shared_key();
-    if (shared_key) {
-        if (shared_key->used && shared_key->version == version) {
-            auth_success = 1;
-            return;
-        }
-        
-        sub = cJSON_GetArrayItem(root, 2);
-        if (!sub) {
-            return;
-        }
-        
-        if (strlen(sub->valuestring) != 64) {
-            PRINTF("Invalid key length\n");
-        }
-        
-        string2hex(sub->valuestring, 64, shared_key_enc);
-        
-        /*Decrypt shared key*/
-        if (decrypt_data_by_master_key(shared_key_enc, 32, shared_key->key)) {
-        
-            shared_key->version = version;
-        
-            shared_key->used = 1;
-        
-            save_network_shared_key(shared_key);
-        } else {
-            PRINTF("Network shared key decrypted fail\n");
-        }
-    }
-    
-    return;
-}
-
 /*---------------------------------------------------------------------------*/
 static void
 message_handler(void)
 {
     uint8_t *data, *parameters;
-    //uint16_t msg_id;
     msg_method_e method;
     int32_t len = 0, type, i = 0;
-    //cJSON *root, *node, *node1, *node2, *node3;    
-    //object_instance_t *obj;
-    //resource_instance_t *res;
     
     if(uip_newdata()) {
         len = uip_datalen();
@@ -750,15 +674,9 @@ message_handler(void)
                             break;
                         case METHOD_GET_CONFIG:
                             break;
-                        case METHOD_AUTH:
-                            auth_response_handler(get_msg_parameters(data));
-                            break;
                         default:
                             return;
                     }
-                }
-                if (len > 0) {
-                
                 }
             } else {
                 PRINTF("It is not for me\n");
@@ -802,7 +720,7 @@ set_server_address(void)
     
 }
 /*---------------------------------------------------------------------------*/
-PROCESS_THREAD(udp_client_process, ev, data)
+PROCESS_THREAD(coconut_sensor_process, ev, data)
 {
     static struct etimer et;
     uint32_t len;
@@ -813,7 +731,7 @@ PROCESS_THREAD(udp_client_process, ev, data)
 
     set_server_address();
     
-    PRINTF("UDP client process started\n");
+    PRINTF("Coconut process started\n");
 
     print_local_addresses();
     
@@ -826,12 +744,12 @@ PROCESS_THREAD(udp_client_process, ev, data)
     create_device();
 
     /* new connection with remote host */
-    client_conn = udp_new(NULL, UIP_HTONS(UDP_SERVER_PORT), NULL); 
+    client_conn = udp_new(NULL, UIP_HTONS(COCONUT_UDP_SERVER_PORT), NULL);
     if(client_conn == NULL) {
         PRINTF("No UDP connection available, exiting the process!\n");
         PROCESS_EXIT();
     }
-    udp_bind(client_conn, UIP_HTONS(UDP_CLIENT_PORT)); 
+    udp_bind(client_conn, UIP_HTONS(COCONUT_UDP_CLIENT_PORT));
 
     PRINTF("Created a connection with the server ");
     PRINT6ADDR(&client_conn->ripaddr);
@@ -844,12 +762,8 @@ PROCESS_THREAD(udp_client_process, ev, data)
         PROCESS_YIELD();
         if(etimer_expired(&et)) {
             if (!auth_success) {
-                /*send auth*/
                 etimer_restart(&et);
-                len = create_auth_msg(output_buf, MAX_PAYLOAD_LEN);
-                if (len){
-                    send_msg_to_gateway(output_buf, len);
-                }
+                continue;
             } else if (!reg_success) {
                 /*send register*/
                 etimer_restart(&et);
@@ -860,7 +774,9 @@ PROCESS_THREAD(udp_client_process, ev, data)
             }
         }
         if(ev == tcpip_event) {
-            message_handler();
+            if (auth_success) {
+                message_handler();
+            }
         }
     }
 

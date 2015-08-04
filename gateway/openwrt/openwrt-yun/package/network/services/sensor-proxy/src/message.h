@@ -43,6 +43,7 @@ typedef enum _retcode_e {
     RETCODE_DEVICE_DUPLICATE,
     RETCODE_ENCODE_DECODE_FAIL,
     RETCODE_AUTH_FAIL,
+    RETCODE_DEVICE_CONNECT_ERROR,
 } retcode_e;
 
 typedef struct _msg_header_t {
