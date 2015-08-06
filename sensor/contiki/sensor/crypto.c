@@ -50,9 +50,9 @@ uint8_t set_network_shared_key(uint8_t *key, uint16_t version)
     if (!key) {
         return FAIL;
     }
-    memcpy(master_key.master_key, key, DEVICE_KEY_SIZE);
-    master_key.version = version;
-    master_key.used = 1;
+    memcpy(network_shared_key.key, key, DEVICE_KEY_SIZE);
+    network_shared_key.version = version;
+    network_shared_key.used = 1;
     
     return SUCCESS;
 }
@@ -60,35 +60,35 @@ uint8_t set_network_shared_key(uint8_t *key, uint16_t version)
 uint32_t encrypt_data_by_network_shared_key(uint8_t *data, uint16_t len, uint8_t *enc_buf)
 {
     AesCtx ctx;
-    int32_t len;
+    int32_t len1;
     
     if( AesCtxIni(&ctx, master_key.random_num, network_shared_key.key, KEY128, CBC) < 0) {
         return 0;
     }
     
-    len = AesEncrypt(&ctx, data, enc_buf, len);
-    if (len < 0) {
+    len1 = AesEncrypt(&ctx, data, enc_buf, len);
+    if (len1 < 0) {
         return 0;
     }
     
-    return len;
+    return len1;
 }
 
 uint32_t decrypt_data_by_network_shared_key(uint8_t *data, uint16_t len, uint8_t *dec_buf)
 {
     AesCtx ctx;
-    int32_t len;
+    int32_t len1;
     
     if( AesCtxIni(&ctx, master_key.random_num, network_shared_key.key, KEY128, CBC) < 0) {
         return 0;
     }
     
-    len = AesDecrypt(&ctx, data, enc_buf, len);
-    if (len < 0) {
+    len1 = AesDecrypt(&ctx, data, dec_buf, len);
+    if (len1 < 0) {
         return 0;
     }
     
-    return len;
+    return len1;
 }
 
 uint8_t generate_master_key()
@@ -111,18 +111,18 @@ uint8_t generate_master_key()
 uint32_t decrypt_data_by_master_key(uint8_t *data, uint16_t len, uint8_t *dec_buf)
 {
     AesCtx ctx;
-    int32_t len;
+    int32_t len1;
     
     if( AesCtxIni(&ctx, master_key.random_num, master_key.master_key, KEY128, CBC) < 0) {
         return 0;
     }
     
-    len = AesDecrypt(&ctx, data, enc_buf, len);
-    if (len < 0) {
+    len1 = AesDecrypt(&ctx, data, dec_buf, len);
+    if (len1 < 0) {
         return 0;
     }
     
-    return len;
+    return len1;
 }
 
 uint32_t create_security_client_hello_msg(uint8_t *buf)
@@ -144,12 +144,12 @@ uint32_t create_security_client_hello_msg(uint8_t *buf)
             return 0;
         }
         security_header->key_version = network_shared_key->version;
-        len = encrypt_data_by_network_shared_key(pwd, DEVICE_KEY_SIZE, msg->data);
+        len = encrypt_data_by_network_shared_key(pwd, DEVICE_KEY_SIZE, buf + sizeof(security_handshake_msg_t));
         if (!len) {
             return 0;
         }
     } else {
-        len = get_password_encrypted_by_public_key(msg->data);
+        len = get_password_encrypted_by_public_key(buf + sizeof(security_handshake_msg_t));
         if (!len) {
             return 0;
         }
