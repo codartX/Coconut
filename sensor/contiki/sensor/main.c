@@ -22,6 +22,7 @@
 #define COCONUT_UDP_SERVER_PORT 5678
 
 uint8_t output_buf[MAX_PAYLOAD_LEN];
+uint8_t tmp_buf[MAX_PAYLOAD_LEN];
 
 static struct uip_udp_conn *client_conn;
 static uip_ipaddr_t server_ipaddr;
@@ -29,7 +30,7 @@ static uip_ipaddr_t server_ipaddr;
 uint8_t auth_success = 0;
 uint8_t reg_success = 0;
 
-#define SEND_INTERVAL 5 * CLOCK_SECOND
+#define SEND_INTERVAL 20 * CLOCK_SECOND
 
 /*---------------------------------------------------------------------------*/
 PROCESS(coconut_sensor_process, "Coconut sensor process");
@@ -616,7 +617,9 @@ message_handler(void)
 {
     uint8_t *data, *parameters;
     msg_method_e method;
-    int32_t len = 0, type, i = 0;
+    uint32_t len = 0, len1 = 0, i = 0;
+    security_header_t *security_header = NULL;
+    network_shared_key_t *shared_key = NULL;
     
     if(uip_newdata()) {
         len = uip_datalen();
@@ -626,60 +629,93 @@ message_handler(void)
             PRINTF("%x ", data[i]);
         }
         PRINTF("\n");
-        if (len >= sizeof(msg_header_t)) {
-            if ( memcmp(get_msg_device_id(data), uip_lladdr.addr, 8) == 0) {
-                if (get_msg_type(data) == TYPE_REQUEST) {
-                    //request
-                    method = get_msg_method(data);
-                    switch(method){
-                        case METHOD_NEW_DEVICE:
-                            discover_request_handler();
-                            break;
-                        case METHOD_REPORT:
-                            report_request_handler(get_msg_device_id(data), get_msg_parameters(data));
-                            break;
-                        case METHOD_SET_RESOURCES:
-                            set_resources_request_handler(get_msg_parameters(data));
-                            break;
-                        case METHOD_GET_RESOURCES:
-                            get_resources_request_handler(get_msg_parameters(data));
-                            break;
-                        case METHOD_SET_POLICY:
-                            set_policy_request_handler(get_msg_parameters(data));
-                            break;
-                        case METHOD_GET_POLICY:
-                            get_policy_request_handler(get_msg_parameters(data));
-                            break;
-                        case METHOD_UNSET_POLICY:
-                            unset_policy_request_handler(get_msg_parameters(data));
-                            break;
-                        case METHOD_RELOAD:
-                            reload_request_handler();
-                            break;
-                        case METHOD_SUBSCRIBE:
-                            subscribe_request_handler(get_msg_device_id(data), get_msg_parameters(data));
-                            break;
-                        case METHOD_UNSUBSCRIBE:
-                            unsubscribe_request_handler(get_msg_parameters(data));
-                            break;
-                        default:
-                            return;
+        
+        /*Decrypt data*/
+        security_header = uip_appdata;
+        if (security_header->content_type == SECURITY_SERVER_HELLO) {
+            len1 = decrypt_data_by_master_key(uip_appdata, len, tmp_buf);
+            if (len1 == DEVICE_KEY_SIZE) {
+                if (set_network_shared_key(tmp_buf, security_header->key_version)) {
+                    auth_success = 1;
+                }
+            }
+            
+            return;
+        } else if(security_header->content_type == SECURITY_ERROR) {
+            i = *((uint32_t *)security_header->data);
+            PRINTF("Security Error:%d", i);
+            if (i == SECURITY_ERROR_INVALID_KEY_VERSION || i == SECURITY_ERROR_DECRYPT_ERROR) {
+                shared_key = get_network_shared_key();
+                if (shared_key) {
+                    shared_key->used = false;
+                }
+            }
+            auth_success = 0;
+            return;
+        } else if (security_header->content_type == SECURITY_DATA) {
+            len1 = decrypt_data_by_network_shared_key(uip_appdata, len, tmp_buf);
+            if (!len1) {
+                PRINTF("Decrypt Error");
+                return;
+            }
+            data = tmp_buf;
+            len = len1;
+            
+            if (len >= sizeof(msg_header_t)) {
+                if ( memcmp(get_msg_device_id(data), uip_lladdr.addr, 8) == 0) {
+                    if (get_msg_type(data) == TYPE_REQUEST) {
+                        //request
+                        method = get_msg_method(data);
+                        switch(method){
+                            case METHOD_NEW_DEVICE:
+                                discover_request_handler();
+                                break;
+                            case METHOD_REPORT:
+                                report_request_handler(get_msg_device_id(data), get_msg_parameters(data));
+                                break;
+                            case METHOD_SET_RESOURCES:
+                                set_resources_request_handler(get_msg_parameters(data));
+                                break;
+                            case METHOD_GET_RESOURCES:
+                                get_resources_request_handler(get_msg_parameters(data));
+                                break;
+                            case METHOD_SET_POLICY:
+                                set_policy_request_handler(get_msg_parameters(data));
+                                break;
+                            case METHOD_GET_POLICY:
+                                get_policy_request_handler(get_msg_parameters(data));
+                                break;
+                            case METHOD_UNSET_POLICY:
+                                unset_policy_request_handler(get_msg_parameters(data));
+                                break;
+                            case METHOD_RELOAD:
+                                reload_request_handler();
+                                break;
+                            case METHOD_SUBSCRIBE:
+                                subscribe_request_handler(get_msg_device_id(data), get_msg_parameters(data));
+                                break;
+                            case METHOD_UNSUBSCRIBE:
+                                unsubscribe_request_handler(get_msg_parameters(data));
+                                break;
+                            default:
+                                return;
+                        }
+                    } else {
+                        //TODO: response
+                        method = get_msg_method(data);
+                        switch(method){
+                            case METHOD_NEW_DEVICE:
+                                register_response_handler(get_msg_parameters(data));
+                                break;
+                            case METHOD_GET_CONFIG:
+                                break;
+                            default:
+                                return;
+                        }
                     }
                 } else {
-                    //TODO: response
-                    method = get_msg_method(data);
-                    switch(method){
-                        case METHOD_NEW_DEVICE:
-                            register_response_handler(get_msg_parameters(data));
-                            break;
-                        case METHOD_GET_CONFIG:
-                            break;
-                        default:
-                            return;
-                    }
+                    PRINTF("It is not for me\n");
                 }
-            } else {
-                PRINTF("It is not for me\n");
             }
         }
     }
@@ -763,7 +799,11 @@ PROCESS_THREAD(coconut_sensor_process, ev, data)
         if(etimer_expired(&et)) {
             if (!auth_success) {
                 etimer_restart(&et);
-                continue;
+                generate_master_key();
+                len = create_security_client_hello_msg(output_buf);
+                if (len){
+                    send_msg_to_gateway(output_buf, len);
+                }
             } else if (!reg_success) {
                 /*send register*/
                 etimer_restart(&et);
@@ -774,9 +814,7 @@ PROCESS_THREAD(coconut_sensor_process, ev, data)
             }
         }
         if(ev == tcpip_event) {
-            if (auth_success) {
-                message_handler();
-            }
+            message_handler();
         }
     }
 

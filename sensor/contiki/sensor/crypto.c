@@ -4,64 +4,175 @@
  */
 
 #include "crypto.h"
+#include "main.h"
+#include "device.h"
+#include "aes.h"
 
+static network_shared_key_t network_shared_key;
 
-static network_shared_key_t *network_shared_key;
+static master_key_t master_key;
 
-static uint8_t master_key[32];
+uint16_t g_seq_num;
 
-static uint8_t get_password(uint8_t **pwd)
+uint8_t g_device_passowrd[DEVICE_KEY_SIZE];
+
+uint32_t get_password(uint8_t **pwd)
 {
-
-}
-
-uint8_t get_password_encrypted_by_public_key(uint32_t *pwd)
-{
+    *pwd = g_device_passowrd;
     
+    return DEVICE_KEY_SIZE;
 }
 
-uint8_t get_password_encrypted_by_network_shared_key(uint32_t *pwd)
+uint32_t get_password_encrypted_by_public_key(uint32_t *pwd)
 {
+    int32_t fd;
+    uint32_t len = 0;
     
-}
-
-uint8_t save_network_shared_key(network_shared_key_t *key)
-{
-
-}
-
-network_shared_key_t *get_network_shared_key()
-{
+    fd = cfs_open("PWD_EN", CFS_READ);
+    if(fd != -1) {
+        len = cfs_read(fd, pwd, DEVICE_KEY_SIZE * 2);//DEVICE_KEY_SIZE * 2 is enough for encrypted pwd, right?
+        cfs_close(fd);
+    } else {
+        PRINTF("ERROR: could not read password from memory.\n");
+        return 0;
+    }
     
+    return len;
 }
 
-uint8_t encrypt_data_by_public_key(uint8_t *data, uint16_t len, uint8_t *enc_buf)
+inline network_shared_key_t *get_network_shared_key()
 {
-
+    return &network_shared_key;
 }
 
-uint8_t encrypt_data_by_network_shared_key(uint8_t *data, uint16_t len, uint8_t *enc_buf)
+uint8_t set_network_shared_key(uint8_t *key, uint16_t version)
 {
-
-}
-
-uint8_t decrypt_data_by_network_shared_key(uint8_t *data, uint16_t len, uint8_t *dec_buf)
-{
+    if (!key) {
+        return FAIL;
+    }
+    memcpy(master_key.master_key, key, DEVICE_KEY_SIZE);
+    master_key.version = version;
+    master_key.used = 1;
     
+    return SUCCESS;
 }
 
-static uint8_t generate_master_key(uint8_t *pwd, uint8_t *random_num, uint16_t len)
+uint32_t encrypt_data_by_network_shared_key(uint8_t *data, uint16_t len, uint8_t *enc_buf)
 {
-
-}
-
-uint8_t decrypt_data_by_master_key(uint8_t *data, uint16_t len, uint8_t *dec_buf)
-{
+    AesCtx ctx;
+    int32_t len;
     
+    if( AesCtxIni(&ctx, master_key.random_num, network_shared_key.key, KEY128, CBC) < 0) {
+        return 0;
+    }
+    
+    len = AesEncrypt(&ctx, data, enc_buf, len);
+    if (len < 0) {
+        return 0;
+    }
+    
+    return len;
+}
+
+uint32_t decrypt_data_by_network_shared_key(uint8_t *data, uint16_t len, uint8_t *dec_buf)
+{
+    AesCtx ctx;
+    int32_t len;
+    
+    if( AesCtxIni(&ctx, master_key.random_num, network_shared_key.key, KEY128, CBC) < 0) {
+        return 0;
+    }
+    
+    len = AesDecrypt(&ctx, data, enc_buf, len);
+    if (len < 0) {
+        return 0;
+    }
+    
+    return len;
+}
+
+uint8_t generate_master_key()
+{
+    uint8_t i = 0;
+    uint8_t *pwd = NULL;
+    
+    get_password(&pwd);
+    if (!pwd) {
+        return FAIL;
+    }
+    
+    for (i = 0; i < DEVICE_PWD_SIZE; i++) {
+        master_key.master_key = pwd[i]^master_key.random_num[i];
+    }
+    
+    return SUCCESS;
+}
+
+uint32_t decrypt_data_by_master_key(uint8_t *data, uint16_t len, uint8_t *dec_buf)
+{
+    AesCtx ctx;
+    int32_t len;
+    
+    if( AesCtxIni(&ctx, master_key.random_num, master_key.master_key, KEY128, CBC) < 0) {
+        return 0;
+    }
+    
+    len = AesDecrypt(&ctx, data, enc_buf, len);
+    if (len < 0) {
+        return 0;
+    }
+    
+    return len;
+}
+
+uint32_t create_security_client_hello_msg(uint8_t *buf)
+{
+    security_handshake_msg_t *msg = (security_handshake_msg_t *)buf;
+    uint8_t *pwd = NULL;
+    uint32_t len = 0;
+    
+    msg->security_header.content_type = SECURITY_CLIENT_HELLO;
+    msg->security_header.version = SECURITY_VERSION;
+    msg->security_header.seq = g_seq_num++;
+    master_key.seq_num = msg->security_header.seq;//update master seq
+    memcpy(msg->device_id, g_device.device_id, DEV_ID_SIZE);
+    memcpy(msg->random_num, , DEVICE_KEY_SIZE);
+
+    if (network_shared_key->used) {
+        get_password(&pwd);
+        if (!pwd) {
+            return 0;
+        }
+        security_header->key_version = network_shared_key->version;
+        len = encrypt_data_by_network_shared_key(pwd, DEVICE_KEY_SIZE, msg->data);
+        if (!len) {
+            return 0;
+        }
+    } else {
+        len = get_password_encrypted_by_public_key(msg->data);
+        if (!len) {
+            return 0;
+        }
+        security_header->key_version = 0;
+    }
+    security_header->len = len + DEVICE_KEY_SIZE + DEV_ID_SIZE;
+    
+    return sizeof(security_handshake_msg_t) + len;
 }
 
 uint8_t crypto_init()
 {
+    int32_t fd;
     
+    fd = cfs_open("PWD", CFS_READ);
+    if(fd != -1) {
+        cfs_read(fd, g_device_passowrd, DEVICE_KEY_SIZE);
+        cfs_close(fd);
+    } else {
+        PRINTF("ERROR: could not read password from memory.\n");
+        return FAIL;
+    }
+
+    return SUCCESS;
 }
 

@@ -14,6 +14,8 @@ bool g_crypto_init_done;
 uint8_t g_network_shared_key[DEVICE_KEY_SIZE];
 uint8_t g_network_shared_key_version;
 
+uint16_t g_seq_num;
+
 static void generate_network_shared_key()
 {
     RAND_bytes(g_network_shared_key, sizeof(g_network_shared_key));
@@ -26,9 +28,18 @@ static void generate_network_shared_key()
     return;
 }
 
-int32_t generate_master_key(uint8_t *pwd, uint8_t *random_num)
+uint8_t generate_master_key(sensor_session *session)
 {
-
+    uint8_t i = 0;
+    
+    if (session) {
+        for (i = 0; i < DEVICE_PWD_SIZE; i++) {
+            session->master_key[i] = session->pwd[i]^session->random[i];
+        }
+        return 1;
+    }
+    
+    return 0;
 }
 
 uint8_t *get_network_shared_key()
@@ -55,22 +66,24 @@ int32_t crypto_init()
     return 1;
 }
 
-uint32_t encrypt(uint8_t *plaintext, uint32_t plaintext_len, uint8_t *ciphertext)
+uint32_t encrypt(sensor_session *session, uint8_t *plaintext, uint32_t plaintext_len, uint8_t *ciphertext)
 {
     uint32_t len;
     uint32_t ciphertext_len;
-    uint8_t *key = g_network_shared_key;
-    uint8_t *iv = NULL;
+    EVP_CIPHER_CTX ctx;
     
-    if (g_crypto_init_done == 0) {
-        printf("Crypto init not finished!\n");
+    if(!session) {
         return 0;
     }
+    
+    EVP_CIPHER_CTX_init(&ctx);
+    
+    EVP_EncryptInit_ex(&ctx, EVP_aes_128_cbc(), NULL, g_network_shared_key, session->random);
     
     /* Provide the message to be encrypted, and obtain the encrypted output.
      * EVP_EncryptUpdate can be called multiple times if necessary
      */
-    if(1 != EVP_EncryptUpdate(&g_e_ctx, ciphertext, &len, plaintext, plaintext_len)) {
+    if(1 != EVP_EncryptUpdate(&ctx, ciphertext, &len, plaintext, plaintext_len)) {
         printf("EVP_EncryptUpdate error!\n");
         return 0;
     }
@@ -80,7 +93,7 @@ uint32_t encrypt(uint8_t *plaintext, uint32_t plaintext_len, uint8_t *ciphertext
     /* Finalise the encryption. Further ciphertext bytes may be written at
      * this stage.
      */
-    if(1 != EVP_EncryptFinal_ex(&g_e_ctx, ciphertext + len, &len)) {
+    if(1 != EVP_EncryptFinal_ex(&ctx, ciphertext + len, &len)) {
         printf("EVP_EncryptFinal_ex error!\n");
         return 0;
     }
@@ -90,19 +103,21 @@ uint32_t encrypt(uint8_t *plaintext, uint32_t plaintext_len, uint8_t *ciphertext
     return ciphertext_len;
 }
 
-uint32_t decrypt(uint8_t *ciphertext, uint32_t ciphertext_len, uint8_tr *plaintext)
+uint32_t decrypt(sensor_session *session, uint8_t *ciphertext, uint32_t ciphertext_len, uint8_tr *plaintext)
 {
     uint32_t len;
     uint32_t plaintext_len;
-    uint8_t *key = g_network_shared_key;
-    uint8_t *iv = NULL;
+    EVP_CIPHER_CTX ctx;
     
-    if (g_crypto_init_done == 0) {
-        printf("Crypto init not finished!\n");
+    if(!session) {
         return 0;
     }
     
-    if(1 != EVP_DecryptUpdate(&g_d_ctx, plaintext, &len, ciphertext, ciphertext_len)) {
+    EVP_CIPHER_CTX_init(&ctx);
+    
+    EVP_DecryptInit_ex(&ctx, EVP_aes_128_cbc(), NULL, g_network_shared_key, session->random);
+    
+    if(1 != EVP_DecryptUpdate(&ctx, plaintext, &len, ciphertext, ciphertext_len)) {
         printf("EVP_DecryptUpdate error!\n");
         return 0;
     }
@@ -122,20 +137,21 @@ uint32_t decrypt(uint8_t *ciphertext, uint32_t ciphertext_len, uint8_tr *plainte
     return plaintext_len;
 }
 
-uint32_t create_security_error_msg(uint8_t *buf, uint32_t error_code, uint8_t key_version)
+uint32_t create_security_error_msg(uint8_t *buf, uint32_t error_code, uint8_t key_version, uint16_t seq_num)
 {
     security_error_msg_t *error_msg = (security_error_msg_t *)buf;
     
     error_msg->security_header.content_type = SECURITY_ERROR;
     error_msg->security_header.version = SECURITY_VERSION;
     error_msg->security_header.key_version = key_version;
+    error_msg->security_header.seq_num = seq_num;
     error_msg->security_header.len = sizeof(security_error_msg_t);
     error_msg->error_code = error_code;
     
     return sizeof(security_error_msg_t);
 }
 
-uint32_t create_security_server_hello_msg(uint8_t *buf, sensor_session *session)
+uint32_t create_security_server_hello_msg(uint8_t *buf, sensor_session *session, uint16_t seq_num)
 {
     security_header_t *security_header = (security_header_t *)buf;
     EVP_CIPHER_CTX ctx;
@@ -149,7 +165,7 @@ uint32_t create_security_server_hello_msg(uint8_t *buf, sensor_session *session)
     security_header->content_type = SECURITY_SERVER_HELLO;
     security_header->version = SECURITY_VERSION;
     security_header->key_version = get_current_network_shared_key_version();
-    
+    security_header->seq_num = seq_num;
     
     if(1 != EVP_EncryptInit_ex(ctx, EVP_aes_256_cbc(), NULL, session->master_key, NULL)) {
         printf("EVP_EncryptInit_ex error\n");
@@ -185,6 +201,7 @@ uint32_t create_security_data_msg(uint8_t *buf, uint8_t *payload, uint32_t len)
     security_header->version = SECURITY_VERSION;
     security_header->key_version = get_current_network_shared_key_version();
     security_header->len = len;
+    security_header->seq_num = g_seq_num++;
     memcpy(buf + sizeof(security_header), payload, len);
     
     return sizeof(security_header_t) + len;
