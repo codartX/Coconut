@@ -4,6 +4,7 @@
  */
 
 #include "utils.h"
+#include <stdio.h>
 
 void string_to_hex(uint8_t *hexstring, uint8_t *hex_val, uint8_t len)
 {

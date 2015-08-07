@@ -17,20 +17,26 @@
  |    len        |  data...
  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-
 
- 1. SECURITY_CLIENT_HELLO & SECURITY_SERVER_HELLO, first 8 bytes is device ID
+ 1. SECURITY_CLIENT_HELLO & SECURITY_SERVER_HELLO
  
-  SECURITY_CLIENT_HELLO's data:
-
+ SECURITY_CLIENT_HELLO's data:
  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
- |                     Random Number (32 Bytes)                  |
+ |                     Device ID                                 |
+ +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+ |                     Device ID                                 |
+ +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+ |Master Key Ver |                        Random Number          |
+ +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+ |                     Random Number (Cont. 32 Bytes)            |
  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
  |                     Encrypted Password ...
  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
  
  SECURITY_SERVER_HELLO's data:
- 
  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
- |                     Encrypted Shared Network Key ...
+ |Master Key Version             | Encrypted Shared Network Key
+ +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+ |                     Encrypted Shared Network Key(Cont) ...
  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
  
  2. SECURITY_DATA's data:
@@ -39,6 +45,8 @@
  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
  
  3. SECURITY_ERROR's data:
+ +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+ |        Pkt Seq Num            | Error Code
  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
  |                     Error Code                                |
  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
@@ -75,15 +83,23 @@ typedef struct _security_header_t {
     uint8_t  payload[0];
 } security_header_t;
 
-typedef struct _security_handshake_msg_t {
+typedef struct _security_client_hello_msg_t {
     security_header_t security_header;
+    uint8_t master_key_version;
     uint8_t device_id[DEVICE_ID_SIZE];
     uint8_t random_num[DEVICE_KEY_SIZE];
     uint8_t data[0];
-} security_handshake_msg_t;
+} security_client_hello_msg_t;
+
+typedef struct _security_server_hello_msg_t {
+    security_header_t security_header;
+    uint8_t master_key_version;
+    uint8_t data[0];
+} security_server_hello_msg_t;
 
 typedef struct _security_error_msg_t {
     security_header_t security_header;
+    uint16_t error_packet_seq;
     uint32_t error_code;
 } security_error_msg_t;
 
@@ -95,13 +111,13 @@ uint8_t get_current_network_shared_key_version();
 
 int32_t crypto_init();
 
-uint32_t encrypt(uint8_t *plaintext, uint32_t plaintext_len, uint8_t *ciphertext);
+uint32_t encrypt(sensor_session *session, uint8_t *plaintext, uint32_t plaintext_len, uint8_t *ciphertext);
 
-uint32_t decrypt(uint8_t *ciphertext, uint32_t ciphertext_len, uint8_tr *plaintext);
+uint32_t decrypt(sensor_session *session, uint8_t *ciphertext, uint32_t ciphertext_len, uint8_t *plaintext);
 
 uint32_t create_security_error_msg(uint8_t *buf, uint32_t error_code, uint8_t key_version, uint16_t seq_num);
 
-uint32_t create_security_server_hello_msg(uint8_t *buf, sensor_session *session, uint16_t seq_num);
+uint32_t create_security_server_hello_msg(uint8_t *buf, sensor_session *session);
 
 uint32_t create_security_data_msg(uint8_t *buf, uint8_t *payload, uint32_t len);
 

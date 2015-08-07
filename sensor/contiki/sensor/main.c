@@ -624,16 +624,22 @@ message_handler(void)
     if(uip_newdata()) {
         len = uip_datalen();
         data = uip_appdata;
+#if 0
         PRINTF("Recv len:%d, data:", len);
         for (i = 0; i < len; i++) {
             PRINTF("%x ", data[i]);
         }
         PRINTF("\n");
+#endif
         
         /*Decrypt data*/
         security_header = uip_appdata;
         if (security_header->content_type == SECURITY_SERVER_HELLO) {
-            len1 = decrypt_data_by_master_key(uip_appdata, len, tmp_buf);
+            security_server_hello_msg_t *msg = uip_appdata;
+            if (msg->master_key_version != get_master_key()->version) {
+                return;
+            }
+            len1 = decrypt_data_by_master_key(msg + sizeof(security_server_hello_msg_t), len, tmp_buf);
             if (len1 == DEVICE_KEY_SIZE) {
                 if (set_network_shared_key(tmp_buf, security_header->key_version)) {
                     auth_success = 1;

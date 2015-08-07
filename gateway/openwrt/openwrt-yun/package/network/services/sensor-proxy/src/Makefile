@@ -2,7 +2,7 @@ CFLAGS += -I$(STAGING_DIR)/usr/include/nopoll/
 
 ODIR=.
 
-LIBS += -lm -lnopoll -lcrypto -lpthread
+LIBS += -lm -lnopoll -lcrypto 
 
 _DEPS = session.h ws-client.h cJSON.h message.h utils.h crypto.h
 DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))

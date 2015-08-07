@@ -17,7 +17,7 @@ typedef struct _network_shared_key_t {
 } network_shared_key_t;
 
 typedef struct _master_key_t {
-    uint16_t seq_num;
+    uint8_t version;
     uint8_t random_num[DEVICE_KEY_SIZE];
     uint8_t master_key[DEVICE_KEY_SIZE];
 } master_key_t;
@@ -31,20 +31,26 @@ typedef struct _master_key_t {
  |    len        |  data...
  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-
  
- 1. SECURITY_CLIENT_HELLO & SECURITY_SERVER_HELLO, first 8 bytes is device ID
+ 1. SECURITY_CLIENT_HELLO & SECURITY_SERVER_HELLO
  
  SECURITY_CLIENT_HELLO's data:
- 
  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
- |                     Random Number (32 Bytes)                  |
+ |                     Device ID                                 |
+ +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+ |                     Device ID                                 |
+ +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+ |Master Key Ver |                        Random Number          |
+ +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+ |                     Random Number (Cont. 32 Bytes)            |
  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
  |                     Encrypted Password ...
  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
  
  SECURITY_SERVER_HELLO's data:
- 
  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
- |                     Encrypted Shared Network Key ...
+ |Master Key Ver |          Encrypted Shared Network Key
+ +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+ |                     Encrypted Shared Network Key(Cont) ...
  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
  
  2. SECURITY_DATA's data:
@@ -53,6 +59,8 @@ typedef struct _master_key_t {
  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
  
  3. SECURITY_ERROR's data:
+ +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+ |        Pkt Seq Num            | Error Code
  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
  |                     Error Code                                |
  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
@@ -88,14 +96,21 @@ typedef struct _security_header_t {
     uint16_t len;
 } security_header_t;
 
-typedef struct _security_handshake_msg_t {
+typedef struct _security_client_hello_msg_t {
     security_header_t security_header;
+    uint8_t master_key_version;
     uint8_t device_id[DEV_ID_SIZE];
     uint8_t random_num[DEVICE_KEY_SIZE];
-} security_handshake_msg_t;
+} security_client_hello_msg_t;
+
+typedef struct _security_server_hello_msg_t {
+    security_header_t security_header;
+    uint8_t master_key_version;
+} security_server_hello_msg_t;
 
 typedef struct _security_error_msg_t {
     security_header_t security_header;
+    uint16_t pkt_seq_num;
     uint32_t error_code;
 } security_error_msg_t;
 
@@ -112,6 +127,8 @@ uint8_t set_network_shared_key(uint8_t *key, uint16_t version);
 inline network_shared_key_t *get_network_shared_key();
 
 uint8_t generate_master_key();
+
+inline master_key_t *get_master_key();
 
 uint32_t decrypt_data_by_master_key(uint8_t *data, uint16_t len, uint8_t *dec_buf);
 

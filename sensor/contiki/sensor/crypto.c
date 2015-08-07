@@ -111,6 +111,11 @@ uint8_t generate_master_key()
     return SUCCESS;
 }
 
+inline master_key_t *get_master_key()
+{
+    return &master_key;
+}
+
 uint32_t decrypt_data_by_master_key(uint8_t *data, uint16_t len, uint8_t *dec_buf)
 {
     AesCtx ctx;
@@ -130,14 +135,14 @@ uint32_t decrypt_data_by_master_key(uint8_t *data, uint16_t len, uint8_t *dec_bu
 
 uint32_t create_security_client_hello_msg(uint8_t *buf)
 {
-    security_handshake_msg_t *msg = (security_handshake_msg_t *)buf;
+    security_client_hello_msg_t *msg = (security_client_hello_msg_t *)buf;
     uint8_t *pwd = NULL;
     uint32_t len = 0;
     
     msg->security_header.content_type = SECURITY_CLIENT_HELLO;
     msg->security_header.version = SECURITY_VERSION;
     msg->security_header.seq = g_seq_num++;
-    master_key.seq_num = msg->security_header.seq;//update master seq
+    msg->master_key_version = master_key.version;
     memcpy(msg->device_id, g_device.device_id, DEV_ID_SIZE);
     memcpy(msg->random_num, master_key.random_num, DEVICE_KEY_SIZE);
 
@@ -147,12 +152,12 @@ uint32_t create_security_client_hello_msg(uint8_t *buf)
             return 0;
         }
         msg->security_header.key_version = network_shared_key.version;
-        len = encrypt_data_by_network_shared_key(pwd, DEVICE_KEY_SIZE, buf + sizeof(security_handshake_msg_t));
+        len = encrypt_data_by_network_shared_key(pwd, DEVICE_KEY_SIZE, buf + sizeof(security_client_hello_msg_t));
         if (!len) {
             return 0;
         }
     } else {
-        len = get_password_encrypted_by_public_key(buf + sizeof(security_handshake_msg_t));
+        len = get_password_encrypted_by_public_key(buf + sizeof(security_client_hello_msg_t));
         if (!len) {
             return 0;
         }
@@ -160,7 +165,7 @@ uint32_t create_security_client_hello_msg(uint8_t *buf)
     }
     msg->security_header.len = len + DEVICE_KEY_SIZE + DEV_ID_SIZE;
     
-    return sizeof(security_handshake_msg_t) + len;
+    return sizeof(security_client_hello_msg_t) + len;
 }
 
 uint8_t crypto_init()
