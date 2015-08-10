@@ -118,9 +118,9 @@ uint32_t get_password(uint8_t **pwd);
 
 uint32_t get_password_encrypted_by_public_key(uint8_t **pwd);
 
-uint32_t encrypt_data_by_network_shared_key(uint8_t *data, uint16_t len, uint8_t *enc_buf);
+uint32_t encrypt_data_by_network_shared_key(uint8_t *data, uint32_t len, uint8_t *enc_buf);
 
-uint32_t decrypt_data_by_network_shared_key(uint8_t *data, uint16_t len, uint8_t *dec_buf);
+uint32_t decrypt_data_by_network_shared_key(uint8_t *data, uint32_t len, uint8_t *dec_buf);
 
 uint8_t set_network_shared_key(uint8_t *key, uint16_t version);
 
@@ -130,7 +130,7 @@ uint8_t generate_master_key();
 
 master_key_t *get_master_key();
 
-uint32_t decrypt_data_by_master_key(uint8_t *data, uint16_t len, uint8_t *dec_buf);
+uint32_t decrypt_data_by_master_key(uint8_t *data, uint32_t len, uint8_t *dec_buf);
 
 uint32_t create_security_client_hello_msg(uint8_t *buf);
 

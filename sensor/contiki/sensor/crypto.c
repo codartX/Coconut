@@ -11,7 +11,7 @@
 #include "cfs/cfs-coffee.h"
 #include "lib/random.h"
 #include "device-fs.h"
-#include "cc2420-aes.h"
+#include "cc2530-aes.h"
 
 static network_shared_key_t network_shared_key;
 
@@ -70,7 +70,7 @@ uint32_t encrypt_data_by_network_shared_key(uint8_t *data, uint32_t len, uint8_t
     return len1;
 }
 
-uint32_t decrypt_data_by_network_shared_key(uint8_t *data, uint16_t len, uint8_t *dec_buf)
+uint32_t decrypt_data_by_network_shared_key(uint8_t *data, uint32_t len, uint8_t *dec_buf)
 {
     uint32_t len1;
     
@@ -104,7 +104,7 @@ master_key_t *get_master_key()
     return &master_key;
 }
 
-uint32_t decrypt_data_by_master_key(uint8_t *data, uint16_t len, uint8_t *dec_buf)
+uint32_t decrypt_data_by_master_key(uint8_t *data, uint32_t len, uint8_t *dec_buf)
 {
     uint32_t len1;
     
