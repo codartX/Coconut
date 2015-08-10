@@ -47,40 +47,14 @@ static uint8_t block_buf[16];
 static void
 cc2530_dma_aes_in(uint8_t *src, uint8_t len)
 {
-    dma_conf[1].src_h = ((uint16_t)data >> 8) & 0x00FF;
-    dma_conf[1].src_l = (uint16_t)data & 0x00FF;
-    dma_conf[1].dst_h = ((uint16_t)ENCDI >> 8) & 0x00FF;
-    dma_conf[1].dst_l = (uint16_t)ENCDI & 0x00FF;
-    dma_conf[1].len_h = DMA_VLEN_LEN | ((len >> 8) & 0x001F);
-    dma_conf[1].len_l = len & 0x00FF;
-    dma_conf[1].wtt = DMA_SINGLE | DMA_T_ENC_DW;
-    dma_conf[1].inc_prio = DMA_SRC_INC_1 | DMA_DST_INC_1 | DMA_PRIO_HIGHEST;
-    
-    /* The DMA configuration data structure may reside at any location in
-     * unified memory space, and the address location is passed to the DMA
-     * through DMAxCFGH:DMAxCFGL.
-     */
-    DMA1CFGH = ((uint16_t)&dma_conf[1] >> 8) & 0x00FF;
-    DMA1CFGL = (uint16_t)&dma_conf[1] & 0x00FF;
-    
-    /* Arm the DMA channel, so that a DMA trigger can initiate DMA writing,
-     and apply 9 NOPs to allow the DMA arming to actually take effect. */
-    DMA_ARM(1);
-    _NOP();_NOP();_NOP();_NOP();_NOP();_NOP();_NOP();_NOP();_NOP(); // 9 NOPs
-
-}
-/*---------------------------------------------------------------------------*/
-static void
-cc2530_dma_aes_out(uint8_t *dest, uint8_t len)
-{
-    dma_conf[2].src_h = ((uint16_t)ENCDO >> 8) & 0x00FF;
-    dma_conf[2].src_l = (uint16_t)ENCDO & 0x00FF;
-    dma_conf[2].dst_h = ((uint16_t)dest >> 8) & 0x00FF;
-    dma_conf[2].dst_l = (uint16_t)dest & 0x00FF;
-    dma_conf[2].len_h = DMA_VLEN_LEN | ((len >> 8) & 0x001F);
-    dma_conf[2].len_l = len & 0x00FF;
-    dma_conf[2].wtt = DMA_SINGLE | DMA_T_ENC_UP;
-    dma_conf[2].inc_prio = DMA_SRC_INC_1 | DMA_DST_INC_1 | DMA_PRIO_HIGHEST;
+    dma_conf[DMA_CH_AES_IN].src_h = ((uint16_t)src >> 8) & 0x00FF;
+    dma_conf[DMA_CH_AES_IN].src_l = (uint16_t)src & 0x00FF;
+    dma_conf[DMA_CH_AES_IN].dst_h = ((uint16_t)ENCDI >> 8) & 0x00FF;
+    dma_conf[DMA_CH_AES_IN].dst_l = (uint16_t)ENCDI & 0x00FF;
+    dma_conf[DMA_CH_AES_IN].len_h = DMA_VLEN_LEN;
+    dma_conf[DMA_CH_AES_IN].len_l = len;
+    dma_conf[DMA_CH_AES_IN].wtt = DMA_SINGLE | DMA_T_ENC_DW;
+    dma_conf[DMA_CH_AES_IN].inc_prio = DMA_SRC_INC_1 | DMA_DST_INC_1 | DMA_PRIO_HIGHEST;
     
     /* The DMA configuration data structure may reside at any location in
      * unified memory space, and the address location is passed to the DMA
@@ -90,25 +64,49 @@ cc2530_dma_aes_out(uint8_t *dest, uint8_t len)
     DMA1CFGL = (uint16_t)&dma_conf[1] & 0x00FF;
     
     /* Arm the DMA channel, so that a DMA trigger can initiate DMA writing*/
-    DMA_ARM(2);
+    DMA_ARM(DMA_CH_AES_IN);
+
+}
+/*---------------------------------------------------------------------------*/
+static void
+cc2530_dma_aes_out(uint8_t *dest, uint8_t len)
+{
+    dma_conf[DMA_CH_AES_OUT].src_h = ((uint16_t)ENCDO >> 8) & 0x00FF;
+    dma_conf[DMA_CH_AES_OUT].src_l = (uint16_t)ENCDO & 0x00FF;
+    dma_conf[DMA_CH_AES_OUT].dst_h = ((uint16_t)dest >> 8) & 0x00FF;
+    dma_conf[DMA_CH_AES_OUT].dst_l = (uint16_t)dest & 0x00FF;
+    dma_conf[DMA_CH_AES_OUT].len_h = DMA_VLEN_LEN;
+    dma_conf[DMA_CH_AES_OUT].len_l = len;
+    dma_conf[DMA_CH_AES_OUT].wtt = DMA_SINGLE | DMA_T_ENC_UP;
+    dma_conf[DMA_CH_AES_OUT].inc_prio = DMA_SRC_INC_1 | DMA_DST_INC_1 | DMA_PRIO_HIGHEST;
+    
+    /* The DMA configuration data structure may reside at any location in
+     * unified memory space, and the address location is passed to the DMA
+     * through DMAxCFGH:DMAxCFGL.
+     */
+    DMA1CFGH = ((uint16_t)&dma_conf[1] >> 8) & 0x00FF;
+    DMA1CFGL = (uint16_t)&dma_conf[1] & 0x00FF;
+    
+    /* Arm the DMA channel, so that a DMA trigger can initiate DMA writing*/
+    DMA_ARM(DMA_CH_AES_OUT);
 }
 /*---------------------------------------------------------------------------*/
 void
-cc2530_aes_set_key(const uint8_t *key, uint8_t len)
+cc2530_aes_set_key(uint8_t *key, uint8_t len)
 {
     cc2530_dma_aes_in(key, len);
     AES_SET_CMD(CC2530_ENCCS_CMD_LOAD_KEY);
     AES_START();
-    while (!DMA_STATUS(1));
+    while (!DMA_STATUS(DMA_CH_AES_IN));
 }
 /*---------------------------------------------------------------------------*/
 void
-cc2530_aes_set_iv(const uint8_t *iv, uint8_t len)
+cc2530_aes_set_iv(uint8_t *iv, uint8_t len)
 {
     cc2530_dma_aes_in(iv, len);
     AES_SET_CMD(CC2530_ENCCS_CMD_LOAD_IV);
     AES_START();
-    while (!DMA_STATUS(1));
+    while (!DMA_STATUS(DMA_CH_AES_IN));
 }
 /*---------------------------------------------------------------------------*/
 uint32_t

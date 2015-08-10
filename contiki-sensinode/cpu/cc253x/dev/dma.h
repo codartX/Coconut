@@ -124,7 +124,7 @@ typedef struct dma_config {
 
 /* Number of DMA Channels and their Descriptors */
 #if DMA_ON
-#define DMA_CHANNEL_COUNT 4
+#define DMA_CHANNEL_COUNT 5
 extern dma_config_t dma_conf[DMA_CHANNEL_COUNT];
 #endif
 

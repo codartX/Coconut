@@ -39,6 +39,8 @@
 #define DEBUG DEBUG_PRINT
 #include "net/uip-debug.h"
 
+#include "cc2530-aes.h"
+
 #define SEND_INTERVAL		2 * CLOCK_SECOND
 #define MAX_PAYLOAD_LEN		48
 
@@ -76,7 +78,7 @@ timeout_handler(void)
     cc2530_aes_set_iv(iv, 16);
     len = cc2530_aes_encrypt(buf, strlen(buf), buf);
     
-    PRINTF(" Remote Port %u,", UIP_HTONS(this_conn->rport));
+    PRINTF(" Remote Port %u,", UIP_HTONS(g_conn->rport));
     
     uip_udp_packet_send(g_conn, buf, len);
 }

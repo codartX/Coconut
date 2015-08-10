@@ -43,25 +43,28 @@
 #include <cc253x.h>
 #include <dma.h>
 
-#define CC2530_ENCCS_MODE_CBC     0x0
-#define CC2530_ENCCS_MODE_CFB     0x1
-#define CC2530_ENCCS_MODE_OFB     0x2
-#define CC2530_ENCCS_MODE_CTR     0x3
-#define CC2530_ENCCS_MODE_ECB     0x4
-#define CC2530_ENCCS_MODE_CBC_MAC 0x5
+#define CC2530_ENCCS_MODE_CBC     0x00
+#define CC2530_ENCCS_MODE_CFB     0x10
+#define CC2530_ENCCS_MODE_OFB     0x20
+#define CC2530_ENCCS_MODE_CTR     0x30
+#define CC2530_ENCCS_MODE_ECB     0x40
+#define CC2530_ENCCS_MODE_CBC_MAC 0x50
 
-#define AES_SETMODE(mode) do { ENCCS &= ~0x70; ENCCS |= mode<<4; } while (0)
+#define AES_SETMODE(mode) do { ENCCS &= ~0x70; ENCCS |= mode; } while (0)
 
 #define CC2530_ENCCS_CMD_ENCRYPT  0x0;
-#define CC2530_ENCCS_CMD_DECRYPT  0x1;
-#define CC2530_ENCCS_CMD_LOAD_KEY 0x2;
-#define CC2530_ENCCS_CMD_LOAD_IV  0x3;
+#define CC2530_ENCCS_CMD_DECRYPT  0x2;
+#define CC2530_ENCCS_CMD_LOAD_KEY 0x4;
+#define CC2530_ENCCS_CMD_LOAD_IV  0x6;
 
-#define AES_SET_CMD(cmd) do { ENCCS &= ~0x06; ENCCS |= cmd<<1; } while (0)
+#define AES_SET_CMD(cmd) do { ENCCS &= ~0x06; ENCCS |= cmd ; } while (0)
 
-#define AES_START() ENCCS |= 0x01
+#define AES_START() ( ENCCS |= 0x01 )
 
-#define AES_COMPLETE() ENCCS &= 0x08
+#define AES_COMPLETE() ( ENCCS &= 0x08 )
+
+#define DMA_CH_AES_IN  1
+#define DMA_CH_AES_OUT 2
 
 /**
  * \brief      Setup an AES key
@@ -75,7 +78,7 @@
  *
  *
  */
-void cc2530_aes_set_key(const uint8_t *key, uint8_t len);
+void cc2530_aes_set_key(uint8_t *key, uint8_t len);
 
 /**
  * \brief      Setup an AES IV
@@ -88,7 +91,7 @@ void cc2530_aes_set_key(const uint8_t *key, uint8_t len);
  *             encrypt/decrypt data.
  *
  */
-void cc2530_aes_set_iv(const uint8_t *iv, uint8_t len);
+void cc2530_aes_set_iv(uint8_t *iv, uint8_t len);
 
 /**
  * \brief        Encrypt data with AES

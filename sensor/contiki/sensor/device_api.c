@@ -3,7 +3,7 @@
  *  Copyright (c) 2014年 Jun Fang. All rights reserved.
  */ 
 
-#include "dev/adc-sensor.h"
+//#include "dev/adc-sensor.h"
 #include "device_api.h"
 #include "main.h"
 
@@ -11,7 +11,7 @@ int32_t get_temperature(resource_value_u *value)
 {
     /* Sensor Values */
     static int rv;
-    static struct sensors_sensor *sensor;
+    //static struct sensors_sensor *sensor;
     static float sane = 0;
     static int dec;
     static float frac;
@@ -20,10 +20,10 @@ int32_t get_temperature(resource_value_u *value)
      * Request some ADC conversions
      * Return value -1 means sensor not available or turned off in conf
      */
-    sensor = sensors_find(ADC_SENSOR);
-    if(!sensor) {
-        return FAIL;
-    }
+    //sensor = sensors_find(ADC_SENSOR);
+    //if(!sensor) {
+    //    return FAIL;
+    //}
     //leds_on(LEDS_RED);
     /*
      * Temperature:
@@ -38,7 +38,8 @@ int32_t get_temperature(resource_value_u *value)
      * T = 25 + ---------
      *              4.5
      */
-    rv = sensor->value(ADC_SENSOR_TYPE_TEMP);
+    //rv = sensor->value(ADC_SENSOR_TYPE_TEMP);
+    rv = 28;
     if(rv == -1) {
         return FAIL;
     }
