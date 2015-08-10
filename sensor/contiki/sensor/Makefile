@@ -5,8 +5,8 @@ HAVE_BANKING=1
 UIP_CONF_IPV6=1
 UIP_CONF_RPL=1
 
-#device-fsdata.c : ./fs/*.*
-#	$(CONTIKI)/tools/makefsdata -C -d ./fs -o device-fsdata.c 
+device-fsdata.c : ./fs/*.*
+	$(CONTIKI)/tools/makefsdata -d ./fs -o device-fsdata.c 
 
 PROJECT_SOURCEFILES += device_api.c device.c object.c resource.c subscriber.c \
                        message.c cJSON.c policy.c crypto.c aes.c \
