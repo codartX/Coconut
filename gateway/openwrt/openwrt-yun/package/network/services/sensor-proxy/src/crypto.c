@@ -159,7 +159,7 @@ uint32_t create_security_server_hello_msg(uint8_t *buf, sensor_session *session)
     msg->security_header.seq = g_seq_num++;
     msg->master_key_version = session->master_key_version;
     
-    if(1 != EVP_EncryptInit_ex(&ctx, EVP_aes_256_cbc(), NULL, session->master_key, NULL)) {
+    if(1 != EVP_EncryptInit_ex(&ctx, EVP_aes_128_cbc(), NULL, session->master_key, NULL)) {
         printf("EVP_EncryptInit_ex error\n");
         return 0;
     }

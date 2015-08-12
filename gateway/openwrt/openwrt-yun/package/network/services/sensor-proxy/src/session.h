@@ -9,9 +9,9 @@
 #include <stdint.h>
 #include <netinet/in.h>
 
-#define DEVICE_KEY_SIZE    32
+#define DEVICE_KEY_SIZE    16
 
-#define DEVICE_PWD_SIZE    32
+#define DEVICE_PWD_SIZE    16
 
 #define DEVICE_ID_SIZE    8
 

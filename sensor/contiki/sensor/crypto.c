@@ -11,6 +11,7 @@
 #include "cfs/cfs-coffee.h"
 #include "lib/random.h"
 #include "device-fs.h"
+#include <cc2420-aes.h>
 
 static network_shared_key_t network_shared_key;
 
@@ -59,6 +60,10 @@ uint8_t set_network_shared_key(uint8_t *key, uint16_t version)
 
 uint32_t encrypt_data_by_network_shared_key(uint8_t *data, uint16_t len, uint8_t *enc_buf)
 {
+    
+    cc2420_aes_set_key(const uint8_t *key, int index);
+    cc2420_aes_cipher(uint8_t *data, int len, int key_index);
+    
     AesCtx ctx;
     int32_t len1;
     

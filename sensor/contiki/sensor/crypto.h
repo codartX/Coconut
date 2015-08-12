@@ -8,7 +8,7 @@
 
 #include "main.h"
 
-#define DEVICE_KEY_SIZE    32
+#define DEVICE_KEY_SIZE    16
 
 typedef struct _network_shared_key_t {
     uint8_t used;
@@ -41,7 +41,7 @@ typedef struct _master_key_t {
  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
  |Master Key Ver |                        Random Number          |
  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
- |                     Random Number (Cont. 32 Bytes)            |
+ |                     Random Number (Cont. 16 Bytes)            |
  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
  |                     Encrypted Password ...
  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
