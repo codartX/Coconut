@@ -11,7 +11,7 @@
 #include "cfs/cfs-coffee.h"
 #include "lib/random.h"
 #include "device-fs.h"
-#include <cc2420-aes.h>
+#include "cc2420-aes.h"
 
 static network_shared_key_t network_shared_key;
 
@@ -58,40 +58,26 @@ uint8_t set_network_shared_key(uint8_t *key, uint16_t version)
     return SUCCESS;
 }
 
-uint32_t encrypt_data_by_network_shared_key(uint8_t *data, uint16_t len, uint8_t *enc_buf)
+uint32_t encrypt_data_by_network_shared_key(uint8_t *data, uint32_t len, uint8_t *enc_buf)
 {
+    uint32_t len1;
     
-    cc2420_aes_set_key(const uint8_t *key, int index);
-    cc2420_aes_cipher(uint8_t *data, int len, int key_index);
-    
-    AesCtx ctx;
-    int32_t len1;
-    
-    if( AesCtxIni(&ctx, master_key.random_num, network_shared_key.key, KEY128, CBC) < 0) {
-        return 0;
-    }
-    
-    len1 = AesEncrypt(&ctx, data, enc_buf, len);
-    if (len1 < 0) {
-        return 0;
-    }
+    AES_SET_CMD(CC2530_ENCCS_MODE_CBC);
+    cc2530_aes_set_key(network_shared_key.key, DEVICE_KEY_SIZE);
+    cc2530_aes_set_iv(master_key.random_num, DEVICE_KEY_SIZE);
+    len1 = cc2530_aes_encrypt(data, len, enc_buf);
     
     return len1;
 }
 
 uint32_t decrypt_data_by_network_shared_key(uint8_t *data, uint16_t len, uint8_t *dec_buf)
 {
-    AesCtx ctx;
-    int32_t len1;
+    uint32_t len1;
     
-    if( AesCtxIni(&ctx, master_key.random_num, network_shared_key.key, KEY128, CBC) < 0) {
-        return 0;
-    }
-    
-    len1 = AesDecrypt(&ctx, data, dec_buf, len);
-    if (len1 < 0) {
-        return 0;
-    }
+    AES_SET_CMD(CC2530_ENCCS_MODE_CBC);
+    cc2530_aes_set_key(network_shared_key.key, DEVICE_KEY_SIZE);
+    cc2530_aes_set_iv(master_key.random_num, DEVICE_KEY_SIZE);
+    len1 = cc2530_aes_decrypt(data, len, dec_buf);
     
     return len1;
 }
@@ -107,7 +93,7 @@ uint8_t generate_master_key()
     }
     
     for (i = 0; i < DEVICE_KEY_SIZE; i++) {
-        master_key.master_key[i] = pwd[i]^master_key.random_num[i];
+        master_key.key[i] = pwd[i]^master_key.random_num[i];
     }
     
     return SUCCESS;
@@ -120,17 +106,12 @@ master_key_t *get_master_key()
 
 uint32_t decrypt_data_by_master_key(uint8_t *data, uint16_t len, uint8_t *dec_buf)
 {
-    AesCtx ctx;
-    int32_t len1;
+    uint32_t len1;
     
-    if( AesCtxIni(&ctx, master_key.random_num, master_key.master_key, KEY128, CBC) < 0) {
-        return 0;
-    }
-    
-    len1 = AesDecrypt(&ctx, data, dec_buf, len);
-    if (len1 < 0) {
-        return 0;
-    }
+    AES_SET_CMD(CC2530_ENCCS_MODE_CBC);
+    cc2530_aes_set_key(master_key.key, DEVICE_KEY_SIZE);
+    cc2530_aes_set_iv(master_key.random_num, DEVICE_KEY_SIZE);
+    len1 = cc2530_aes_decrypt(data, len, dec_buf);
     
     return len1;
 }

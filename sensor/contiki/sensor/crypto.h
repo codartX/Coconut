@@ -19,7 +19,7 @@ typedef struct _network_shared_key_t {
 typedef struct _master_key_t {
     uint8_t version;
     uint8_t random_num[DEVICE_KEY_SIZE];
-    uint8_t master_key[DEVICE_KEY_SIZE];
+    uint8_t key[DEVICE_KEY_SIZE];
 } master_key_t;
 
 /*
