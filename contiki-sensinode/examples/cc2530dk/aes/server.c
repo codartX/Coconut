@@ -80,10 +80,8 @@ tcpip_handler(void)
         PRINT6ADDR(&UIP_IP_BUF->srcipaddr);
         PRINTF("]:%u\n", UIP_HTONS(UIP_UDP_BUF->srcport));
       
-        AES_SET_CMD(CC2530_ENCCS_MODE_CBC);
-        cc2530_aes_set_key(key, 16);
-        cc2530_aes_set_iv(iv, 16);
-        cc2530_aes_decrypt(uip_appdata, len, buf);
+        cc2530_aes_set_key(key);
+        cc2530_aes_decrypt(AES_MODE_CBC, uip_appdata, len, buf, iv);
         PRINTF("MSG:%s", buf);
     }
     return;

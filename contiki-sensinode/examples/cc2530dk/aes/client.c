@@ -66,17 +66,20 @@ static void
 timeout_handler(void)
 {
     static uint8_t count;
-    uint32_t len = 0;
+    uint32_t len = 0, i = 0;
     
     PRINTF("Client to: ");
     PRINT6ADDR(&g_conn->ripaddr);
     
     sprintf(buf, "Hello %d", count++);
     
-    AES_SET_CMD(CC2530_ENCCS_MODE_CBC);
-    cc2530_aes_set_key(key, 16);
-    cc2530_aes_set_iv(iv, 16);
-    len = cc2530_aes_encrypt(buf, strlen(buf), buf);
+    cc2530_aes_set_key(key);
+    len = cc2530_aes_encrypt(AES_MODE_CBC, buf, strlen(buf), buf, iv);
+    PRINTF("Enc data len :%d:", len);
+    for (;i < len; i++) {
+        PRINTF("%x ", buf[i]);
+    }
+    PRINTF("\n");
     
     PRINTF(" Remote Port %u,", UIP_HTONS(g_conn->rport));
     
@@ -91,7 +94,7 @@ PROCESS_THREAD(udp_client_process, ev, data)
     PROCESS_BEGIN();
     PRINTF("UDP client process started\n");
     
-    uip_ip6addr(&ipaddr, 0xaaaa, 0, 0, 0, 0x0215, 0x2000, 0x0002, 0x2145);
+    uip_ip6addr(&ipaddr, 0xaaaa, 0, 0, 0, 0x0212, 0x4b00, 0x0413, 0xdc28);
     g_conn = udp_new(&ipaddr, UIP_HTONS(3000), NULL);
     if(!g_conn) {
         PRINTF("udp_new g_conn error.\n");

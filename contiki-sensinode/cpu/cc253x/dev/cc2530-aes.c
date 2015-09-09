@@ -40,117 +40,137 @@
 #include "contiki.h"
 #include "cc253x.h"
 #include "dev/cc2530-aes.h"
-
-static uint8_t block_buf[16];
+#define DEBUG DEBUG_PRINT
+#include "net/uip-debug.h"
+#include "sys/clock.h"
 
 /*---------------------------------------------------------------------------*/
-static void
-cc2530_dma_aes_in(uint8_t *src, uint8_t len)
+void
+cc2530_aes_set_key(uint8_t *key)
 {
-    dma_conf[DMA_CH_AES_IN].src_h = ((uint16_t)src >> 8) & 0x00FF;
-    dma_conf[DMA_CH_AES_IN].src_l = (uint16_t)src & 0x00FF;
-    dma_conf[DMA_CH_AES_IN].dst_h = ((uint16_t)ENCDI >> 8) & 0x00FF;
-    dma_conf[DMA_CH_AES_IN].dst_l = (uint16_t)ENCDI & 0x00FF;
-    dma_conf[DMA_CH_AES_IN].len_h = DMA_VLEN_LEN;
-    dma_conf[DMA_CH_AES_IN].len_l = len;
-    dma_conf[DMA_CH_AES_IN].wtt = DMA_SINGLE | DMA_T_ENC_DW;
-    dma_conf[DMA_CH_AES_IN].inc_prio = DMA_SRC_INC_1 | DMA_DST_INC_1 | DMA_PRIO_HIGHEST;
-    
-    /* The DMA configuration data structure may reside at any location in
-     * unified memory space, and the address location is passed to the DMA
-     * through DMAxCFGH:DMAxCFGL.
-     */
-    DMA1CFGH = ((uint16_t)&dma_conf[1] >> 8) & 0x00FF;
-    DMA1CFGL = (uint16_t)&dma_conf[1] & 0x00FF;
-    
-    /* Arm the DMA channel, so that a DMA trigger can initiate DMA writing*/
-    DMA_ARM(DMA_CH_AES_IN);
+    uint8_t i;
 
+    AES_SET_CMD(AES_LOAD_KEY);
+    AES_START();
+
+    for(i = 0; i < 16; i++){
+       ENCDI = key[i];
+    }
+
+    return;
 }
 /*---------------------------------------------------------------------------*/
 static void
-cc2530_dma_aes_out(uint8_t *dest, uint8_t len)
+cc2530_aes_set_iv(uint8_t *iv)
 {
-    dma_conf[DMA_CH_AES_OUT].src_h = ((uint16_t)ENCDO >> 8) & 0x00FF;
-    dma_conf[DMA_CH_AES_OUT].src_l = (uint16_t)ENCDO & 0x00FF;
-    dma_conf[DMA_CH_AES_OUT].dst_h = ((uint16_t)dest >> 8) & 0x00FF;
-    dma_conf[DMA_CH_AES_OUT].dst_l = (uint16_t)dest & 0x00FF;
-    dma_conf[DMA_CH_AES_OUT].len_h = DMA_VLEN_LEN;
-    dma_conf[DMA_CH_AES_OUT].len_l = len;
-    dma_conf[DMA_CH_AES_OUT].wtt = DMA_SINGLE | DMA_T_ENC_UP;
-    dma_conf[DMA_CH_AES_OUT].inc_prio = DMA_SRC_INC_1 | DMA_DST_INC_1 | DMA_PRIO_HIGHEST;
-    
-    /* The DMA configuration data structure may reside at any location in
-     * unified memory space, and the address location is passed to the DMA
-     * through DMAxCFGH:DMAxCFGL.
-     */
-    DMA1CFGH = ((uint16_t)&dma_conf[1] >> 8) & 0x00FF;
-    DMA1CFGL = (uint16_t)&dma_conf[1] & 0x00FF;
-    
-    /* Arm the DMA channel, so that a DMA trigger can initiate DMA writing*/
-    DMA_ARM(DMA_CH_AES_OUT);
-}
-/*---------------------------------------------------------------------------*/
-void
-cc2530_aes_set_key(uint8_t *key, uint8_t len)
-{
-    cc2530_dma_aes_in(key, len);
-    AES_SET_CMD(CC2530_ENCCS_CMD_LOAD_KEY);
+    uint8_t i;
+
+    AES_SET_CMD(AES_LOAD_IV);
     AES_START();
-    while (!DMA_STATUS(DMA_CH_AES_IN));
+
+    for(i = 0; i < 16; i++){
+       ENCDI = iv[i];
+    }
+
+    return;
 }
 /*---------------------------------------------------------------------------*/
-void
-cc2530_aes_set_iv(uint8_t *iv, uint8_t len)
+static uint16_t cc2530_aes_operation(uint8_t op,uint8_t *input, uint16_t length, 
+                                 uint8_t *output, uint8_t *iv)
 {
-    cc2530_dma_aes_in(iv, len);
-    AES_SET_CMD(CC2530_ENCCS_CMD_LOAD_IV);
-    AES_START();
-    while (!DMA_STATUS(DMA_CH_AES_IN));
-}
-/*---------------------------------------------------------------------------*/
-uint32_t
-cc2530_aes_encrypt(uint8_t *data, uint32_t len, uint8_t *cipher)
-{
-    uint32_t len1 = 0;
+    uint16_t i;
+    uint8_t j, k;
+    uint8_t mode;
+    uint16_t total_blocks_num;
+    uint16_t converted_blocks;
     
-    while (len1 < len) {
-        if ((len - len1) < 16) {
-            //Just padding 0x0
-            memset(block_buf, 0x0, 16);
-            memcpy(block_buf, data + len1, len - len1);
-            cc2530_dma_aes_in(block_buf, 16);
-        } else {
-            cc2530_dma_aes_in(data + len1, 16);
-        }
-        
-        cc2530_dma_aes_out(cipher + len1, 16);
-        AES_SET_CMD(CC2530_ENCCS_CMD_ENCRYPT);
-        AES_START();
-        while (!AES_COMPLETE());
-        
-        len1 += 16;
+    total_blocks_num = length / 0x10;
+    
+    if((length % 0x10) != 0){
+        // length not multiplum of 16, convert one block extra with zeropadding
+        total_blocks_num++;
     }
     
-    return len1;
+    // Loading the IV.
+    cc2530_aes_set_iv(iv);
+    
+    // Start the operation
+    AES_SET_CMD(op);
+    
+    // Getting the operation mode.
+    mode = ENCCS & 0x70;
+    
+    for(converted_blocks = 0; converted_blocks < total_blocks_num; converted_blocks++){
+        // Starting the conversion.
+        AES_START();
+    
+        i = converted_blocks * 16;
+        // Counter, Output Feedback and Cipher Feedback operates on 4 bytes and not 16 bytes.
+        if((mode == AES_MODE_CFB) || (mode == AES_MODE_OFB) || (mode == AES_MODE_CTR)) {
+    
+            for(j = 0; j < 4; j++){
+                // Writing the input data with zero-padding
+                for(k = 0; k < 4; k++){
+                    ENCDI = ((i + 4*j + k < length) ? input[i + 4*j + k] : 0x00 );
+                }
+    
+                // Read out data for every 4th byte
+                for(k = 0; k < 4; k++){
+                    output[i + 4*j + k] = ENCDO;
+                }
+    
+            }
+        } else if (mode == AES_MODE_CBC_MAC){
+            // Writing the input data with zero-padding
+            for(j = 0; j < 16; j++){
+                ENCDI = ((i + j < length) ? input[i + j] : 0x00 );
+            }
+            // The last block of the CBC-MAC is computed by using CBC mode.
+            if(converted_blocks == total_blocks_num - 2){
+                AES_SET_MODE(AES_MODE_CBC);
+                // wait for data ready
+                clock_delay_usec(1);
+            } else if(converted_blocks == total_blocks_num - 1){
+                // The CBC-MAC does not produce an output on the n-1 first blocks
+                // only the last block is read out
+    
+                // wait for data ready
+                clock_delay_usec(1);
+                for(j = 0; j < 16; j++){
+                    output[j] = ENCDO;
+                }
+            }
+        } else { // ECB or CBC
+           // Writing the input data with zero-padding
+           for(j = 0; j < 16; j++){
+               ENCDI = ((i+j < length) ? input[i+j] : 0x00 );
+           }
+    
+           // wait for data ready
+           clock_delay_usec(1);
+    
+           // Read out data
+           for(j = 0; j < 16; j++){
+               output[i+j] = ENCDO;
+           }
+        }
+    }
+    
+    return converted_blocks * 16; 
+}
+/*---------------------------------------------------------------------------*/
+uint16_t
+cc2530_aes_encrypt(uint8_t mode, uint8_t *data, uint16_t len, uint8_t *cipher, uint8_t *iv)
+{
+    AES_SET_MODE(mode);
+    return cc2530_aes_operation(AES_ENCRYPT, data, len, cipher, iv);
 }
 /*---------------------------------------------------------------------------*/
 /*Make sure cipher size is multiple of 16*/
-uint32_t
-cc2530_aes_decrypt(uint8_t *cipher, uint32_t len, uint8_t *data)
+uint16_t
+cc2530_aes_decrypt(uint8_t mode, uint8_t *cipher, uint16_t len, uint8_t *data, uint8_t *iv)
 {
-    uint32_t len1 = 0;
-    
-    while (len1 < len) {
-        cc2530_dma_aes_in(cipher + len1, 16);
-        cc2530_dma_aes_out(data + len1, 16);
-        AES_SET_CMD(CC2530_ENCCS_CMD_DECRYPT);
-        AES_START();
-        while (!AES_COMPLETE());
-        
-        len1 += 16;
-    }
-    
-    return len1;
+    AES_SET_MODE(mode);
+    return cc2530_aes_operation(AES_DECRYPT, cipher, len, data, iv);
 }
 /*---------------------------------------------------------------------------*/
