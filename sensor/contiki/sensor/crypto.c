@@ -62,10 +62,8 @@ uint32_t encrypt_data_by_network_shared_key(uint8_t *data, uint32_t len, uint8_t
 {
     uint32_t len1;
     
-    AES_SET_CMD(CC2530_ENCCS_MODE_CBC);
-    cc2530_aes_set_key(network_shared_key.key, DEVICE_KEY_SIZE);
-    cc2530_aes_set_iv(master_key.random_num, DEVICE_KEY_SIZE);
-    len1 = cc2530_aes_encrypt(data, len, enc_buf);
+    cc2530_aes_set_key(network_shared_key.key);
+    len1 = cc2530_aes_encrypt(AES_MODE_CBC, data, len, enc_buf, master_key.random_num);
     
     return len1;
 }
@@ -74,10 +72,8 @@ uint32_t decrypt_data_by_network_shared_key(uint8_t *data, uint32_t len, uint8_t
 {
     uint32_t len1;
     
-    AES_SET_CMD(CC2530_ENCCS_MODE_CBC);
-    cc2530_aes_set_key(network_shared_key.key, DEVICE_KEY_SIZE);
-    cc2530_aes_set_iv(master_key.random_num, DEVICE_KEY_SIZE);
-    len1 = cc2530_aes_decrypt(data, len, dec_buf);
+    cc2530_aes_set_key(network_shared_key.key);
+    len1 = cc2530_aes_decrypt(AES_MODE_CBC, data, len, dec_buf, master_key.random_num);
     
     return len1;
 }
@@ -108,10 +104,8 @@ uint32_t decrypt_data_by_master_key(uint8_t *data, uint32_t len, uint8_t *dec_bu
 {
     uint32_t len1;
     
-    AES_SET_CMD(CC2530_ENCCS_MODE_CBC);
-    cc2530_aes_set_key(master_key.key, DEVICE_KEY_SIZE);
-    cc2530_aes_set_iv(master_key.random_num, DEVICE_KEY_SIZE);
-    len1 = cc2530_aes_decrypt(data, len, dec_buf);
+    cc2530_aes_set_key(master_key.key);
+    len1 = cc2530_aes_decrypt(AES_MODE_CBC, data, len, dec_buf, master_key.random_num);
     
     return len1;
 }
