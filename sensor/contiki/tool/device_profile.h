@@ -6,6 +6,8 @@
 #ifndef _DEVICE_PROFILE_H
 #define _DEVICE_PROFILE_H
 
-void create_device();
+#include <stdbool.h>
+
+bool create_device();
 
 #endif

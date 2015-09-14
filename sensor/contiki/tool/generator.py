@@ -34,7 +34,7 @@ HEAD_FILES_BLOCK ="""\
 
 #function name block
 FUNC_NAME_BLOCK ="""\
-void create_device()
+bool create_device()
 """
 
 #device init block
@@ -47,7 +47,8 @@ DEVICE_INIT_BLOCK ="""\
     retval = device_init("<device_id>");
     if (retval == FAIL) {
         PRINTF("device init fail\\n");
-        return;
+        device_deinit();
+        return false;
     }
 
 """
@@ -58,7 +59,7 @@ OBJECT_BLOCK ="""\
     obj_instance = object_instance_alloc();
     if (!obj_instance) {
         device_deinit();
-        return;
+        return false;
     }
 
     object_instance_init(obj_instance, "<object_name>", <object_id>);
@@ -71,7 +72,7 @@ RESOURCE_ALLOC_BLOCK ="""\
     res_instance = resource_instance_alloc();
     if (!res_instance) {
         device_deinit();
-        return;
+        return false;
     }
 
 """
@@ -80,12 +81,12 @@ RESOURCE_ADD_BLOCK ="""\
     if (!resource_instance_init(res_instance, "<resource_name>", <resource_id>, 
                                 &value, <get_func>, <set_func>)) {
         device_deinit();
-        return;
+        return false;
     }
 
     if (!object_instance_insert_resource(obj_instance, res_instance)) {
         device_deinit();
-        return;
+        return false;
     }
 
 """
@@ -188,6 +189,7 @@ def main(argv):
                                }
                 f.write(replace_all(RESOURCE_ADD_BLOCK, replacements)) 
 
+    f.write('    return true;\n')
     f.write('}\n')
     f.flush()
     f.close()
