@@ -19,6 +19,9 @@
 #include "crypto.h"
 #include "device-fs.h"
 
+#define DEBUG DEBUG_PRINT
+#include "net/uip-debug.h"
+
 #define COCONUT_UDP_CLIENT_PORT 8765
 #define COCONUT_UDP_SERVER_PORT 5678
 
@@ -36,6 +39,17 @@ uint8_t reg_success = 0;
 /*---------------------------------------------------------------------------*/
 PROCESS(coconut_sensor_process, "Coconut sensor process");
 AUTOSTART_PROCESSES(&coconut_sensor_process);
+/*---------------------------------------------------------------------------*/
+static void debug_print_msg(uint8_t *msg, uint32_t len)
+{
+    uint16_t i;
+
+    PRINTF("Message:");
+    for(i = 0; i < len; i++) {
+        PRINTF("%x ", msg[i]);
+    }
+    PRINTF("\n");
+}
 /*---------------------------------------------------------------------------*/
 void send_msg(uint8_t *data, uint32_t len, uip_ipaddr_t *peer_ipaddr)
 {
@@ -811,6 +825,7 @@ PROCESS_THREAD(coconut_sensor_process, ev, data)
                 generate_master_key();
                 len = create_security_client_hello_msg(output_buf);
                 if (len){
+                    debug_print_msg(output_buf, len);
                     send_msg_to_gateway(output_buf, len);
                 }
             } else if (!reg_success) {
@@ -818,6 +833,7 @@ PROCESS_THREAD(coconut_sensor_process, ev, data)
                 etimer_restart(&et);
                 len = create_new_device_msg(output_buf, MAX_PAYLOAD_LEN, TYPE_REQUEST);
                 if (len){
+                    debug_print_msg(output_buf, len);
                     send_msg_to_gateway(output_buf, len);
                 }
             }
