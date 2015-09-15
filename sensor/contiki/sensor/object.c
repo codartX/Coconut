@@ -9,35 +9,6 @@
 #include <string.h>
 #include "object.h"
 
-object_instance_t *object_instance_alloc()
-{
-    object_instance_t *instance = NULL;
-    instance = (object_instance_t *)malloc(sizeof(object_instance_t));
-    if (!instance) {
-        PRINTF("ipso object instance alloc fail!\n");
-        return NULL;
-    }
-
-    return instance;
-}
-
-void object_instance_free(object_instance_t *instance)
-{
-    resource_instance_t *tmp = NULL, *tmp1 = NULL;
-
-    if (instance) {
-        tmp = instance->res_list;
-        while(tmp) {
-            tmp1 = tmp->next;
-            resource_instance_free(tmp);
-            tmp = tmp1;
-        }
-        free(instance);
-    }
-
-    return;
-}
-
 int32_t object_instance_init(object_instance_t *object, uint8_t *name, uint32_t object_id)
 {
     if (object && name) {
@@ -72,33 +43,6 @@ int32_t object_instance_insert_resource(object_instance_t *object, resource_inst
     }
 
     return FAIL;
-}
-
-int32_t object_instance_remove_resource(object_instance_t *object, uint8_t *resource_name)
-{
-    resource_instance_t *cur = NULL, *pre = NULL;
-
-    if (object && resource_name) {
-        cur = object->res_list;
-        while(cur) {
-            if(strncmp(cur->name, resource_name, MAX_RESOURCE_NAME_LEN) == 0) {
-                if (!pre) {
-                    object->res_list = cur->next;
-                } else {
-                    pre->next = cur->next;
-                }
-                resource_instance_free(cur);
-                return SUCCESS;
-            }
-            pre = cur;
-            cur = cur->next;
-        }
-    } else {
-        PRINTF("invalid object or resource name\n");
-        return FAIL;
-    }
-
-    return SUCCESS;
 }
 
 resource_instance_t *object_instance_find_resource(object_instance_t *object, uint8_t *resource_name)

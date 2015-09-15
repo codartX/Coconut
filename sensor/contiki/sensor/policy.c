@@ -7,11 +7,22 @@
 #include <stdio.h>
 #include "policy.h"
 
+MEMB(policy_memb, dev_policy_t, 1);
+MEMB(policy_cond_memb, policy_cond_t, 1);
+MEMB(policy_action_memb, policy_action_t, 1);
+
+void policy_mem_pool_init()
+{
+    memb_init(&policy_memb); 
+    memb_init(&policy_cond_memb); 
+    memb_init(&policy_action_memb); 
+}
+
 policy_cond_t *dev_policy_cond_alloc()
 {
     policy_cond_t *tmp = NULL;
 
-    tmp = (policy_cond_t *)malloc(sizeof(policy_cond_t));
+    tmp = (policy_cond_t *)memb_alloc(&policy_cond_memb);
     if(tmp) {
         return tmp;
     }
@@ -21,7 +32,7 @@ policy_cond_t *dev_policy_cond_alloc()
 
 void dev_policy_cond_free(policy_cond_t *cond)
 {
-    free(cond); 
+    memb_free(&policy_cond_memb, cond); 
 }
 
 int32_t dev_policy_cond_resource_init(policy_cond_t *cond, uip_ip6addr_t *ip6_addr, 
@@ -77,7 +88,7 @@ policy_action_t *dev_policy_action_alloc()
 {
     policy_action_t *tmp = NULL;
 
-    tmp = (policy_action_t *)malloc(sizeof(policy_action_t));
+    tmp = (policy_action_t *)memb_alloc(&policy_action_memb);
     if(tmp) {
         return tmp;
     }
@@ -88,7 +99,7 @@ policy_action_t *dev_policy_action_alloc()
 
 void dev_policy_action_free(policy_action_t *action)
 {
-    free(action);
+    memb_free(&policy_action_memb, action);
 }
 
 int32_t dev_policy_action_resource_init(policy_action_t *action, resource_instance_t *res, 
@@ -124,7 +135,7 @@ dev_policy_t *dev_policy_alloc()
 {
     dev_policy_t *tmp = NULL;
 
-    tmp = (dev_policy_t *)malloc(sizeof(dev_policy_t));
+    tmp = (dev_policy_t *)memb_alloc(&policy_memb);
     if(tmp) {
         return tmp;
     }
@@ -141,18 +152,18 @@ void dev_policy_free(dev_policy_t *policy)
     cond = policy->cond_list;
     while (cond) {
         cond1 = cond->next;
-        free(cond);
+        memb_free(&policy_cond_memb, cond);
         cond = cond1;
     }
 
     action = policy->action_list;
     while (action) {
         action1 = action->next;
-        free(action);
+        memb_free(&policy_action_memb, action);
         action = action1; 
     }
 
-    free(policy);
+    memb_free(&policy_memb, policy);
 }
 
 int32_t dev_policy_init(dev_policy_t *policy, uint32_t policy_id)

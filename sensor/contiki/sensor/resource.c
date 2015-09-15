@@ -5,7 +5,6 @@
 
 #include <stddef.h>
 #include <stdio.h>
-#include <malloc.h>
 #include "resource.h"
 #include "ipso_resource.h"
 
@@ -20,35 +19,6 @@ resource_type_t *find_resource_type(uint32_t resource_id)
     }
 
     return NULL;
-}
-
-resource_instance_t *resource_instance_alloc()
-{
-    resource_instance_t *instance = NULL;
-    instance = (resource_instance_t *)malloc(sizeof(resource_instance_t));
-    if (!instance) {
-        PRINTF("ipso resource instance alloc fail!\n");
-        return NULL;
-    }
-
-    return instance;
-}
-
-void resource_instance_free(resource_instance_t *instance)
-{
-    res_subscriber_t *subscriber = NULL, *tmp = NULL;
-
-    if (instance) {
-        subscriber = instance->sub_list;
-        while(subscriber) {
-            tmp = subscriber->next;
-            subscriber_free(subscriber);
-            subscriber = tmp; 
-        }
-        free(instance);
-    }
-
-    return;
 }
 
 int32_t resource_instance_init(resource_instance_t *instance, uint8_t *name, uint32_t resource_id, resource_value_u *value, 

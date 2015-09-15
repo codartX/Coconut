@@ -7,12 +7,13 @@
 import sys
 import getopt
 import json
+import mmap
 import ipso_resources
 import ipso_objects
 
 #copy right block
 
-COPY_RIGHT_BLOCK ="""\
+COPY_RIGHT_BLOCK ='''\
 /*
  *  Created by Jun Fang on 14-11-24.
  *  Copyright (c) 2014年 Jun Fang. All rights reserved.
@@ -20,25 +21,25 @@ COPY_RIGHT_BLOCK ="""\
  *  Don't modify this file, auto generated.
  */
 
-"""
+'''
 
 #head files block
 
-HEAD_FILES_BLOCK ="""\
+HEAD_FILES_BLOCK ='''\
 #include "main.h"
 #include "device_profile.h"
 #include "device.h"
 #include "device_api.h"
 
-"""
+'''
 
 #function name block
-FUNC_NAME_BLOCK ="""\
+FUNC_NAME_BLOCK ='''\
 bool create_device()
-"""
+'''
 
 #device init block
-DEVICE_INIT_BLOCK ="""\
+DEVICE_INIT_BLOCK ='''\
     int32_t retval = FAIL;
     resource_instance_t *res_instance = NULL;
     object_instance_t *obj_instance = NULL;
@@ -47,49 +48,41 @@ DEVICE_INIT_BLOCK ="""\
     retval = device_init("<device_id>");
     if (retval == FAIL) {
         PRINTF("device init fail\\n");
-        device_deinit();
         return false;
     }
 
-"""
+'''
 
 #object block
 
-OBJECT_BLOCK ="""\
-    obj_instance = object_instance_alloc();
-    if (!obj_instance) {
-        device_deinit();
+OBJECT_BLOCK ='''\
+
+    obj_instance = &<object_var>;
+
+    object_instance_init(obj_instance, "<object_name>", <object_id>);
+   
+    if (!device_insert_object(obj_instance)) {
         return false;
     }
 
-    object_instance_init(obj_instance, "<object_name>", <object_id>);
-
-"""
+'''
 
 #resource block
 
-RESOURCE_ALLOC_BLOCK ="""\
-    res_instance = resource_instance_alloc();
-    if (!res_instance) {
-        device_deinit();
-        return false;
-    }
+RESOURCE_BLOCK ='''\
 
-"""
+    res_instance = &<resource_var>;
 
-RESOURCE_ADD_BLOCK ="""\
     if (!resource_instance_init(res_instance, "<resource_name>", <resource_id>, 
                                 &value, <get_func>, <set_func>)) {
-        device_deinit();
         return false;
     }
 
     if (!object_instance_insert_resource(obj_instance, res_instance)) {
-        device_deinit();
         return false;
     }
 
-"""
+'''
 
 def replace_all(text, dic):
     for i, j in dic.iteritems():
@@ -120,6 +113,32 @@ def main(argv):
 
     f.write(COPY_RIGHT_BLOCK)
     f.write(HEAD_FILES_BLOCK)
+
+    for object in json_data['objects']:
+        if not 'object_id' in object:
+            print 'No object id'
+            return
+        
+        if not 'object_name' in object:
+            if not object['object_id'] in ipso_resources.IPSO_OBJECTS:
+                print 'No object name'
+                return
+            object_name = ipso_objects.IPSO_OBJECTS[object['object_id']]['Object Name']
+        else:
+            object_name = object['object_name']
+        
+        f.write('object_instance_t g_object_' + object_name.replace(' ', '_').lower() + ';\n')
+
+        for resource in object['resources']:
+            if resource['resource_id'] in ipso_resources.IPSO_RESOURCES:
+                if not 'resource_name' in resource:
+                    resource_name = ipso_resources.IPSO_RESOURCES[resource['resource_id']]['Resource Name']
+                else:
+                    resource_name = resource['resource_name']
+        
+                f.write('resource_instance_t g_resource_' + resource_name.replace(' ', '_').lower() + ';\n')
+
+    f.write('\n')
     f.write(FUNC_NAME_BLOCK)
     f.write('{\n')
 
@@ -139,13 +158,12 @@ def main(argv):
         else:
             object_name = object['object_name']
 
-        replacements = {'<object_id>': str(object['object_id']), '<object_name>': str(object_name)}
+        replacements = {'<object_var>': 'g_object_' + object_name.replace(' ', '_').lower(), 
+                        '<object_id>': str(object['object_id']), '<object_name>': str(object_name)}
         f.write(replace_all(OBJECT_BLOCK, replacements))
 
         for resource in object['resources']:
             if resource['resource_id'] in ipso_resources.IPSO_RESOURCES:
-                f.write(RESOURCE_ALLOC_BLOCK)
-
                 if not 'get_func' in resource:
                     get_func = 'NULL'
                 else:
@@ -182,12 +200,13 @@ def main(argv):
                     resource_name = resource['resource_name']
 
                 replacements = {
+                                   '<resource_var>': 'g_resource_' + resource_name.replace(' ', '_').lower(), 
                                    '<resource_id>': str(resource['resource_id']), 
                                    '<resource_name>': str(resource_name),
                                    '<get_func>': str(get_func),
                                    '<set_func>': str(set_func),
                                }
-                f.write(replace_all(RESOURCE_ADD_BLOCK, replacements)) 
+                f.write(replace_all(RESOURCE_BLOCK, replacements)) 
 
     f.write('    return true;\n')
     f.write('}\n')

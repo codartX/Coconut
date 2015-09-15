@@ -26,7 +26,6 @@
 #define COCONUT_UDP_SERVER_PORT 5678
 
 uint8_t output_buf[MAX_PAYLOAD_LEN];
-uint8_t tmp_buf[MAX_PAYLOAD_LEN];
 
 static struct uip_udp_conn *client_conn;
 static uip_ipaddr_t server_ipaddr;
@@ -654,9 +653,9 @@ message_handler(void)
             if (msg->master_key_version != get_master_key()->version) {
                 return;
             }
-            len1 = decrypt_data_by_master_key(uip_appdata + sizeof(security_server_hello_msg_t), msg->security_header.len + 1, tmp_buf);
+            len1 = decrypt_data_by_master_key(uip_appdata + sizeof(security_server_hello_msg_t), msg->security_header.len + 1, output_buf);
             if (len1 == DEVICE_KEY_SIZE) {
-                if (set_network_shared_key(tmp_buf, security_header->key_version)) {
+                if (set_network_shared_key(output_buf, security_header->key_version)) {
                     auth_success = 1;
                 }
             }
@@ -674,12 +673,12 @@ message_handler(void)
             auth_success = 0;
             return;
         } else if (security_header->content_type == SECURITY_DATA) {
-            len1 = decrypt_data_by_network_shared_key(uip_appdata, len, tmp_buf);
+            len1 = decrypt_data_by_network_shared_key(uip_appdata, len, output_buf);
             if (!len1) {
                 PRINTF("Decrypt Error");
                 return;
             }
-            data = tmp_buf;
+            data = output_buf;
             len = len1;
             
             if (len >= sizeof(msg_header_t)) {
@@ -792,56 +791,68 @@ PROCESS_THREAD(coconut_sensor_process, ev, data)
 
     print_local_addresses();
     
+    //objects_mem_pool_init(); 
+    //resources_mem_pool_init(); 
+    //subscribers_mem_pool_init(); 
+    //policy_mem_pool_init(); 
+
     device_fs_init(); 
 
-    if (crypto_init()) {
+    if (!crypto_init()) {
         PRINTF("Crypto init fail\n");
         PROCESS_EXIT();
     }
 
-    /*create device, and init*/
-    create_device();
+    PRINTF("Crypto init Done\n");
 
-    /* new connection with remote host */
-    client_conn = udp_new(NULL, UIP_HTONS(COCONUT_UDP_SERVER_PORT), NULL);
-    if(client_conn == NULL) {
-        PRINTF("No UDP connection available, exiting the process!\n");
+    /*create device, and init*/
+    if (!create_device()) {
+        PRINTF("Device init fail\n");
         PROCESS_EXIT();
     }
-    udp_bind(client_conn, UIP_HTONS(COCONUT_UDP_CLIENT_PORT));
 
-    PRINTF("Created a connection with the server ");
-    PRINT6ADDR(&client_conn->ripaddr);
-    PRINTF(" local/remote port %u/%u\n",
-          UIP_HTONS(client_conn->lport), UIP_HTONS(client_conn->rport));
+    PRINTF("Device create done\n");
 
-    etimer_set(&et, SEND_INTERVAL);
-    
-    while(1) {
-        PROCESS_YIELD();
-        if(etimer_expired(&et)) {
-            if (!auth_success) {
-                etimer_restart(&et);
-                generate_master_key();
-                len = create_security_client_hello_msg(output_buf);
-                if (len){
-                    debug_print_msg(output_buf, len);
-                    send_msg_to_gateway(output_buf, len);
-                }
-            } else if (!reg_success) {
-                /*send register*/
-                etimer_restart(&et);
-                len = create_new_device_msg(output_buf, MAX_PAYLOAD_LEN, TYPE_REQUEST);
-                if (len){
-                    debug_print_msg(output_buf, len);
-                    send_msg_to_gateway(output_buf, len);
-                }
-            }
-        }
-        if(ev == tcpip_event) {
-            message_handler();
-        }
-    }
+    ///* new connection with remote host */
+    //client_conn = udp_new(NULL, UIP_HTONS(COCONUT_UDP_SERVER_PORT), NULL);
+    //if(client_conn == NULL) {
+    //    PRINTF("No UDP connection available, exiting the process!\n");
+    //    PROCESS_EXIT();
+    //}
+    //udp_bind(client_conn, UIP_HTONS(COCONUT_UDP_CLIENT_PORT));
+
+    //PRINTF("Created a connection with the server ");
+    //PRINT6ADDR(&client_conn->ripaddr);
+    //PRINTF(" local/remote port %u/%u\n",
+    //      UIP_HTONS(client_conn->lport), UIP_HTONS(client_conn->rport));
+
+    //etimer_set(&et, SEND_INTERVAL);
+    //
+    //while(1) {
+    //    PROCESS_YIELD();
+    //    if(etimer_expired(&et)) {
+    //        if (!auth_success) {
+    //            etimer_restart(&et);
+    //            generate_master_key();
+    //            len = create_security_client_hello_msg(output_buf);
+    //            if (len){
+    //                debug_print_msg(output_buf, len);
+    //                send_msg_to_gateway(output_buf, len);
+    //            }
+    //        } else if (!reg_success) {
+    //            /*send register*/
+    //            etimer_restart(&et);
+    //            len = create_new_device_msg(output_buf, MAX_PAYLOAD_LEN, TYPE_REQUEST);
+    //            if (len){
+    //                debug_print_msg(output_buf, len);
+    //                send_msg_to_gateway(output_buf, len);
+    //            }
+    //        }
+    //    }
+    //    if(ev == tcpip_event) {
+    //        message_handler();
+    //    }
+    //}
 
     PROCESS_END();
 }

@@ -10,8 +10,8 @@
 #include "main.h"
 #include "subscriber.h"
 
-#define MAX_RESOURCE_NAME_LEN 64
-#define MAX_RESOURCE_STR_VALUE_LEN 64
+#define MAX_RESOURCE_NAME_LEN 8
+#define MAX_RESOURCE_STR_VALUE_LEN 8
 
 typedef enum _resource_access_type {
     ReadOnly,
@@ -57,10 +57,6 @@ typedef struct _resource_instance_t {
 extern resource_type_t resource_types[];
 
 resource_type_t *find_resource_type(uint32_t resource_id);
-
-resource_instance_t *resource_instance_alloc();
-
-void resource_instance_free(resource_instance_t *instance);
 
 int32_t resource_instance_init(resource_instance_t *instance, uint8_t *name, uint32_t resource_id, resource_value_u *value, 
                                get_resource_value_func get_func, set_resource_value_func set_func);

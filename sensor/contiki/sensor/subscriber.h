@@ -8,6 +8,7 @@
 
 #include "net/uip.h"
 #include "main.h"
+#include "lib/memb.h"
 
 #define CONDITION_TYPE_PERIOD          0
 #define CONDITION_TYPE_EXPIRE          1
@@ -44,6 +45,8 @@ typedef struct _res_subscriber_t {
     condition_t condition;
     struct ctimer timer;
 } res_subscriber_t;
+
+void subscribers_mem_pool_init();
 
 res_subscriber_t *subscriber_alloc();
 

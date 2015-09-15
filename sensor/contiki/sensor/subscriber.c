@@ -3,11 +3,17 @@
  *  Copyright (c) 2014年 Jun Fang. All rights reserved.
  */
 
-#include <malloc.h>
 #include "subscriber.h"
 #include "message.h"
 #include "resource.h"
 #include <time.h>
+
+MEMB(subscribers_memb, res_subscriber_t, 4);
+
+void subscribers_mem_pool_init()
+{
+    memb_init(&subscribers_memb); 
+}
 
 static void timeout_handler(void *arg)
 {
@@ -70,7 +76,7 @@ res_subscriber_t *subscriber_alloc()
 {
     res_subscriber_t *sub = NULL;
 
-    sub = (res_subscriber_t *)malloc(sizeof(res_subscriber_t));
+    sub = (res_subscriber_t *)memb_alloc(&subscribers_memb);
     if (sub) {
         return sub;
     }
@@ -82,7 +88,7 @@ void subscriber_free(res_subscriber_t *subscriber)
 {
     ctimer_stop(&subscriber->timer);
     
-    free(subscriber);
+    memb_free(&subscribers_memb, subscriber);
 }
 
 int32_t subscriber_period_type_init(res_subscriber_t *subscriber, uip_ip6addr_t *addr, 

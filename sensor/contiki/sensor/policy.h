@@ -8,6 +8,7 @@
 
 #include "net/uip.h"
 #include "main.h"
+#include "lib/memb.h"
 #include "subscriber.h"
 #include "object.h"
 
@@ -54,6 +55,8 @@ typedef struct _dev_policy_t {
     policy_cond_t *cond_list;
     policy_action_t *action_list; 
 } dev_policy_t;
+
+void policy_mem_pool_init();
 
 policy_cond_t *dev_policy_cond_alloc();
 

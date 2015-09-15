@@ -22,11 +22,7 @@ extern device_t g_device;
 
 int32_t device_init(uint8_t *device_id);
 
-void device_deinit();
-
 int32_t device_insert_object(object_instance_t *object);
-
-int32_t device_remove_object(uint8_t *object_name);
 
 object_instance_t *device_find_object(uint8_t *object_name);
 

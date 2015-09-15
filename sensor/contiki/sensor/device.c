@@ -22,30 +22,6 @@ int32_t device_init(uint8_t *device_id)
     return FAIL;
 }
 
-void device_deinit()
-{
-    object_instance_t *obj = g_device.obj_list, *next_obj = NULL;
-    dev_policy_t *policy = g_device.policy_list, *next_policy = NULL; 
-
-    while (obj) {
-        next_obj = obj->next;
-        object_instance_free(obj);
-        obj = next_obj;
-    }
-    g_device.obj_list = NULL;
-
-    while (policy) {
-        next_policy = policy->next;
-        dev_policy_free(policy);
-        policy = next_policy;
-    }
-    g_device.policy_list = NULL;
-
-    memset(g_device.device_id, 0x0, DEV_ID_SIZE);
-
-    return;
-}
-
 int32_t device_insert_object(object_instance_t *object)
 {
     object_instance_t *tmp = NULL;
@@ -66,34 +42,6 @@ int32_t device_insert_object(object_instance_t *object)
     }
 
     return FAIL;
-}
-
-int32_t device_remove_object(uint8_t *object_name)
-{
-    object_instance_t *cur = NULL, *pre = NULL;
-
-    if (object_name) {
-        cur = g_device.obj_list;
-        while(cur) {
-            if(strncmp(cur->name, object_name, MAX_OBJECT_NAME_LEN) == 0) {
-                if (!pre) {
-                    g_device.obj_list = cur->next;
-                } else {
-                    pre->next = cur->next;
-                }
-                object_instance_free(cur);
-                g_device.timestamp = (uint32_t)time(NULL);
-                return SUCCESS;
-            }
-            pre = cur;
-            cur = cur->next;
-        }
-    } else {
-        PRINTF("invalid device or object name\n");
-        return FAIL;
-    }
-
-    return SUCCESS;
 }
 
 object_instance_t *device_find_object(uint8_t *object_name)

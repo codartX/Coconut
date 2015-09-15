@@ -2,63 +2,27 @@
    "device_id": "0123456789ABCDEF0",
    "objects": [
        {
-           "object_name": "Device Information",
+           "object_name": "DevInfo",
            "object_id": 3100,
            "resources": [
                {
                    "resource_id": 5105,
                    "value": "Temperature Sensor"
-               },
-               {
-                   "resource_id": 5100,
-                   "value": "Cisco"
-               },
-               {
-                   "resource_id": 5101,
-                   "value": "NHK1"
-               },
-               {
-                   "resource_id": 5102,
-                   "value": "01"
-               },
-               {
-                   "resource_id": 5103,
-                   "value": "01"
-               },
-               {
-                   "resource_id": 5104,
-                   "value": "e23344fa11"
-               },
-               {
-                   "resource_id": 5106,
-                   "value": "Battery"
-               },
-               {
-                   "resource_id": 5107,
-                   "value": 5
                }
            ]
        },
        {
-           "object_name": "Temperature Sensor",
+           "object_name": "Temp",
            "object_id": 3303,
            "resources": [
                {
-                   "resource_name": "Temperature",
+                   "resource_name": "Temp",
                    "resource_id": 5700,
                    "get_func": "get_temperature"
                },
                {
                    "resource_id": 5701,
                    "value": "C"
-               },
-               {
-                   "resource_id": 5601,
-                   "value": -20.0
-               },
-               {
-                   "resource_id": 5602,
-                   "value": 50.0
                }
            ]
        }
