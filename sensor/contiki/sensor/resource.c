@@ -21,15 +21,16 @@ resource_type_t *find_resource_type(uint32_t resource_id)
     return NULL;
 }
 
-int32_t resource_instance_init(resource_instance_t *instance, uint8_t *name, uint32_t resource_id, resource_value_u *value, 
-                               get_resource_value_func get_func, set_resource_value_func set_func)
+int32_t resource_instance_init(resource_instance_t *instance, const uint8_t *name, uint32_t resource_id, 
+                               resource_value_u *value, get_resource_value_func get_func, 
+                               set_resource_value_func set_func)
 {
     resource_type_t *resource_type = NULL;
 
     if (instance && name) {
         resource_type = find_resource_type(resource_id);
         if (resource_type) {
-            strncpy(instance->name, name, MAX_RESOURCE_NAME_LEN);
+            instance->name = name;
             instance->resource_type = resource_type;
             instance->next = NULL;
             if (value) {

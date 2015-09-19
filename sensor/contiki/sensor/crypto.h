@@ -126,8 +126,6 @@ uint8_t set_network_shared_key(uint8_t *key, uint16_t version);
 
 network_shared_key_t *get_network_shared_key();
 
-uint8_t generate_master_key();
-
 master_key_t *get_master_key();
 
 uint32_t decrypt_data_by_master_key(uint8_t *data, uint32_t len, uint8_t *dec_buf);

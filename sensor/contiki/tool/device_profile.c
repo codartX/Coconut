@@ -38,7 +38,8 @@ bool create_device()
         return false;
     }
 
-    strcpy(value.string_value, "Temperature Sensor");
+    strncpy(value.string_value, "Temperature Sensor", MAX_RESOURCE_STR_VALUE_LEN - 1);
+    value.string_value[MAX_RESOURCE_STR_VALUE_LEN] = '\0';
 
     res_instance = &g_resource_name;
 
@@ -73,7 +74,8 @@ bool create_device()
         return false;
     }
 
-    strcpy(value.string_value, "C");
+    strncpy(value.string_value, "C", MAX_RESOURCE_STR_VALUE_LEN - 1);
+    value.string_value[MAX_RESOURCE_STR_VALUE_LEN] = '\0';
 
     res_instance = &g_resource_units;
 

@@ -10,17 +10,15 @@
 #include "resource.h"
 #include "ipso_object.h"
 
-#define MAX_OBJECT_NAME_LEN 8
-
 typedef struct _object_instance_t {
     struct _object_instance_t *next;
     void *parent_dev;
-    uint8_t name[MAX_OBJECT_NAME_LEN];
+    const uint8_t *name;
     uint32_t object_id;
     resource_instance_t *res_list;
 } object_instance_t;
 
-int32_t object_instance_init(object_instance_t *object, uint8_t *name, uint32_t object_id);
+int32_t object_instance_init(object_instance_t *object, const uint8_t *name, uint32_t object_id);
 
 int32_t object_instance_insert_resource(object_instance_t *object, resource_instance_t *resource);
 

@@ -21,15 +21,15 @@ typedef struct _policy_cond_t {
     uint8_t type;
     uip_ip6addr_t ip6_addr;
     uint8_t device_id[DEV_ID_SIZE];
-    uint8_t obj_name[MAX_OBJECT_NAME_LEN];
-    uint8_t res_name[MAX_RESOURCE_NAME_LEN];
+    const uint8_t *obj_name;
+    uint8_t *res_name;
     condition_t cond; 
 } policy_cond_t;
 
 #define POLICY_ACTION_RESOURCE    0
 #define POLICY_ACTION_MESSAGE     1
 
-#define POLICY_ACTION_MESSAGE_LEN 32
+#define POLICY_ACTION_MESSAGE_LEN 8
 
 union policy_action_u {
     struct resource_op_t {
@@ -63,8 +63,8 @@ policy_cond_t *dev_policy_cond_alloc();
 void dev_policy_cond_free(policy_cond_t *cond);
 
 int32_t dev_policy_cond_resource_init(policy_cond_t *cond, uip_ip6addr_t *ip6_addr, 
-                                      uint8_t *device_id, uint8_t *obj_name, 
-                                      uint8_t *res_name, enum operation_e op, 
+                                      uint8_t *device_id, const uint8_t *obj_name, 
+                                      const uint8_t *res_name, enum operation_e op, 
                                       cond_value_u *value);
 
 int32_t dev_policy_cond_expire_time_init(policy_cond_t *cond, uint32_t exp_timestamp);

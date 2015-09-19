@@ -181,7 +181,8 @@ def main(argv):
                      
                 elif resource['value']:
                     if resource_desc['Type'] == 'String':
-                        f.write('    strcpy(value.string_value, "' + str(resource['value']) + '");\n')
+                        f.write('    strncpy(value.string_value, "' + str(resource['value']) + '", MAX_RESOURCE_STR_VALUE_LEN - 1);\n')
+                        f.write('    value.string_value[MAX_RESOURCE_STR_VALUE_LEN] = \'\\0\';\n')
                     elif resource_desc['Type'] == 'Float':
                         f.write('    value.float_value = ' + str(float(resource['value'])) + ';\n')
                     elif resource_desc['Type'] == 'Integer':

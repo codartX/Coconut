@@ -9,10 +9,10 @@
 #include <string.h>
 #include "object.h"
 
-int32_t object_instance_init(object_instance_t *object, uint8_t *name, uint32_t object_id)
+int32_t object_instance_init(object_instance_t *object, const uint8_t *name, uint32_t object_id)
 {
     if (object && name) {
-        strncpy(object->name, name, MAX_OBJECT_NAME_LEN);
+        object->name = name;
         object->object_id = object_id;
         object->res_list = NULL;
         return SUCCESS;
@@ -28,7 +28,7 @@ int32_t object_instance_insert_resource(object_instance_t *object, resource_inst
     if (object && resource) {
         tmp = object->res_list;
         while(tmp) {
-            if(strncmp(tmp->name, resource->name, MAX_RESOURCE_NAME_LEN) == 0) {
+            if(strcmp(tmp->name, resource->name) == 0) {
                 PRINTF("already has the same name resource\n");
                 return 0;
             }
@@ -52,7 +52,7 @@ resource_instance_t *object_instance_find_resource(object_instance_t *object, ui
     if (object && resource_name) {
         tmp = object->res_list;
         while(tmp) {
-            if(strncmp(tmp->name, resource_name, MAX_RESOURCE_NAME_LEN) == 0) {
+            if(strcmp(tmp->name, resource_name) == 0) {
                 return tmp;
             }
             tmp = tmp->next;

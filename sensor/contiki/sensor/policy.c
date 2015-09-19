@@ -7,9 +7,9 @@
 #include <stdio.h>
 #include "policy.h"
 
-MEMB(policy_memb, dev_policy_t, 1);
-MEMB(policy_cond_memb, policy_cond_t, 1);
-MEMB(policy_action_memb, policy_action_t, 1);
+MEMB(policy_memb, dev_policy_t, 2);
+MEMB(policy_cond_memb, policy_cond_t, 2);
+MEMB(policy_action_memb, policy_action_t, 2);
 
 void policy_mem_pool_init()
 {
@@ -36,8 +36,8 @@ void dev_policy_cond_free(policy_cond_t *cond)
 }
 
 int32_t dev_policy_cond_resource_init(policy_cond_t *cond, uip_ip6addr_t *ip6_addr, 
-                                 uint8_t *device_id, uint8_t *obj_name, 
-                                 uint8_t *res_name, enum operation_e op, 
+                                 uint8_t *device_id, const uint8_t *obj_name, 
+                                 const uint8_t *res_name, enum operation_e op, 
                                  cond_value_u *value)
 {
     if (!cond) {
@@ -48,10 +48,8 @@ int32_t dev_policy_cond_resource_init(policy_cond_t *cond, uip_ip6addr_t *ip6_ad
     cond->type = POLICY_COND_TYPE_RESOURCE;
     memcpy(&cond->ip6_addr, ip6_addr, sizeof(uip_ip6addr_t));
     memcpy(&cond->device_id, device_id, 8);
-    strncpy(cond->obj_name, obj_name, MAX_OBJECT_NAME_LEN-1);
-    cond->obj_name[MAX_OBJECT_NAME_LEN-1] = '\0';
-    strncpy(cond->res_name, res_name, MAX_RESOURCE_NAME_LEN-1);
-    cond->res_name[MAX_RESOURCE_NAME_LEN-1] = '\0';
+    cond->obj_name = obj_name;
+    cond->res_name = res_name;
     cond->cond.operation = op;
     memcpy(&cond->cond.value, value, sizeof(cond_value_u));
 

@@ -22,7 +22,7 @@ uint16_t g_seq_num;
 uint32_t get_password(uint8_t **pwd)
 {
     struct device_fs_file file;
-    if(device_fs_open("PWD", &file)) {
+    if(device_fs_open("/PWD", &file)) {
         *pwd = file.data;
         return file.len;
     } 
@@ -33,7 +33,7 @@ uint32_t get_password(uint8_t **pwd)
 uint32_t get_password_encrypted_by_public_key(uint8_t **pwd)
 {
     struct device_fs_file file;
-    if(device_fs_open("PWD_EN", &file)) {
+    if(device_fs_open("/PWD_EN", &file)) {
         *pwd = file.data;
         return file.len;
     } 
@@ -78,7 +78,7 @@ uint32_t decrypt_data_by_network_shared_key(uint8_t *data, uint32_t len, uint8_t
     return len1;
 }
 
-uint8_t generate_master_key()
+static uint8_t generate_master_key()
 {
     uint8_t i = 0;
     uint8_t *pwd = NULL;
@@ -89,6 +89,7 @@ uint8_t generate_master_key()
     }
     
     for (i = 0; i < DEVICE_KEY_SIZE; i++) {
+        master_key.random_num[i] = random_rand();
         master_key.key[i] = pwd[i]^master_key.random_num[i];
     }
     
@@ -126,16 +127,19 @@ uint32_t create_security_client_hello_msg(uint8_t *buf)
     if (network_shared_key.used) {
         len = get_password(&pwd);
         if (!len) {
+            PRINTF("Get pwd fail\n");
             return 0;
         }
         msg->security_header.key_version = network_shared_key.version;
         len = encrypt_data_by_network_shared_key(pwd, len, buf + sizeof(security_client_hello_msg_t));
         if (!len) {
+            PRINTF("Encrypt data fail\n");
             return 0;
         }
     } else {
         len = get_password_encrypted_by_public_key(&pwd);
         if (!len) {
+            PRINTF("Get encypted pwd fail\n");
             return 0;
         }
         memcpy(buf + sizeof(security_client_hello_msg_t), pwd, len);
@@ -148,6 +152,10 @@ uint32_t create_security_client_hello_msg(uint8_t *buf)
 
 uint8_t crypto_init()
 {
+    if (generate_master_key() == FAIL) {
+        return FAIL;
+    }
+
     return SUCCESS;
 }
 

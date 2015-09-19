@@ -18,6 +18,7 @@
 #include "device_profile.h"
 #include "crypto.h"
 #include "device-fs.h"
+#include "clock.h"
 
 #define DEBUG DEBUG_PRINT
 #include "net/uip-debug.h"
@@ -32,6 +33,7 @@ static uip_ipaddr_t server_ipaddr;
 
 uint8_t auth_success = 0;
 uint8_t reg_success = 0;
+uint8_t get_global_addr_success = 0;
 
 #define SEND_INTERVAL 20 * CLOCK_SECOND
 
@@ -767,10 +769,14 @@ set_server_address(void)
 {
     uip_ds6_addr_t *g_addr = NULL;
  
-    while (g_addr == NULL) {
-        g_addr = uip_ds6_get_global(ADDR_PREFERRED);
+    g_addr = uip_ds6_get_global(ADDR_PREFERRED);
+    if (!g_addr) {
+        uip_ip6addr(&server_ipaddr, 0xaaaa, 0, 0, 0, 0, 0, 0, 0);
+        uip_ds6_set_addr_iid(&server_ipaddr, &uip_lladdr);
+        uip_ds6_addr_add(&server_ipaddr, 0, ADDR_AUTOCONF);
     }
-    
+
+    g_addr = uip_ds6_get_global(ADDR_PREFERRED);
     uip_ip6addr(&server_ipaddr, g_addr->ipaddr.u16[0], g_addr->ipaddr.u16[1], g_addr->ipaddr.u16[2],
                 g_addr->ipaddr.u16[3], 0, 0, 0, 1);
     
@@ -791,10 +797,8 @@ PROCESS_THREAD(coconut_sensor_process, ev, data)
 
     print_local_addresses();
     
-    //objects_mem_pool_init(); 
-    //resources_mem_pool_init(); 
-    //subscribers_mem_pool_init(); 
-    //policy_mem_pool_init(); 
+    subscribers_mem_pool_init(); 
+    policy_mem_pool_init(); 
 
     device_fs_init(); 
 
@@ -813,46 +817,45 @@ PROCESS_THREAD(coconut_sensor_process, ev, data)
 
     PRINTF("Device create done\n");
 
-    ///* new connection with remote host */
-    //client_conn = udp_new(NULL, UIP_HTONS(COCONUT_UDP_SERVER_PORT), NULL);
-    //if(client_conn == NULL) {
-    //    PRINTF("No UDP connection available, exiting the process!\n");
-    //    PROCESS_EXIT();
-    //}
-    //udp_bind(client_conn, UIP_HTONS(COCONUT_UDP_CLIENT_PORT));
+    /* new connection with remote host */
+    client_conn = udp_new(NULL, UIP_HTONS(COCONUT_UDP_SERVER_PORT), NULL);
+    if(client_conn == NULL) {
+        PRINTF("No UDP connection available, exiting the process!\n");
+        PROCESS_EXIT();
+    }
+    udp_bind(client_conn, UIP_HTONS(COCONUT_UDP_CLIENT_PORT));
 
-    //PRINTF("Created a connection with the server ");
-    //PRINT6ADDR(&client_conn->ripaddr);
-    //PRINTF(" local/remote port %u/%u\n",
-    //      UIP_HTONS(client_conn->lport), UIP_HTONS(client_conn->rport));
+    PRINTF("Created a connection with the server ");
+    PRINT6ADDR(&client_conn->ripaddr);
+    PRINTF(" local/remote port %u/%u\n",
+          UIP_HTONS(client_conn->lport), UIP_HTONS(client_conn->rport));
 
-    //etimer_set(&et, SEND_INTERVAL);
-    //
-    //while(1) {
-    //    PROCESS_YIELD();
-    //    if(etimer_expired(&et)) {
-    //        if (!auth_success) {
-    //            etimer_restart(&et);
-    //            generate_master_key();
-    //            len = create_security_client_hello_msg(output_buf);
-    //            if (len){
-    //                debug_print_msg(output_buf, len);
-    //                send_msg_to_gateway(output_buf, len);
-    //            }
-    //        } else if (!reg_success) {
-    //            /*send register*/
-    //            etimer_restart(&et);
-    //            len = create_new_device_msg(output_buf, MAX_PAYLOAD_LEN, TYPE_REQUEST);
-    //            if (len){
-    //                debug_print_msg(output_buf, len);
-    //                send_msg_to_gateway(output_buf, len);
-    //            }
-    //        }
-    //    }
-    //    if(ev == tcpip_event) {
-    //        message_handler();
-    //    }
-    //}
+    etimer_set(&et, SEND_INTERVAL);
+    
+    while(1) {
+        PROCESS_YIELD();
+        if(etimer_expired(&et)) {
+            if (!auth_success) {
+                etimer_restart(&et);
+                len = create_security_client_hello_msg(output_buf);
+                if (len){
+                    debug_print_msg(output_buf, len);
+                    send_msg_to_gateway(output_buf, len);
+                }
+            } else if (!reg_success) {
+                /*send register*/
+                etimer_restart(&et);
+                len = create_new_device_msg(output_buf, MAX_PAYLOAD_LEN, TYPE_REQUEST);
+                if (len){
+                    debug_print_msg(output_buf, len);
+                    send_msg_to_gateway(output_buf, len);
+                }
+            }
+        }
+        if(ev == tcpip_event) {
+            message_handler();
+        }
+    }
 
     PROCESS_END();
 }

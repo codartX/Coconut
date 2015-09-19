@@ -28,7 +28,7 @@ int32_t device_insert_object(object_instance_t *object)
     if (object) {
         tmp = g_device.obj_list;
         while(tmp) {
-            if(strncmp(tmp->name, object->name, MAX_OBJECT_NAME_LEN) == 0) {
+            if(strcmp(tmp->name, object->name) == 0) {
                 PRINTF("already has the same name object\n");
                 return FAIL;
             }
@@ -51,7 +51,7 @@ object_instance_t *device_find_object(uint8_t *object_name)
     if (object_name) {
         tmp = g_device.obj_list;
         while(tmp) {
-            if(strncmp(tmp->name, object_name, MAX_OBJECT_NAME_LEN) == 0) {
+            if(strcmp(tmp->name, object_name) == 0) {
                 return tmp;
             }
             tmp = tmp->next;
