@@ -12,7 +12,6 @@ sys.setdefaultencoding('utf8')
 import os.path
 import re
 import memcache
-import torndb
 import tornado.httpserver
 import tornado.ioloop
 import tornado.options
@@ -30,8 +29,13 @@ from tornado.options import define, options
 
 import motor
 
+#from cassandra.cluster import Cluster
+from cassandra.cluster import Cluster
+from lib.tornado_cassandra import TornadoCassandra 
+
 define('port', default = 9999, help = 'run on the given port', type = int)
-define('server_node', default = '127.0.0.1:9999', help = 'server node')
+define('mongodb_node', default = '127.0.0.1', help = 'mongodb node ip')
+define('cassandra_node', default = '127.0.0.1', help = 'cassandra node ip')
 
 class Application(tornado.web.Application):
     def __init__(self):
@@ -42,15 +46,17 @@ class Application(tornado.web.Application):
 
         tornado.web.Application.__init__(self, handlers)
         
-        self.server_node = options.server_node
+        self.mongodb = motor.MotorClient(options.mongodb_node, 27017).linkiome
 
-        self.mongodb = motor.MotorClient('localhost', 27017).linkiome
-
+        self.cluster = Cluster(['127.0.0.1'])
+        self.session = self.cluster.connect('coconut')
+        self.cassandra_conn = TornadoCassandra(self.session, ioloop=tornado.ioloop.IOLoop.current())
+  
         # Have one global model for db query
         self.device_key_model = model.device_key.DeviceKeyModel(self.mongodb)
         self.device_info_model = model.device_info.DeviceInfoModel(self.mongodb)
         self.device_log_model = model.device_log.DeviceLogModel(self.mongodb)
-        self.device_stats_model = model.device_stats.DeviceStatsModel(self.mongodb)
+        self.device_stats_model = model.device_stats.DeviceStatsModel(self.cassandra_conn)
         self.device_key_model = model.device_key.DeviceKeyModel(self.mongodb)
         self.license_model = model.license.LicenseModel(self.mongodb)
 

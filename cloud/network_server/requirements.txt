@@ -6,3 +6,4 @@ pymongo
 json
 jsonschema
 tornadorpc
+sprockets.clients.cassandra=0.1.0

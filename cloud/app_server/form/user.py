@@ -7,7 +7,6 @@
 
 from wtforms import TextField, validators
 from lib.forms import Form
-import torndb
 from lib.loader import Loader
 from tornado.options import define, options
 

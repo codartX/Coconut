@@ -12,7 +12,6 @@ sys.setdefaultencoding("utf8")
 import os.path
 import re
 import memcache
-import torndb
 import tornado.httpserver
 import tornado.ioloop
 import tornado.options
@@ -51,10 +50,6 @@ import motor
 import logging
 
 define("port", default = 80, help = "run on the given port", type = int)
-define("mysql_host", default = "127.0.0.1", help = "community database host")
-define("mysql_database", default = "LinkIoMe", help = "community database name")
-define("mysql_user", default = "root", help = "community database user")
-define("mysql_password", default = "198318", help = "community database password")
 
 class Application(tornado.web.Application):
     def __init__(self):
