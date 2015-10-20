@@ -54,6 +54,7 @@ typedef struct _resource_instance_t {
 } resource_instance_t;
 
 extern resource_type_t resource_types[];
+extern uint16_t resource_types_count;
 
 resource_type_t *find_resource_type(uint32_t resource_id);
 

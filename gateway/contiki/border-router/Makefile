@@ -14,6 +14,6 @@ CONTIKI_PROJECT = border-router
 
 all: $(CONTIKI_PROJECT) 
 
-CONTIKI = ../../..
+CONTIKI = ../../../contiki-sensinode
 
 include $(CONTIKI)/Makefile.include

@@ -774,9 +774,9 @@ set_server_address(void)
         uip_ip6addr(&server_ipaddr, 0xaaaa, 0, 0, 0, 0, 0, 0, 0);
         uip_ds6_set_addr_iid(&server_ipaddr, &uip_lladdr);
         uip_ds6_addr_add(&server_ipaddr, 0, ADDR_AUTOCONF);
+        g_addr = uip_ds6_get_global(ADDR_PREFERRED);
     }
 
-    g_addr = uip_ds6_get_global(ADDR_PREFERRED);
     uip_ip6addr(&server_ipaddr, g_addr->ipaddr.u16[0], g_addr->ipaddr.u16[1], g_addr->ipaddr.u16[2],
                 g_addr->ipaddr.u16[3], 0, 0, 0, 1);
     

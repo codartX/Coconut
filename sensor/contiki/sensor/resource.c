@@ -6,13 +6,12 @@
 #include <stddef.h>
 #include <stdio.h>
 #include "resource.h"
-#include "ipso_resource.h"
 
 resource_type_t *find_resource_type(uint32_t resource_id)
 {
     int32_t i = 0;
 
-    for(;i < sizeof(resource_types); i++) {
+    for(;i < resource_types_count; i++) {
         if (resource_types[i].resource_id == resource_id) {
             return &resource_types[i];
         }

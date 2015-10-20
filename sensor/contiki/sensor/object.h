@@ -8,7 +8,6 @@
 
 #include "main.h"
 #include "resource.h"
-#include "ipso_object.h"
 
 typedef struct _object_instance_t {
     struct _object_instance_t *next;

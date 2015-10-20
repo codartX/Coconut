@@ -84,6 +84,24 @@ RESOURCE_BLOCK ='''\
 
 '''
 
+IPSO_RESOURCE_HEADER_BLOCK = '''
+#ifndef _IPSO_RESOURCE_H
+#define _IPSO_RESOURCE_H
+
+#include <stdint.h>
+#include "resource.h"
+
+resource_type_t resource_types[] = {
+'''
+
+IPSO_RESOURCE_END_BLOCK = '''
+};
+
+uint16_t resource_types_count = sizeof(resource_types)/sizeof(resource_types[0]);
+
+#endif
+'''
+
 def replace_all(text, dic):
     for i, j in dic.iteritems():
         text = text.replace(i, j)
@@ -108,11 +126,17 @@ def main(argv):
     f = open(outputfile, 'w+')
 
     f1 = open(inputfile, 'r')
+
+    f2 = open('ipso_resource.c', 'w+')
+
     raw_data = f1.read()
     json_data = json.loads(raw_data)
 
     f.write(COPY_RIGHT_BLOCK)
     f.write(HEAD_FILES_BLOCK)
+
+    f2.write(COPY_RIGHT_BLOCK)
+    f2.write(IPSO_RESOURCE_HEADER_BLOCK)
 
     for object in json_data['objects']:
         if not 'object_id' in object:
@@ -137,10 +161,18 @@ def main(argv):
                     resource_name = resource['resource_name']
         
                 f.write('resource_instance_t g_resource_' + resource_name.replace(' ', '_').lower() + ';\n')
+                f2.write('{"' + ipso_resources.IPSO_RESOURCES[resource['resource_id']]['Resource Name'] + '", ' +
+                         str(resource['resource_id']) + ', ' +
+                         ipso_resources.IPSO_RESOURCES[resource['resource_id']]['Access Type'] + ', ' + 
+                         ipso_resources.IPSO_RESOURCES[resource['resource_id']]['Type'] + ', "' + 
+                         ipso_resources.IPSO_RESOURCES[resource['resource_id']]['Description'] + '"},\n' 
+                        )
 
     f.write('\n')
     f.write(FUNC_NAME_BLOCK)
     f.write('{\n')
+
+    f2.write(IPSO_RESOURCE_END_BLOCK)
 
     replacements = {'<device_id>': str(json_data['device_id'])}
     f.write(replace_all(DEVICE_INIT_BLOCK, replacements))
