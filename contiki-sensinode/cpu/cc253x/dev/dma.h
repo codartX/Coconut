@@ -75,9 +75,6 @@
 #define	DMA_VLEN_RES2 (6 << 5) /* reserved */
 #define	DMA_VLEN_LEN2 (7 << 5) /* Use LEN for transfer count */
 
-/*Word Size*/
-#define DMA_WORD_SIZE_2BYTES 0x80 /* Repeated block */
-
 /* Transfer Types (Byte 6 [6:5]) */
 #define DMA_SINGLE           0x00 /* Single */
 #define DMA_BLOCK            0x20 /* Block */
@@ -124,7 +121,7 @@ typedef struct dma_config {
 
 /* Number of DMA Channels and their Descriptors */
 #if DMA_ON
-#define DMA_CHANNEL_COUNT 5
+#define DMA_CHANNEL_COUNT 2
 extern dma_config_t dma_conf[DMA_CHANNEL_COUNT];
 #endif
 
@@ -139,20 +136,6 @@ extern dma_config_t dma_conf[DMA_CHANNEL_COUNT];
 /* Abort Ongoing DMA Transfers on Channel C */
 #define DMA_ABORT(c)    (DMAARM = DMAARM_ABORT | (1 << c))
 #define DMA_ABORT_ALL() (DMAARM = 0x9F) /* Abort ALL Ongoing DMA Transfers */
-
-#define DMA_SET_DEST(c, dest) do {} while(0)
-
-#define DMA_SET_VLEN(c, len) do {} while(0)
-
-#define DMA_SET_WORD_SIZE(c, size) do {} while(0)
-
-#define DMA_SET_TRIG_MODE(c, mode) do {} while(0)
-
-#define DMA_SET_SRC_INC(c, mode) do {} while(0)
-
-#define DMA_SET_SOURCE(c, src) do {} while(0)
-
-#define DMA_SET_DST_INC(c, mode) do {} while(0)
 
 /* Functions Declarations */
 void dma_init(void);

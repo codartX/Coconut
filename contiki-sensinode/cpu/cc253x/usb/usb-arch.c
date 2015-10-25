@@ -246,8 +246,7 @@ usb_get_ep_events(uint8_t addr)
 }
 #if DMA_ON
 #ifndef DMA_USB_CHANNEL
-#define DMA_USB_CHANNEL 3
-//#error You must set DMA_USB_CHANNEL to a valid dma channel.
+#error You must set DMA_USB_CHANNEL to a valid dma channel.
 #endif
 static void
 read_hw_buffer_dma(uint8_t tl, uint8_t th, uint8_t __xdata * xptr,
