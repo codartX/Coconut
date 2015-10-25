@@ -227,7 +227,8 @@
 #endif
 
 /* uIP */
-#define UIP_CONF_BUFFER_SIZE               240
+//#define UIP_CONF_BUFFER_SIZE               240
+#define UIP_CONF_BUFFER_SIZE               290
 #define UIP_CONF_IPV6_QUEUE_PKT              0
 #define UIP_CONF_IPV6_CHECKS                 1
 #define UIP_CONF_IPV6_REASSEMBLY             0
@@ -235,7 +236,8 @@
 /* 6lowpan */
 #define SICSLOWPAN_CONF_COMPRESSION          SICSLOWPAN_COMPRESSION_HC06
 #ifndef SICSLOWPAN_CONF_FRAG
-#define SICSLOWPAN_CONF_FRAG                 0 /* About 2KB of CODE if 1 */
+//#define SICSLOWPAN_CONF_FRAG                 0 /* About 2KB of CODE if 1 */
+#define SICSLOWPAN_CONF_FRAG                 1 /* About 2KB of CODE if 1 */
 #endif
 #define SICSLOWPAN_CONF_MAXAGE               8
 
