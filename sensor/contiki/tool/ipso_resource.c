@@ -13,9 +13,9 @@
 #include "resource.h"
 
 resource_type_t resource_types[] = {
-{"Name", 5105, ReadWrite, String, "Device name"},
-{"Sensor Value", 5700, ReadOnly, Float, "Last or Current Measured Value from the Sensor"},
-{"Units", 5701, ReadOnly, String, "Measurement Units Definition e.g. “Cel” for Temperature in Celsius."},
+{5105, ReadWrite, String},
+{5700, ReadOnly, Float},
+{5701, ReadOnly, String},
 
 };
 

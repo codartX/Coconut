@@ -44,8 +44,10 @@ DEVICE_INIT_BLOCK ='''\
     resource_instance_t *res_instance = NULL;
     object_instance_t *obj_instance = NULL;
     resource_value_u value;
+    uint8_t device_id[] = {<device_id_1>,<device_id_2>,<device_id_3>,<device_id_4>,
+                           <device_id_5>,<device_id_6>,<device_id_7>,<device_id_8>};
        
-    retval = device_init("<device_id>");
+    retval = device_init(device_id);
     if (retval == FAIL) {
         PRINTF("device init fail\\n");
         return false;
@@ -161,11 +163,10 @@ def main(argv):
                     resource_name = resource['resource_name']
         
                 f.write('resource_instance_t g_resource_' + resource_name.replace(' ', '_').lower() + ';\n')
-                f2.write('{"' + ipso_resources.IPSO_RESOURCES[resource['resource_id']]['Resource Name'] + '", ' +
+                f2.write('{' +
                          str(resource['resource_id']) + ', ' +
                          ipso_resources.IPSO_RESOURCES[resource['resource_id']]['Access Type'] + ', ' + 
-                         ipso_resources.IPSO_RESOURCES[resource['resource_id']]['Type'] + ', "' + 
-                         ipso_resources.IPSO_RESOURCES[resource['resource_id']]['Description'] + '"},\n' 
+                         ipso_resources.IPSO_RESOURCES[resource['resource_id']]['Type'] + '},\n'  
                         )
 
     f.write('\n')
@@ -174,7 +175,11 @@ def main(argv):
 
     f2.write(IPSO_RESOURCE_END_BLOCK)
 
-    replacements = {'<device_id>': str(json_data['device_id'])}
+    dev_id_array = json_data['device_id']
+    replacements = {'<device_id_1>': str(dev_id_array[0]), '<device_id_2>': str(dev_id_array[1]), 
+                    '<device_id_3>': str(dev_id_array[2]), '<device_id_4>': str(dev_id_array[3]), 
+                    '<device_id_5>': str(dev_id_array[4]), '<device_id_6>': str(dev_id_array[5]), 
+                    '<device_id_7>': str(dev_id_array[6]), '<device_id_8>': str(dev_id_array[7])}
     f.write(replace_all(DEVICE_INIT_BLOCK, replacements))
 
     for object in json_data['objects']:
@@ -214,7 +219,7 @@ def main(argv):
                 elif resource['value']:
                     if resource_desc['Type'] == 'String':
                         f.write('    strncpy(value.string_value, "' + str(resource['value']) + '", MAX_RESOURCE_STR_VALUE_LEN - 1);\n')
-                        f.write('    value.string_value[MAX_RESOURCE_STR_VALUE_LEN] = \'\\0\';\n')
+                        f.write('    value.string_value[MAX_RESOURCE_STR_VALUE_LEN -1] = \'\\0\';\n')
                     elif resource_desc['Type'] == 'Float':
                         f.write('    value.float_value = ' + str(float(resource['value'])) + ';\n')
                     elif resource_desc['Type'] == 'Integer':
