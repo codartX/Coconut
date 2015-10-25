@@ -52,22 +52,23 @@ static void debug_print_msg(uint8_t *msg, uint32_t len)
     PRINTF("\n");
 }
 /*---------------------------------------------------------------------------*/
-void send_msg(uint8_t *data, uint32_t len, uip_ipaddr_t *peer_ipaddr)
+void send_msg(uint8_t *data, uint16_t len, uip_ipaddr_t *peer_ipaddr)
 {
-    uip_ipaddr_copy(&client_conn->ripaddr, peer_ipaddr);
+    //uip_ipaddr_copy(&client_conn->ripaddr, peer_ipaddr);
     uip_udp_packet_sendto(client_conn, data, len,
                           peer_ipaddr, UIP_HTONS(COCONUT_UDP_SERVER_PORT));
-    uip_create_unspecified(&client_conn->ripaddr);
+    //uip_create_unspecified(&client_conn->ripaddr);
     
     return;
 }
 
-void send_msg_to_gateway(uint8_t *data, uint32_t len)
+void send_msg_to_gateway(uint8_t *data, uint16_t len)
 {
-    uip_ipaddr_copy(&client_conn->ripaddr, &server_ipaddr);
+    //uip_ipaddr_copy(&client_conn->ripaddr, &server_ipaddr);
+    PRINTF("packet len:%x\n", len);
     uip_udp_packet_sendto(client_conn, data, len,
                           &server_ipaddr, UIP_HTONS(COCONUT_UDP_SERVER_PORT));
-    uip_create_unspecified(&client_conn->ripaddr);
+    //uip_create_unspecified(&client_conn->ripaddr);
     
     return;
 }
@@ -383,6 +384,7 @@ get_resources_request_handler(uint8_t *parameters)
 
 }
 
+#ifdef POLICY_SUPPORT
 /*---------------------------------------------------------------------------*/
 static void
 set_policy_request_handler(uint8_t *parameters)
@@ -403,6 +405,7 @@ unset_policy_request_handler(uint8_t *parameters)
 {
     
 }
+#endif
 
 /*---------------------------------------------------------------------------*/
 static void
@@ -701,6 +704,7 @@ message_handler(void)
                             case METHOD_GET_RESOURCES:
                                 get_resources_request_handler(get_msg_parameters(data));
                                 break;
+#ifdef POLICY_SUPPORT
                             case METHOD_SET_POLICY:
                                 set_policy_request_handler(get_msg_parameters(data));
                                 break;
@@ -710,6 +714,7 @@ message_handler(void)
                             case METHOD_UNSET_POLICY:
                                 unset_policy_request_handler(get_msg_parameters(data));
                                 break;
+#endif
                             case METHOD_RELOAD:
                                 reload_request_handler();
                                 break;
@@ -785,7 +790,7 @@ set_server_address(void)
 PROCESS_THREAD(coconut_sensor_process, ev, data)
 {
     static struct etimer et;
-    uint32_t len;
+    uint16_t len;
     
     PROCESS_BEGIN();
 
@@ -798,7 +803,10 @@ PROCESS_THREAD(coconut_sensor_process, ev, data)
     print_local_addresses();
     
     subscribers_mem_pool_init(); 
+
+#ifdef POLICY_SUPPORT
     policy_mem_pool_init(); 
+#endif
 
     device_fs_init(); 
 
@@ -837,6 +845,7 @@ PROCESS_THREAD(coconut_sensor_process, ev, data)
         if(etimer_expired(&et)) {
             if (!auth_success) {
                 etimer_restart(&et);
+                PRINTF("Send auth message\n");
                 len = create_security_client_hello_msg(output_buf);
                 if (len){
                     debug_print_msg(output_buf, len);

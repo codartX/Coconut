@@ -20,14 +20,14 @@
 
 #define DEV_ID_SIZE         8
 
-#define MAX_PAYLOAD_LEN		80
+#define MAX_PAYLOAD_LEN	    290	
 
 extern uint8_t auth_success;
 
 extern uint8_t output_buf[MAX_PAYLOAD_LEN];
 
-void send_msg(uint8_t *data, uint32_t len, uip_ipaddr_t *peer_ipaddr);
+void send_msg(uint8_t *data, uint16_t len, uip_ipaddr_t *peer_ipaddr);
 
-void send_msg_to_gateway(uint8_t *data, uint32_t len);
+void send_msg_to_gateway(uint8_t *data, uint16_t len);
 
 #endif

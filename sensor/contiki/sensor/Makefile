@@ -1,5 +1,5 @@
 all: main 
-CONTIKI=../../../contiki-sensinode
+CONTIKI=../../../contiki-sensinode/
 
 HAVE_BANKING=1
 UIP_CONF_IPV6=1
@@ -9,8 +9,12 @@ UIP_CONF_RPL=1
 #	$(CONTIKI)/tools/makefsdata -d ./fs -o device-fsdata.c 
 
 PROJECT_SOURCEFILES += device_api.c device.c object.c resource.c subscriber.c \
-                       message.c cJSON.c policy.c crypto.c  ipso_resource.c \
+                       message.c cJSON.c crypto.c  ipso_resource.c \
                        device_profile.c device-fs.c device-fsdata.c 
+
+#ifdef POLICY_SUPPORT
+PROJECT_SOURCEFILES += policy.c
+#endif
 
 include $(CONTIKI)/Makefile.include
 

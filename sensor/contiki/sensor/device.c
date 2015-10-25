@@ -14,7 +14,9 @@ int32_t device_init(uint8_t *device_id)
     if (device_id) {
         memcpy(g_device.device_id, device_id, DEV_ID_SIZE);
         g_device.obj_list = NULL;
+#ifdef POLICY_SUPPORT
         g_device.policy_list = NULL;
+#endif
         g_device.timestamp = (uint32_t)time(NULL);
         return SUCCESS;
     }
@@ -65,6 +67,7 @@ object_instance_t *device_find_object(uint8_t *object_name)
 
 }
 
+#ifdef POLICY_SUPPORT
 int32_t device_insert_policy(dev_policy_t *policy)
 {
     dev_policy_t *tmp = NULL;
@@ -123,5 +126,6 @@ dev_policy_t *device_find_policy(uint32_t policy_id)
  
     return NULL;
 }
+#endif
 
 

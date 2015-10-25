@@ -22,8 +22,10 @@ bool create_device()
     resource_instance_t *res_instance = NULL;
     object_instance_t *obj_instance = NULL;
     resource_value_u value;
+    uint8_t device_id[] = {1,2,3,4,
+                           5,6,7,8};
        
-    retval = device_init("0123456789ABCDEF0");
+    retval = device_init(device_id);
     if (retval == FAIL) {
         PRINTF("device init fail\n");
         return false;
@@ -39,7 +41,7 @@ bool create_device()
     }
 
     strncpy(value.string_value, "Temperature Sensor", MAX_RESOURCE_STR_VALUE_LEN - 1);
-    value.string_value[MAX_RESOURCE_STR_VALUE_LEN] = '\0';
+    value.string_value[MAX_RESOURCE_STR_VALUE_LEN -1] = '\0';
 
     res_instance = &g_resource_name;
 
@@ -75,7 +77,7 @@ bool create_device()
     }
 
     strncpy(value.string_value, "C", MAX_RESOURCE_STR_VALUE_LEN - 1);
-    value.string_value[MAX_RESOURCE_STR_VALUE_LEN] = '\0';
+    value.string_value[MAX_RESOURCE_STR_VALUE_LEN -1] = '\0';
 
     res_instance = &g_resource_units;
 

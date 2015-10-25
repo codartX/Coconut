@@ -32,11 +32,9 @@ typedef union _resource_value_u {
 } resource_value_u;
 
 typedef struct _resource_type_t {
-    const uint8_t *resource_name;
     uint32_t  resource_id;
     resource_access_type access_type;
     resource_type type;
-    const uint8_t *description;
 } resource_type_t;
 
 typedef int32_t (*get_resource_value_func)(resource_value_u *value);

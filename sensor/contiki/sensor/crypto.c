@@ -33,8 +33,9 @@ uint32_t get_password(uint8_t **pwd)
 uint32_t get_password_encrypted_by_public_key(uint8_t **pwd)
 {
     struct device_fs_file file;
-    if(device_fs_open("/PWD_EN", &file)) {
+    if(device_fs_open("/EN_PWD", &file)) {
         *pwd = file.data;
+        PRINTF("EN_PWD len:%d\n", file.len);
         return file.len;
     } 
     
@@ -82,6 +83,7 @@ static uint8_t generate_master_key()
 {
     uint8_t i = 0;
     uint8_t *pwd = NULL;
+    static uint8_t version = 0;
     
     get_password(&pwd);
     if (!pwd) {
@@ -93,6 +95,8 @@ static uint8_t generate_master_key()
         master_key.key[i] = pwd[i]^master_key.random_num[i];
     }
     
+    master_key.version = version++;
+
     return SUCCESS;
 }
 
@@ -125,6 +129,7 @@ uint32_t create_security_client_hello_msg(uint8_t *buf)
     memcpy(msg->random_num, master_key.random_num, DEVICE_KEY_SIZE);
 
     if (network_shared_key.used) {
+        PRINTF("Use shared key\n");
         len = get_password(&pwd);
         if (!len) {
             PRINTF("Get pwd fail\n");
@@ -137,6 +142,7 @@ uint32_t create_security_client_hello_msg(uint8_t *buf)
             return 0;
         }
     } else {
+        PRINTF("Use public key\n");
         len = get_password_encrypted_by_public_key(&pwd);
         if (!len) {
             PRINTF("Get encypted pwd fail\n");

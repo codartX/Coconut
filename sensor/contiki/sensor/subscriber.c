@@ -8,7 +8,7 @@
 #include "resource.h"
 #include <time.h>
 
-MEMB(subscribers_memb, res_subscriber_t, 4);
+MEMB(subscribers_memb, res_subscriber_t, 1);
 
 void subscribers_mem_pool_init()
 {
