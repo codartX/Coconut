@@ -1210,7 +1210,6 @@ uip_process(uint8_t flag)
   uip_ext_len = 0;
   uip_ext_bitmap = 0;
 #endif /* UIP_CONF_ROUTER */
-
   while(1) {
     switch(*uip_next_hdr){
 #if UIP_TCP

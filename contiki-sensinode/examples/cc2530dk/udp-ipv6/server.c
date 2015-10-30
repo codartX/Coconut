@@ -44,13 +44,15 @@
 #define UIP_IP_BUF   ((struct uip_ip_hdr *)&uip_buf[UIP_LLH_LEN])
 #define UIP_UDP_BUF  ((struct uip_udp_hdr *)&uip_buf[uip_l2_l3_hdr_len])
 
-#define MAX_PAYLOAD_LEN 120
+//#define MAX_PAYLOAD_LEN 120
+#define MAX_PAYLOAD_LEN 300
 
 static struct uip_udp_conn *server_conn;
 static char buf[MAX_PAYLOAD_LEN];
 static uint16_t len;
 
-#define SERVER_REPLY          1
+//#define SERVER_REPLY          1
+#define SERVER_REPLY          0
 
 /* Should we act as RPL root? */
 #define SERVER_RPL_ROOT       1

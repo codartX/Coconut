@@ -228,7 +228,7 @@
 
 /* uIP */
 //#define UIP_CONF_BUFFER_SIZE               240
-#define UIP_CONF_BUFFER_SIZE               290
+#define UIP_CONF_BUFFER_SIZE               320
 #define UIP_CONF_IPV6_QUEUE_PKT              0
 #define UIP_CONF_IPV6_CHECKS                 1
 #define UIP_CONF_IPV6_REASSEMBLY             0

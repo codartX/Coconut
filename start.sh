@@ -2,3 +2,4 @@
 
 sudo nginx
 mongod --dbpath mongodb &
+sudo service cassandra start

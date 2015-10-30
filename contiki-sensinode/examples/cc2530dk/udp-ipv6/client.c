@@ -40,7 +40,7 @@
 #include "net/uip-debug.h"
 
 #define SEND_INTERVAL		2 * CLOCK_SECOND
-#define MAX_PAYLOAD_LEN		40
+#define MAX_PAYLOAD_LEN		200
 
 static char buf[MAX_PAYLOAD_LEN];
 
@@ -100,12 +100,15 @@ timeout_handler(void)
   PRINTF("Client to: ");
   PRINT6ADDR(&this_conn->ripaddr);
 
-  memcpy(buf, &seq_id, sizeof(seq_id));
+  //memcpy(buf, &seq_id, sizeof(seq_id));
+  memset(buf, 0x27, MAX_PAYLOAD_LEN);
 
   PRINTF(" Remote Port %u,", UIP_HTONS(this_conn->rport));
-  PRINTF(" (msg=0x%04x), %u bytes\n", *(uint16_t *) buf, sizeof(seq_id));
+  //PRINTF(" (msg=0x%04x), %u bytes\n", *(uint16_t *) buf, sizeof(seq_id));
+  PRINTF(" (msg=0x%04x), %u bytes\n", *(uint16_t *) buf, MAX_PAYLOAD_LEN);
 
-  uip_udp_packet_send(this_conn, buf, sizeof(seq_id));
+  //uip_udp_packet_send(this_conn, buf, sizeof(seq_id));
+  uip_udp_packet_send(this_conn, buf, MAX_PAYLOAD_LEN);
   leds_off(LEDS_RED);
 }
 /*---------------------------------------------------------------------------*/
@@ -130,7 +133,7 @@ PROCESS_THREAD(udp_client_process, ev, data)
   PRINTF(" local/remote port %u/%u\n",
          UIP_HTONS(l_conn->lport), UIP_HTONS(l_conn->rport));
 
-  uip_ip6addr(&ipaddr, 0xaaaa, 0, 0, 0, 0x0215, 0x2000, 0x0002, 0x2145);
+  uip_ip6addr(&ipaddr, 0xaaaa, 0, 0, 0, 0x0212, 0x4b00, 0x053d, 0x20b6);
   g_conn = udp_new(&ipaddr, UIP_HTONS(3000), NULL);
   if(!g_conn) {
     PRINTF("udp_new g_conn error.\n");
