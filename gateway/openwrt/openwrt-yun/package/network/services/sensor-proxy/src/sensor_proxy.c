@@ -81,7 +81,7 @@ void websocket_connect()
         g_ws_ctx = create_ctx();
         
         /* call to create a connection */
-        g_ws_conn = nopoll_conn_new(g_ws_ctx, "www.linkio.me", "9999", NULL, url, NULL, NULL);
+        g_ws_conn = nopoll_conn_new(g_ws_ctx, "139.196.21.76", "9999", NULL, url, NULL, NULL);
 
         if (!nopoll_conn_is_ok(g_ws_conn)) {
             printf ("ERROR: Expected to find proper client connection status, but found error..\n");
@@ -125,8 +125,6 @@ int main(int argc,char *argv[])
     noPollMsg  *ws_msg = NULL;
     uint8_t *ws_msg_payload = NULL;
     
-    crypto_init();
-    
     /*main socket*/
     if ((sock = socket(AF_INET6,SOCK_DGRAM, 0)) < 0) {  
         perror("error:");  
@@ -154,7 +152,7 @@ int main(int argc,char *argv[])
 
     websocket_connect();
     
-    if (crypto_init()) {
+    if (!crypto_init()) {
         printf("Crypto init fail\n");
         return (1);
     }
@@ -163,7 +161,13 @@ int main(int argc,char *argv[])
         /*auth message*/
         len = recvfrom(sock, msg, sizeof(msg), 0, (struct sockaddr *)&addr, (socklen_t*)&addr_len);
         if (len > 0 && len > sizeof(security_header_t)) {
+            printf("len:%d\n", len);
+            for (i = 0; i < len; i++) {
+                printf("%x", msg[i]);
+            }
             security_header_t *security_header= (security_header_t *)msg;
+            printf("version:%d, content type:%d, seq:%d, len:%d\n", security_header->version, 
+                   security_header->content_type, security_header->seq, security_header->len);
             
             /*check version*/
             if (security_header->version != SECURITY_VERSION) {
@@ -195,8 +199,7 @@ int main(int argc,char *argv[])
                     hex_to_string(buf1 + 4, handshake_msg->data,
                                   len - sizeof(security_client_hello_msg_t));
                     sprintf(buf1 + 4 + 2*(len - sizeof(security_client_hello_msg_t)), "\"]");
-                    memcpy(session->random, handshake_msg->random_num, DEVICE_KEY_SIZE);
-                    session->master_key_version = handshake_msg->master_key_version;
+                    session->random = handshake_msg->random_num;
                     len1 = build_msg(buf, MAX_MSG_LEN, TYPE_REQUEST, METHOD_AUTH, handshake_msg->device_id, buf1);
                     len2 = websocket_write(buf, len1);
                     if (len2 != len1) {
@@ -253,8 +256,7 @@ int main(int argc,char *argv[])
                             }
                             goto WS_MESSAGE_HANDLE;
                         } else {
-                            memcpy(session->random, handshake_msg->random_num, DEVICE_KEY_SIZE);
-                            session->master_key_version = handshake_msg->master_key_version;
+                            session->random = handshake_msg->random_num;
                             
                             generate_master_key(session);
                             
@@ -273,8 +275,7 @@ int main(int argc,char *argv[])
                         sprintf(buf1, "[0,\"");//1 means encrypted, 0=plaintext
                         hex_to_string(buf1 + 4, buf, len1);
                         sprintf(buf1 + 4 + 2*len1, "\"]");
-                        memcpy(session->random, handshake_msg->random_num, DEVICE_KEY_SIZE);
-                        session->master_key_version = handshake_msg->master_key_version;
+                        session->random = handshake_msg->random_num;
                         len1 = build_msg(buf, MAX_MSG_LEN, TYPE_REQUEST, METHOD_AUTH,
                                          handshake_msg->device_id, buf1);
                         len2 = websocket_write(buf, len1);

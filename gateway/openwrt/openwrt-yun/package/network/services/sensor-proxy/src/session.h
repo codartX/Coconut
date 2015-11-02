@@ -21,8 +21,7 @@ typedef struct _sensor_session {
     struct _sensor_session *next;
     uint8_t auth_flag;
     uint16_t client_hello_seq;
-    uint8_t master_key_version;
-    uint8_t random[DEVICE_KEY_SIZE];
+    uint8_t random;
     uint8_t pwd[DEVICE_PWD_SIZE];
     uint8_t master_key[DEVICE_KEY_SIZE];
 } sensor_session;

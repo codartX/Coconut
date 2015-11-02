@@ -655,9 +655,6 @@ message_handler(void)
         security_header = uip_appdata;
         if (security_header->content_type == SECURITY_SERVER_HELLO) {
             security_server_hello_msg_t *msg = (security_server_hello_msg_t *)uip_appdata;
-            if (msg->master_key_version != get_master_key()->version) {
-                return;
-            }
             len1 = decrypt_data_by_master_key(uip_appdata + sizeof(security_server_hello_msg_t), msg->security_header.len + 1, output_buf);
             if (len1 == DEVICE_KEY_SIZE) {
                 if (set_network_shared_key(output_buf, security_header->key_version)) {
@@ -784,6 +781,8 @@ set_server_address(void)
 
     uip_ip6addr(&server_ipaddr, g_addr->ipaddr.u16[0], g_addr->ipaddr.u16[1], g_addr->ipaddr.u16[2],
                 g_addr->ipaddr.u16[3], 0, 0, 0, 1);
+    //uip_ip6addr(&server_ipaddr, 0xaaaa, 0, 0,
+    //            0, 0x0212, 0x4b00, 0x053d, 0x20b6);
     
 }
 /*---------------------------------------------------------------------------*/

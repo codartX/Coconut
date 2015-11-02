@@ -12,10 +12,10 @@
  0                   1                   2                   3
  0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
- |content type   |    version    | key version   |      len      |
+ |vserion        |  content_type | key version   |      seq      |
  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
- |    len        |  data...
- +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-
+ |    seq        |  len          |   len         |    data...
+ +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 
  1. SECURITY_CLIENT_HELLO & SECURITY_SERVER_HELLO
  
@@ -25,18 +25,14 @@
  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
  |                     Device ID                                 |
  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
- |Master Key Ver |                        Random Number          |
- +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
- |                     Random Number (Cont. 16 Bytes)            |
+ |Random Number  |               Encrypt Password                
  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
  |                     Encrypted Password ...
  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
  
  SECURITY_SERVER_HELLO's data:
  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
- |Master Key Version             | Encrypted Shared Network Key
- +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
- |                     Encrypted Shared Network Key(Cont) ...
+ |                     Encrypted Shared Network Key
  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
  
  2. SECURITY_DATA's data:
@@ -75,9 +71,9 @@ typedef enum _content_type_e {
 } content_type_e;
 
 typedef struct _security_header_t {
-    uint8_t  version;
-    uint8_t  content_type;
-    uint8_t  key_version;//0=cloud public key, >0 version of shared key
+    uint8_t  version:2;
+    uint8_t  content_type:3;
+    uint8_t  key_version:3;//0=cloud public key, >0 version of shared key
     uint16_t seq;
     uint16_t len;
     uint8_t  payload[0];
@@ -85,15 +81,13 @@ typedef struct _security_header_t {
 
 typedef struct _security_client_hello_msg_t {
     security_header_t security_header;
-    uint8_t master_key_version;
     uint8_t device_id[DEVICE_ID_SIZE];
-    uint8_t random_num[DEVICE_KEY_SIZE];
+    uint8_t random_num;
     uint8_t data[0];
 } security_client_hello_msg_t;
 
 typedef struct _security_server_hello_msg_t {
     security_header_t security_header;
-    uint8_t master_key_version;
     uint8_t data[0];
 } security_server_hello_msg_t;
 

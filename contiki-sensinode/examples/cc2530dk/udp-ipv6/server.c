@@ -67,6 +67,7 @@ AUTOSTART_PROCESSES(&udp_server_process);
 static void
 tcpip_handler(void)
 {
+  uint16_t i = 0;
   memset(buf, 0, MAX_PAYLOAD_LEN);
   if(uip_newdata()) {
     leds_on(LEDS_RED);
@@ -75,6 +76,11 @@ tcpip_handler(void)
     PRINTF("%u bytes from [", len);
     PRINT6ADDR(&UIP_IP_BUF->srcipaddr);
     PRINTF("]:%u\n", UIP_HTONS(UIP_UDP_BUF->srcport));
+    PRINTF("Message:");
+    for(i = 0; i < len; i++) {
+        PRINTF("%x ", buf[i]);
+    }
+    PRINTF("\n");
 #if SERVER_REPLY
     uip_ipaddr_copy(&server_conn->ripaddr, &UIP_IP_BUF->srcipaddr);
     server_conn->rport = UIP_UDP_BUF->srcport;
@@ -161,7 +167,8 @@ PROCESS_THREAD(udp_server_process, ev, data)
 #endif
 
   server_conn = udp_new(NULL, UIP_HTONS(0), NULL);
-  udp_bind(server_conn, UIP_HTONS(3000));
+  //udp_bind(server_conn, UIP_HTONS(3000));
+  udp_bind(server_conn, UIP_HTONS(5678));
 
   PRINTF("Listen port: 3000, TTL=%u\n", server_conn->ttl);
 

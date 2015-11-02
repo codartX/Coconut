@@ -90,13 +90,11 @@ static uint8_t generate_master_key()
         return FAIL;
     }
     
+    master_key.random_num = random_rand();
     for (i = 0; i < DEVICE_KEY_SIZE; i++) {
-        master_key.random_num[i] = random_rand();
-        master_key.key[i] = pwd[i]^master_key.random_num[i];
+        master_key.key[i] = pwd[i]^master_key.random_num;
     }
     
-    master_key.version = version++;
-
     return SUCCESS;
 }
 
@@ -124,9 +122,8 @@ uint32_t create_security_client_hello_msg(uint8_t *buf)
     msg->security_header.content_type = SECURITY_CLIENT_HELLO;
     msg->security_header.version = SECURITY_VERSION;
     msg->security_header.seq = g_seq_num++;
-    msg->master_key_version = master_key.version;
     memcpy(msg->device_id, g_device.device_id, DEV_ID_SIZE);
-    memcpy(msg->random_num, master_key.random_num, DEVICE_KEY_SIZE);
+    msg->random_num = master_key.random_num;
 
     if (network_shared_key.used) {
         PRINTF("Use shared key\n");
@@ -151,7 +148,7 @@ uint32_t create_security_client_hello_msg(uint8_t *buf)
         memcpy(buf + sizeof(security_client_hello_msg_t), pwd, len);
         msg->security_header.key_version = 0;
     }
-    msg->security_header.len = len + DEVICE_KEY_SIZE + DEV_ID_SIZE;
+    msg->security_header.len = len + 1 + DEV_ID_SIZE;
     
     return sizeof(security_client_hello_msg_t) + len;
 }

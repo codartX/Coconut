@@ -17,8 +17,7 @@ typedef struct _network_shared_key_t {
 } network_shared_key_t;
 
 typedef struct _master_key_t {
-    uint8_t version;
-    uint8_t random_num[DEVICE_KEY_SIZE];
+    uint8_t random_num;
     uint8_t key[DEVICE_KEY_SIZE];
 } master_key_t;
 
@@ -89,23 +88,21 @@ typedef enum _content_type_e {
 } content_type_e;
 
 typedef struct _security_header_t {
-    uint8_t  version;
-    uint8_t  content_type;
-    uint8_t  key_version;//0=cloud public key, >0 version of shared key
+    uint8_t  version:2;
+    uint8_t  content_type:3;
+    uint8_t  key_version:3;//0=cloud public key, >0 version of shared key
     uint16_t seq;
     uint16_t len;
 } security_header_t;
 
 typedef struct _security_client_hello_msg_t {
     security_header_t security_header;
-    uint8_t master_key_version;
     uint8_t device_id[DEV_ID_SIZE];
-    uint8_t random_num[DEVICE_KEY_SIZE];
+    uint8_t random_num;
 } security_client_hello_msg_t;
 
 typedef struct _security_server_hello_msg_t {
     security_header_t security_header;
-    uint8_t master_key_version;
 } security_server_hello_msg_t;
 
 typedef struct _security_error_msg_t {

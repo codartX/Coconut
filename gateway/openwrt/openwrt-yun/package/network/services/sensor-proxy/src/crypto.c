@@ -31,7 +31,7 @@ uint8_t generate_master_key(sensor_session *session)
     
     if (session) {
         for (i = 0; i < DEVICE_PWD_SIZE; i++) {
-            session->master_key[i] = session->pwd[i]^session->random[i];
+            session->master_key[i] = session->pwd[i]^session->random;
         }
         return 1;
     }
@@ -157,7 +157,6 @@ uint32_t create_security_server_hello_msg(uint8_t *buf, sensor_session *session)
     msg->security_header.version = SECURITY_VERSION;
     msg->security_header.key_version = get_current_network_shared_key_version();
     msg->security_header.seq = g_seq_num++;
-    msg->master_key_version = session->master_key_version;
     
     if(1 != EVP_EncryptInit_ex(&ctx, EVP_aes_128_cbc(), NULL, session->master_key, NULL)) {
         printf("EVP_EncryptInit_ex error\n");
