@@ -119,6 +119,7 @@ uint32_t create_security_client_hello_msg(uint8_t *buf)
     uint8_t *pwd = NULL;
     uint32_t len = 0;
     
+    memset(msg->security_header.pad, 0x0, 3);
     msg->security_header.content_type = SECURITY_CLIENT_HELLO;
     msg->security_header.version = SECURITY_VERSION;
     msg->security_header.seq = g_seq_num++;

@@ -845,6 +845,8 @@ PROCESS_THREAD(coconut_sensor_process, ev, data)
             if (!auth_success) {
                 etimer_restart(&et);
                 PRINTF("Send auth message\n");
+                sprintf(output_buf, "ABCD");
+                send_msg_to_gateway(output_buf, strlen(output_buf));
                 len = create_security_client_hello_msg(output_buf);
                 if (len){
                     debug_print_msg(output_buf, len);

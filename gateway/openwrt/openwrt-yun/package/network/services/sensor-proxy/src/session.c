@@ -55,7 +55,7 @@ sensor_session *find_session_by_addr(struct sockaddr_in6 addr)
 {
     sensor_session *s = header;
     while (s) {
-        if (memcmp(addr, s->addr, sizeof(struct sockaddr_in6)) == 0) {
+        if (memcmp(&addr, &(s->addr), sizeof(struct sockaddr_in6)) == 0) {
             return s;
         }
         s = s->next;

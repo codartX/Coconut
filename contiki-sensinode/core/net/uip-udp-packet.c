@@ -45,25 +45,17 @@ extern uint16_t uip_slen;
 
 #include <string.h>
 
-#define DEBUG DEBUG_PRINT
-#include "net/uip-debug.h"
 /*---------------------------------------------------------------------------*/
 void
 uip_udp_packet_send(struct uip_udp_conn *c, const void *data, int len)
 {
 #if UIP_UDP
   int i = 0;
-  uint8_t *tmp = data;
   if(data != NULL) {
     uip_udp_conn = c;
     memcpy(&uip_buf[UIP_LLH_LEN + UIP_IPUDPH_LEN], data,
            len > UIP_BUFSIZE? UIP_BUFSIZE: len);
     uip_slen = len;
-    PRINTF("Udp send, len:%d, msg", uip_slen);
-    for(i = 0; i < len; i++) {
-        PRINTF("%x ", (&uip_buf[UIP_LLH_LEN + UIP_IPUDPH_LEN])[i]);
-    }
-    PRINTF("\n");
     uip_process(UIP_UDP_SEND_CONN);
 #if UIP_CONF_IPV6
     tcpip_ipv6_output();

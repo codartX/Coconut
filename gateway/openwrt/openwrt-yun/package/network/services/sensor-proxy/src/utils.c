@@ -6,10 +6,10 @@
 #include "utils.h"
 #include <stdio.h>
 
-void string_to_hex(uint8_t *hexstring, uint8_t *hex_val, uint8_t len)
+void string_to_hex(uint8_t *hexstring, uint8_t *hex_val, uint16_t len)
 {
     uint8_t *pos = hexstring;
-    uint8_t i;
+    uint16_t i;
     
     /* WARNING: no sanitization or error-checking whatsoever */
     for(i = 0; i < len; i++) {
@@ -20,14 +20,14 @@ void string_to_hex(uint8_t *hexstring, uint8_t *hex_val, uint8_t len)
     return;
 }
 
-void hex_to_string(uint8_t *string, uint8_t *hex_val, uint8_t len)
+void hex_to_string(uint8_t *string, uint8_t *hex_val, uint16_t len)
 {
     uint8_t *pos = string;
-    uint8_t i;
+    uint16_t i;
     
     /* WARNING: no sanitization or error-checking whatsoever */
     for(i = 0; i < len; i++) {
-        sprintf(pos, "%2hhx", &hex_val[i]);
+        sprintf(pos, "%02hhx", hex_val[i]);
         pos += 2 * sizeof(uint8_t);
     }
     

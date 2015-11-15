@@ -8,8 +8,8 @@
 
 #include <stdint.h>
 
-void string_to_hex(uint8_t *hexstring, uint8_t *hex_val, uint8_t len);
+void string_to_hex(uint8_t *hexstring, uint8_t *hex_val, uint16_t len);
 
-void hex_to_string(uint8_t *string, uint8_t *hex_val, uint8_t len);
+void hex_to_string(uint8_t *string, uint8_t *hex_val, uint16_t len);
 
 #endif

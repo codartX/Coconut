@@ -22,7 +22,7 @@
 #define MAIN_SOCKET_PORT 5678 
 #define LICENSE_ID "abcd1234" 
 
-#define MAX_MSG_LEN    512
+#define MAX_MSG_LEN    1024
 
 noPollCtx  *g_ws_ctx;
 noPollConn *g_ws_conn;
@@ -160,11 +160,10 @@ int main(int argc,char *argv[])
     while(1) {
         /*auth message*/
         len = recvfrom(sock, msg, sizeof(msg), 0, (struct sockaddr *)&addr, (socklen_t*)&addr_len);
-        if (len > 0 && len > sizeof(security_header_t)) {
-            printf("len:%d\n", len);
-            for (i = 0; i < len; i++) {
-                printf("%x", msg[i]);
-            }
+	if (len > 0 && len > sizeof(security_header_t)) {
+            //for (i = 0; i < len; i++) {
+            //    printf("%x ", msg[i]);
+            //}
             security_header_t *security_header= (security_header_t *)msg;
             printf("version:%d, content type:%d, seq:%d, len:%d\n", security_header->version, 
                    security_header->content_type, security_header->seq, security_header->len);
@@ -192,13 +191,17 @@ int main(int argc,char *argv[])
                 }
                 
                 session->client_hello_seq = security_header->seq;
+                memcpy(session->device_id, handshake_msg->device_id, DEVICE_ID_SIZE);
 
                 /*Decrypt*/
                 if (handshake_msg->security_header.key_version == 0) {
+                    if (handshake_msg->security_header.len != len - sizeof(security_header_t)) {
+                        goto WS_MESSAGE_HANDLE;
+                    }
+                    len1 = handshake_msg->security_header.len - 1 - DEVICE_ID_SIZE;
                     sprintf(buf1, "[1,\"");//1 means encrypted, 0=plaintext
-                    hex_to_string(buf1 + 4, handshake_msg->data,
-                                  len - sizeof(security_client_hello_msg_t));
-                    sprintf(buf1 + 4 + 2*(len - sizeof(security_client_hello_msg_t)), "\"]");
+                    hex_to_string(buf1 + 4, handshake_msg->data, len1);
+                    sprintf(buf1 + 4 + 2*len1, "\"]");
                     session->random = handshake_msg->random_num;
                     len1 = build_msg(buf, MAX_MSG_LEN, TYPE_REQUEST, METHOD_AUTH, handshake_msg->device_id, buf1);
                     len2 = websocket_write(buf, len1);

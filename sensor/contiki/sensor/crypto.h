@@ -88,6 +88,7 @@ typedef enum _content_type_e {
 } content_type_e;
 
 typedef struct _security_header_t {
+    uint8_t  pad[3];
     uint8_t  version:2;
     uint8_t  content_type:3;
     uint8_t  key_version:3;//0=cloud public key, >0 version of shared key
