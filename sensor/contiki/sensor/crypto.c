@@ -119,10 +119,10 @@ uint32_t create_security_client_hello_msg(uint8_t *buf)
     uint8_t *pwd = NULL;
     uint32_t len = 0;
     
-    memset(msg->security_header.pad, 0x0, 3);
     msg->security_header.content_type = SECURITY_CLIENT_HELLO;
     msg->security_header.version = SECURITY_VERSION;
-    msg->security_header.seq = g_seq_num++;
+    msg->security_header.seq = 0;
+    g_seq_num = 0;
     memcpy(msg->device_id, g_device.device_id, DEV_ID_SIZE);
     msg->random_num = master_key.random_num;
 
@@ -152,6 +152,25 @@ uint32_t create_security_client_hello_msg(uint8_t *buf)
     msg->security_header.len = len + 1 + DEV_ID_SIZE;
     
     return sizeof(security_client_hello_msg_t) + len;
+}
+
+uint32_t create_security_data_msg(uint8_t *buf, uint8_t *data, uint16_t len)
+{
+    security_header_t *header = (security_header_t *)buf;
+    uint16_t msg_len = 0;
+
+    memcpy(buf + sizeof(security_header_t), data, len);
+    header->content_type = SECURITY_DATA;
+    header->version = SECURITY_VERSION;
+    header->seq = g_seq_num++;
+
+    msg_len = encrypt_data_by_network_shared_key(buf + sizeof(security_header_t), len, 
+                                                 buf + sizeof(security_header_t));
+    if (msg_len) {
+        return msg_len + sizeof(security_header_t);
+    } 
+
+    return 0;
 }
 
 uint8_t crypto_init()

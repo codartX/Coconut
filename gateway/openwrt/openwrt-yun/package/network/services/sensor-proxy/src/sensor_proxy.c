@@ -39,7 +39,6 @@ int websocket_write (const char *content, int length)
         return bytes_written;
     }
 
-    printf("errno:%d\n", errno);
     perror("error:");
     // SECOND PART: retry in the case of failure
     // some failure found, check errno
@@ -115,7 +114,7 @@ int main(int argc,char *argv[])
 {  
     int32_t sock, len, len1, len2, i = 0, retcode, flags;
     struct sockaddr_in6 addr;  
-    uint8_t addr_len;
+    uint32_t addr_len;
     uint8_t msg[MAX_MSG_LEN];
     uint8_t buf[MAX_MSG_LEN];
     uint8_t buf1[MAX_MSG_LEN];
@@ -162,11 +161,12 @@ int main(int argc,char *argv[])
         len = recvfrom(sock, msg, sizeof(msg), 0, (struct sockaddr *)&addr, (socklen_t*)&addr_len);
 	if (len > 0 && len > sizeof(security_header_t)) {
             //for (i = 0; i < len; i++) {
-            //    printf("%x ", msg[i]);
+            //    printf("%02x ", msg[i]);
             //}
             security_header_t *security_header= (security_header_t *)msg;
-            printf("version:%d, content type:%d, seq:%d, len:%d\n", security_header->version, 
-                   security_header->content_type, security_header->seq, security_header->len);
+            printf("version:%d, content type:%d, key_version:%d, seq:%d, len:%d\n", security_header->version, 
+                   security_header->content_type, security_header->key_version, security_header->seq, 
+                   security_header->len);
             
             /*check version*/
             if (security_header->version != SECURITY_VERSION) {
@@ -196,6 +196,7 @@ int main(int argc,char *argv[])
                 /*Decrypt*/
                 if (handshake_msg->security_header.key_version == 0) {
                     if (handshake_msg->security_header.len != len - sizeof(security_header_t)) {
+                        printf("handshake packet size error\n");
                         goto WS_MESSAGE_HANDLE;
                     }
                     len1 = handshake_msg->security_header.len - 1 - DEVICE_ID_SIZE;
@@ -204,6 +205,10 @@ int main(int argc,char *argv[])
                     sprintf(buf1 + 4 + 2*len1, "\"]");
                     session->random = handshake_msg->random_num;
                     len1 = build_msg(buf, MAX_MSG_LEN, TYPE_REQUEST, METHOD_AUTH, handshake_msg->device_id, buf1);
+                    if (!len1) {
+                        printf("build message fail\n");
+                        goto WS_MESSAGE_HANDLE;
+                    }
                     len2 = websocket_write(buf, len1);
                     if (len2 != len1) {
                         printf("ERROR: websocket send total len:%d, send %d\n", len1, len2);
@@ -215,7 +220,7 @@ int main(int argc,char *argv[])
                             if(sendto(sock, buf1, len1, 0,
                                       (struct sockaddr *)&session->addr,
                                       sizeof(struct sockaddr_in6)) < 0) {
-                                printf("Send security error msg fail\n");
+                                perror("Send security error msg fail");
                             }
                         } else {
                             printf("Create security error msg fail\n");
@@ -235,7 +240,7 @@ int main(int argc,char *argv[])
                             if(sendto(sock, buf1, len1, 0,
                                       (struct sockaddr *)&session->addr,
                                       sizeof(struct sockaddr_in6)) < 0) {
-                                printf("Send security error msg fail\n");
+                                perror("Send security error msg fail");
                             }
                         } else {
                             printf("Create security error msg fail\n");
@@ -252,7 +257,7 @@ int main(int argc,char *argv[])
                                 if(sendto(sock, buf1, len1, 0,
                                           (struct sockaddr *)&session->addr,
                                           sizeof(struct sockaddr_in6)) < 0) {
-                                    printf("Send security error msg fail\n");
+                                    perror("Send security error msg fail");
                                 }
                             } else {
                                 printf("Create security error msg fail\n");
@@ -268,7 +273,7 @@ int main(int argc,char *argv[])
                                 if(sendto(sock, buf1, len1, 0,
                                          (struct sockaddr *)&session->addr,
                                          sizeof(struct sockaddr_in6)) < 0) {
-                                    printf("Send security server hello msg fail\n");
+                                    perror("Send security server hello msg fail");
                                 }
                             } else {
                                 printf("Create security server hello msg fail\n");
@@ -292,7 +297,7 @@ int main(int argc,char *argv[])
                                 if(sendto(sock, buf1, len1, 0,
                                           (struct sockaddr *)&session->addr,
                                           sizeof(struct sockaddr_in6)) < 0) {
-                                    printf("Send security error msg fail\n");
+                                    perror("Send security error msg fail");
                                 }
                             } else {
                                 printf("Create security error msg fail\n");
@@ -309,7 +314,7 @@ int main(int argc,char *argv[])
                         if(sendto(sock, buf1, len1, 0,
                                   (struct sockaddr *)&session->addr,
                                   sizeof(struct sockaddr_in6)) < 0) {
-                            printf("Send security error msg fail\n");
+                            perror("Send security error msg fail");
                         }
                     } else {
                         printf("Create security error msg fail\n");
@@ -326,7 +331,7 @@ int main(int argc,char *argv[])
                         if(sendto(sock, buf1, len1, 0,
                                   (struct sockaddr *)&session->addr,
                                   sizeof(struct sockaddr_in6)) < 0) {
-                            printf("Send security error msg fail\n");
+                            perror("Send security error msg fail");
                         }
                     } else {
                         printf("Create security error msg fail\n");
@@ -345,7 +350,7 @@ int main(int argc,char *argv[])
                             if(sendto(sock, buf1, len1, 0,
                                       (struct sockaddr *)&session->addr,
                                       sizeof(struct sockaddr_in6)) < 0) {
-                                printf("Send security error msg fail\n");
+                                perror("Send security error msg fail");
                             }
                         } else {
                             printf("Create security error msg fail\n");
@@ -363,7 +368,7 @@ int main(int argc,char *argv[])
                             if(sendto(sock, buf1, len1, 0,
                                       (struct sockaddr *)&session->addr,
                                       sizeof(struct sockaddr_in6)) < 0) {
-                                printf("Send security error msg fail\n");
+                                perror("Send security error msg fail");
                             }
                         } else {
                             printf("Create security error msg fail\n");
@@ -379,7 +384,7 @@ int main(int argc,char *argv[])
                         if(sendto(sock, buf1, len1, 0,
                                   (struct sockaddr *)&session->addr,
                                   sizeof(struct sockaddr_in6)) < 0) {
-                            printf("Send security error msg fail\n");
+                            perror("Send security error msg fail");
                         }
                     } else {
                         printf("Create security error msg fail\n");
@@ -402,10 +407,6 @@ WS_MESSAGE_HANDLE:
         if (ws_msg) {
             ws_msg_payload = (char *)nopoll_msg_get_payload(ws_msg);
             len = nopoll_msg_get_payload_size(ws_msg);
-            printf("websocket recv message len:%d data:\n", len);
-            for(i = 0; i < len; i++) {
-                printf("%x ", ws_msg_payload[i]);
-            }
             if (len >= MSG_HEAD_LEN) {
                 device_id = get_msg_device_id(ws_msg_payload);
                 session = find_session(device_id);
@@ -424,7 +425,7 @@ WS_MESSAGE_HANDLE:
                                         if(sendto(sock, buf1, len1, 0,
                                                   (struct sockaddr *)&session->addr,
                                                   sizeof(struct sockaddr_in6)) < 0) {
-                                            printf("Send security server hello msg fail\n");
+                                            perror("Send security server hello msg fail");
                                         } else {
                                             generate_master_key(session);
                                             session->auth_flag = true;
@@ -432,12 +433,12 @@ WS_MESSAGE_HANDLE:
                                     }
                                 }
                             } else {
-                                len1 = create_security_error_msg(buf1, node->valueint, 0, session->client_hello_seq);
+                                len1 = create_security_error_msg(buf1, node->valueint, 0, get_msg_id(ws_msg_payload));
                                 if (len1 > 0) {
                                     if(sendto(sock, buf1, len1, 0,
                                               (struct sockaddr *)&session->addr,
                                               sizeof(struct sockaddr_in6)) < 0) {
-                                        printf("Send security error msg fail\n");
+                                        perror("Send security error msg fail");
                                     }
                                 } else {
                                     printf("Create security error msg fail\n");
@@ -453,7 +454,7 @@ WS_MESSAGE_HANDLE:
                                 if(sendto(sock, msg, len, 0,
                                           (struct sockaddr *)&session->addr,
                                           sizeof(struct sockaddr_in6)) < 0){
-                                    printf("send error\n");
+                                    perror("send error");
                                 }
                             } else {
                                 printf("Create security data message fail\n");

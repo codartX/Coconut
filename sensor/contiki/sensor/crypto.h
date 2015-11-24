@@ -88,7 +88,6 @@ typedef enum _content_type_e {
 } content_type_e;
 
 typedef struct _security_header_t {
-    uint8_t  pad[3];
     uint8_t  version:2;
     uint8_t  content_type:3;
     uint8_t  key_version:3;//0=cloud public key, >0 version of shared key
@@ -105,6 +104,10 @@ typedef struct _security_client_hello_msg_t {
 typedef struct _security_server_hello_msg_t {
     security_header_t security_header;
 } security_server_hello_msg_t;
+
+typedef struct _security_data_msg_t {
+    security_header_t security_header;
+} security_data_msg_t;
 
 typedef struct _security_error_msg_t {
     security_header_t security_header;
@@ -129,6 +132,8 @@ master_key_t *get_master_key();
 uint32_t decrypt_data_by_master_key(uint8_t *data, uint32_t len, uint8_t *dec_buf);
 
 uint32_t create_security_client_hello_msg(uint8_t *buf);
+
+uint32_t create_security_data_msg(uint8_t *buf, uint8_t *data, uint16_t len);
 
 uint8_t crypto_init();
 
