@@ -3,7 +3,6 @@ user
 {
     '_id':<uid>, //auto generated
     'username':<nickname>,
-    'nickname'<nickname>,
     'email':<email>,
     'password':<password>,
     'avatar':<avatar>,
@@ -23,7 +22,6 @@ device_info
 
 {
     'device_id':<device id>,
-    'serial_number':<serial_number>,
     'owner_id':<owner_id>,
     'device_manager_id':<device manager id>,
     'server_node':<server node ip/host>,
@@ -44,12 +42,11 @@ device_info
     'timestamp':<timestamp>,
 }
 
-device_key
+device_factory_info
 
 {
     'device_id':<device_id>,
-    'key':<key>,
-    'iv':<iv>,
+    'serial_number': <serial_number>,
     'password':<password>
 }
 
@@ -107,13 +104,3 @@ mylicense
     'uid':<uid>,
 }
 
-device log
-
-{
-    'device_id':<device_id>,
-    'level':<log_level>,
-    'log':<msg>,
-    'timestamp':<timestamp>,
-    'checked':<checked>,
-
-}

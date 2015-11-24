@@ -5,7 +5,6 @@
 #  Copyright (c) 2014年 Jun Fang. All rights reserved.
 
 import time
-import pymongo
 from tornado import gen
 
 class DeviceStatsModel():

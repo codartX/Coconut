@@ -128,11 +128,10 @@ class WebSocketHandler(websocket.WebSocketHandler):
             logging.error('Update device fail')
             raise gen.Return([error.DATABASE_ERROR])
         
-        #if is_info_changed:
-        #    retval = yield self.application.device_info_history_model.add_new_device_info(device_id, parameters)
-        #    if not retval:
-        #        logging.error('Device history info add fail')
-        #        raise gen.Return(error.DATABASE_ERROR)
+        retval = yield self.application.device_stats_model.add_new_device_stats(device_id, parameters)
+        if not retval:
+            logging.error('Device history info add fail')
+            raise gen.Return(error.DATABASE_ERROR)
                     
         #success response
         raise gen.Return([error.SUCCESS])
@@ -179,11 +178,6 @@ class WebSocketHandler(websocket.WebSocketHandler):
             logging.error('Device not yours')
             raise gen.Return([error.PERMISSION_DENY])
         
-        device_key = yield self.application.device_key_model.get_device_key(device_id)
-        if not device_key:
-            logging.error('Device key not exist')
-            raise gen.Return([error.DECODE_FAIL])
-
         cryptor = AES.new(device_key['key'], AES.MODE_CBC)
         password_decoded = cryptor.decrypt(parameters)
         
@@ -413,38 +407,46 @@ class WebSocketHandler(websocket.WebSocketHandler):
         if callback:
             self.session[msg_id] = callback
 
-        self.write_message(msg)
+        self.write_message(msg, binary=True)
         
         return True
 
+    @gen.coroutine
     def open(self, *args):
-        self.id = self.get_argument('Id')
+        self.id = str(self.get_argument('Id'))
         self.session = {}
         self.transaction_id = 0
         self.stream.set_nodelay(True)
         
-        license = self.application.license_model.get_license(self.id)
+        license = yield self.application.license_model.get_license(self.id)
         if not license:
-            close()
+            self.close()
+            return
+        mylicense = yield self.application.mylicense_model.get_my_license_by_license_id(self.id)
+        if not mylicense:
+            self.close()
+            return
         logging.info('New client connected, id:%s', str(self.id))
+        print license, mylicense
+        license['owner_id'] = mylicense['uid']
         clients[self.id] = {'id': self.id, 'object': self, 'license': license}
     
     @gen.coroutine
     def on_message(self, message):
         try:
-            retval = m.parseMessage(message)
+            retval = m.parse_message(message)
         except Exception as e:
-            logging.error('malformed message {0}: {1}'.format(lib.utils.formatBuf(message),str(e)))
+            logging.error('malformed message error: %s' % str(e))
             return
                 
         msg_type = retval['msg_type']
         msg_id = retval['message_id']
         parameters = retval['parameters']
-        device_id = ntohl(retval['device_id'])
+        device_id = b2a_hex(retval['device_id'])
         method = retval['method']
         data = retval['parameters']
 
-        logging.info('msg_type %d, msg_id %d, session_id %d, device_id %x, method %d',
+        logging.info('msg_type %d, msg_id %d, device_id %s, method %d',
                      msg_type, msg_id, device_id, method)
 
         try:
@@ -475,7 +477,7 @@ class WebSocketHandler(websocket.WebSocketHandler):
                                            device_id = retval['device_id'],
                                            method = method,
                                            parameters = result)
-                self.write_message(response)
+                self.write_message(response, binary=True)
 
         elif msg_type == d.TYPE_RESPONSE:
             #response

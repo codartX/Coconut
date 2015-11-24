@@ -1,9 +1,6 @@
 tornado
-torndb
 python-memcached
-mysql-python
-pymongo
+motor
 json
 jsonschema
 tornadorpc
-sprockets.clients.cassandra=0.1.0

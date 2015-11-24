@@ -18,10 +18,6 @@ import tornado.options
 import tornado.web
 from tornado import gen
 
-import tornado.platform.twisted
-tornado.platform.twisted.install()
-from twisted.internet import reactor
-
 import handler.user
 import handler.message
 import handler.index
@@ -35,10 +31,10 @@ from model.message import MessageModel
 from model.license import LicenseModel
 from model.mylicense import MylicenseModel
 from model.device_info import DeviceInfoModel
+from model.device_factory_info import DeviceFactoryInfoModel
 from model.device_log import DeviceLogModel
 from model.device_policy import DevicePolicyModel
 from model.device_stats import DeviceStatsModel
-from model.device_key import DeviceKeyModel
 
 from tornado.options import define, options
 from lib.loader import Loader
@@ -47,9 +43,14 @@ from jinja2 import Environment, FileSystemLoader
 
 import motor
 
+from cassandra.cluster import Cluster
+from lib.tornado_cassandra import TornadoCassandra 
+
 import logging
 
 define("port", default = 80, help = "run on the given port", type = int)
+define('mongodb_node', default = '127.0.0.1', help = 'mongodb node ip')
+define('cassandra_node', default = '127.0.0.1', help = 'cassandra node ip')
 
 class Application(tornado.web.Application):
     def __init__(self):
@@ -67,7 +68,7 @@ class Application(tornado.web.Application):
         handlers = [
             (r"/", handler.index.IndexHandler),
             (r"/u/(.*)", handler.user.ProfileHandler),
-            (r"/setting", handler.user.SettingHandler),
+            (r"/settings", handler.user.SettingsHandler),
             (r"/setting/avatar", handler.user.SettingAvatarHandler),
             (r"/setting/avatar/gravatar", handler.user.SettingAvatarFromGravatarHandler),
             (r"/setting/password", handler.user.SettingPasswordHandler),
@@ -94,18 +95,22 @@ class Application(tornado.web.Application):
 
         tornado.web.Application.__init__(self, handlers, **settings)
 
-        self.mongodb = motor.MotorClient('localhost', 27017).linkiome
+        self.mongodb = motor.MotorClient(options.mongodb_node, 27017).coconut
 
+        self.cluster = Cluster(['127.0.0.1'])
+        self.session = self.cluster.connect('coconut')
+        self.cassandra_conn = TornadoCassandra(self.session, ioloop=tornado.ioloop.IOLoop.current())
+  
         # Have one global model for db query
         self.user_model = UserModel(self.mongodb)
         self.message_model = MessageModel(self.mongodb)
         self.license_model = LicenseModel(self.mongodb)
         self.mylicense_model = MylicenseModel(self.mongodb)
-        self.device_key_model = DeviceKeyModel(self.mongodb)
         self.device_info_model = DeviceInfoModel(self.mongodb)
-        self.device_log_model = DeviceLogModel(self.mongodb)
+        self.device_factory_info_model = DeviceFactoryInfoModel(self.mongodb)
+        self.device_log_model = DeviceLogModel(self.cassandra_conn)
         self.device_policy_model = DevicePolicyModel(self.mongodb)
-        self.device_stats_model = DeviceStatsModel(self.mongodb)
+        self.device_stats_model = DeviceStatsModel(self.cassandra_conn)
 
         # Have one global session controller
         self.session_manager = SessionManager(settings["cookie_secret"], ["127.0.0.1:11211"], 0)

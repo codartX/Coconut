@@ -327,52 +327,52 @@ parameters:
 [<retcode>,<msg_str>]
 """
 
-def build_message(msgtype, session_id ,message_id, device_id, method, parameters = []):
+def build_message(msgtype, message_id, device_id, method, parameters = []):
     assert msgtype in d.TYPE_ALL
     assert method in d.METHOD_ALL
     
     message   = []
     
     # header
-    message += [d.VERSION<<6 | msgtype]
-    message += [session_id]
-    message += u.int2buf(message_id,2)
+    message += [chr(d.VERSION<<6 | msgtype)]
+    message += [chr(method)]
+    message += [chr((message_id>>8) & 0xFF), chr(message_id & 0xFF)] 
     message += device_id
-    message += [method]
     if parameters:
         message += parameters
     
-    return message
+    return ''.join(message)
 
 def parse_message(message):
     
     returnVal = {}
     
     # header
-    if len(message) < 13:
+    if len(message) < 12:
         raise e.messageFormatError('message to short, {0} bytes: not space for header'.format(len(message)))
     
-    returnVal['version'] = (message[0]>>6)&0x03
+    header_string = message[:12]
+    header = map(ord, header_string)
+    returnVal['version'] = (header[0]>>6)&0x03
     if returnVal['version'] != d.VERSION:
         raise e.messageFormatError('invalid version {0}'.format(returnVal['version']))
     
-    returnVal['msg_type'] = message[0]&0x3f
-    if returnVal['type'] not in d.TYPE_ALL:
+    returnVal['msg_type'] = header[0]&0x3f
+    if returnVal['msg_type'] not in d.TYPE_ALL:
         raise e.messageFormatError('invalid message type {0}'.format(returnVal['type']))
     
-    returnVal['session_id'] = message[1]
+    returnVal['method'] = header[1]
 
-    returnVal['message_id'] = u.buf2int(message[2:4])
+    returnVal['message_id'] = u.buf2int(header[2:4])
 
-    returnVal['device_id'] = message[5:12]
+    returnVal['device_id'] = message[4:12]
 
-    returnVal['method'] = message[13]
 
-    if len(message) > 13:
-        returnVal['parameters'] = message[14:]
+    if len(message) > 12:
+        returnVal['parameters'] = message[12:]
     else:
         returnVal['parameters'] = []
     
-    log.debug('parsed message: {0}'.format(returnVal))
+    logging.debug('parsed message: {0}'.format(returnVal))
     
     return returnVal

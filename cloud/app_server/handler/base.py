@@ -55,13 +55,13 @@ class BaseHandler(tornado.web.RequestHandler):
         return self.application.mc
     
     def get_current_user(self):
-        user_json = self.get_secure_cookie('linkiome_user')
+        user_json = self.get_secure_cookie('coconut_user')
         if not user_json:
             return None
         return tornado.escape.json_decode(user_json)
 
     def update_current_user(self, user_info):
-        self.set_secure_cookie('linkiome_user', tornado.escape.json_encode(user_info))
+        self.set_secure_cookie('coconut_user', tornado.escape.json_encode(user_info))
 
     def render(self, template_name, **template_vars):
         html = self.render_string(template_name, **template_vars)

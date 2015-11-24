@@ -4,30 +4,25 @@
 #  Created by Jun Fang on 14-8-24.
 #  Copyright (c) 2014年 Jun Fang. All rights reserved.
 
+import time
 from tornado import gen
 
 class DeviceLogModel():
-    def __init__(self, db):
-        self.db = db
-        self.collection_name = 'device_log'
+    def __init__(self, conn):
+        self.conn = conn
     
     @gen.coroutine
-    def new_device_log(self, device_id, level, log, timestamp):
-        result = yield self.db.device_log.insert({'device_id': device_id, 'level': level,
-                                             'log': log, 'timestamp': timestamp, 'checked': False})
-        raise gen.Return(result)
+    def add_new_device_log(self, device_id, log, timestamp):
+        yield self.conn.execute('INSERT INTO device_log (device_id, log, timestamp) VALUES (' + 
+                                device_id + ', ' + 
+                                log + ', ' + 
+                                timestamp +  
+                                ')') 
     
-    @gen.coroutine
-    def get_unchecked_log(self, device_id):
-        logs = []
-        cursor = yield self.db.device_log.find({'$and': [{'device_id': device_id}, {'checked': False}]})
-        while (yield cursor.fetch_next):
-            log = cursor.next_object()
-            logs.append(log)
-        raise gen.Return(logs)
     
-    @gen.coroutine
-    def checked_log(self, log_id):
-        result = yield self.db.device_log.update({'_id': log_id},
-                                                 {'$set': {'checked': true}})
-        raise gen.Return(result)
+    def get_device_log_collection_in_period(self, device_id, from_time, to_time):
+        device_logs = yield self.conn.execute('SELECT * from device_log WHERE device_id = ' + device_id + 
+                                               ' AND timestamp > ' + str(from_time) + 
+                                               ' AND timestamp < ' + str(to_time))
+        raise gen.Return(device_logs)
+    

@@ -1,2 +1,2 @@
 #!/bin/sh 
-sudo python application.py --port=9999 
+sudo python application.py --port=9999 & 
