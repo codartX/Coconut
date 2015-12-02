@@ -63,10 +63,15 @@ class DeviceAddHandler(BaseHandler):
             self.get(template_variables)
             return
         
+        device = yield self.application.device_factory_info_model.get_device_factory_info(device_id)
+        if not device or (device and device['serial_number'] != serial_number):
+            template_variables['errors']['device_serial_number_error'] = ["Device doesn't exist or serial number error"]
+            self.get(template_variables)
+            return
+        
         # continue while validate succeed
         new_device = {
             'device_id': device_id,
-            'serial_number': serial_number,
             'owner_id': user_info['_id'],
             'objects': {}
         }
@@ -75,9 +80,9 @@ class DeviceAddHandler(BaseHandler):
         
         # update current user
         user_info['devices'].append(new_device)
-        update_current_user(user_info)
+        self.update_current_user(user_info)
         
-        self.redirect(self.get_argument('next', '/device/list'))
+        self.redirect(self.get_argument('next', '/'))
 
 class DeviceViewHandler(BaseHandler):
     @tornado.web.authenticated

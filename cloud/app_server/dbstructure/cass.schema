@@ -1,0 +1,16 @@
+CREATE TABLE dev_stats (
+  dev_id text,
+  obj_name text,
+  value text,
+  time timestamp,
+  PRIMARY KEY (dev_id, obj_name, time)
+)
+WITH CLUSTERING ORDER BY (obj_name ASC, time DESC);
+
+CREATE TABLE dev_log (
+  dev_id text,
+  log text,
+  time timestamp,
+  PRIMARY KEY (dev_id, time)
+)
+WITH CLUSTERING ORDER BY (time DESC);

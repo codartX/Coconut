@@ -5,7 +5,7 @@
  Source Server Type    : MySQL
  Source Server Version : 50527
  Source Host           : localhost
- Source Database       : linkiome
+ Source Database       : coconut
 
  Target Server Type    : MySQL
  Target Server Version : 50527
@@ -13,9 +13,9 @@
 
  Date: 01/02/2013 18:26:36 PM
 */
-DROP DATABASE linkiome;
-CREATE DATABASE linkiome;
-USE linkiome;
+DROP DATABASE coconut;
+CREATE DATABASE coconut;
+USE coconut;
 
 SET NAMES utf8;
 SET FOREIGN_KEY_CHECKS = 0;

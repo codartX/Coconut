@@ -16,20 +16,21 @@ import tornado.httpserver
 import tornado.ioloop
 import tornado.options
 import tornado.web
+import rsa
 
 import handler.device_handler
 import handler.app_rpc_handler
 import model.device_info
+import model.device_factory_info
 import model.device_log
 import model.device_stats
-import model.device_key
 import model.license
+import model.mylicense
 
 from tornado.options import define, options
 
 import motor
 
-#from cassandra.cluster import Cluster
 from cassandra.cluster import Cluster
 from lib.tornado_cassandra import TornadoCassandra 
 
@@ -46,19 +47,19 @@ class Application(tornado.web.Application):
 
         tornado.web.Application.__init__(self, handlers)
         
-        self.mongodb = motor.MotorClient(options.mongodb_node, 27017).linkiome
+        self.mongodb = motor.MotorClient(options.mongodb_node, 27017).coconut
 
         self.cluster = Cluster(['127.0.0.1'])
         self.session = self.cluster.connect('coconut')
         self.cassandra_conn = TornadoCassandra(self.session, ioloop=tornado.ioloop.IOLoop.current())
   
         # Have one global model for db query
-        self.device_key_model = model.device_key.DeviceKeyModel(self.mongodb)
         self.device_info_model = model.device_info.DeviceInfoModel(self.mongodb)
-        self.device_log_model = model.device_log.DeviceLogModel(self.mongodb)
+        self.device_factory_info_model = model.device_factory_info.DeviceFactoryInfoModel(self.mongodb)
+        self.device_log_model = model.device_log.DeviceLogModel(self.cassandra_conn)
         self.device_stats_model = model.device_stats.DeviceStatsModel(self.cassandra_conn)
-        self.device_key_model = model.device_key.DeviceKeyModel(self.mongodb)
         self.license_model = model.license.LicenseModel(self.mongodb)
+        self.mylicense_model = model.mylicense.MylicenseModel(self.mongodb)
 
         # Have one global memcache controller
         self.mc = memcache.Client(['127.0.0.1:11211'])

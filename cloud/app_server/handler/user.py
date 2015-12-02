@@ -50,7 +50,7 @@ def do_logout(self):
     # destroy cookies
     self.clear_cookie('user')
 
-class SettingHandler(BaseHandler):
+class SettingsHandler(BaseHandler):
     @tornado.web.authenticated
     def get(self, template_variables = {}):
         user_info = self.current_user
@@ -58,7 +58,7 @@ class SettingHandler(BaseHandler):
         template_variables['user_info'] = user_info
         template_variables['gen_random'] = gen_random
 
-        self.render('user/setting.html', **template_variables)
+        self.render('user/settings.html', **template_variables)
 
     @tornado.web.authenticated
     @gen.coroutine
@@ -72,18 +72,11 @@ class SettingHandler(BaseHandler):
             self.get({'errors': form.errors})
             return
 
-        #location encode
-        lat = float(self.get_argument('lat', 0))
-        lng = float(self.get_argument('lng', 0))
-        geohash_prefix = ''
-        if lat and lng:
-            geohash_prefix = encode(lat, lng, 6)
-
         # validate duplicated
         if form.email.data != self.current_user['email']:
             duplicated_email = yield self.application.user_model.get_user_by_email(form.email.data)
             if(duplicated_email):
-                template_variables['errors']['duplicated_email'] = [u'所填邮箱已经被注册过']
+                template_variables['errors']['duplicated_email'] = ['Email address has been registered']
                 self.get(template_variables)
                 return
 
@@ -92,14 +85,11 @@ class SettingHandler(BaseHandler):
         user_info = self.current_user
         update_result = yield self.application.user_model.set_user_base_info_by_uid(user_info['_id'], {
             'email': form.email.data,
-            'location': form.location.data,
-            'geohash': geohash_prefix,
-            'self_intro': form.self_intro.data,
             'updated': time.strftime('%Y-%m-%d %H:%M:%S'),
         })
 
         template_variables['message'] = {}
-        template_variables['message']['success_message'] = [u'用户基本资料更新成功']
+        template_variables['message']['success_message'] = ['User information update successfully']
 
         self.get(template_variables)
 
@@ -118,7 +108,7 @@ class SettingAvatarHandler(BaseHandler):
 
         if(not 'avatar' in self.request.files):
             template_variables['errors'] = {}
-            template_variables['errors']['invalid_avatar'] = [u'请先选择要上传的头像']
+            template_variables['errors']['invalid_avatar'] = ['Please choose a avatar file to upload']
             self.get(template_variables)
             return
 
@@ -144,7 +134,7 @@ class SettingAvatarHandler(BaseHandler):
         updated = yield self.application.user_model.set_user_base_info_by_uid(user_id, {'avatar': '%s.png' % avatar_name,
                                                                         'updated': time.strftime('%Y-%m-%d %H:%M:%S')})
 
-        template_variables['success_message'] = [u'用户头像更新成功']
+        template_variables['success_message'] = ['Avatar update successfully']
         
         self.get(template_variables)
 
@@ -165,7 +155,7 @@ class SettingAvatarFromGravatarHandler(BaseHandler):
         updated = yield self.application.user_model.set_user_base_info_by_uid(user_id, {'avatar': '%s.png' % avatar_name,
                                                                         'updated': time.strftime('%Y-%m-%d %H:%M:%S')})
 
-        template_variables['success_message'] = [u'用户头像更新成功']
+        template_variables['success_message'] = ['Avatar update successfully']
         template_variables['user_info'] = user_info
         template_variables['gen_random'] = gen_random
         
@@ -200,7 +190,7 @@ class SettingPasswordHandler(BaseHandler):
         secure_new_password = hashlib.sha1(form.password.data).hexdigest()
 
         if(not user_info['password'] == secure_password):
-            template_variables['errors']['error_password'] = [u'当前密码输入有误']
+            template_variables['errors']['error_password'] = ['Current password is not correct']
             self.get(template_variables)
             return
 
@@ -208,7 +198,7 @@ class SettingPasswordHandler(BaseHandler):
         updated = yield self.application.user_model.set_user_base_info_by_uid(user_id, {'password': secure_new_password,
                                                                         'updated': time.strftime('%Y-%m-%d %H:%M:%S')})
 
-        template_variables['messages']['success_message'] = [u'您的用户密码已更新']
+        template_variables['messages']['success_message'] = ['Password updated successfully']
 
         self.get(template_variables)
 
@@ -234,7 +224,7 @@ class ForgotPasswordHandler(BaseHandler):
         if(not user_info):
             self.write(lib.jsonp.print_JSON({
                 'success': 0,
-                'message': [u'所填邮箱有误'],
+                'message': ['Email address is not correct'],
             }))
 
         # continue while validate succeed
@@ -245,16 +235,16 @@ class ForgotPasswordHandler(BaseHandler):
         update_result = yield self.application.user_model.set_user_password_by_uid(user_info['_id'], new_secure_password)
 
         # send password reset link to user
-        mail_title = u'找回密码'
+        mail_title = 'Find password'
         template_variables = {'email': form.email_reset_pwd.data, 'new_password': new_password};
-        #template_variables['success_message'] = [u'新密码已发送至您的注册邮箱']
+        #template_variables['success_message'] = ['New password has been sent to your email']
         #mail_content = self.render_string('user/forgot_password_mail.html', **template_variables)
-        mail_content = u'新密码' + new_password
+        mail_content = 'New password' + new_password
         send(mail_title, mail_content, form.email_reset_pwd.data)
 
         self.write(lib.jsonp.print_JSON({
             'success': 1,
-            'message': [u'新密码已发送至您的注册邮箱'],
+            'message': ['New password has been sent to your email'],
         }))
 
 class LoginHandler(BaseHandler):
@@ -286,7 +276,7 @@ class LoginHandler(BaseHandler):
             self.redirect(self.get_argument('next', '/'))
             return
 
-        template_variables['errors'] = {'invalid_email_or_password': [u'邮箱或者密码不正确']}
+        template_variables['errors'] = {'invalid_email_or_password': ['Email or password is not correct']}
         self.get(template_variables)
 
 class LogoutHandler(BaseHandler):
@@ -318,10 +308,10 @@ class RegisterHandler(BaseHandler):
             template_variables['errors'] = {}
 
             if(duplicated_email):
-                template_variables['errors']['duplicated_email'] = [u'所填邮箱已经被注册过']
+                template_variables['errors']['duplicated_email'] = ['Email address has been registered']
 
             if(duplicated_username):
-                template_variables['errors']['duplicated_username'] = [u'所填用户名已经被注册过']
+                template_variables['errors']['duplicated_username'] = ['Username has been registered']
 
             self.get(template_variables)
             return
@@ -329,7 +319,7 @@ class RegisterHandler(BaseHandler):
         # validate reserved
         if(form.username.data in self.settings.get('reserved')):
             template_variables['errors'] = {}
-            template_variables['errors']['reserved_username'] = [u'用户名被保留不可用']
+            template_variables['errors']['reserved_username'] = ['This username is reserved']
             self.get(template_variables)
             return
 
@@ -350,7 +340,7 @@ class RegisterHandler(BaseHandler):
 
             # send register success mail to user
 
-            mail_title = u'注册成功通知'
+            mail_title = 'Register successfully'
             mail_content = self.render_string('user/register_mail.html')
             send(mail_title, mail_content, form.email.data)
 
