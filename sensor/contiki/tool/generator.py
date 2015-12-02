@@ -40,7 +40,7 @@ bool create_device()
 
 #device init block
 DEVICE_INIT_BLOCK ='''\
-    int32_t retval = FAIL;
+    int16_t retval = FAIL;
     resource_instance_t *res_instance = NULL;
     object_instance_t *obj_instance = NULL;
     resource_value_u value;
@@ -75,7 +75,7 @@ RESOURCE_BLOCK ='''\
 
     res_instance = &<resource_var>;
 
-    if (!resource_instance_init(res_instance, "<resource_name>", <resource_id>, 
+    if (!resource_instance_init(res_instance, <resource_id>, 
                                 &value, <get_func>, <set_func>)) {
         return false;
     }
@@ -157,10 +157,7 @@ def main(argv):
 
         for resource in object['resources']:
             if resource['resource_id'] in ipso_resources.IPSO_RESOURCES:
-                if not 'resource_name' in resource:
-                    resource_name = ipso_resources.IPSO_RESOURCES[resource['resource_id']]['Resource Name']
-                else:
-                    resource_name = resource['resource_name']
+                resource_name = ipso_resources.IPSO_RESOURCES[resource['resource_id']]['Resource Name']
         
                 f.write('resource_instance_t g_resource_' + resource_name.replace(' ', '_').lower() + ';\n')
                 f2.write('{' +
@@ -201,6 +198,8 @@ def main(argv):
 
         for resource in object['resources']:
             if resource['resource_id'] in ipso_resources.IPSO_RESOURCES:
+                resource_name = ipso_resources.IPSO_RESOURCES[resource['resource_id']]['Resource Name']
+
                 if not 'get_func' in resource:
                     get_func = 'NULL'
                 else:
@@ -218,29 +217,17 @@ def main(argv):
                      
                 elif resource['value']:
                     if resource_desc['Type'] == 'String':
-                        f.write('    strncpy(value.string_value, "' + str(resource['value']) + '", MAX_RESOURCE_STR_VALUE_LEN - 1);\n')
-                        f.write('    value.string_value[MAX_RESOURCE_STR_VALUE_LEN -1] = \'\\0\';\n')
+                        f.write('    strncpy(value.string_value, "' + str(resource['value']) + '", MAX_RES_STR_VALUE_LEN);\n')
                     elif resource_desc['Type'] == 'Float':
                         f.write('    value.float_value = ' + str(float(resource['value'])) + ';\n')
                     elif resource_desc['Type'] == 'Integer':
                         f.write('    value.int_value = ' + str(int(resource['value'])) + ';\n')
-                    elif resource_desc['Type'] == 'Boolean':
-                        if resource['value']:
-                            f.write('    value.bool_value = true;\n')
-                        else:
-                            f.write('    value.bool_value = false;\n')
                 else:
                     print 'No value!'
-
-                if not 'resource_name' in resource:
-                    resource_name = ipso_resources.IPSO_RESOURCES[resource['resource_id']]['Resource Name']
-                else:
-                    resource_name = resource['resource_name']
 
                 replacements = {
                                    '<resource_var>': 'g_resource_' + resource_name.replace(' ', '_').lower(), 
                                    '<resource_id>': str(resource['resource_id']), 
-                                   '<resource_name>': str(resource_name),
                                    '<get_func>': str(get_func),
                                    '<set_func>': str(set_func),
                                }

@@ -7,7 +7,7 @@
            "resources": [
                {
                    "resource_id": 5105,
-                   "value": "Temperature Sensor"
+                   "value": "Temp Sensor"
                }
            ]
        },
@@ -16,7 +16,6 @@
            "object_id": 3303,
            "resources": [
                {
-                   "resource_name": "Temp",
                    "resource_id": 5700,
                    "get_func": "get_temperature"
                },

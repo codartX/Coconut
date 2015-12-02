@@ -7,7 +7,7 @@
 #include "device_api.h"
 #include "main.h"
 
-int32_t get_temperature(resource_value_u *value)
+int16_t get_temperature(resource_value_u *value)
 {
     /* Sensor Values */
     static int rv;

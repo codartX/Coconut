@@ -9,7 +9,7 @@
 
 device_t g_device;
 
-int32_t device_init(uint8_t *device_id)
+int16_t device_init(uint8_t *device_id)
 {
     if (device_id) {
         memcpy(g_device.device_id, device_id, DEV_ID_SIZE);
@@ -24,7 +24,7 @@ int32_t device_init(uint8_t *device_id)
     return FAIL;
 }
 
-int32_t device_insert_object(object_instance_t *object)
+int16_t device_insert_object(object_instance_t *object)
 {
     object_instance_t *tmp = NULL;
     if (object) {
@@ -68,7 +68,7 @@ object_instance_t *device_find_object(uint8_t *object_name)
 }
 
 #ifdef POLICY_SUPPORT
-int32_t device_insert_policy(dev_policy_t *policy)
+int16_t device_insert_policy(dev_policy_t *policy)
 {
     dev_policy_t *tmp = NULL;
 
@@ -90,7 +90,7 @@ int32_t device_insert_policy(dev_policy_t *policy)
     return SUCCESS;
 }
 
-int32_t device_remove_policy(uint32_t policy_id)
+int16_t device_remove_policy(uint16_t policy_id)
 {
     dev_policy_t *cur = NULL, *pre = NULL;
 
@@ -112,7 +112,7 @@ int32_t device_remove_policy(uint32_t policy_id)
     return SUCCESS;
 }
 
-dev_policy_t *device_find_policy(uint32_t policy_id)
+dev_policy_t *device_find_policy(uint16_t policy_id)
 {
     dev_policy_t *tmp = NULL;
 

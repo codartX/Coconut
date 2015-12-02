@@ -9,19 +9,21 @@
 #include "main.h"
 #include "resource.h"
 
+#define MAX_OBJECT_NAME_LEN    8
+
 typedef struct _object_instance_t {
     struct _object_instance_t *next;
     void *parent_dev;
-    const uint8_t *name;
-    uint32_t object_id;
+    uint8_t name[MAX_OBJECT_NAME_LEN];
+    uint16_t object_id;
     resource_instance_t *res_list;
 } object_instance_t;
 
-int32_t object_instance_init(object_instance_t *object, const uint8_t *name, uint32_t object_id);
+int16_t object_instance_init(object_instance_t *object, uint8_t *name, uint16_t object_id);
 
-int32_t object_instance_insert_resource(object_instance_t *object, resource_instance_t *resource);
+int16_t object_instance_insert_resource(object_instance_t *object, resource_instance_t *resource);
 
-resource_instance_t *object_instance_find_resource(object_instance_t *object, uint8_t *resource_name);
+resource_instance_t *object_instance_find_resource(object_instance_t *object, uint16_t resource_id);
 
 #endif
 

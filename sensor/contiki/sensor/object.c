@@ -9,11 +9,12 @@
 #include <string.h>
 #include "object.h"
 
-int32_t object_instance_init(object_instance_t *object, const uint8_t *name, uint32_t object_id)
+int16_t object_instance_init(object_instance_t *object, uint8_t *name, uint16_t object_id)
 {
     if (object && name) {
-        object->name = name;
+        strncpy(object->name, name, MAX_OBJECT_NAME_LEN);
         object->object_id = object_id;
+        PRINTF("obj id:%d, name:%s\n", object->object_id, object->name);
         object->res_list = NULL;
         return SUCCESS;
     }
@@ -21,15 +22,15 @@ int32_t object_instance_init(object_instance_t *object, const uint8_t *name, uin
     return FAIL;
 }
 
-int32_t object_instance_insert_resource(object_instance_t *object, resource_instance_t *resource)
+int16_t object_instance_insert_resource(object_instance_t *object, resource_instance_t *resource)
 {
     resource_instance_t *tmp = NULL;
 
     if (object && resource) {
         tmp = object->res_list;
         while(tmp) {
-            if(strcmp(tmp->name, resource->name) == 0) {
-                PRINTF("already has the same name resource\n");
+            if(resource->resource_type->resource_id == tmp->resource_type->resource_id) {
+                PRINTF("already has the same name resource, id:%d\n", resource->resource_type->resource_id);
                 return 0;
             }
             tmp = tmp->next;
@@ -45,14 +46,14 @@ int32_t object_instance_insert_resource(object_instance_t *object, resource_inst
     return FAIL;
 }
 
-resource_instance_t *object_instance_find_resource(object_instance_t *object, uint8_t *resource_name)
+resource_instance_t *object_instance_find_resource(object_instance_t *object, uint16_t resource_id)
 {
     resource_instance_t *tmp = NULL;
 
-    if (object && resource_name) {
+    if (object) {
         tmp = object->res_list;
         while(tmp) {
-            if(strcmp(tmp->name, resource_name) == 0) {
+            if(tmp->resource_type->resource_id == resource_id) {
                 return tmp;
             }
             tmp = tmp->next;

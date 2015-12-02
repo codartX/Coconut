@@ -17,7 +17,7 @@ void subscribers_mem_pool_init()
 
 static void timeout_handler(void *arg)
 {
-    uint32_t len = 0;
+    uint16_t len = 0;
     res_subscriber_t *sub = (res_subscriber_t *)arg;
     resource_instance_t *res = sub->parent_res;
     bool flag = false;
@@ -92,7 +92,7 @@ void subscriber_free(res_subscriber_t *subscriber)
 }
 
 int32_t subscriber_period_type_init(res_subscriber_t *subscriber, uip_ip6addr_t *addr, 
-                                    uint8_t *device_id, uint32_t period)
+                                    uint8_t *device_id, uint16_t period)
 {
     if (!subscriber) {
         return FAIL;
@@ -107,7 +107,7 @@ int32_t subscriber_period_type_init(res_subscriber_t *subscriber, uip_ip6addr_t 
 }
 
 int32_t subscriber_expire_type_init(res_subscriber_t *subscriber, uip_ip6addr_t *addr, 
-                                    uint8_t *device_id, uint32_t expire_time)
+                                    uint8_t *device_id, uint16_t expire_time)
 {
     if (!subscriber) {
         return FAIL;
@@ -155,7 +155,7 @@ int32_t subscriber_value_change_type_init(res_subscriber_t *subscriber, uip_ip6a
 
 void subscriber_timer_start(res_subscriber_t *subscriber)
 {
-    uint32_t sec = 0;
+    uint16_t sec = 0;
     
     if (subscriber->parent_res == NULL) {
         return;
@@ -164,7 +164,7 @@ void subscriber_timer_start(res_subscriber_t *subscriber)
     if (subscriber->condition_type == CONDITION_TYPE_PERIOD) {
         sec = subscriber->condition.period;
     } else if (subscriber->condition_type == CONDITION_TYPE_EXPIRE) {
-        sec = subscriber->condition.expire_time - (uint32_t)time(NULL);
+        sec = subscriber->condition.expire_time - (uint16_t)time(NULL);
     } else {
         if (subscriber->condition.period) {
             sec = subscriber->condition.period;

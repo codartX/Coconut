@@ -12,9 +12,9 @@
  0                   1                   2                   3
  0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
- |vserion        |  content_type | key version   |      seq      |
+ | v | type|key v|              len              |data           |
  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
- |    seq        |  len          |   len         |    data...
+ |        data...
  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 
  1. SECURITY_CLIENT_HELLO & SECURITY_SERVER_HELLO
@@ -74,7 +74,6 @@ typedef struct __attribute__((__packed__)) _security_header_t {
     uint8_t  version:2;
     uint8_t  content_type:3;
     uint8_t  key_version:3;//0=cloud public key, >0 version of shared key
-    uint16_t seq;
     uint16_t len;
     uint8_t  payload[0];
 } security_header_t;
@@ -82,7 +81,7 @@ typedef struct __attribute__((__packed__)) _security_header_t {
 typedef struct __attribute__((__packed__)) _security_client_hello_msg_t {
     security_header_t security_header;
     uint8_t device_id[DEVICE_ID_SIZE];
-    uint8_t random_num;
+    uint32_t random_num;
     uint8_t data[0];
 } security_client_hello_msg_t;
 
@@ -93,7 +92,6 @@ typedef struct _security_server_hello_msg_t {
 
 typedef struct __attribute__((__packed__)) _security_error_msg_t {
     security_header_t security_header;
-    uint16_t error_packet_seq;
     uint32_t error_code;
 } security_error_msg_t;
 
@@ -109,10 +107,10 @@ uint32_t encrypt(sensor_session *session, uint8_t *plaintext, uint32_t plaintext
 
 uint32_t decrypt(sensor_session *session, uint8_t *ciphertext, uint32_t ciphertext_len, uint8_t *plaintext);
 
-uint32_t create_security_error_msg(uint8_t *buf, uint32_t error_code, uint8_t key_version, uint16_t seq_num);
+uint32_t create_security_error_msg(uint8_t *buf, uint32_t error_code, uint8_t key_version);
 
-uint32_t create_security_server_hello_msg(uint8_t *buf, sensor_session *session);
+uint32_t create_security_server_hello_msg(sensor_session *session, uint8_t *buf);
 
-uint32_t create_security_data_msg(uint8_t *buf, uint8_t *payload, uint32_t len);
+uint32_t create_security_data_msg(sensor_session *session, uint8_t *buf, uint8_t *payload, uint32_t len);
 
 #endif

@@ -75,7 +75,7 @@ cc2530_aes_set_iv(uint8_t *iv)
     return;
 }
 /*---------------------------------------------------------------------------*/
-static uint16_t cc2530_aes_operation(uint8_t op,uint8_t *input, uint16_t length, 
+static uint16_t cc2530_aes_operation(uint8_t op, uint8_t *input, uint16_t length, 
                                  uint8_t *output, uint8_t *iv)
 {
     uint16_t i;
@@ -83,7 +83,7 @@ static uint16_t cc2530_aes_operation(uint8_t op,uint8_t *input, uint16_t length,
     uint8_t mode;
     uint16_t total_blocks_num;
     uint16_t converted_blocks;
-    
+   
     total_blocks_num = length / 0x10;
     
     if((length % 0x10) != 0){
@@ -92,7 +92,9 @@ static uint16_t cc2530_aes_operation(uint8_t op,uint8_t *input, uint16_t length,
     }
     
     // Loading the IV.
-    cc2530_aes_set_iv(iv);
+    if (iv) {
+        cc2530_aes_set_iv(iv);
+    }
     
     // Start the operation
     AES_SET_CMD(op);

@@ -38,7 +38,7 @@ union policy_action_u {
     } resource_op;
 
     struct message_t {
-        uint32_t level;
+        uint16_t level;
         uint8_t msg[POLICY_ACTION_MESSAGE_LEN];
     } message;
 };
@@ -51,7 +51,7 @@ typedef struct _policy_action_t {
 
 typedef struct _dev_policy_t {
     struct _dev_policy_t *next;
-    uint32_t policy_id;
+    uint16_t policy_id;
     policy_cond_t *cond_list;
     policy_action_t *action_list; 
 } dev_policy_t;
@@ -62,33 +62,33 @@ policy_cond_t *dev_policy_cond_alloc();
 
 void dev_policy_cond_free(policy_cond_t *cond);
 
-int32_t dev_policy_cond_resource_init(policy_cond_t *cond, uip_ip6addr_t *ip6_addr, 
+int16_t dev_policy_cond_resource_init(policy_cond_t *cond, uip_ip6addr_t *ip6_addr, 
                                       uint8_t *device_id, const uint8_t *obj_name, 
                                       const uint8_t *res_name, enum operation_e op, 
                                       cond_value_u *value);
 
-int32_t dev_policy_cond_expire_time_init(policy_cond_t *cond, uint32_t exp_timestamp);
+int16_t dev_policy_cond_expire_time_init(policy_cond_t *cond, uint32_t exp_timestamp);
 
-int32_t dev_policy_cond_periodic_init(policy_cond_t *cond, uint32_t start_timestamp, uint32_t interval);
+int16_t dev_policy_cond_periodic_init(policy_cond_t *cond, uint32_t start_timestamp, uint16_t interval);
 
 policy_action_t *dev_policy_action_alloc();
 
 void dev_policy_action_free(policy_action_t *action);
 
-int32_t dev_policy_action_resource_init(policy_action_t *action, resource_instance_t *res, 
+int16_t dev_policy_action_resource_init(policy_action_t *action, resource_instance_t *res, 
                                         resource_value_u *value);
 
-int32_t dev_policy_action_message_init(policy_action_t *action, uint32_t level, uint8_t *message);
+int16_t dev_policy_action_message_init(policy_action_t *action, uint16_t level, uint8_t *message);
 
 dev_policy_t *dev_policy_alloc();
 
 void dev_policy_free(dev_policy_t *policy);
 
-int32_t dev_policy_init(dev_policy_t *policy, uint32_t policy_id);
+int16_t dev_policy_init(dev_policy_t *policy, uint16_t policy_id);
 
-int32_t dev_policy_add_cond(dev_policy_t *policy, policy_cond_t *cond);
+int16_t dev_policy_add_cond(dev_policy_t *policy, policy_cond_t *cond);
 
-int32_t dev_policy_add_action(dev_policy_t *policy, policy_action_t *action);
+int16_t dev_policy_add_action(dev_policy_t *policy, policy_action_t *action);
 
 #endif
 

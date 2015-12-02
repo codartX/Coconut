@@ -35,7 +35,7 @@ void dev_policy_cond_free(policy_cond_t *cond)
     memb_free(&policy_cond_memb, cond); 
 }
 
-int32_t dev_policy_cond_resource_init(policy_cond_t *cond, uip_ip6addr_t *ip6_addr, 
+int16_t dev_policy_cond_resource_init(policy_cond_t *cond, uip_ip6addr_t *ip6_addr, 
                                  uint8_t *device_id, const uint8_t *obj_name, 
                                  const uint8_t *res_name, enum operation_e op, 
                                  cond_value_u *value)
@@ -56,7 +56,7 @@ int32_t dev_policy_cond_resource_init(policy_cond_t *cond, uip_ip6addr_t *ip6_ad
     return SUCCESS;
 }
 
-int32_t dev_policy_cond_expire_time_init(policy_cond_t *cond, uint32_t exp_timestamp)
+int16_t dev_policy_cond_expire_time_init(policy_cond_t *cond, uint32_t exp_timestamp)
 {
     if (!cond) {
         return FAIL;
@@ -69,7 +69,7 @@ int32_t dev_policy_cond_expire_time_init(policy_cond_t *cond, uint32_t exp_times
     return SUCCESS;
 }
 
-int32_t dev_policy_cond_periodic_init(policy_cond_t *cond, uint32_t start_timestamp, uint32_t interval)
+int16_t dev_policy_cond_periodic_init(policy_cond_t *cond, uint32_t start_timestamp, uint16_t interval)
 {
     if (!cond) {
         return FAIL;
@@ -100,7 +100,7 @@ void dev_policy_action_free(policy_action_t *action)
     memb_free(&policy_action_memb, action);
 }
 
-int32_t dev_policy_action_resource_init(policy_action_t *action, resource_instance_t *res, 
+int16_t dev_policy_action_resource_init(policy_action_t *action, resource_instance_t *res, 
                                         resource_value_u *value)
 {
     if (!action) {
@@ -115,7 +115,7 @@ int32_t dev_policy_action_resource_init(policy_action_t *action, resource_instan
     return SUCCESS;
 }
 
-int32_t dev_policy_action_message_init(policy_action_t *action, uint32_t level, uint8_t *message)
+int16_t dev_policy_action_message_init(policy_action_t *action, uint16_t level, uint8_t *message)
 {
     if (!action) {
         return FAIL;
@@ -164,7 +164,7 @@ void dev_policy_free(dev_policy_t *policy)
     memb_free(&policy_memb, policy);
 }
 
-int32_t dev_policy_init(dev_policy_t *policy, uint32_t policy_id)
+int16_t dev_policy_init(dev_policy_t *policy, uint16_t policy_id)
 {
     policy->policy_id = policy_id;
     policy->cond_list = NULL;
@@ -173,7 +173,7 @@ int32_t dev_policy_init(dev_policy_t *policy, uint32_t policy_id)
     return SUCCESS;
 }
 
-int32_t dev_policy_add_cond(dev_policy_t *policy, policy_cond_t *cond)
+int16_t dev_policy_add_cond(dev_policy_t *policy, policy_cond_t *cond)
 {
     cond->next = policy->cond_list;
     policy->cond_list = cond;
@@ -181,7 +181,7 @@ int32_t dev_policy_add_cond(dev_policy_t *policy, policy_cond_t *cond)
     return SUCCESS;
 }
 
-int32_t dev_policy_add_action(dev_policy_t *policy, policy_action_t *action)
+int16_t dev_policy_add_action(dev_policy_t *policy, policy_action_t *action)
 {
     action->next = policy->action_list;
     policy->action_list = action;

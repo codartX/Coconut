@@ -7,9 +7,9 @@
 #include <stdio.h>
 #include "resource.h"
 
-resource_type_t *find_resource_type(uint32_t resource_id)
+resource_type_t *find_resource_type(uint16_t resource_id)
 {
-    int32_t i = 0;
+    uint16_t i = 0;
 
     for(;i < resource_types_count; i++) {
         if (resource_types[i].resource_id == resource_id) {
@@ -20,22 +20,19 @@ resource_type_t *find_resource_type(uint32_t resource_id)
     return NULL;
 }
 
-int32_t resource_instance_init(resource_instance_t *instance, const uint8_t *name, uint32_t resource_id, 
+int16_t resource_instance_init(resource_instance_t *instance, uint16_t resource_id, 
                                resource_value_u *value, get_resource_value_func get_func, 
                                set_resource_value_func set_func)
 {
     resource_type_t *resource_type = NULL;
 
-    if (instance && name) {
+    if (instance && value) {
         resource_type = find_resource_type(resource_id);
         if (resource_type) {
-            instance->name = name;
             instance->resource_type = resource_type;
             instance->next = NULL;
             if (value) {
                 memcpy(&(instance->value), value, sizeof(resource_value_u));
-            } else {
-                memset(&(instance->value), 0x0, sizeof(resource_value_u));
             }
             instance->get_func = get_func;
             instance->set_func = set_func;
@@ -81,7 +78,7 @@ int8_t set_resource_value(resource_instance_t *res, resource_value_u *value)
     return SUCCESS;
 }
 
-int32_t resource_add_subscriber(resource_instance_t *res_instance, res_subscriber_t *res_sub)
+int16_t resource_add_subscriber(resource_instance_t *res_instance, res_subscriber_t *res_sub)
 {
     if (!res_instance || !res_sub) {
         return FAIL;
@@ -96,7 +93,7 @@ int32_t resource_add_subscriber(resource_instance_t *res_instance, res_subscribe
     return SUCCESS;
 }
 
-int32_t resource_remove_subscriber(resource_instance_t *res_instance, uip_ip6addr_t *ip_addr)
+int16_t resource_remove_subscriber(resource_instance_t *res_instance, uip_ip6addr_t *ip_addr)
 {
     res_subscriber_t *cur = NULL, *pre = NULL;  
 
@@ -124,15 +121,13 @@ int32_t resource_remove_subscriber(resource_instance_t *res_instance, uip_ip6add
 
 int8_t resource_value_compare(resource_instance_t *res_instance, resource_value_u *value)
 {
-    if (res_instance->resource_type->type == String) {
-        return strcmp(value->string_value, res_instance->value.string_value);
-    } else if (res_instance->resource_type->type == Boolean) {
-        return (value->boolean_value - res_instance->value.boolean_value);
-    } else if (res_instance->resource_type->type == Integer){
+    if (res_instance->resource_type->type == Integer){
         return (value->int_value - res_instance->value.int_value);
     } else if (res_instance->resource_type->type == Float) {
         return (value->float_value - res_instance->value.float_value);
-    }
+    } else if (res_instance->resource_type->type == String) {
+        return strcmp(value->string_value, res_instance->value.string_value);
+    } 
     
     return 0;
 }

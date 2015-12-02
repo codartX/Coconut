@@ -22,18 +22,18 @@ typedef struct _device_t {
 
 extern device_t g_device;
 
-int32_t device_init(uint8_t *device_id);
+int16_t device_init(uint8_t *device_id);
 
-int32_t device_insert_object(object_instance_t *object);
+int16_t device_insert_object(object_instance_t *object);
 
 object_instance_t *device_find_object(uint8_t *object_name);
 
 #ifdef POLICY_SUPPORT
-int32_t device_insert_policy(dev_policy_t *policy);
+int16_t device_insert_policy(dev_policy_t *policy);
 
-int32_t device_remove_policy(uint32_t policy_id);
+int16_t device_remove_policy(uint16_t policy_id);
 
-dev_policy_t *device_find_policy(uint32_t policy_id);
+dev_policy_t *device_find_policy(uint16_t policy_id);
 #endif
 
 #endif

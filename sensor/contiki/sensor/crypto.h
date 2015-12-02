@@ -17,7 +17,7 @@ typedef struct _network_shared_key_t {
 } network_shared_key_t;
 
 typedef struct _master_key_t {
-    uint8_t random_num;
+    uint32_t random_num;
     uint8_t key[DEVICE_KEY_SIZE];
 } master_key_t;
 
@@ -25,9 +25,9 @@ typedef struct _master_key_t {
  0                   1                   2                   3
  0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
- |  version      | content_type  | key version   |      seq      |
+ | v | type|key v|              len              |data           |
  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
- |    seq        |  len          |   len         |    data....
+ |                            data....
  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
  
  1. SECURITY_CLIENT_HELLO & SECURITY_SERVER_HELLO
@@ -38,18 +38,14 @@ typedef struct _master_key_t {
  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
  |                     Device ID                                 |
  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
- |Master Key Ver |                        Random Number          |
- +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
- |                     Random Number (Cont. 16 Bytes)            |
+ |                     Random Number                             |
  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
  |                     Encrypted Password ...
  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
  
  SECURITY_SERVER_HELLO's data:
  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
- |Master Key Ver |          Encrypted Shared Network Key
- +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
- |                     Encrypted Shared Network Key(Cont) ...
+ |                Encrypted Shared Network Key...                   
  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
  
  2. SECURITY_DATA's data:
@@ -58,8 +54,6 @@ typedef struct _master_key_t {
  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
  
  3. SECURITY_ERROR's data:
- +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
- |        Pkt Seq Num            | Error Code
  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
  |                     Error Code                                |
  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
@@ -91,14 +85,13 @@ typedef struct _security_header_t {
     uint8_t  version:2;
     uint8_t  content_type:3;
     uint8_t  key_version:3;//0=cloud public key, >0 version of shared key
-    uint16_t seq;
-    uint16_t len;
+    uint16_t  len;
 } security_header_t;
 
 typedef struct _security_client_hello_msg_t {
     security_header_t security_header;
     uint8_t device_id[DEV_ID_SIZE];
-    uint8_t random_num;
+    uint32_t random_num;
 } security_client_hello_msg_t;
 
 typedef struct _security_server_hello_msg_t {
@@ -111,17 +104,16 @@ typedef struct _security_data_msg_t {
 
 typedef struct _security_error_msg_t {
     security_header_t security_header;
-    uint16_t pkt_seq_num;
-    uint32_t error_code;
+    uint16_t error_code;
 } security_error_msg_t;
 
-uint32_t get_password(uint8_t **pwd);
+uint16_t get_password(uint8_t **pwd);
 
-uint32_t get_password_encrypted_by_public_key(uint8_t **pwd);
+uint16_t get_password_encrypted_by_public_key(uint8_t **pwd);
 
-uint32_t encrypt_data_by_network_shared_key(uint8_t *data, uint32_t len, uint8_t *enc_buf);
+uint16_t encrypt_data_by_network_shared_key(uint8_t *data, uint16_t len, uint8_t *enc_buf);
 
-uint32_t decrypt_data_by_network_shared_key(uint8_t *data, uint32_t len, uint8_t *dec_buf);
+uint16_t decrypt_data_by_network_shared_key(uint8_t *data, uint16_t len, uint8_t *dec_buf);
 
 uint8_t set_network_shared_key(uint8_t *key, uint16_t version);
 
@@ -129,11 +121,11 @@ network_shared_key_t *get_network_shared_key();
 
 master_key_t *get_master_key();
 
-uint32_t decrypt_data_by_master_key(uint8_t *data, uint32_t len, uint8_t *dec_buf);
+uint16_t decrypt_data_by_master_key(uint8_t *data, uint16_t len, uint8_t *dec_buf);
 
-uint32_t create_security_client_hello_msg(uint8_t *buf);
+uint16_t create_security_client_hello_msg(uint8_t *buf);
 
-uint32_t create_security_data_msg(uint8_t *buf, uint8_t *data, uint16_t len);
+uint16_t create_security_data_msg(uint8_t *buf, uint8_t *data, uint16_t len);
 
 uint8_t crypto_init();
 

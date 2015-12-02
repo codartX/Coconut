@@ -13,12 +13,12 @@
 object_instance_t g_object_devinfo;
 resource_instance_t g_resource_name;
 object_instance_t g_object_temp;
-resource_instance_t g_resource_temp;
+resource_instance_t g_resource_sensor_value;
 resource_instance_t g_resource_units;
 
 bool create_device()
 {
-    int32_t retval = FAIL;
+    int16_t retval = FAIL;
     resource_instance_t *res_instance = NULL;
     object_instance_t *obj_instance = NULL;
     resource_value_u value;
@@ -40,12 +40,11 @@ bool create_device()
         return false;
     }
 
-    strncpy(value.string_value, "Temperature Sensor", MAX_RESOURCE_STR_VALUE_LEN - 1);
-    value.string_value[MAX_RESOURCE_STR_VALUE_LEN -1] = '\0';
+    strncpy(value.string_value, "Temp Sensor", MAX_RES_STR_VALUE_LEN);
 
     res_instance = &g_resource_name;
 
-    if (!resource_instance_init(res_instance, "Name", 5105, 
+    if (!resource_instance_init(res_instance, 5105, 
                                 &value, NULL, NULL)) {
         return false;
     }
@@ -65,9 +64,9 @@ bool create_device()
 
     get_temperature(&value);
 
-    res_instance = &g_resource_temp;
+    res_instance = &g_resource_sensor_value;
 
-    if (!resource_instance_init(res_instance, "Temp", 5700, 
+    if (!resource_instance_init(res_instance, 5700, 
                                 &value, get_temperature, NULL)) {
         return false;
     }
@@ -76,12 +75,11 @@ bool create_device()
         return false;
     }
 
-    strncpy(value.string_value, "C", MAX_RESOURCE_STR_VALUE_LEN - 1);
-    value.string_value[MAX_RESOURCE_STR_VALUE_LEN -1] = '\0';
+    strncpy(value.string_value, "C", MAX_RES_STR_VALUE_LEN);
 
     res_instance = &g_resource_units;
 
-    if (!resource_instance_init(res_instance, "Units", 5701, 
+    if (!resource_instance_init(res_instance, 5701, 
                                 &value, NULL, NULL)) {
         return false;
     }

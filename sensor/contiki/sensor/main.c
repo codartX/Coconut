@@ -19,6 +19,7 @@
 #include "crypto.h"
 #include "device-fs.h"
 #include "clock.h"
+#include "cc2530-aes.h"
 
 #define DEBUG DEBUG_PRINT
 #include "net/uip-debug.h"
@@ -41,11 +42,11 @@ uint8_t get_global_addr_success = 0;
 PROCESS(coconut_sensor_process, "Coconut sensor process");
 AUTOSTART_PROCESSES(&coconut_sensor_process);
 /*---------------------------------------------------------------------------*/
-static void debug_print_msg(uint8_t *msg, uint32_t len)
+static void debug_print_msg(uint8_t *msg, uint16_t len)
 {
     uint16_t i;
 
-    PRINTF("Message:");
+    PRINTF("Message len:%d, content:", len);
     for(i = 0; i < len; i++) {
         PRINTF("%x ", msg[i]);
     }
@@ -65,7 +66,6 @@ void send_msg(uint8_t *data, uint16_t len, uip_ipaddr_t *peer_ipaddr)
 void send_msg_to_gateway(uint8_t *data, uint16_t len)
 {
     //uip_ipaddr_copy(&client_conn->ripaddr, &server_ipaddr);
-    PRINTF("packet len:%x\n", len);
     uip_udp_packet_sendto(client_conn, data, len,
                           &server_ipaddr, UIP_HTONS(COCONUT_UDP_SERVER_PORT));
     //uip_create_unspecified(&client_conn->ripaddr);
@@ -77,7 +77,7 @@ void send_msg_to_gateway(uint8_t *data, uint16_t len)
 static void 
 discover_request_handler()
 {
-    uint32_t len = 0;
+    uint16_t len = 0;
     
     len = create_new_device_msg(output_buf, MAX_PAYLOAD_LEN, TYPE_RESPONSE);
     if (len > 0) {
@@ -114,7 +114,7 @@ static void
 report_request_handler(uint8_t *device_id, uint8_t *parameters)
 {
     cJSON *root = NULL, *sub = NULL, *sub1 = NULL, *sub2 = NULL, *sub3 = NULL;
-    uint32_t i = 0, j = 0;
+    uint16_t i = 0, j = 0;
     object_instance_t *obj = NULL;
     resource_instance_t *res = NULL;
     resource_value_u value;
@@ -164,7 +164,7 @@ report_request_handler(uint8_t *device_id, uint8_t *parameters)
                 continue;
             }
             
-            res = object_instance_find_resource(obj, sub3->valuestring);
+            res = object_instance_find_resource(obj, sub3->valueint);
             if (!res) {
                 continue;
             }
@@ -174,8 +174,7 @@ report_request_handler(uint8_t *device_id, uint8_t *parameters)
                 continue;
             }
             
-            if (res->resource_type->type == Integer ||
-                res->resource_type->type == Boolean) {
+            if (res->resource_type->type == Integer) {
                 value.int_value = sub3->valueint;
             } else if (res->resource_type->type == Float) {
                 value.float_value = sub3->valuefloat;
@@ -202,7 +201,7 @@ static void
 set_resources_request_handler(uint8_t *parameters)
 {
     cJSON *root = NULL, *sub = NULL, *sub1 = NULL, *sub2 = NULL, *sub3 = NULL;
-    uint32_t i = 0, j = 0;
+    uint16_t i = 0, j = 0;
     object_instance_t *obj = NULL;
     resource_instance_t *res = NULL;
     resource_value_u value;
@@ -252,7 +251,7 @@ set_resources_request_handler(uint8_t *parameters)
                 continue;
             }
             
-            res = object_instance_find_resource(obj, sub3->valuestring);
+            res = object_instance_find_resource(obj, sub3->valueint);
             if (!res) {
                 continue;
             }
@@ -262,8 +261,7 @@ set_resources_request_handler(uint8_t *parameters)
                 continue;
             }
             
-            if (res->resource_type->type == Integer ||
-                res->resource_type->type == Boolean) {
+            if (res->resource_type->type == Integer) {
                 value.int_value = sub3->valueint;
             } else if (res->resource_type->type == Float) {
                 value.float_value = sub3->valuefloat;
@@ -290,7 +288,7 @@ static void
 get_resources_request_handler(uint8_t *parameters)
 {
     cJSON *root = NULL, *sub = NULL, *sub1 = NULL, *sub2 = NULL;
-    uint32_t i = 0, j = 0;
+    uint16_t i = 0, j = 0;
     object_instance_t *obj = NULL;
     resource_instance_t *res = NULL;
     resource_value_u value;
@@ -341,7 +339,7 @@ get_resources_request_handler(uint8_t *parameters)
                 continue;
             }
             
-            res = object_instance_find_resource(obj, sub2->valuestring);
+            res = object_instance_find_resource(obj, sub2->valueint);
             if (!res) {
                 continue;
             }
@@ -351,20 +349,13 @@ get_resources_request_handler(uint8_t *parameters)
             }
             
             if (res->resource_type->type == Integer) {
-                sprintf(ptr, "[%s, %d],", sub2->valuestring, value.int_value);
-                ptr = ptr + strlen(ptr);
-            } else if (res->resource_type->type == Boolean) {
-                if (value.int_value) {
-                    sprintf(ptr, "[%s, true],", sub2->valuestring);
-                } else {
-                    sprintf(ptr, "[%s, false],", sub2->valuestring);
-                }
+                sprintf(ptr, "[%d, %d],", sub2->valueint, value.int_value);
                 ptr = ptr + strlen(ptr);
             } else if (res->resource_type->type == Float) {
-                sprintf(ptr, "[%s, %f],", sub2->valuestring, value.float_value);
+                sprintf(ptr, "[%d, %f],", sub2->valueint, value.float_value);
                 ptr = ptr + strlen(ptr);
             } else if (res->resource_type->type == String) {
-                sprintf(ptr, "[%s, %s],", sub2->valuestring, value.string_value);
+                sprintf(ptr, "[%d, %s],", sub2->valueint, value.string_value);
                 ptr = ptr + strlen(ptr);
             } else {
                 continue;
@@ -419,7 +410,7 @@ static void
 subscribe_request_handler(uint8_t *device_id, uint8_t *parameters)
 {
     cJSON *root = NULL, *sub = NULL, *sub1 = NULL, *sub2 = NULL, *sub3 = NULL, *sub4 = NULL;
-    uint32_t i = 0, j = 0;
+    uint16_t i = 0, j = 0;
     object_instance_t *obj = NULL;
     resource_instance_t *res = NULL;
     resource_value_u value;
@@ -472,7 +463,7 @@ subscribe_request_handler(uint8_t *device_id, uint8_t *parameters)
                 continue;
             }
             
-            res = object_instance_find_resource(obj, sub3->valuestring);
+            res = object_instance_find_resource(obj, sub3->valueint);
             if (!res) {
                 continue;
             }
@@ -515,8 +506,6 @@ subscribe_request_handler(uint8_t *device_id, uint8_t *parameters)
                                 cond_value.int_value = sub4->valueint;
                             } else if (res->resource_type->type == Float) {
                                 cond_value.float_value = sub4->valuefloat;
-                            } else if (res->resource_type->type == Boolean) {
-                                cond_value.boolean_value = sub4->valueint;
                             } else {
                                 continue;
                             }
@@ -568,7 +557,7 @@ static void
 unsubscribe_request_handler(uint8_t *parameters)
 {
     cJSON *root = NULL, *sub = NULL, *sub1 = NULL, *sub2 = NULL;
-    uint32_t i = 0, j = 0;
+    uint16_t i = 0, j = 0;
     object_instance_t *obj = NULL;
     resource_instance_t *res = NULL;
     retcode_e retcode = RETCODE_SUCCESS;
@@ -612,7 +601,7 @@ unsubscribe_request_handler(uint8_t *parameters)
                 continue;
             }
             
-            res = object_instance_find_resource(obj, sub2->valuestring);
+            res = object_instance_find_resource(obj, sub2->valueint);
             if (!res) {
                 continue;
             }
@@ -636,35 +625,49 @@ message_handler(void)
 {
     uint8_t *data, *parameters;
     msg_method_e method;
-    uint32_t len = 0, len1 = 0, i = 0;
+    uint16_t len = 0, len1 = 0, i = 0;
     security_header_t *security_header = NULL;
     network_shared_key_t *shared_key = NULL;
     
     if(uip_newdata()) {
         len = uip_datalen();
-        data = uip_appdata;
-#if 0
+        memcpy(output_buf, uip_appdata, len);
+#if 1
         PRINTF("Recv len:%d, data:", len);
         for (i = 0; i < len; i++) {
-            PRINTF("%x ", data[i]);
+            PRINTF("%x ", output_buf[i]);
         }
         PRINTF("\n");
 #endif
         
         /*Decrypt data*/
-        security_header = uip_appdata;
+        security_header = (security_header_t *)output_buf;
         if (security_header->content_type == SECURITY_SERVER_HELLO) {
-            security_server_hello_msg_t *msg = (security_server_hello_msg_t *)uip_appdata;
-            len1 = decrypt_data_by_master_key(uip_appdata + sizeof(security_server_hello_msg_t), msg->security_header.len + 1, output_buf);
-            if (len1 == DEVICE_KEY_SIZE) {
-                if (set_network_shared_key(output_buf, security_header->key_version)) {
+            data = output_buf + sizeof(security_server_hello_msg_t);
+
+            PRINTF("server hello len:%d, data:", security_header->len);
+            for (i = 0; i < security_header->len; i++) {
+                PRINTF("%02x ", data[i]);
+            }
+            PRINTF("\n");
+    
+            len1 = decrypt_data_by_master_key(data, security_header->len, data);
+
+            PRINTF("decoded len:%d, data:", len1);
+            for (i = 0; i < len1; i++) {
+                PRINTF("%02x ", data[i]);
+            }
+            PRINTF("\n");
+
+            if (len1) {
+                if (set_network_shared_key(data, security_header->key_version)) {
                     auth_success = 1;
                 }
             }
             
             return;
         } else if(security_header->content_type == SECURITY_ERROR) {
-            i = *((uint32_t *)(security_header + sizeof(security_header_t)));
+            i = *((uint16_t *)(security_header + sizeof(security_header_t)));
             PRINTF("Security Error:%d", i);
             if (i == SECURITY_ERROR_INVALID_KEY_VERSION || i == SECURITY_ERROR_DECRYPT_ERROR) {
                 shared_key = get_network_shared_key();
@@ -748,7 +751,7 @@ message_handler(void)
 static void
 print_local_addresses(void)
 {
-    uint32_t i;
+    uint16_t i;
     uint8_t state;
 
     PRINTF("Client IPv6 addresses: ");
@@ -853,8 +856,16 @@ PROCESS_THREAD(coconut_sensor_process, ev, data)
             } else if (!reg_success) {
                 /*send register*/
                 etimer_restart(&et);
-                len = create_new_device_msg(output_buf, MAX_PAYLOAD_LEN, TYPE_REQUEST);
-                len = create_security_data_msg(output_buf, output_buf, len);
+                //sprintf(output_buf + sizeof(security_header_t), "hello");
+                //len = create_security_data_msg(output_buf, output_buf + sizeof(security_header_t), 5);
+                //if (len){
+                //    debug_print_msg(output_buf, len);
+                //    send_msg_to_gateway(output_buf, len);
+                //}
+
+                len = create_new_device_msg(output_buf + sizeof(security_header_t), 
+                                            MAX_PAYLOAD_LEN - sizeof(security_header_t), TYPE_REQUEST);
+                len = create_security_data_msg(output_buf, output_buf + sizeof(security_header_t), len);
                 if (len){
                     debug_print_msg(output_buf, len);
                     send_msg_to_gateway(output_buf, len);
