@@ -70,8 +70,7 @@ int32_t crypto_init()
 
 uint32_t encrypt(sensor_session *session, uint8_t *plaintext, uint32_t plaintext_len, uint8_t *ciphertext)
 {
-    uint32_t len;
-    uint32_t ciphertext_len;
+    uint32_t len, ciphertext_len;
     EVP_CIPHER_CTX ctx;
     uint8_t iv[DEVICE_KEY_SIZE];
     
@@ -97,16 +96,23 @@ uint32_t encrypt(sensor_session *session, uint8_t *plaintext, uint32_t plaintext
         printf("EVP_EncryptUpdate error!\n");
         return 0;
     }
-    
     ciphertext_len = len;
     
+    if(1 != EVP_EncryptFinal_ex(&ctx, ciphertext + len, &len)) {
+        printf("EVP_EncryptFinal_ex error\n");
+        return 0;
+    }
+  
+    ciphertext_len += len;
+
+    EVP_CIPHER_CTX_cleanup(&ctx);
+
     return ciphertext_len;
 }
 
 uint32_t decrypt(sensor_session *session, uint8_t *ciphertext, uint32_t ciphertext_len, uint8_t *plaintext)
 {
     uint32_t len;
-    uint32_t plaintext_len;
     EVP_CIPHER_CTX ctx;
     uint8_t iv[DEVICE_KEY_SIZE];
     
@@ -130,9 +136,9 @@ uint32_t decrypt(sensor_session *session, uint8_t *ciphertext, uint32_t cipherte
         return 0;
     }
 
-    plaintext_len = len;
-    
-    return plaintext_len;
+    EVP_CIPHER_CTX_cleanup(&ctx);
+
+    return len;
 }
 
 uint32_t create_security_error_msg(uint8_t *buf, uint32_t error_code, uint8_t key_version)
@@ -200,7 +206,7 @@ uint32_t create_security_data_msg(sensor_session *session, uint8_t *buf, uint8_t
     security_header->version = SECURITY_VERSION;
     security_header->key_version = get_current_network_shared_key_version();
     security_header->len = len;
-    memcpy(buf + sizeof(security_header), payload, len);
+    memcpy(buf + sizeof(security_header_t), payload, len);
     
     return sizeof(security_header_t) + len;
 }

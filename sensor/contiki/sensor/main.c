@@ -91,6 +91,7 @@ register_response_handler(uint8_t *parameters)
 {
     cJSON *root = NULL, *sub = NULL;
     
+    PRINTF("register response:%s\n", parameters);
     if (!parameters) {
         return;
     }
@@ -102,6 +103,7 @@ register_response_handler(uint8_t *parameters)
     }
     
     sub = cJSON_GetArrayItem(root, 0);
+    PRINTF("register response ret code:%d\n", sub->valueint);
     if (sub && sub->valueint == RETCODE_SUCCESS) {
         reg_success = 1;
     }
@@ -632,7 +634,7 @@ message_handler(void)
     if(uip_newdata()) {
         len = uip_datalen();
         memcpy(output_buf, uip_appdata, len);
-#if 1
+#if 0
         PRINTF("Recv len:%d, data:", len);
         for (i = 0; i < len; i++) {
             PRINTF("%x ", output_buf[i]);
@@ -645,19 +647,19 @@ message_handler(void)
         if (security_header->content_type == SECURITY_SERVER_HELLO) {
             data = output_buf + sizeof(security_server_hello_msg_t);
 
-            PRINTF("server hello len:%d, data:", security_header->len);
-            for (i = 0; i < security_header->len; i++) {
-                PRINTF("%02x ", data[i]);
-            }
-            PRINTF("\n");
+            //PRINTF("server hello len:%d, data:", security_header->len);
+            //for (i = 0; i < security_header->len; i++) {
+            //    PRINTF("%02x ", data[i]);
+            //}
+            //PRINTF("\n");
     
             len1 = decrypt_data_by_master_key(data, security_header->len, data);
 
-            PRINTF("decoded len:%d, data:", len1);
-            for (i = 0; i < len1; i++) {
-                PRINTF("%02x ", data[i]);
-            }
-            PRINTF("\n");
+            //PRINTF("decoded len:%d, data:", len1);
+            //for (i = 0; i < len1; i++) {
+            //    PRINTF("%02x ", data[i]);
+            //}
+            //PRINTF("\n");
 
             if (len1) {
                 if (set_network_shared_key(data, security_header->key_version)) {
@@ -678,16 +680,20 @@ message_handler(void)
             auth_success = 0;
             return;
         } else if (security_header->content_type == SECURITY_DATA) {
-            len1 = decrypt_data_by_network_shared_key(uip_appdata, len, output_buf);
+            data = output_buf + sizeof(security_header_t);
+            len1 = decrypt_data_by_network_shared_key(data, len - sizeof(security_header_t), data);
             if (!len1) {
                 PRINTF("Decrypt Error");
                 return;
             }
-            data = output_buf;
-            len = len1;
+            //PRINTF("data decoded len:%d, data:", len1);
+            //for (i = 0; i < len1; i++) {
+            //    PRINTF("%02x ", data[i]);
+            //}
+            //PRINTF("\n");
             
-            if (len >= sizeof(msg_header_t)) {
-                if ( memcmp(get_msg_device_id(data), uip_lladdr.addr, 8) == 0) {
+            if (len1 >= sizeof(msg_header_t)) {
+                if (memcmp(get_msg_device_id(data), g_device.device_id, DEV_ID_SIZE) == 0) {
                     if (get_msg_type(data) == TYPE_REQUEST) {
                         //request
                         method = get_msg_method(data);
@@ -728,7 +734,6 @@ message_handler(void)
                                 return;
                         }
                     } else {
-                        //TODO: response
                         method = get_msg_method(data);
                         switch(method){
                             case METHOD_NEW_DEVICE:
@@ -856,12 +861,6 @@ PROCESS_THREAD(coconut_sensor_process, ev, data)
             } else if (!reg_success) {
                 /*send register*/
                 etimer_restart(&et);
-                //sprintf(output_buf + sizeof(security_header_t), "hello");
-                //len = create_security_data_msg(output_buf, output_buf + sizeof(security_header_t), 5);
-                //if (len){
-                //    debug_print_msg(output_buf, len);
-                //    send_msg_to_gateway(output_buf, len);
-                //}
 
                 len = create_new_device_msg(output_buf + sizeof(security_header_t), 
                                             MAX_PAYLOAD_LEN - sizeof(security_header_t), TYPE_REQUEST);
@@ -870,6 +869,9 @@ PROCESS_THREAD(coconut_sensor_process, ev, data)
                     debug_print_msg(output_buf, len);
                     send_msg_to_gateway(output_buf, len);
                 }
+            } else {
+                etimer_restart(&et);
+
             }
         }
         if(ev == tcpip_event) {

@@ -53,8 +53,6 @@ typedef struct _msg_header_t {
 uint16_t build_msg(uint8_t *buf, uint16_t len, msg_type_e msg_type, 
                    msg_method_e method, uint8_t *parameters);
 
-#define get_msg_con(payload) (((msg_header_t *)payload)->con) 
-
 #define get_msg_type(payload) (msg_type_e)(((msg_header_t *)payload)->msg_type) 
 
 #define get_msg_method(payload) (msg_method_e)(((msg_header_t *)payload)->method) 

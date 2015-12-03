@@ -61,7 +61,7 @@ int websocket_write (const char *content, int length)
 void websocket_connect()
 {
     uint8_t url[64];
-    uint8_t i = 1;
+    uint8_t i = 20, j = 1;
 
     if (g_ws_conn) {
         nopoll_conn_close (g_ws_conn);
@@ -75,7 +75,7 @@ void websocket_connect()
 
     snprintf(url, sizeof(url), "/device_monitor?Id=%s", LICENSE_ID);
     //create websocket client
-    while (i) {
+    while (j) {
         /* create context */
         g_ws_ctx = create_ctx();
         
@@ -91,9 +91,15 @@ void websocket_connect()
                 printf ("ERROR: Expected to find proper client connection status, but found error..\n");
                 goto reconnect;
             }
+
+            if (i <= 0) {
+                goto reconnect;
+            }
+
             /* wait a bit 10ms */
             printf("wait for conn ready\n");
             nopoll_sleep (10000);
+            i--;
         }
 
         //success
@@ -106,7 +112,7 @@ reconnect:
         nopoll_ctx_unref (g_ws_ctx);
         g_ws_conn = NULL;
         g_ws_ctx = NULL;
-        i--;
+        j--;
     }  
 }
 
@@ -403,18 +409,19 @@ WS_MESSAGE_HANDLE:
         if (ws_msg) {
             ws_msg_payload = (uint8_t *)nopoll_msg_get_payload(ws_msg);
             len = nopoll_msg_get_payload_size(ws_msg);
-            //printf("websocket msg len %d:\n", len);
-            //for (i = 0; i < len; i++) {
-            //    printf("%02x ", ws_msg_payload[i]);
-            //}
+            printf("websocket msg len %d:\n", len);
+            for (i = 0; i < len; i++) {
+                printf("%02x ", ws_msg_payload[i]);
+            }
             printf("\n");
             if (len >= MSG_HEAD_LEN) {
                 device_id = get_msg_device_id(ws_msg_payload);
                 session = find_session(device_id);
                 if (session) {
+                    memset(msg, 0x0, sizeof(msg));
                     memcpy(msg, ws_msg_payload, len);
-                    if (get_msg_method(ws_msg_payload) == METHOD_AUTH) {
-                        root  = cJSON_Parse(get_msg_parameters(ws_msg_payload));
+                    if (get_msg_method(msg) == METHOD_AUTH) {
+                        root  = cJSON_Parse(get_msg_parameters(msg));
                         if (root) {
                             node = cJSON_GetArrayItem(root, 0);
                             if (node && node->valueint == 0) {
@@ -449,12 +456,21 @@ WS_MESSAGE_HANDLE:
                             }
                         }
                     } else {
-                        len1 = encrypt(session, ws_msg_payload, len, buf);
+                        if (len%16 != 0) {
+                            len++;
+                        }
+                        len1 = encrypt(session, msg, len, buf);
                         if (len1) {
+                            printf("encrypt data len:%d, data:", len1);
+                            for (i = 0; i < len1; i++) {
+                                printf("%02x ", buf[i]);
+                            }
+                            printf("\n");
+
                             len2 = create_security_data_msg(session, buf1, buf, len1);
                             if (len2) {
                                 printf("find session, send response msg\n");
-                                if(sendto(sock, msg, len, 0,
+                                if(sendto(sock, buf1, len2, 0,
                                           (struct sockaddr *)&session->addr,
                                           sizeof(struct sockaddr_in6)) < 0){
                                     perror("send error");
