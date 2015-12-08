@@ -16,7 +16,7 @@ import tornado.httpserver
 import tornado.ioloop
 import tornado.options
 import tornado.web
-import rsa
+from Crypto.PublicKey import RSA
 
 import handler.device_handler
 import handler.app_rpc_handler
@@ -63,6 +63,11 @@ class Application(tornado.web.Application):
 
         # Have one global memcache controller
         self.mc = memcache.Client(['127.0.0.1:11211'])
+
+        f = open('privkey.der', 'r')
+        self.private_key = RSA.importKey(f.read())
+
+        self.server_node = '10.174.148.97' 
 
 def main():
     logging.basicConfig(level=logging.DEBUG,

@@ -334,9 +334,9 @@ def build_message(msgtype, message_id, device_id, method, parameters = []):
     message   = []
     
     # header
-    message += [chr(d.VERSION<<6 | msgtype)]
+    message += [chr(msgtype << 2 | d.VERSION & 0x03)]
     message += [chr(method)]
-    message += [chr((message_id>>8) & 0xFF), chr(message_id & 0xFF)] 
+    message += [chr(message_id & 0xFF), chr((message_id>>8) & 0xFF)] 
     message += device_id
     if parameters:
         message += parameters
