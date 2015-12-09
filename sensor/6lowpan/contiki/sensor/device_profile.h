@@ -8,6 +8,8 @@
 
 #include <stdbool.h>
 
+extern uint32_t g_send_interval;
+
 bool create_device();
 
 #endif

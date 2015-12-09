@@ -8,7 +8,7 @@
 #include "resource.h"
 #include <time.h>
 
-MEMB(subscribers_memb, subscriber_t, 1);
+MEMB(subscribers_memb, subscriber_t, 2);
 
 void subscribers_mem_pool_init()
 {
@@ -40,8 +40,14 @@ int32_t subscriber_value_compare_type_init(subscriber_t *subscriber, uip_ip6addr
         return FAIL;
     } 
 
-    memcpy(&(subscriber->ip6_addr), addr, sizeof(uip_ip6addr_t));
-    memcpy(subscriber->device_id, device_id, DEV_ID_SIZE);
+    if (device_id && addr) {
+        subscriber->system = false;
+        memcpy(&(subscriber->ip6_addr), addr, sizeof(uip_ip6addr_t));
+        memcpy(subscriber->device_id, device_id, DEV_ID_SIZE);
+    } else {
+        subscriber->system = true;
+    }
+
     subscriber->condition_type = CONDITION_TYPE_VALUE_COMPARE;
     subscriber->condition.operation = operation;
     memcpy(&subscriber->condition.value, value, sizeof(cond_value_u));
@@ -56,8 +62,14 @@ int32_t subscriber_report_type_init(subscriber_t *subscriber, uip_ip6addr_t *add
         return FAIL;
     } 
 
-    memcpy(&(subscriber->ip6_addr), addr, sizeof(uip_ip6addr_t));
-    memcpy(subscriber->device_id, device_id, DEV_ID_SIZE);
+    if (device_id && addr) {
+        subscriber->system = false;
+        memcpy(&(subscriber->ip6_addr), addr, sizeof(uip_ip6addr_t));
+        memcpy(subscriber->device_id, device_id, DEV_ID_SIZE);
+    } else {
+        subscriber->system = true;
+    }
+
     subscriber->condition_type = CONDITION_TYPE_REPORT;
 
     return SUCCESS;

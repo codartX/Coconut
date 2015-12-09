@@ -43,6 +43,7 @@ DEVICE_INIT_BLOCK ='''\
     int16_t retval = FAIL;
     resource_instance_t *res_instance = NULL;
     object_instance_t *obj_instance = NULL;
+    subscriber_t *sub = NULL;
     resource_value_u value;
     uint8_t device_id[] = {<device_id_1>,<device_id_2>,<device_id_3>,<device_id_4>,
                            <device_id_5>,<device_id_6>,<device_id_7>,<device_id_8>};
@@ -83,6 +84,21 @@ RESOURCE_BLOCK ='''\
     if (!object_instance_insert_resource(obj_instance, res_instance)) {
         return false;
     }
+
+'''
+
+#subscriber block
+
+SUBSCRIBER_BLOCK ='''\
+    obj_instance = device_find_object("<obj_var>");
+    if (obj_instance) {
+        sub = subscriber_alloc();
+        if (!sub) {
+            return false;
+        }
+        subscriber_report_type_init(sub, NULL, NULL);
+        object_add_subscriber(obj_instance, sub);
+    };
 
 '''
 
@@ -140,6 +156,11 @@ def main(argv):
     f2.write(COPY_RIGHT_BLOCK)
     f2.write(IPSO_RESOURCE_HEADER_BLOCK)
 
+    if 'send_interval' in json_data:
+        f.write('uint32_t g_send_interval = ' + str(json_data['send_interval']) + ';\n')
+    else:
+        f.write('uint32_t g_send_interval = 60' + ';\n')
+        
     for object in json_data['objects']:
         if not 'object_id' in object:
             print 'No object id'
@@ -232,6 +253,11 @@ def main(argv):
                                    '<set_func>': str(set_func),
                                }
                 f.write(replace_all(RESOURCE_BLOCK, replacements)) 
+
+    #report
+    if 'report_objects' in json_data:
+        for object in json_data['report_objects']:
+            f.write(replace_all(SUBSCRIBER_BLOCK, {'<obj_var>': str(object)})) 
 
     f.write('    return true;\n')
     f.write('}\n')

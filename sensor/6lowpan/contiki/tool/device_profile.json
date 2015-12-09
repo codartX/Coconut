@@ -28,6 +28,6 @@
    ],
    "send_interval": 30,
    "report_objects": [
-       "Temp":[5700, 5701]
+       "Temp"
    ]
 }

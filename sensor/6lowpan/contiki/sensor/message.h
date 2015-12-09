@@ -5,7 +5,7 @@
 #ifndef _MESSAGE_H
 #define _MESSAGE_H
 
-#include "resource.h"
+#include "object.h"
 
 #define MESSAGE_VERSION    0
 
@@ -65,7 +65,7 @@ uint16_t build_msg(uint8_t *buf, uint16_t len, msg_type_e msg_type,
 
 uint16_t create_new_device_msg(uint8_t *buf, uint16_t len, msg_type_e msg_type);
 
-uint16_t create_report_msg(uint8_t *buf, uint16_t len, resource_instance_t *resource);
+uint16_t create_report_msg(uint8_t *buf, uint16_t len, uint8_t *device_id, object_instance_t *obj);
 
 uint16_t create_get_config_msg(uint8_t *buf, uint16_t len);
 

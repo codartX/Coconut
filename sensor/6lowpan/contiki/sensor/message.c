@@ -64,24 +64,35 @@ uint16_t build_msg(uint8_t *buf, uint16_t len, msg_type_e msg_type,
     return sizeof(msg_header_t) + strlen(parameters);
 }
 
-uint16_t create_report_msg(uint8_t *buf, uint16_t len, resource_instance_t *resource)
+uint16_t create_report_msg(uint8_t *buf, uint16_t len, uint8_t *device_id, object_instance_t *obj)
 {
     uint16_t header_len = 0, parameters_len = 0;
+    resource_instance_t *resource = NULL;
     
-    if (!resource) {
+    if (!obj) {
         return 0;
     }
     
     header_len = build_msg_header(buf, len, TYPE_REQUEST, METHOD_REPORT);
+    resource = object_instance_find_resource(obj, 5700);
     if (resource->resource_type->type == Integer) {
-        parameters_len = sprintf(buf + header_len, "[[[\"%s\", [[%d, %d]]]]]", ((object_instance_t *)resource->parent_obj)->name,
-                                 resource->resource_type->resource_id, resource->value.int_value);
+        parameters_len = sprintf(buf + header_len, "[%02x%02x%02x%02x%02x%02x%02x%02x,[[\"%s\",%d]]]", 
+                                 device_id[0],device_id[1],device_id[2],device_id[3],
+                                 device_id[4],device_id[5],device_id[6],device_id[7],
+                                 ((object_instance_t *)resource->parent_obj)->name,
+                                 resource->value.int_value);
     } else if (resource->resource_type->type == Float) {
-        parameters_len = sprintf(buf + header_len, "[[[\"%s\", [[%d, %f]]]]]", ((object_instance_t *)resource->parent_obj)->name,
-                                 resource->resource_type->resource_id, resource->value.float_value);
+        parameters_len = sprintf(buf + header_len, "[%02x%02x%02x%02x%02x%02x%02x%02x,[[\"%s\",%f]]]", 
+                                 device_id[0],device_id[1],device_id[2],device_id[3],
+                                 device_id[4],device_id[5],device_id[6],device_id[7],
+                                 ((object_instance_t *)resource->parent_obj)->name,
+                                 resource->value.float_value);
     } else if (resource->resource_type->type == String) {
-        parameters_len = sprintf(buf + header_len, "[[[\"%s\", [[%d, \"%s\"]]]]]", ((object_instance_t *)resource->parent_obj)->name,
-                                 resource->resource_type->resource_id, resource->value.string_value);
+        parameters_len = sprintf(buf + header_len, "[%02x%02x%02x%02x%02x%02x%02x%02x,[[\"%s\",\"%s\"]]]", 
+                                 device_id[0],device_id[1],device_id[2],device_id[3],
+                                 device_id[4],device_id[5],device_id[6],device_id[7],
+                                 ((object_instance_t *)resource->parent_obj)->name,
+                                 resource->value.string_value);
     } else {
         return 0;
     }

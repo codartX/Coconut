@@ -36,8 +36,6 @@ uint8_t auth_success = 0;
 uint8_t reg_success = 0;
 uint8_t get_global_addr_success = 0;
 
-#define SEND_INTERVAL 20 * CLOCK_SECOND
-
 /*---------------------------------------------------------------------------*/
 PROCESS(coconut_sensor_process, "Coconut sensor process");
 AUTOSTART_PROCESSES(&coconut_sensor_process);
@@ -652,6 +650,8 @@ PROCESS_THREAD(coconut_sensor_process, ev, data)
 {
     static struct etimer et;
     uint16_t len;
+    object_instance_t *obj = NULL;
+    subscriber_t *sub = NULL;
     
     PROCESS_BEGIN();
 
@@ -699,7 +699,7 @@ PROCESS_THREAD(coconut_sensor_process, ev, data)
     PRINTF(" local/remote port %u/%u\n",
           UIP_HTONS(client_conn->lport), UIP_HTONS(client_conn->rport));
 
-    etimer_set(&et, SEND_INTERVAL);
+    etimer_set(&et, g_send_interval*CLOCK_SECOND);
     
     while(1) {
         PROCESS_YIELD();
@@ -725,7 +725,23 @@ PROCESS_THREAD(coconut_sensor_process, ev, data)
                 }
             } else {
                 etimer_restart(&et);
+                obj = g_device.obj_list;
+                while (obj) {
+                    sub = obj->sub_list;
+                    while (sub) {
+                        len = create_report_msg(output_buf + sizeof(security_header_t), 
+                                                MAX_PAYLOAD_LEN - sizeof(security_header_t), 
+                                                g_device.device_id, obj); 
+                        len = create_security_data_msg(output_buf, output_buf + sizeof(security_header_t), len);
+                        if (sub->system) {
+                            send_msg_to_gateway(output_buf, len);
+                        } else {
 
+                        }
+                        sub = sub->next;
+                    }
+                    obj = obj->next;
+                }  
             }
         }
         if(ev == tcpip_event) {

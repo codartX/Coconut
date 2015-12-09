@@ -32,6 +32,7 @@ typedef struct _condition_t {
 typedef struct _subscriber_t {
     struct _subscriber_t *next;
     void *publisher;
+    uint8_t system;
     uip_ip6addr_t ip6_addr;
     uint8_t device_id[DEV_ID_SIZE];
     uint8_t condition_type;

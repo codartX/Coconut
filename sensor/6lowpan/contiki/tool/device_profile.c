@@ -10,6 +10,7 @@
 #include "device.h"
 #include "device_api.h"
 
+uint32_t g_send_interval = 30;
 object_instance_t g_object_devinfo;
 resource_instance_t g_resource_name;
 object_instance_t g_object_temp;
@@ -21,6 +22,7 @@ bool create_device()
     int16_t retval = FAIL;
     resource_instance_t *res_instance = NULL;
     object_instance_t *obj_instance = NULL;
+    subscriber_t *sub = NULL;
     resource_value_u value;
     uint8_t device_id[] = {1,2,3,4,
                            5,6,7,8};
@@ -87,6 +89,16 @@ bool create_device()
     if (!object_instance_insert_resource(obj_instance, res_instance)) {
         return false;
     }
+
+    obj_instance = device_find_object("Temp");
+    if (obj_instance) {
+        sub = subscriber_alloc();
+        if (!sub) {
+            return false;
+        }
+        subscriber_report_type_init(sub, NULL, NULL);
+        object_add_subscriber(obj_instance, sub);
+    };
 
     return true;
 }
