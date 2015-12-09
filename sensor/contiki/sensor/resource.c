@@ -78,47 +78,6 @@ int8_t set_resource_value(resource_instance_t *res, resource_value_u *value)
     return SUCCESS;
 }
 
-int16_t resource_add_subscriber(resource_instance_t *res_instance, res_subscriber_t *res_sub)
-{
-    if (!res_instance || !res_sub) {
-        return FAIL;
-    }
-
-    res_sub->next = res_instance->sub_list;
-    res_instance->sub_list = res_sub;
-    res_sub->parent_res = res_instance;
-    
-    subscriber_timer_start(res_sub);
-
-    return SUCCESS;
-}
-
-int16_t resource_remove_subscriber(resource_instance_t *res_instance, uip_ip6addr_t *ip_addr)
-{
-    res_subscriber_t *cur = NULL, *pre = NULL;  
-
-    if (!res_instance || !ip_addr) {
-        return FAIL;
-    }
-
-    cur = res_instance->sub_list;
-    while(cur) {
-        if(!memcmp(&cur->ip6_addr, ip_addr, sizeof(uip_ip6addr_t))) {
-            if (!pre) {
-                res_instance->sub_list = cur->next;
-            } else {
-                pre->next = cur->next;
-            }
-            subscriber_free(cur); 
-            return SUCCESS;
-        }
-        pre = cur;
-        cur = cur->next;
-    }
-
-    return SUCCESS;
-}
-
 int8_t resource_value_compare(resource_instance_t *res_instance, resource_value_u *value)
 {
     if (res_instance->resource_type->type == Integer){

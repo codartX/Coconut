@@ -115,92 +115,12 @@ register_response_handler(uint8_t *parameters)
 static void
 report_request_handler(uint8_t *device_id, uint8_t *parameters)
 {
-    cJSON *root = NULL, *sub = NULL, *sub1 = NULL, *sub2 = NULL, *sub3 = NULL;
-    uint16_t i = 0, j = 0;
-    object_instance_t *obj = NULL;
-    resource_instance_t *res = NULL;
-    resource_value_u value;
-    retcode_e retcode = RETCODE_SUCCESS;
-    
-    if (!parameters) {
-        return;
-    }
-    
-    root = cJSON_Parse(parameters);
-    
-    if (!root) {
-        return;
-    }
-    
-    for (;i < cJSON_GetArraySize(root); i++) {
-        //object
-        sub = cJSON_GetArrayItem(root, i);
-        if (!sub) {
-            return;
-        }
-        
-        sub1 = cJSON_GetArrayItem(sub, 0);
-        if (!sub1) {
-            return;
-        }
-        
-        obj = device_find_object(sub1->valuestring);
-        if(!obj) {
-            continue;
-        }
-        
-        //resources
-        sub1 = cJSON_GetArrayItem(sub, 1);
-        if (!sub1) {
-            continue;
-        }
-        
-        for (j = 0; j < cJSON_GetArraySize(sub1); j++) {
-            sub2 = cJSON_GetArrayItem(sub1, j);
-            if (!sub2) {
-                continue;
-            }
-            
-            sub3 = cJSON_GetArrayItem(sub2, 0);
-            if (!sub3) {
-                continue;
-            }
-            
-            res = object_instance_find_resource(obj, sub3->valueint);
-            if (!res) {
-                continue;
-            }
-            
-            sub3 = cJSON_GetArrayItem(sub2, 1);
-            if (!sub3) {
-                continue;
-            }
-            
-            if (res->resource_type->type == Integer) {
-                value.int_value = sub3->valueint;
-            } else if (res->resource_type->type == Float) {
-                value.float_value = sub3->valuefloat;
-            } else if (res->resource_type->type == String) {
-                strcpy(value.string_value, sub3->valuestring);
-            } else {
-                continue;
-            }
-            
-            set_resource_value(res, &value);
-        }
-        
-    }
-    
-    sprintf(output_buf, "[%d]", retcode);
-    send_msg(output_buf, strlen(output_buf), &UIP_IP_BUF->srcipaddr);
-    
     return;
-
 }
 
 /*---------------------------------------------------------------------------*/
 static void
-set_resources_request_handler(uint8_t *parameters)
+set_objects_request_handler(uint8_t *parameters)
 {
     cJSON *root = NULL, *sub = NULL, *sub1 = NULL, *sub2 = NULL, *sub3 = NULL;
     uint16_t i = 0, j = 0;
@@ -411,13 +331,12 @@ reload_request_handler()
 static void
 subscribe_request_handler(uint8_t *device_id, uint8_t *parameters)
 {
-    cJSON *root = NULL, *sub = NULL, *sub1 = NULL, *sub2 = NULL, *sub3 = NULL, *sub4 = NULL;
+    cJSON *root = NULL, *sub = NULL, *sub1 = NULL, *sub3 = NULL, *sub4 = NULL;
     uint16_t i = 0, j = 0;
     object_instance_t *obj = NULL;
     resource_instance_t *res = NULL;
-    resource_value_u value;
     retcode_e retcode = RETCODE_SUCCESS;
-    res_subscriber_t *subscriber = NULL;
+    subscriber_t *subscriber = NULL;
     cond_value_u cond_value;
     enum operation_e op;
     
@@ -447,81 +366,25 @@ subscribe_request_handler(uint8_t *device_id, uint8_t *parameters)
         if(!obj) {
             continue;
         }
-        
-        //resources
-        sub1 = cJSON_GetArrayItem(sub, 1);
-        if (!sub1) {
+       
+        res = object_instance_find_resource(obj, 5700);//sensor value 
+        if (!res) {
+            continue;
+        }
+            
+        sub3 = cJSON_GetArrayItem(sub1, 1);
+        if (!sub3) {
             continue;
         }
         
-        for (j = 0; j < cJSON_GetArraySize(sub1); j++) {
-            sub2 = cJSON_GetArrayItem(sub1, j);
-            if (!sub2) {
-                continue;
-            }
-            
-            sub3 = cJSON_GetArrayItem(sub2, 0);
-            if (!sub3) {
-                continue;
-            }
-            
-            res = object_instance_find_resource(obj, sub3->valueint);
-            if (!res) {
-                continue;
-            }
-            
-            sub3 = cJSON_GetArrayItem(sub2, 1);
-            if (!sub3) {
-                continue;
-            }
-            
-            //subscribe type
-            sub4 = cJSON_GetArrayItem(sub3, 0);
-            if (sub4) {
-                if (sub4->valueint == CONDITION_TYPE_PERIOD) {
-                    sub4 = cJSON_GetArrayItem(sub3, 1);
-                    if (sub4 && sub4->valueint > 0) {
-                        subscriber = subscriber_alloc();
-                        if (subscriber) {
-                            subscriber_period_type_init(subscriber, &UIP_IP_BUF->srcipaddr, device_id, sub4->valueint);
-                            resource_add_subscriber(res, subscriber);
-                            subscriber_timer_start(subscriber);
-                        }
-                    }
-                } else if (sub4->valueint == CONDITION_TYPE_EXPIRE) {
-                    sub4 = cJSON_GetArrayItem(sub3, 1);
-                    if (sub4 && sub4->valueint > 0) {
-                        subscriber = subscriber_alloc();
-                        if (subscriber) {
-                            subscriber_expire_type_init(subscriber, &UIP_IP_BUF->srcipaddr, device_id, sub4->valueint);
-                            resource_add_subscriber(res, subscriber);
-                            subscriber_timer_start(subscriber);
-                        }
-                    }
-                } else if (sub4->valueint == CONDITION_TYPE_VALUE) {
-                    sub4 = cJSON_GetArrayItem(sub3, 1);
-                    if (sub4) {
-                        op = sub4->valueint;
-                        sub4 = cJSON_GetArrayItem(sub3, 2);
-                        if (sub4) {
-                            if (res->resource_type->type == Integer) {
-                                cond_value.int_value = sub4->valueint;
-                            } else if (res->resource_type->type == Float) {
-                                cond_value.float_value = sub4->valuefloat;
-                            } else {
-                                continue;
-                            }
-                        }
-                        
-                        subscriber = subscriber_alloc();
-                        if (subscriber) {
-                            subscriber_value_type_init(subscriber, &UIP_IP_BUF->srcipaddr, device_id, op, &cond_value);
-                            resource_add_subscriber(res, subscriber);
-                            subscriber_timer_start(subscriber);
-                        }
-                    }
-                } else if (sub4->valueint == CONDITION_TYPE_VALUE_CHANGE) {
-                    sub4 = cJSON_GetArrayItem(sub3, 1);
+        //subscribe type
+        sub4 = cJSON_GetArrayItem(sub3, 0);
+        if (sub4) {
+            if (sub4->valueint == CONDITION_TYPE_VALUE_COMPARE) {
+                sub4 = cJSON_GetArrayItem(sub3, 1);
+                if (sub4) {
+                    op = sub4->valueint;
+                    sub4 = cJSON_GetArrayItem(sub3, 2);
                     if (sub4) {
                         if (res->resource_type->type == Integer) {
                             cond_value.int_value = sub4->valueint;
@@ -530,19 +393,23 @@ subscribe_request_handler(uint8_t *device_id, uint8_t *parameters)
                         } else {
                             continue;
                         }
-                        
-                        subscriber = subscriber_alloc();
-                        if (subscriber) {
-                            subscriber_value_change_type_init(subscriber, &UIP_IP_BUF->srcipaddr, device_id, &cond_value);
-                            resource_add_subscriber(res, subscriber);
-                            subscriber_timer_start(subscriber);
-                        }
                     }
-                } else {
-                    continue;
+                    
+                    subscriber = subscriber_alloc();
+                    if (subscriber) {
+                        subscriber_value_compare_type_init(subscriber, &UIP_IP_BUF->srcipaddr, device_id, op, &cond_value);
+                        object_add_subscriber(obj, subscriber);
+                    }
                 }
+            } else if (sub4->valueint == CONDITION_TYPE_REPORT) {
+                subscriber = subscriber_alloc();
+                if (subscriber) {
+                    subscriber_report_type_init(subscriber, &UIP_IP_BUF->srcipaddr, device_id);
+                    object_add_subscriber(obj, subscriber);
+                }
+            } else {
+                continue;
             }
-            
         }
         
     }
@@ -558,10 +425,9 @@ subscribe_request_handler(uint8_t *device_id, uint8_t *parameters)
 static void
 unsubscribe_request_handler(uint8_t *parameters)
 {
-    cJSON *root = NULL, *sub = NULL, *sub1 = NULL, *sub2 = NULL;
+    cJSON *root = NULL, *sub = NULL, *sub1 = NULL;
     uint16_t i = 0, j = 0;
     object_instance_t *obj = NULL;
-    resource_instance_t *res = NULL;
     retcode_e retcode = RETCODE_SUCCESS;
     
     if (!parameters) {
@@ -597,20 +463,8 @@ unsubscribe_request_handler(uint8_t *parameters)
             continue;
         }
         
-        for (j = 0; j < cJSON_GetArraySize(sub1); j++) {
-            sub2 = cJSON_GetArrayItem(sub1, j);
-            if (!sub2) {
-                continue;
-            }
+        object_remove_subscriber(obj, &UIP_IP_BUF->srcipaddr);
             
-            res = object_instance_find_resource(obj, sub2->valueint);
-            if (!res) {
-                continue;
-            }
-            
-            resource_remove_subscriber(res, &UIP_IP_BUF->srcipaddr);
-            
-        }
         
     }
     
@@ -705,7 +559,7 @@ message_handler(void)
                                 report_request_handler(get_msg_device_id(data), get_msg_parameters(data));
                                 break;
                             case METHOD_SET_RESOURCES:
-                                set_resources_request_handler(get_msg_parameters(data));
+                                set_objects_request_handler(get_msg_parameters(data));
                                 break;
                             case METHOD_GET_RESOURCES:
                                 get_resources_request_handler(get_msg_parameters(data));
@@ -865,7 +719,7 @@ PROCESS_THREAD(coconut_sensor_process, ev, data)
                 len = create_new_device_msg(output_buf + sizeof(security_header_t), 
                                             MAX_PAYLOAD_LEN - sizeof(security_header_t), TYPE_REQUEST);
                 len = create_security_data_msg(output_buf, output_buf + sizeof(security_header_t), len);
-                if (len){
+                if (len) {
                     debug_print_msg(output_buf, len);
                     send_msg_to_gateway(output_buf, len);
                 }

@@ -12,28 +12,22 @@
 #include "subscriber.h"
 #include "object.h"
 
-#define POLICY_COND_TYPE_RESOURCE       0
-#define POLICY_COND_TYPE_EXPIRE_TIME    1
-#define POLICY_COND_TYPE_PERIODIC       2
-
 typedef struct _policy_cond_t {
     struct _policy_cond_t *next;
-    uint8_t type;
     uip_ip6addr_t ip6_addr;
     uint8_t device_id[DEV_ID_SIZE];
-    const uint8_t *obj_name;
-    uint8_t *res_name;
+    uint8_t obj_name[MAX_OBJECT_NAME_LEN];
     condition_t cond; 
 } policy_cond_t;
 
-#define POLICY_ACTION_RESOURCE    0
-#define POLICY_ACTION_MESSAGE     1
+#define POLICY_ACTION_VALUE_CHANGE    0
+#define POLICY_ACTION_MESSAGE         1
 
 #define POLICY_ACTION_MESSAGE_LEN 8
 
 union policy_action_u {
-    struct resource_op_t {
-        resource_instance_t *res;
+    struct object_op_t {
+        object_instance_t *obj;
         resource_value_u value; 
     } resource_op;
 
@@ -62,21 +56,16 @@ policy_cond_t *dev_policy_cond_alloc();
 
 void dev_policy_cond_free(policy_cond_t *cond);
 
-int16_t dev_policy_cond_resource_init(policy_cond_t *cond, uip_ip6addr_t *ip6_addr, 
-                                      uint8_t *device_id, const uint8_t *obj_name, 
-                                      const uint8_t *res_name, enum operation_e op, 
-                                      cond_value_u *value);
-
-int16_t dev_policy_cond_expire_time_init(policy_cond_t *cond, uint32_t exp_timestamp);
-
-int16_t dev_policy_cond_periodic_init(policy_cond_t *cond, uint32_t start_timestamp, uint16_t interval);
+int16_t dev_policy_cond_init(policy_cond_t *cond, uip_ip6addr_t *ip6_addr, 
+                             uint8_t *device_id, const uint8_t *obj_name, 
+                             enum operation_e op, cond_value_u *value);
 
 policy_action_t *dev_policy_action_alloc();
 
 void dev_policy_action_free(policy_action_t *action);
 
-int16_t dev_policy_action_resource_init(policy_action_t *action, resource_instance_t *res, 
-                                        resource_value_u *value);
+int16_t dev_policy_action_value_change_init(policy_action_t *action, object_instance_t *obj, 
+                                            resource_value_u *value);
 
 int16_t dev_policy_action_message_init(policy_action_t *action, uint16_t level, uint8_t *message);
 

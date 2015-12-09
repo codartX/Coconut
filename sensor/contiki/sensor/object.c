@@ -67,3 +67,41 @@ resource_instance_t *object_instance_find_resource(object_instance_t *object, ui
 
 }
 
+int16_t object_add_subscriber(object_instance_t *instance, subscriber_t *sub)
+{
+    if (!instance || !sub) {
+        return FAIL;
+    }
+
+    sub->next = instance->sub_list;
+    instance->sub_list = sub;
+    sub->publisher = instance;
+    
+    return SUCCESS;
+}
+
+int16_t object_remove_subscriber(object_instance_t *instance, uip_ip6addr_t *ip_addr)
+{
+    subscriber_t *cur = NULL, *pre = NULL;  
+
+    if (!instance || !ip_addr) {
+        return FAIL;
+    }
+
+    cur = instance->sub_list;
+    while(cur) {
+        if(!memcmp(&cur->ip6_addr, ip_addr, sizeof(uip_ip6addr_t))) {
+            if (!pre) {
+                instance->sub_list = cur->next;
+            } else {
+                pre->next = cur->next;
+            }
+            subscriber_free(cur); 
+            return SUCCESS;
+        }
+        pre = cur;
+        cur = cur->next;
+    }
+
+    return SUCCESS;
+}

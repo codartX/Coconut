@@ -8,7 +8,6 @@
 
 #include <stdbool.h>
 #include "main.h"
-#include "subscriber.h"
 
 #define MAX_RES_STR_VALUE_LEN    8 
 
@@ -45,7 +44,6 @@ typedef struct _resource_instance_t {
     resource_value_u value;
     get_resource_value_func get_func;
     set_resource_value_func set_func;
-    res_subscriber_t *sub_list; 
 } resource_instance_t;
 
 extern resource_type_t resource_types[];
@@ -56,10 +54,6 @@ resource_type_t *find_resource_type(uint16_t resource_id);
 int16_t resource_instance_init(resource_instance_t *instance, uint16_t resource_id, 
                                resource_value_u *value, get_resource_value_func get_func, 
                                set_resource_value_func set_func);
-
-int16_t resource_add_subscriber(resource_instance_t *res_instance, res_subscriber_t *res_sub);
-
-int16_t resource_remove_subscriber(resource_instance_t *res_instance, uip_ip6addr_t *ip_addr);
 
 int8_t resource_value_compare(resource_instance_t *res_instance, resource_value_u *value);
 

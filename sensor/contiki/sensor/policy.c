@@ -35,49 +35,20 @@ void dev_policy_cond_free(policy_cond_t *cond)
     memb_free(&policy_cond_memb, cond); 
 }
 
-int16_t dev_policy_cond_resource_init(policy_cond_t *cond, uip_ip6addr_t *ip6_addr, 
-                                 uint8_t *device_id, const uint8_t *obj_name, 
-                                 const uint8_t *res_name, enum operation_e op, 
-                                 cond_value_u *value)
+int16_t dev_policy_cond_init(policy_cond_t *cond, uip_ip6addr_t *ip6_addr, 
+                             uint8_t *device_id, const uint8_t *obj_name, 
+                             enum operation_e op, cond_value_u *value)
 {
     if (!cond) {
         return FAIL;
     }
 
     cond->next = NULL;
-    cond->type = POLICY_COND_TYPE_RESOURCE;
     memcpy(&cond->ip6_addr, ip6_addr, sizeof(uip_ip6addr_t));
-    memcpy(&cond->device_id, device_id, 8);
-    cond->obj_name = obj_name;
-    cond->res_name = res_name;
+    memcpy(&cond->device_id, device_id, DEV_ID_SIZE);
+    strncpy(cond->obj_name, obj_name, MAX_OBJECT_NAME_LEN);
     cond->cond.operation = op;
     memcpy(&cond->cond.value, value, sizeof(cond_value_u));
-
-    return SUCCESS;
-}
-
-int16_t dev_policy_cond_expire_time_init(policy_cond_t *cond, uint32_t exp_timestamp)
-{
-    if (!cond) {
-        return FAIL;
-    }
-
-    cond->next = NULL;
-    cond->type = POLICY_COND_TYPE_EXPIRE_TIME;
-    cond->cond.expire_time = exp_timestamp;
-
-    return SUCCESS;
-}
-
-int16_t dev_policy_cond_periodic_init(policy_cond_t *cond, uint32_t start_timestamp, uint16_t interval)
-{
-    if (!cond) {
-        return FAIL;
-    }
-
-    cond->next = NULL;
-    cond->type = POLICY_COND_TYPE_PERIODIC;
-    cond->cond.period = interval;
 
     return SUCCESS;
 }
@@ -100,16 +71,16 @@ void dev_policy_action_free(policy_action_t *action)
     memb_free(&policy_action_memb, action);
 }
 
-int16_t dev_policy_action_resource_init(policy_action_t *action, resource_instance_t *res, 
-                                        resource_value_u *value)
+int16_t dev_policy_action_value_change_init(policy_action_t *action, object_instance_t *obj, 
+                                            resource_value_u *value)
 {
     if (!action) {
         return FAIL;
     }
 
     action->next = NULL;
-    action->type = POLICY_ACTION_RESOURCE;
-    action->action.resource_op.res = res;
+    action->type = POLICY_ACTION_VALUE_CHANGE;
+    action->action.resource_op.obj = obj;
     memcpy(&action->action.resource_op.value, value, sizeof(resource_value_u));
 
     return SUCCESS;
