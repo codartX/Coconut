@@ -1,0 +1,2424 @@
+                              1 ;--------------------------------------------------------
+                              2 ; File Created by SDCC : free open source ANSI-C Compiler
+                              3 ; Version 3.1.1 #7100 (Oct 29 2014) (Linux)
+                              4 ; This file was generated Wed Dec  2 18:10:54 2015
+                              5 ;--------------------------------------------------------
+                              6 	.module rpl_of_etx
+                              7 	.optsdcc -mmcs51 --model-huge
+                              8 	
+                              9 ;--------------------------------------------------------
+                             10 ; Public variables in this module
+                             11 ;--------------------------------------------------------
+                             12 	.globl _ACTIVE
+                             13 	.globl _TX_BYTE
+                             14 	.globl _RX_BYTE
+                             15 	.globl _ERR
+                             16 	.globl _FE
+                             17 	.globl _SLAVE
+                             18 	.globl _RE
+                             19 	.globl _MODE
+                             20 	.globl _T3OVFIF
+                             21 	.globl _T3CH0IF
+                             22 	.globl _T3CH1IF
+                             23 	.globl _T4OVFIF
+                             24 	.globl _T4CH0IF
+                             25 	.globl _T4CH1IF
+                             26 	.globl _OVFIM
+                             27 	.globl _B_0
+                             28 	.globl _B_1
+                             29 	.globl _B_2
+                             30 	.globl _B_3
+                             31 	.globl _B_4
+                             32 	.globl _B_5
+                             33 	.globl _B_6
+                             34 	.globl _B_7
+                             35 	.globl _P2IF
+                             36 	.globl _UTX0IF
+                             37 	.globl _UTX1IF
+                             38 	.globl _P1IF
+                             39 	.globl _WDTIF
+                             40 	.globl _ACC_0
+                             41 	.globl _ACC_1
+                             42 	.globl _ACC_2
+                             43 	.globl _ACC_3
+                             44 	.globl _ACC_4
+                             45 	.globl _ACC_5
+                             46 	.globl _ACC_6
+                             47 	.globl _ACC_7
+                             48 	.globl _P
+                             49 	.globl _F1
+                             50 	.globl _OV
+                             51 	.globl _RS0
+                             52 	.globl _RS1
+                             53 	.globl _F0
+                             54 	.globl _AC
+                             55 	.globl _CY
+                             56 	.globl _DMAIF
+                             57 	.globl _T1IF
+                             58 	.globl _T2IF
+                             59 	.globl _T3IF
+                             60 	.globl _T4IF
+                             61 	.globl _P0IF
+                             62 	.globl _STIF
+                             63 	.globl _DMAIE
+                             64 	.globl _T1IE
+                             65 	.globl _T2IE
+                             66 	.globl _T3IE
+                             67 	.globl _T4IE
+                             68 	.globl _P0IE
+                             69 	.globl _RFERRIE
+                             70 	.globl _ADCIE
+                             71 	.globl _URX0IE
+                             72 	.globl _URX1IE
+                             73 	.globl _ENCIE
+                             74 	.globl _STIE
+                             75 	.globl _EA
+                             76 	.globl _P2_0
+                             77 	.globl _P2_1
+                             78 	.globl _P2_2
+                             79 	.globl _P2_3
+                             80 	.globl _P2_4
+                             81 	.globl _P2_5
+                             82 	.globl _P2_6
+                             83 	.globl _P2_7
+                             84 	.globl _ENCIF_0
+                             85 	.globl _ENCIF_1
+                             86 	.globl _P1_0
+                             87 	.globl _P1_1
+                             88 	.globl _P1_2
+                             89 	.globl _P1_3
+                             90 	.globl _P1_4
+                             91 	.globl _P1_5
+                             92 	.globl _P1_6
+                             93 	.globl _P1_7
+                             94 	.globl _IT0
+                             95 	.globl _RFERRIF
+                             96 	.globl _IT1
+                             97 	.globl _URX0IF
+                             98 	.globl _ADCIF
+                             99 	.globl _URX1IF
+                            100 	.globl _P0_0
+                            101 	.globl _P0_1
+                            102 	.globl _P0_2
+                            103 	.globl _P0_3
+                            104 	.globl _P0_4
+                            105 	.globl _P0_5
+                            106 	.globl _P0_6
+                            107 	.globl _P0_7
+                            108 	.globl _WDCTL
+                            109 	.globl _U1GCR
+                            110 	.globl _U1UCR
+                            111 	.globl _U1BAUD
+                            112 	.globl _U1DBUF
+                            113 	.globl _U1CSR
+                            114 	.globl _U0GCR
+                            115 	.globl _U0UCR
+                            116 	.globl _U0BAUD
+                            117 	.globl _U0DBUF
+                            118 	.globl _U0CSR
+                            119 	.globl _TIMIF
+                            120 	.globl _T4CC1
+                            121 	.globl _T4CCTL1
+                            122 	.globl _T4CC0
+                            123 	.globl _T4CCTL0
+                            124 	.globl _T4CTL
+                            125 	.globl _T4CNT
+                            126 	.globl _T3CC1
+                            127 	.globl _T3CCTL1
+                            128 	.globl _T3CC0
+                            129 	.globl _T3CCTL0
+                            130 	.globl _T3CTL
+                            131 	.globl _T3CNT
+                            132 	.globl _T2MSEL
+                            133 	.globl _T2IRQM
+                            134 	.globl _T2MOVF2
+                            135 	.globl _T2MOVF1
+                            136 	.globl _T2MOVF0
+                            137 	.globl _T2M1
+                            138 	.globl _T2M0
+                            139 	.globl _T2IRQF
+                            140 	.globl _T2EVTCFG
+                            141 	.globl _T2CTRL
+                            142 	.globl _T1STAT
+                            143 	.globl _T1CCTL2
+                            144 	.globl _T1CCTL1
+                            145 	.globl _T1CCTL0
+                            146 	.globl _T1CTL
+                            147 	.globl _T1CNTH
+                            148 	.globl _T1CNTL
+                            149 	.globl _T1CC2H
+                            150 	.globl _T1CC2L
+                            151 	.globl _T1CC1H
+                            152 	.globl _T1CC1L
+                            153 	.globl _T1CC0H
+                            154 	.globl _T1CC0L
+                            155 	.globl _CLKCONSTA
+                            156 	.globl _CLKCONCMD
+                            157 	.globl _SLEEPSTA
+                            158 	.globl _SLEEPCMD
+                            159 	.globl _STLOAD
+                            160 	.globl _ST2
+                            161 	.globl _ST1
+                            162 	.globl _ST0
+                            163 	.globl _RFERRF
+                            164 	.globl _RFIRQF0
+                            165 	.globl _RFST
+                            166 	.globl _RFD
+                            167 	.globl _RFIRQF1
+                            168 	.globl _PSBANK
+                            169 	.globl _FMAP
+                            170 	.globl _MEMCTR
+                            171 	.globl __XPAGE
+                            172 	.globl _MPAGE
+                            173 	.globl _PMUX
+                            174 	.globl _P2DIR
+                            175 	.globl _P1DIR
+                            176 	.globl _P0DIR
+                            177 	.globl _P2INP
+                            178 	.globl _P1INP
+                            179 	.globl _P2SEL
+                            180 	.globl _P1SEL
+                            181 	.globl _P0SEL
+                            182 	.globl _APCFG
+                            183 	.globl _PERCFG
+                            184 	.globl _P0INP
+                            185 	.globl _P2IEN
+                            186 	.globl _P1IEN
+                            187 	.globl _P0IEN
+                            188 	.globl _PICTL
+                            189 	.globl _P2IFG
+                            190 	.globl _P1IFG
+                            191 	.globl _P0IFG
+                            192 	.globl _DMAREQ
+                            193 	.globl _DMAARM
+                            194 	.globl _DMA0CFGH
+                            195 	.globl _DMA0CFGL
+                            196 	.globl _DMA1CFGH
+                            197 	.globl _DMA1CFGL
+                            198 	.globl _DMAIRQ
+                            199 	.globl _ENCCS
+                            200 	.globl _ENCDO
+                            201 	.globl _ENCDI
+                            202 	.globl _RNDH
+                            203 	.globl _RNDL
+                            204 	.globl _ADCH
+                            205 	.globl _ADCL
+                            206 	.globl _ADCCON3
+                            207 	.globl _ADCCON2
+                            208 	.globl _ADCCON1
+                            209 	.globl _B
+                            210 	.globl _IRCON2
+                            211 	.globl _ACC
+                            212 	.globl _PSW
+                            213 	.globl _IRCON
+                            214 	.globl _IP1
+                            215 	.globl _IEN1
+                            216 	.globl _IP0
+                            217 	.globl _IEN0
+                            218 	.globl _P2
+                            219 	.globl _S1CON
+                            220 	.globl _IEN2
+                            221 	.globl _S0CON
+                            222 	.globl _DPS
+                            223 	.globl _P1
+                            224 	.globl _TCON
+                            225 	.globl _PCON
+                            226 	.globl _DPH1
+                            227 	.globl _DPL1
+                            228 	.globl _DPH0
+                            229 	.globl _DPL0
+                            230 	.globl _SP
+                            231 	.globl _P0
+                            232 	.globl _rpl_of_etx
+                            233 	.globl _X_IEEE_ADDR
+                            234 	.globl _X_INFOPAGE
+                            235 	.globl _X_P2DIR
+                            236 	.globl _X_P1DIR
+                            237 	.globl _X_P0DIR
+                            238 	.globl _X_U1GCR
+                            239 	.globl _X_U1UCR
+                            240 	.globl _X_U1BAUD
+                            241 	.globl _X_U1DBUF
+                            242 	.globl _X_U1CSR
+                            243 	.globl _X_P2INP
+                            244 	.globl _X_P1INP
+                            245 	.globl _X_P2SEL
+                            246 	.globl _X_P1SEL
+                            247 	.globl _X_P0SEL
+                            248 	.globl _X_APCFG
+                            249 	.globl _X_PERCFG
+                            250 	.globl _X_T4CC1
+                            251 	.globl _X_T4CCTL1
+                            252 	.globl _X_T4CC0
+                            253 	.globl _X_T4CCTL0
+                            254 	.globl _X_T4CTL
+                            255 	.globl _X_T4CNT
+                            256 	.globl _X_RFIRQF0
+                            257 	.globl _X_T1CCTL2
+                            258 	.globl _X_T1CCTL1
+                            259 	.globl _X_T1CCTL0
+                            260 	.globl _X_T1CTL
+                            261 	.globl _X_T1CNTH
+                            262 	.globl _X_T1CNTL
+                            263 	.globl _X_RFST
+                            264 	.globl _X_T1CC2H
+                            265 	.globl _X_T1CC2L
+                            266 	.globl _X_T1CC1H
+                            267 	.globl _X_T1CC1L
+                            268 	.globl _X_T1CC0H
+                            269 	.globl _X_T1CC0L
+                            270 	.globl _X_RFD
+                            271 	.globl _X_TIMIF
+                            272 	.globl _X_DMAREQ
+                            273 	.globl _X_DMAARM
+                            274 	.globl _X_DMA0CFGH
+                            275 	.globl _X_DMA0CFGL
+                            276 	.globl _X_DMA1CFGH
+                            277 	.globl _X_DMA1CFGL
+                            278 	.globl _X_DMAIRQ
+                            279 	.globl _X_T3CC1
+                            280 	.globl _X_T3CCTL1
+                            281 	.globl _X_T3CC0
+                            282 	.globl _X_T3CCTL0
+                            283 	.globl _X_T3CTL
+                            284 	.globl _X_T3CNT
+                            285 	.globl _X_WDCTL
+                            286 	.globl _X_MEMCTR
+                            287 	.globl _X_CLKCONCMD
+                            288 	.globl _X_U0GCR
+                            289 	.globl _X_U0UCR
+                            290 	.globl _X_T2MSEL
+                            291 	.globl _X_U0BAUD
+                            292 	.globl _X_U0DBUF
+                            293 	.globl _X_RFERRF
+                            294 	.globl _X_SLEEPCMD
+                            295 	.globl _X_RNDH
+                            296 	.globl _X_RNDL
+                            297 	.globl _X_ADCH
+                            298 	.globl _X_ADCL
+                            299 	.globl _X_ADCCON3
+                            300 	.globl _X_ADCCON2
+                            301 	.globl _X_ADCCON1
+                            302 	.globl _X_ENCCS
+                            303 	.globl _X_ENCDO
+                            304 	.globl _X_ENCDI
+                            305 	.globl _X_T1STAT
+                            306 	.globl _X_PMUX
+                            307 	.globl _X_STLOAD
+                            308 	.globl _X_P2IEN
+                            309 	.globl _X_P0IEN
+                            310 	.globl _X_T2IRQM
+                            311 	.globl _X_T2MOVF2
+                            312 	.globl _X_T2MOVF1
+                            313 	.globl _X_T2MOVF0
+                            314 	.globl _X_T2M1
+                            315 	.globl _X_T2M0
+                            316 	.globl _X_T2IRQF
+                            317 	.globl _X_P2
+                            318 	.globl _X_PSBANK
+                            319 	.globl _X_FMAP
+                            320 	.globl _X_CLKCONSTA
+                            321 	.globl _X_SLEEPSTA
+                            322 	.globl _X_T2EVTCFG
+                            323 	.globl _X_ST2
+                            324 	.globl _X_ST1
+                            325 	.globl _X_ST0
+                            326 	.globl _X_T2CTRL
+                            327 	.globl _X__XPAGE
+                            328 	.globl _X_MPAGE
+                            329 	.globl _X_RFIRQF1
+                            330 	.globl _X_P1
+                            331 	.globl _X_P0INP
+                            332 	.globl _X_P1IEN
+                            333 	.globl _X_PICTL
+                            334 	.globl _X_P2IFG
+                            335 	.globl _X_P1IFG
+                            336 	.globl _X_P0IFG
+                            337 	.globl _X_U0CSR
+                            338 	.globl _X_P0
+                            339 	.globl _USBF5
+                            340 	.globl _USBF4
+                            341 	.globl _USBF3
+                            342 	.globl _USBF2
+                            343 	.globl _USBF1
+                            344 	.globl _USBF0
+                            345 	.globl _USBCNTH
+                            346 	.globl _USBCNTL
+                            347 	.globl _USBCNT0
+                            348 	.globl _USBCSOH
+                            349 	.globl _USBCSOL
+                            350 	.globl _USBMAXO
+                            351 	.globl _USBCSIH
+                            352 	.globl _USBCSIL
+                            353 	.globl _USBCS0
+                            354 	.globl _USBMAXI
+                            355 	.globl _USBCTRL
+                            356 	.globl _USBINDEX
+                            357 	.globl _USBFRMH
+                            358 	.globl _USBFRML
+                            359 	.globl _USBCIE
+                            360 	.globl _USBOIE
+                            361 	.globl _USBIIE
+                            362 	.globl _USBCIF
+                            363 	.globl _USBOIF
+                            364 	.globl _USBIIF
+                            365 	.globl _USBPOW
+                            366 	.globl _USBADDR
+                            367 	.globl _CSPT
+                            368 	.globl _CSPZ
+                            369 	.globl _CSPY
+                            370 	.globl _CSPX
+                            371 	.globl _CSPSTAT
+                            372 	.globl _CSPCTRL
+                            373 	.globl _CSPPROG23
+                            374 	.globl _CSPPROG22
+                            375 	.globl _CSPPROG21
+                            376 	.globl _CSPPROG20
+                            377 	.globl _CSPPROG19
+                            378 	.globl _CSPPROG18
+                            379 	.globl _CSPPROG17
+                            380 	.globl _CSPPROG16
+                            381 	.globl _CSPPROG15
+                            382 	.globl _CSPPROG14
+                            383 	.globl _CSPPROG13
+                            384 	.globl _CSPPROG12
+                            385 	.globl _CSPPROG11
+                            386 	.globl _CSPPROG10
+                            387 	.globl _CSPPROG9
+                            388 	.globl _CSPPROG8
+                            389 	.globl _CSPPROG7
+                            390 	.globl _CSPPROG6
+                            391 	.globl _CSPPROG5
+                            392 	.globl _CSPPROG4
+                            393 	.globl _CSPPROG3
+                            394 	.globl _CSPPROG2
+                            395 	.globl _CSPPROG1
+                            396 	.globl _CSPPROG0
+                            397 	.globl _RFC_OBS_CTRL2
+                            398 	.globl _RFC_OBS_CTRL1
+                            399 	.globl _RFC_OBS_CTRL0
+                            400 	.globl _TXFILTCFG
+                            401 	.globl _PTEST1
+                            402 	.globl _PTEST0
+                            403 	.globl _ATEST
+                            404 	.globl _DACTEST2
+                            405 	.globl _DACTEST1
+                            406 	.globl _DACTEST0
+                            407 	.globl _MDMTEST1
+                            408 	.globl _MDMTEST0
+                            409 	.globl _ADCTEST2
+                            410 	.globl _ADCTEST1
+                            411 	.globl _ADCTEST0
+                            412 	.globl _AGCCTRL3
+                            413 	.globl _AGCCTRL2
+                            414 	.globl _AGCCTRL1
+                            415 	.globl _AGCCTRL0
+                            416 	.globl _FSCAL3
+                            417 	.globl _FSCAL2
+                            418 	.globl _FSCAL1
+                            419 	.globl _FSCAL0
+                            420 	.globl _FSCTRL
+                            421 	.globl _RXCTRL
+                            422 	.globl _FREQEST
+                            423 	.globl _MDMCTRL1
+                            424 	.globl _MDMCTRL0
+                            425 	.globl _RFRND
+                            426 	.globl _RFERRM
+                            427 	.globl _RFIRQM1
+                            428 	.globl _RFIRQM0
+                            429 	.globl _TXLAST_PTR
+                            430 	.globl _TXFIRST_PTR
+                            431 	.globl _RXP1_PTR
+                            432 	.globl _RXLAST_PTR
+                            433 	.globl _RXFIRST_PTR
+                            434 	.globl _TXFIFOCNT
+                            435 	.globl _RXFIFOCNT
+                            436 	.globl _RXFIRST
+                            437 	.globl _RSSISTAT
+                            438 	.globl _RSSI
+                            439 	.globl _CCACTRL1
+                            440 	.globl _CCACTRL0
+                            441 	.globl _FSMCTRL
+                            442 	.globl _FIFOPCTRL
+                            443 	.globl _FSMSTAT1
+                            444 	.globl _FSMSTAT0
+                            445 	.globl _TXCTRL
+                            446 	.globl _TXPOWER
+                            447 	.globl _FREQCTRL
+                            448 	.globl _FREQTUNE
+                            449 	.globl _RXMASKCLR
+                            450 	.globl _RXMASKSET
+                            451 	.globl _RXENABLE
+                            452 	.globl _FRMCTRL1
+                            453 	.globl _FRMCTRL0
+                            454 	.globl _SRCEXTEN2
+                            455 	.globl _SRCEXTEN1
+                            456 	.globl _SRCEXTEN0
+                            457 	.globl _SRCSHORTEN2
+                            458 	.globl _SRCSHORTEN1
+                            459 	.globl _SRCSHORTEN0
+                            460 	.globl _SRCMATCH
+                            461 	.globl _FRMFILT1
+                            462 	.globl _FRMFILT0
+                            463 	.globl _SHORT_ADDR1
+                            464 	.globl _SHORT_ADDR0
+                            465 	.globl _PAN_ID1
+                            466 	.globl _PAN_ID0
+                            467 	.globl _EXT_ADDR7
+                            468 	.globl _EXT_ADDR6
+                            469 	.globl _EXT_ADDR5
+                            470 	.globl _EXT_ADDR4
+                            471 	.globl _EXT_ADDR3
+                            472 	.globl _EXT_ADDR2
+                            473 	.globl _EXT_ADDR1
+                            474 	.globl _EXT_ADDR0
+                            475 	.globl _SRCSHORTPENDEN2
+                            476 	.globl _SRCSHORTPENDEN1
+                            477 	.globl _SRCSHORTPENDEN0
+                            478 	.globl _SRCEXTPENDEN2
+                            479 	.globl _SRCEXTPENDEN1
+                            480 	.globl _SRCEXTPENDEN0
+                            481 	.globl _SRCRESINDEX
+                            482 	.globl _SRCRESMASK2
+                            483 	.globl _SRCRESMASK1
+                            484 	.globl _SRCRESMASK0
+                            485 	.globl _SRC_ADDR_TABLE
+                            486 	.globl _TXFIFO
+                            487 	.globl _RXFIFO
+                            488 	.globl _RFCORE_RAM
+                            489 	.globl _CMPCTL
+                            490 	.globl _OPAMPS
+                            491 	.globl _OPAMPC
+                            492 	.globl _STCV2
+                            493 	.globl _STCV1
+                            494 	.globl _STCV0
+                            495 	.globl _STCS
+                            496 	.globl _STCC
+                            497 	.globl _T1CC4H
+                            498 	.globl _T1CC4L
+                            499 	.globl _T1CC3H
+                            500 	.globl _T1CC3L
+                            501 	.globl _XX_T1CC2H
+                            502 	.globl _XX_T1CC2L
+                            503 	.globl _XX_T1CC1H
+                            504 	.globl _XX_T1CC1L
+                            505 	.globl _XX_T1CC0H
+                            506 	.globl _XX_T1CC0L
+                            507 	.globl _T1CCTL4
+                            508 	.globl _T1CCTL3
+                            509 	.globl _XX_T1CCTL2
+                            510 	.globl _XX_T1CCTL1
+                            511 	.globl _XX_T1CCTL0
+                            512 	.globl _CLD
+                            513 	.globl _IRCTL
+                            514 	.globl _CHIPINFO1
+                            515 	.globl _CHIPINFO0
+                            516 	.globl _FWDATA
+                            517 	.globl _FADDRH
+                            518 	.globl _FADDRL
+                            519 	.globl _FCTL
+                            520 	.globl _IVCTRL
+                            521 	.globl _BATTMON
+                            522 	.globl _SRCRC
+                            523 	.globl _DBGDATA
+                            524 	.globl _TESTREG0
+                            525 	.globl _CHIPID
+                            526 	.globl _CHVER
+                            527 	.globl _OBSSEL5
+                            528 	.globl _OBSSEL4
+                            529 	.globl _OBSSEL3
+                            530 	.globl _OBSSEL2
+                            531 	.globl _OBSSEL1
+                            532 	.globl _OBSSEL0
+                            533 	.globl _I2CIO
+                            534 	.globl _I2CWC
+                            535 	.globl _I2CADDR
+                            536 	.globl _I2CDATA
+                            537 	.globl _I2CSTAT
+                            538 	.globl _I2CCFG
+                            539 	.globl _OPAMPMC
+                            540 	.globl _MONMUX
+                            541 ;--------------------------------------------------------
+                            542 ; special function registers
+                            543 ;--------------------------------------------------------
+                            544 	.area RSEG    (ABS,DATA)
+   0000                     545 	.org 0x0000
+                    0080    546 _P0	=	0x0080
+                    0081    547 _SP	=	0x0081
+                    0082    548 _DPL0	=	0x0082
+                    0083    549 _DPH0	=	0x0083
+                    0084    550 _DPL1	=	0x0084
+                    0085    551 _DPH1	=	0x0085
+                    0087    552 _PCON	=	0x0087
+                    0088    553 _TCON	=	0x0088
+                    0090    554 _P1	=	0x0090
+                    0092    555 _DPS	=	0x0092
+                    0098    556 _S0CON	=	0x0098
+                    009A    557 _IEN2	=	0x009a
+                    009B    558 _S1CON	=	0x009b
+                    00A0    559 _P2	=	0x00a0
+                    00A8    560 _IEN0	=	0x00a8
+                    00A9    561 _IP0	=	0x00a9
+                    00B8    562 _IEN1	=	0x00b8
+                    00B9    563 _IP1	=	0x00b9
+                    00C0    564 _IRCON	=	0x00c0
+                    00D0    565 _PSW	=	0x00d0
+                    00E0    566 _ACC	=	0x00e0
+                    00E8    567 _IRCON2	=	0x00e8
+                    00F0    568 _B	=	0x00f0
+                    00B4    569 _ADCCON1	=	0x00b4
+                    00B5    570 _ADCCON2	=	0x00b5
+                    00B6    571 _ADCCON3	=	0x00b6
+                    00BA    572 _ADCL	=	0x00ba
+                    00BB    573 _ADCH	=	0x00bb
+                    00BC    574 _RNDL	=	0x00bc
+                    00BD    575 _RNDH	=	0x00bd
+                    00B1    576 _ENCDI	=	0x00b1
+                    00B2    577 _ENCDO	=	0x00b2
+                    00B3    578 _ENCCS	=	0x00b3
+                    00D1    579 _DMAIRQ	=	0x00d1
+                    00D2    580 _DMA1CFGL	=	0x00d2
+                    00D3    581 _DMA1CFGH	=	0x00d3
+                    00D4    582 _DMA0CFGL	=	0x00d4
+                    00D5    583 _DMA0CFGH	=	0x00d5
+                    00D6    584 _DMAARM	=	0x00d6
+                    00D7    585 _DMAREQ	=	0x00d7
+                    0089    586 _P0IFG	=	0x0089
+                    008A    587 _P1IFG	=	0x008a
+                    008B    588 _P2IFG	=	0x008b
+                    008C    589 _PICTL	=	0x008c
+                    00AB    590 _P0IEN	=	0x00ab
+                    008D    591 _P1IEN	=	0x008d
+                    00AC    592 _P2IEN	=	0x00ac
+                    008F    593 _P0INP	=	0x008f
+                    00F1    594 _PERCFG	=	0x00f1
+                    00F2    595 _APCFG	=	0x00f2
+                    00F3    596 _P0SEL	=	0x00f3
+                    00F4    597 _P1SEL	=	0x00f4
+                    00F5    598 _P2SEL	=	0x00f5
+                    00F6    599 _P1INP	=	0x00f6
+                    00F7    600 _P2INP	=	0x00f7
+                    00FD    601 _P0DIR	=	0x00fd
+                    00FE    602 _P1DIR	=	0x00fe
+                    00FF    603 _P2DIR	=	0x00ff
+                    00AE    604 _PMUX	=	0x00ae
+                    0093    605 _MPAGE	=	0x0093
+                    0093    606 __XPAGE	=	0x0093
+                    00C7    607 _MEMCTR	=	0x00c7
+                    009F    608 _FMAP	=	0x009f
+                    009F    609 _PSBANK	=	0x009f
+                    0091    610 _RFIRQF1	=	0x0091
+                    00D9    611 _RFD	=	0x00d9
+                    00E1    612 _RFST	=	0x00e1
+                    00E9    613 _RFIRQF0	=	0x00e9
+                    00BF    614 _RFERRF	=	0x00bf
+                    0095    615 _ST0	=	0x0095
+                    0096    616 _ST1	=	0x0096
+                    0097    617 _ST2	=	0x0097
+                    00AD    618 _STLOAD	=	0x00ad
+                    00BE    619 _SLEEPCMD	=	0x00be
+                    009D    620 _SLEEPSTA	=	0x009d
+                    00C6    621 _CLKCONCMD	=	0x00c6
+                    009E    622 _CLKCONSTA	=	0x009e
+                    00DA    623 _T1CC0L	=	0x00da
+                    00DB    624 _T1CC0H	=	0x00db
+                    00DC    625 _T1CC1L	=	0x00dc
+                    00DD    626 _T1CC1H	=	0x00dd
+                    00DE    627 _T1CC2L	=	0x00de
+                    00DF    628 _T1CC2H	=	0x00df
+                    00E2    629 _T1CNTL	=	0x00e2
+                    00E3    630 _T1CNTH	=	0x00e3
+                    00E4    631 _T1CTL	=	0x00e4
+                    00E5    632 _T1CCTL0	=	0x00e5
+                    00E6    633 _T1CCTL1	=	0x00e6
+                    00E7    634 _T1CCTL2	=	0x00e7
+                    00AF    635 _T1STAT	=	0x00af
+                    0094    636 _T2CTRL	=	0x0094
+                    009C    637 _T2EVTCFG	=	0x009c
+                    00A1    638 _T2IRQF	=	0x00a1
+                    00A2    639 _T2M0	=	0x00a2
+                    00A3    640 _T2M1	=	0x00a3
+                    00A4    641 _T2MOVF0	=	0x00a4
+                    00A5    642 _T2MOVF1	=	0x00a5
+                    00A6    643 _T2MOVF2	=	0x00a6
+                    00A7    644 _T2IRQM	=	0x00a7
+                    00C3    645 _T2MSEL	=	0x00c3
+                    00CA    646 _T3CNT	=	0x00ca
+                    00CB    647 _T3CTL	=	0x00cb
+                    00CC    648 _T3CCTL0	=	0x00cc
+                    00CD    649 _T3CC0	=	0x00cd
+                    00CE    650 _T3CCTL1	=	0x00ce
+                    00CF    651 _T3CC1	=	0x00cf
+                    00EA    652 _T4CNT	=	0x00ea
+                    00EB    653 _T4CTL	=	0x00eb
+                    00EC    654 _T4CCTL0	=	0x00ec
+                    00ED    655 _T4CC0	=	0x00ed
+                    00EE    656 _T4CCTL1	=	0x00ee
+                    00EF    657 _T4CC1	=	0x00ef
+                    00D8    658 _TIMIF	=	0x00d8
+                    0086    659 _U0CSR	=	0x0086
+                    00C1    660 _U0DBUF	=	0x00c1
+                    00C2    661 _U0BAUD	=	0x00c2
+                    00C4    662 _U0UCR	=	0x00c4
+                    00C5    663 _U0GCR	=	0x00c5
+                    00F8    664 _U1CSR	=	0x00f8
+                    00F9    665 _U1DBUF	=	0x00f9
+                    00FA    666 _U1BAUD	=	0x00fa
+                    00FB    667 _U1UCR	=	0x00fb
+                    00FC    668 _U1GCR	=	0x00fc
+                    00C9    669 _WDCTL	=	0x00c9
+                            670 ;--------------------------------------------------------
+                            671 ; special function bits
+                            672 ;--------------------------------------------------------
+                            673 	.area RSEG    (ABS,DATA)
+   0000                     674 	.org 0x0000
+                    0087    675 _P0_7	=	0x0087
+                    0086    676 _P0_6	=	0x0086
+                    0085    677 _P0_5	=	0x0085
+                    0084    678 _P0_4	=	0x0084
+                    0083    679 _P0_3	=	0x0083
+                    0082    680 _P0_2	=	0x0082
+                    0081    681 _P0_1	=	0x0081
+                    0080    682 _P0_0	=	0x0080
+                    008F    683 _URX1IF	=	0x008f
+                    008D    684 _ADCIF	=	0x008d
+                    008B    685 _URX0IF	=	0x008b
+                    008A    686 _IT1	=	0x008a
+                    0089    687 _RFERRIF	=	0x0089
+                    0088    688 _IT0	=	0x0088
+                    0097    689 _P1_7	=	0x0097
+                    0096    690 _P1_6	=	0x0096
+                    0095    691 _P1_5	=	0x0095
+                    0094    692 _P1_4	=	0x0094
+                    0093    693 _P1_3	=	0x0093
+                    0092    694 _P1_2	=	0x0092
+                    0091    695 _P1_1	=	0x0091
+                    0090    696 _P1_0	=	0x0090
+                    0099    697 _ENCIF_1	=	0x0099
+                    0098    698 _ENCIF_0	=	0x0098
+                    00A7    699 _P2_7	=	0x00a7
+                    00A6    700 _P2_6	=	0x00a6
+                    00A5    701 _P2_5	=	0x00a5
+                    00A4    702 _P2_4	=	0x00a4
+                    00A3    703 _P2_3	=	0x00a3
+                    00A2    704 _P2_2	=	0x00a2
+                    00A1    705 _P2_1	=	0x00a1
+                    00A0    706 _P2_0	=	0x00a0
+                    00AF    707 _EA	=	0x00af
+                    00AD    708 _STIE	=	0x00ad
+                    00AC    709 _ENCIE	=	0x00ac
+                    00AB    710 _URX1IE	=	0x00ab
+                    00AA    711 _URX0IE	=	0x00aa
+                    00A9    712 _ADCIE	=	0x00a9
+                    00A8    713 _RFERRIE	=	0x00a8
+                    00BD    714 _P0IE	=	0x00bd
+                    00BC    715 _T4IE	=	0x00bc
+                    00BB    716 _T3IE	=	0x00bb
+                    00BA    717 _T2IE	=	0x00ba
+                    00B9    718 _T1IE	=	0x00b9
+                    00B8    719 _DMAIE	=	0x00b8
+                    00C7    720 _STIF	=	0x00c7
+                    00C5    721 _P0IF	=	0x00c5
+                    00C4    722 _T4IF	=	0x00c4
+                    00C3    723 _T3IF	=	0x00c3
+                    00C2    724 _T2IF	=	0x00c2
+                    00C1    725 _T1IF	=	0x00c1
+                    00C0    726 _DMAIF	=	0x00c0
+                    00D7    727 _CY	=	0x00d7
+                    00D6    728 _AC	=	0x00d6
+                    00D5    729 _F0	=	0x00d5
+                    00D4    730 _RS1	=	0x00d4
+                    00D3    731 _RS0	=	0x00d3
+                    00D2    732 _OV	=	0x00d2
+                    00D1    733 _F1	=	0x00d1
+                    00D0    734 _P	=	0x00d0
+                    00E7    735 _ACC_7	=	0x00e7
+                    00E6    736 _ACC_6	=	0x00e6
+                    00E5    737 _ACC_5	=	0x00e5
+                    00E4    738 _ACC_4	=	0x00e4
+                    00E3    739 _ACC_3	=	0x00e3
+                    00E2    740 _ACC_2	=	0x00e2
+                    00E1    741 _ACC_1	=	0x00e1
+                    00E0    742 _ACC_0	=	0x00e0
+                    00EC    743 _WDTIF	=	0x00ec
+                    00EB    744 _P1IF	=	0x00eb
+                    00EA    745 _UTX1IF	=	0x00ea
+                    00E9    746 _UTX0IF	=	0x00e9
+                    00E8    747 _P2IF	=	0x00e8
+                    00F7    748 _B_7	=	0x00f7
+                    00F6    749 _B_6	=	0x00f6
+                    00F5    750 _B_5	=	0x00f5
+                    00F4    751 _B_4	=	0x00f4
+                    00F3    752 _B_3	=	0x00f3
+                    00F2    753 _B_2	=	0x00f2
+                    00F1    754 _B_1	=	0x00f1
+                    00F0    755 _B_0	=	0x00f0
+                    00DE    756 _OVFIM	=	0x00de
+                    00DD    757 _T4CH1IF	=	0x00dd
+                    00DC    758 _T4CH0IF	=	0x00dc
+                    00DB    759 _T4OVFIF	=	0x00db
+                    00DA    760 _T3CH1IF	=	0x00da
+                    00D9    761 _T3CH0IF	=	0x00d9
+                    00D8    762 _T3OVFIF	=	0x00d8
+                    00FF    763 _MODE	=	0x00ff
+                    00FE    764 _RE	=	0x00fe
+                    00FD    765 _SLAVE	=	0x00fd
+                    00FC    766 _FE	=	0x00fc
+                    00FB    767 _ERR	=	0x00fb
+                    00FA    768 _RX_BYTE	=	0x00fa
+                    00F9    769 _TX_BYTE	=	0x00f9
+                    00F8    770 _ACTIVE	=	0x00f8
+                            771 ;--------------------------------------------------------
+                            772 ; overlayable register banks
+                            773 ;--------------------------------------------------------
+                            774 	.area REG_BANK_0	(REL,OVR,DATA)
+   0000                     775 	.ds 8
+                            776 ;--------------------------------------------------------
+                            777 ; internal ram data
+                            778 ;--------------------------------------------------------
+                            779 	.area DSEG    (DATA)
+                            780 ;--------------------------------------------------------
+                            781 ; overlayable items in internal ram 
+                            782 ;--------------------------------------------------------
+                            783 	.area OSEG    (OVR,DATA)
+                            784 ;--------------------------------------------------------
+                            785 ; indirectly addressable internal ram data
+                            786 ;--------------------------------------------------------
+                            787 	.area ISEG    (DATA)
+                            788 ;--------------------------------------------------------
+                            789 ; absolute internal ram data
+                            790 ;--------------------------------------------------------
+                            791 	.area IABS    (ABS,DATA)
+                            792 	.area IABS    (ABS,DATA)
+                            793 ;--------------------------------------------------------
+                            794 ; bit data
+                            795 ;--------------------------------------------------------
+                            796 	.area BSEG    (BIT)
+                            797 ;--------------------------------------------------------
+                            798 ; paged external ram data
+                            799 ;--------------------------------------------------------
+                            800 	.area PSEG    (PAG,XDATA)
+                            801 ;--------------------------------------------------------
+                            802 ; external ram data
+                            803 ;--------------------------------------------------------
+                            804 	.area XSEG    (XDATA)
+                    61A6    805 _MONMUX	=	0x61a6
+                    61A6    806 _OPAMPMC	=	0x61a6
+                    6230    807 _I2CCFG	=	0x6230
+                    6231    808 _I2CSTAT	=	0x6231
+                    6232    809 _I2CDATA	=	0x6232
+                    6233    810 _I2CADDR	=	0x6233
+                    6234    811 _I2CWC	=	0x6234
+                    6235    812 _I2CIO	=	0x6235
+                    6243    813 _OBSSEL0	=	0x6243
+                    6244    814 _OBSSEL1	=	0x6244
+                    6245    815 _OBSSEL2	=	0x6245
+                    6246    816 _OBSSEL3	=	0x6246
+                    6247    817 _OBSSEL4	=	0x6247
+                    6248    818 _OBSSEL5	=	0x6248
+                    6249    819 _CHVER	=	0x6249
+                    624A    820 _CHIPID	=	0x624a
+                    624B    821 _TESTREG0	=	0x624b
+                    6260    822 _DBGDATA	=	0x6260
+                    6262    823 _SRCRC	=	0x6262
+                    6264    824 _BATTMON	=	0x6264
+                    6265    825 _IVCTRL	=	0x6265
+                    6270    826 _FCTL	=	0x6270
+                    6271    827 _FADDRL	=	0x6271
+                    6272    828 _FADDRH	=	0x6272
+                    6273    829 _FWDATA	=	0x6273
+                    6276    830 _CHIPINFO0	=	0x6276
+                    6277    831 _CHIPINFO1	=	0x6277
+                    6281    832 _IRCTL	=	0x6281
+                    6290    833 _CLD	=	0x6290
+                    62A0    834 _XX_T1CCTL0	=	0x62a0
+                    62A1    835 _XX_T1CCTL1	=	0x62a1
+                    62A2    836 _XX_T1CCTL2	=	0x62a2
+                    62A3    837 _T1CCTL3	=	0x62a3
+                    62A4    838 _T1CCTL4	=	0x62a4
+                    62A6    839 _XX_T1CC0L	=	0x62a6
+                    62A7    840 _XX_T1CC0H	=	0x62a7
+                    62A8    841 _XX_T1CC1L	=	0x62a8
+                    62A9    842 _XX_T1CC1H	=	0x62a9
+                    62AA    843 _XX_T1CC2L	=	0x62aa
+                    62AB    844 _XX_T1CC2H	=	0x62ab
+                    62AC    845 _T1CC3L	=	0x62ac
+                    62AD    846 _T1CC3H	=	0x62ad
+                    62AE    847 _T1CC4L	=	0x62ae
+                    62AF    848 _T1CC4H	=	0x62af
+                    62B0    849 _STCC	=	0x62b0
+                    62B1    850 _STCS	=	0x62b1
+                    62B2    851 _STCV0	=	0x62b2
+                    62B3    852 _STCV1	=	0x62b3
+                    62B4    853 _STCV2	=	0x62b4
+                    62C0    854 _OPAMPC	=	0x62c0
+                    62C1    855 _OPAMPS	=	0x62c1
+                    62D0    856 _CMPCTL	=	0x62d0
+                    6000    857 _RFCORE_RAM	=	0x6000
+                    6000    858 _RXFIFO	=	0x6000
+                    6080    859 _TXFIFO	=	0x6080
+                    6100    860 _SRC_ADDR_TABLE	=	0x6100
+                    6160    861 _SRCRESMASK0	=	0x6160
+                    6161    862 _SRCRESMASK1	=	0x6161
+                    6162    863 _SRCRESMASK2	=	0x6162
+                    6163    864 _SRCRESINDEX	=	0x6163
+                    6164    865 _SRCEXTPENDEN0	=	0x6164
+                    6165    866 _SRCEXTPENDEN1	=	0x6165
+                    6166    867 _SRCEXTPENDEN2	=	0x6166
+                    6167    868 _SRCSHORTPENDEN0	=	0x6167
+                    6168    869 _SRCSHORTPENDEN1	=	0x6168
+                    6169    870 _SRCSHORTPENDEN2	=	0x6169
+                    616A    871 _EXT_ADDR0	=	0x616a
+                    616B    872 _EXT_ADDR1	=	0x616b
+                    616C    873 _EXT_ADDR2	=	0x616c
+                    616D    874 _EXT_ADDR3	=	0x616d
+                    616E    875 _EXT_ADDR4	=	0x616e
+                    616F    876 _EXT_ADDR5	=	0x616f
+                    6170    877 _EXT_ADDR6	=	0x6170
+                    6171    878 _EXT_ADDR7	=	0x6171
+                    6172    879 _PAN_ID0	=	0x6172
+                    6173    880 _PAN_ID1	=	0x6173
+                    6174    881 _SHORT_ADDR0	=	0x6174
+                    6175    882 _SHORT_ADDR1	=	0x6175
+                    6180    883 _FRMFILT0	=	0x6180
+                    6181    884 _FRMFILT1	=	0x6181
+                    6182    885 _SRCMATCH	=	0x6182
+                    6183    886 _SRCSHORTEN0	=	0x6183
+                    6184    887 _SRCSHORTEN1	=	0x6184
+                    6185    888 _SRCSHORTEN2	=	0x6185
+                    6186    889 _SRCEXTEN0	=	0x6186
+                    6187    890 _SRCEXTEN1	=	0x6187
+                    6188    891 _SRCEXTEN2	=	0x6188
+                    6189    892 _FRMCTRL0	=	0x6189
+                    618A    893 _FRMCTRL1	=	0x618a
+                    618B    894 _RXENABLE	=	0x618b
+                    618C    895 _RXMASKSET	=	0x618c
+                    618D    896 _RXMASKCLR	=	0x618d
+                    618E    897 _FREQTUNE	=	0x618e
+                    618F    898 _FREQCTRL	=	0x618f
+                    6190    899 _TXPOWER	=	0x6190
+                    6191    900 _TXCTRL	=	0x6191
+                    6192    901 _FSMSTAT0	=	0x6192
+                    6193    902 _FSMSTAT1	=	0x6193
+                    6194    903 _FIFOPCTRL	=	0x6194
+                    6195    904 _FSMCTRL	=	0x6195
+                    6196    905 _CCACTRL0	=	0x6196
+                    6197    906 _CCACTRL1	=	0x6197
+                    6198    907 _RSSI	=	0x6198
+                    6199    908 _RSSISTAT	=	0x6199
+                    619A    909 _RXFIRST	=	0x619a
+                    619B    910 _RXFIFOCNT	=	0x619b
+                    619C    911 _TXFIFOCNT	=	0x619c
+                    619D    912 _RXFIRST_PTR	=	0x619d
+                    619E    913 _RXLAST_PTR	=	0x619e
+                    619F    914 _RXP1_PTR	=	0x619f
+                    61A1    915 _TXFIRST_PTR	=	0x61a1
+                    61A2    916 _TXLAST_PTR	=	0x61a2
+                    61A3    917 _RFIRQM0	=	0x61a3
+                    61A4    918 _RFIRQM1	=	0x61a4
+                    61A5    919 _RFERRM	=	0x61a5
+                    61A7    920 _RFRND	=	0x61a7
+                    61A8    921 _MDMCTRL0	=	0x61a8
+                    61A9    922 _MDMCTRL1	=	0x61a9
+                    61AA    923 _FREQEST	=	0x61aa
+                    61AB    924 _RXCTRL	=	0x61ab
+                    61AC    925 _FSCTRL	=	0x61ac
+                    61AD    926 _FSCAL0	=	0x61ad
+                    61AE    927 _FSCAL1	=	0x61ae
+                    61AF    928 _FSCAL2	=	0x61af
+                    61B0    929 _FSCAL3	=	0x61b0
+                    61B1    930 _AGCCTRL0	=	0x61b1
+                    61B2    931 _AGCCTRL1	=	0x61b2
+                    61B3    932 _AGCCTRL2	=	0x61b3
+                    61B4    933 _AGCCTRL3	=	0x61b4
+                    61B5    934 _ADCTEST0	=	0x61b5
+                    61B6    935 _ADCTEST1	=	0x61b6
+                    61B7    936 _ADCTEST2	=	0x61b7
+                    61B8    937 _MDMTEST0	=	0x61b8
+                    61B9    938 _MDMTEST1	=	0x61b9
+                    61BA    939 _DACTEST0	=	0x61ba
+                    61BB    940 _DACTEST1	=	0x61bb
+                    61BC    941 _DACTEST2	=	0x61bc
+                    61BD    942 _ATEST	=	0x61bd
+                    61BE    943 _PTEST0	=	0x61be
+                    61BF    944 _PTEST1	=	0x61bf
+                    61FA    945 _TXFILTCFG	=	0x61fa
+                    61EB    946 _RFC_OBS_CTRL0	=	0x61eb
+                    61EC    947 _RFC_OBS_CTRL1	=	0x61ec
+                    61ED    948 _RFC_OBS_CTRL2	=	0x61ed
+                    61C0    949 _CSPPROG0	=	0x61c0
+                    61C1    950 _CSPPROG1	=	0x61c1
+                    61C2    951 _CSPPROG2	=	0x61c2
+                    61C3    952 _CSPPROG3	=	0x61c3
+                    61C4    953 _CSPPROG4	=	0x61c4
+                    61C5    954 _CSPPROG5	=	0x61c5
+                    61C6    955 _CSPPROG6	=	0x61c6
+                    61C7    956 _CSPPROG7	=	0x61c7
+                    61C8    957 _CSPPROG8	=	0x61c8
+                    61C9    958 _CSPPROG9	=	0x61c9
+                    61CA    959 _CSPPROG10	=	0x61ca
+                    61CB    960 _CSPPROG11	=	0x61cb
+                    61CC    961 _CSPPROG12	=	0x61cc
+                    61CD    962 _CSPPROG13	=	0x61cd
+                    61CE    963 _CSPPROG14	=	0x61ce
+                    61CF    964 _CSPPROG15	=	0x61cf
+                    61D0    965 _CSPPROG16	=	0x61d0
+                    61D1    966 _CSPPROG17	=	0x61d1
+                    61D2    967 _CSPPROG18	=	0x61d2
+                    61D3    968 _CSPPROG19	=	0x61d3
+                    61D4    969 _CSPPROG20	=	0x61d4
+                    61D5    970 _CSPPROG21	=	0x61d5
+                    61D6    971 _CSPPROG22	=	0x61d6
+                    61D7    972 _CSPPROG23	=	0x61d7
+                    61E0    973 _CSPCTRL	=	0x61e0
+                    61E1    974 _CSPSTAT	=	0x61e1
+                    61E2    975 _CSPX	=	0x61e2
+                    61E3    976 _CSPY	=	0x61e3
+                    61E4    977 _CSPZ	=	0x61e4
+                    61E5    978 _CSPT	=	0x61e5
+                    6200    979 _USBADDR	=	0x6200
+                    6201    980 _USBPOW	=	0x6201
+                    6202    981 _USBIIF	=	0x6202
+                    6204    982 _USBOIF	=	0x6204
+                    6206    983 _USBCIF	=	0x6206
+                    6207    984 _USBIIE	=	0x6207
+                    6209    985 _USBOIE	=	0x6209
+                    620B    986 _USBCIE	=	0x620b
+                    620C    987 _USBFRML	=	0x620c
+                    620D    988 _USBFRMH	=	0x620d
+                    620E    989 _USBINDEX	=	0x620e
+                    620F    990 _USBCTRL	=	0x620f
+                    6210    991 _USBMAXI	=	0x6210
+                    6211    992 _USBCS0	=	0x6211
+                    6211    993 _USBCSIL	=	0x6211
+                    6212    994 _USBCSIH	=	0x6212
+                    6213    995 _USBMAXO	=	0x6213
+                    6214    996 _USBCSOL	=	0x6214
+                    6215    997 _USBCSOH	=	0x6215
+                    6216    998 _USBCNT0	=	0x6216
+                    6216    999 _USBCNTL	=	0x6216
+                    6217   1000 _USBCNTH	=	0x6217
+                    6220   1001 _USBF0	=	0x6220
+                    6222   1002 _USBF1	=	0x6222
+                    6224   1003 _USBF2	=	0x6224
+                    6226   1004 _USBF3	=	0x6226
+                    6228   1005 _USBF4	=	0x6228
+                    622A   1006 _USBF5	=	0x622a
+                    7080   1007 _X_P0	=	0x7080
+                    7086   1008 _X_U0CSR	=	0x7086
+                    7089   1009 _X_P0IFG	=	0x7089
+                    708A   1010 _X_P1IFG	=	0x708a
+                    708B   1011 _X_P2IFG	=	0x708b
+                    708C   1012 _X_PICTL	=	0x708c
+                    708D   1013 _X_P1IEN	=	0x708d
+                    708F   1014 _X_P0INP	=	0x708f
+                    7090   1015 _X_P1	=	0x7090
+                    7091   1016 _X_RFIRQF1	=	0x7091
+                    7093   1017 _X_MPAGE	=	0x7093
+                    7093   1018 _X__XPAGE	=	0x7093
+                    7094   1019 _X_T2CTRL	=	0x7094
+                    7095   1020 _X_ST0	=	0x7095
+                    7096   1021 _X_ST1	=	0x7096
+                    7097   1022 _X_ST2	=	0x7097
+                    709C   1023 _X_T2EVTCFG	=	0x709c
+                    709D   1024 _X_SLEEPSTA	=	0x709d
+                    709E   1025 _X_CLKCONSTA	=	0x709e
+                    709F   1026 _X_FMAP	=	0x709f
+                    709F   1027 _X_PSBANK	=	0x709f
+                    70A0   1028 _X_P2	=	0x70a0
+                    70A1   1029 _X_T2IRQF	=	0x70a1
+                    70A2   1030 _X_T2M0	=	0x70a2
+                    70A3   1031 _X_T2M1	=	0x70a3
+                    70A4   1032 _X_T2MOVF0	=	0x70a4
+                    70A5   1033 _X_T2MOVF1	=	0x70a5
+                    70A6   1034 _X_T2MOVF2	=	0x70a6
+                    70A7   1035 _X_T2IRQM	=	0x70a7
+                    70AB   1036 _X_P0IEN	=	0x70ab
+                    70AC   1037 _X_P2IEN	=	0x70ac
+                    70AD   1038 _X_STLOAD	=	0x70ad
+                    70AE   1039 _X_PMUX	=	0x70ae
+                    70AF   1040 _X_T1STAT	=	0x70af
+                    70B1   1041 _X_ENCDI	=	0x70b1
+                    70B2   1042 _X_ENCDO	=	0x70b2
+                    70B3   1043 _X_ENCCS	=	0x70b3
+                    70B4   1044 _X_ADCCON1	=	0x70b4
+                    70B5   1045 _X_ADCCON2	=	0x70b5
+                    70B6   1046 _X_ADCCON3	=	0x70b6
+                    70BA   1047 _X_ADCL	=	0x70ba
+                    70BB   1048 _X_ADCH	=	0x70bb
+                    70BC   1049 _X_RNDL	=	0x70bc
+                    70BD   1050 _X_RNDH	=	0x70bd
+                    70BE   1051 _X_SLEEPCMD	=	0x70be
+                    70BF   1052 _X_RFERRF	=	0x70bf
+                    70C1   1053 _X_U0DBUF	=	0x70c1
+                    70C2   1054 _X_U0BAUD	=	0x70c2
+                    70C3   1055 _X_T2MSEL	=	0x70c3
+                    70C4   1056 _X_U0UCR	=	0x70c4
+                    70C5   1057 _X_U0GCR	=	0x70c5
+                    70C6   1058 _X_CLKCONCMD	=	0x70c6
+                    70C7   1059 _X_MEMCTR	=	0x70c7
+                    70C9   1060 _X_WDCTL	=	0x70c9
+                    70CA   1061 _X_T3CNT	=	0x70ca
+                    70CB   1062 _X_T3CTL	=	0x70cb
+                    70CC   1063 _X_T3CCTL0	=	0x70cc
+                    70CD   1064 _X_T3CC0	=	0x70cd
+                    70CE   1065 _X_T3CCTL1	=	0x70ce
+                    70CF   1066 _X_T3CC1	=	0x70cf
+                    70D1   1067 _X_DMAIRQ	=	0x70d1
+                    70D2   1068 _X_DMA1CFGL	=	0x70d2
+                    70D3   1069 _X_DMA1CFGH	=	0x70d3
+                    70D4   1070 _X_DMA0CFGL	=	0x70d4
+                    70D5   1071 _X_DMA0CFGH	=	0x70d5
+                    70D6   1072 _X_DMAARM	=	0x70d6
+                    70D7   1073 _X_DMAREQ	=	0x70d7
+                    70D8   1074 _X_TIMIF	=	0x70d8
+                    70D9   1075 _X_RFD	=	0x70d9
+                    70DA   1076 _X_T1CC0L	=	0x70da
+                    70DB   1077 _X_T1CC0H	=	0x70db
+                    70DC   1078 _X_T1CC1L	=	0x70dc
+                    70DD   1079 _X_T1CC1H	=	0x70dd
+                    70DE   1080 _X_T1CC2L	=	0x70de
+                    70DF   1081 _X_T1CC2H	=	0x70df
+                    70E1   1082 _X_RFST	=	0x70e1
+                    70E2   1083 _X_T1CNTL	=	0x70e2
+                    70E3   1084 _X_T1CNTH	=	0x70e3
+                    70E4   1085 _X_T1CTL	=	0x70e4
+                    70E5   1086 _X_T1CCTL0	=	0x70e5
+                    70E6   1087 _X_T1CCTL1	=	0x70e6
+                    70E7   1088 _X_T1CCTL2	=	0x70e7
+                    70E9   1089 _X_RFIRQF0	=	0x70e9
+                    70EA   1090 _X_T4CNT	=	0x70ea
+                    70EB   1091 _X_T4CTL	=	0x70eb
+                    70EC   1092 _X_T4CCTL0	=	0x70ec
+                    70ED   1093 _X_T4CC0	=	0x70ed
+                    70EE   1094 _X_T4CCTL1	=	0x70ee
+                    70EF   1095 _X_T4CC1	=	0x70ef
+                    70F1   1096 _X_PERCFG	=	0x70f1
+                    70F2   1097 _X_APCFG	=	0x70f2
+                    70F3   1098 _X_P0SEL	=	0x70f3
+                    70F4   1099 _X_P1SEL	=	0x70f4
+                    70F5   1100 _X_P2SEL	=	0x70f5
+                    70F6   1101 _X_P1INP	=	0x70f6
+                    70F7   1102 _X_P2INP	=	0x70f7
+                    70F8   1103 _X_U1CSR	=	0x70f8
+                    70F9   1104 _X_U1DBUF	=	0x70f9
+                    70FA   1105 _X_U1BAUD	=	0x70fa
+                    70FB   1106 _X_U1UCR	=	0x70fb
+                    70FC   1107 _X_U1GCR	=	0x70fc
+                    70FD   1108 _X_P0DIR	=	0x70fd
+                    70FE   1109 _X_P1DIR	=	0x70fe
+                    70FF   1110 _X_P2DIR	=	0x70ff
+                    7800   1111 _X_INFOPAGE	=	0x7800
+                    780C   1112 _X_IEEE_ADDR	=	0x780c
+                           1113 ;--------------------------------------------------------
+                           1114 ; absolute external ram data
+                           1115 ;--------------------------------------------------------
+                           1116 	.area XABS    (ABS,XDATA)
+                           1117 ;--------------------------------------------------------
+                           1118 ; external initialized ram data
+                           1119 ;--------------------------------------------------------
+                           1120 	.area XISEG   (XDATA)
+   0000                    1121 _rpl_of_etx::
+   0000                    1122 	.ds 20
+                           1123 	.area HOME    (CODE)
+                           1124 	.area GSINIT0 (CODE)
+                           1125 	.area GSINIT1 (CODE)
+                           1126 	.area GSINIT2 (CODE)
+                           1127 	.area GSINIT3 (CODE)
+                           1128 	.area GSINIT4 (CODE)
+                           1129 	.area GSINIT5 (CODE)
+                           1130 	.area GSINIT  (CODE)
+                           1131 	.area GSFINAL (CODE)
+                           1132 	.area CSEG    (CODE)
+                           1133 ;--------------------------------------------------------
+                           1134 ; global & static initialisations
+                           1135 ;--------------------------------------------------------
+                           1136 	.area HOME    (CODE)
+                           1137 	.area GSINIT  (CODE)
+                           1138 	.area GSFINAL (CODE)
+                           1139 	.area GSINIT  (CODE)
+                           1140 ;--------------------------------------------------------
+                           1141 ; Home
+                           1142 ;--------------------------------------------------------
+                           1143 	.area HOME    (CODE)
+                           1144 	.area HOME    (CODE)
+                           1145 ;--------------------------------------------------------
+                           1146 ; code
+                           1147 ;--------------------------------------------------------
+                           1148 	.area BANK1   (CODE)
+                           1149 ;------------------------------------------------------------
+                           1150 ;Allocation info for local variables in function 'calculate_path_metric'
+                           1151 ;------------------------------------------------------------
+                           1152 ;p                         Allocated to stack - sp -6
+                           1153 ;etx                       Allocated to stack - sp -3
+                           1154 ;------------------------------------------------------------
+                           1155 ;	../../../contiki-sensinode//core/net/rpl/rpl-of-etx.c:84: calculate_path_metric(rpl_parent_t *p)
+                           1156 ;	-----------------------------------------
+                           1157 ;	 function calculate_path_metric
+                           1158 ;	-----------------------------------------
+   0000                    1159 _calculate_path_metric:
+                    0007   1160 	ar7 = 0x07
+                    0006   1161 	ar6 = 0x06
+                    0005   1162 	ar5 = 0x05
+                    0004   1163 	ar4 = 0x04
+                    0003   1164 	ar3 = 0x03
+                    0002   1165 	ar2 = 0x02
+                    0001   1166 	ar1 = 0x01
+                    0000   1167 	ar0 = 0x00
+   0000 C0 82              1168 	push	dpl
+   0002 C0 83              1169 	push	dph
+   0004 C0 F0              1170 	push	b
+   0006 E5 81              1171 	mov	a,sp
+   0008 24 04              1172 	add	a,#0x04
+                           1173 ;	../../../contiki-sensinode//core/net/rpl/rpl-of-etx.c:86: if(p == NULL || (p->mc.obj.etx == 0 && p->rank > ROOT_RANK(p->dag->instance))) {
+   000A F5 81              1174 	mov	sp,a
+   000C 24 FA              1175 	add	a,#0xfa
+   000E F8                 1176 	mov	r0,a
+   000F E6                 1177 	mov	a,@r0
+   0010 08                 1178 	inc	r0
+   0011 46                 1179 	orl	a,@r0
+   0012 70 03              1180 	jnz	00112$
+   0014 02s00rC6           1181 	ljmp	00101$
+   0017                    1182 00112$:
+   0017 E5 81              1183 	mov	a,sp
+   0019 24 FA              1184 	add	a,#0xfa
+   001B F8                 1185 	mov	r0,a
+   001C 74 06              1186 	mov	a,#0x06
+   001E 26                 1187 	add	a,@r0
+   001F FA                 1188 	mov	r2,a
+   0020 E4                 1189 	clr	a
+   0021 08                 1190 	inc	r0
+   0022 36                 1191 	addc	a,@r0
+   0023 FB                 1192 	mov	r3,a
+   0024 08                 1193 	inc	r0
+   0025 86 04              1194 	mov	ar4,@r0
+   0027 74 05              1195 	mov	a,#0x05
+   0029 2A                 1196 	add	a,r2
+   002A FA                 1197 	mov	r2,a
+   002B E4                 1198 	clr	a
+   002C 3B                 1199 	addc	a,r3
+   002D FB                 1200 	mov	r3,a
+   002E 8A 82              1201 	mov	dpl,r2
+   0030 8B 83              1202 	mov	dph,r3
+   0032 8C F0              1203 	mov	b,r4
+   0034 12s00r00           1204 	lcall	__gptrget
+   0037 FB                 1205 	mov	r3,a
+   0038 A3                 1206 	inc	dptr
+   0039 12s00r00           1207 	lcall	__gptrget
+   003C FC                 1208 	mov	r4,a
+   003D 4B                 1209 	orl	a,r3
+   003E 60 03              1210 	jz	00113$
+   0040 02s00rCC           1211 	ljmp	00102$
+   0043                    1212 00113$:
+   0043 C0 03              1213 	push	ar3
+   0045 C0 04              1214 	push	ar4
+   0047 E5 81              1215 	mov	a,sp
+   0049 24 F8              1216 	add	a,#0xf8
+   004B F8                 1217 	mov	r0,a
+   004C 74 1D              1218 	mov	a,#0x1D
+   004E 26                 1219 	add	a,@r0
+   004F FA                 1220 	mov	r2,a
+   0050 E4                 1221 	clr	a
+   0051 08                 1222 	inc	r0
+   0052 36                 1223 	addc	a,@r0
+   0053 FB                 1224 	mov	r3,a
+   0054 08                 1225 	inc	r0
+   0055 86 04              1226 	mov	ar4,@r0
+   0057 8A 82              1227 	mov	dpl,r2
+   0059 8B 83              1228 	mov	dph,r3
+   005B 8C F0              1229 	mov	b,r4
+   005D 12s00r00           1230 	lcall	__gptrget
+   0060 FA                 1231 	mov	r2,a
+   0061 A3                 1232 	inc	dptr
+   0062 12s00r00           1233 	lcall	__gptrget
+   0065 FB                 1234 	mov	r3,a
+   0066 E5 81              1235 	mov	a,sp
+   0068 24 F8              1236 	add	a,#0xf8
+   006A F8                 1237 	mov	r0,a
+   006B 74 03              1238 	mov	a,#0x03
+   006D 26                 1239 	add	a,@r0
+   006E FC                 1240 	mov	r4,a
+   006F E4                 1241 	clr	a
+   0070 08                 1242 	inc	r0
+   0071 36                 1243 	addc	a,@r0
+   0072 FE                 1244 	mov	r6,a
+   0073 08                 1245 	inc	r0
+   0074 86 07              1246 	mov	ar7,@r0
+   0076 8C 82              1247 	mov	dpl,r4
+   0078 8E 83              1248 	mov	dph,r6
+   007A 8F F0              1249 	mov	b,r7
+   007C 12s00r00           1250 	lcall	__gptrget
+   007F FC                 1251 	mov	r4,a
+   0080 A3                 1252 	inc	dptr
+   0081 12s00r00           1253 	lcall	__gptrget
+   0084 FE                 1254 	mov	r6,a
+   0085 A3                 1255 	inc	dptr
+   0086 12s00r00           1256 	lcall	__gptrget
+   0089 FF                 1257 	mov	r7,a
+   008A 74 1C              1258 	mov	a,#0x1C
+   008C 2C                 1259 	add	a,r4
+   008D FC                 1260 	mov	r4,a
+   008E E4                 1261 	clr	a
+   008F 3E                 1262 	addc	a,r6
+   0090 FE                 1263 	mov	r6,a
+   0091 8C 82              1264 	mov	dpl,r4
+   0093 8E 83              1265 	mov	dph,r6
+   0095 8F F0              1266 	mov	b,r7
+   0097 12s00r00           1267 	lcall	__gptrget
+   009A FC                 1268 	mov	r4,a
+   009B A3                 1269 	inc	dptr
+   009C 12s00r00           1270 	lcall	__gptrget
+   009F FE                 1271 	mov	r6,a
+   00A0 A3                 1272 	inc	dptr
+   00A1 12s00r00           1273 	lcall	__gptrget
+   00A4 FF                 1274 	mov	r7,a
+   00A5 74 93              1275 	mov	a,#0x93
+   00A7 2C                 1276 	add	a,r4
+   00A8 FC                 1277 	mov	r4,a
+   00A9 E4                 1278 	clr	a
+   00AA 3E                 1279 	addc	a,r6
+   00AB FE                 1280 	mov	r6,a
+   00AC 8C 82              1281 	mov	dpl,r4
+   00AE 8E 83              1282 	mov	dph,r6
+   00B0 8F F0              1283 	mov	b,r7
+   00B2 12s00r00           1284 	lcall	__gptrget
+   00B5 FC                 1285 	mov	r4,a
+   00B6 A3                 1286 	inc	dptr
+   00B7 12s00r00           1287 	lcall	__gptrget
+   00BA FE                 1288 	mov	r6,a
+   00BB C3                 1289 	clr	c
+   00BC EC                 1290 	mov	a,r4
+   00BD 9A                 1291 	subb	a,r2
+   00BE EE                 1292 	mov	a,r6
+   00BF 9B                 1293 	subb	a,r3
+   00C0 D0 04              1294 	pop	ar4
+   00C2 D0 03              1295 	pop	ar3
+   00C4 50 06              1296 	jnc	00102$
+   00C6                    1297 00101$:
+                           1298 ;	../../../contiki-sensinode//core/net/rpl/rpl-of-etx.c:87: return MAX_PATH_COST * RPL_DAG_MC_ETX_DIVISOR;
+   00C6 90 32 00           1299 	mov	dptr,#0x3200
+   00C9 02s01r6F           1300 	ljmp	00106$
+   00CC                    1301 00102$:
+                           1302 ;	../../../contiki-sensinode//core/net/rpl/rpl-of-etx.c:89: long etx = p->link_metric;
+   00CC E5 81              1303 	mov	a,sp
+   00CE 24 FA              1304 	add	a,#0xfa
+   00D0 F8                 1305 	mov	r0,a
+   00D1 74 1F              1306 	mov	a,#0x1F
+   00D3 26                 1307 	add	a,@r0
+   00D4 FD                 1308 	mov	r5,a
+   00D5 E4                 1309 	clr	a
+   00D6 08                 1310 	inc	r0
+   00D7 36                 1311 	addc	a,@r0
+   00D8 FE                 1312 	mov	r6,a
+   00D9 08                 1313 	inc	r0
+   00DA 86 07              1314 	mov	ar7,@r0
+   00DC 8D 82              1315 	mov	dpl,r5
+   00DE 8E 83              1316 	mov	dph,r6
+   00E0 8F F0              1317 	mov	b,r7
+   00E2 12s00r00           1318 	lcall	__gptrget
+   00E5 FD                 1319 	mov	r5,a
+   00E6 E5 81              1320 	mov	a,sp
+   00E8 24 FD              1321 	add	a,#0xfd
+   00EA F8                 1322 	mov	r0,a
+   00EB A6 05              1323 	mov	@r0,ar5
+   00ED 08                 1324 	inc	r0
+   00EE 76 00              1325 	mov	@r0,#0x00
+   00F0 08                 1326 	inc	r0
+   00F1 76 00              1327 	mov	@r0,#0x00
+   00F3 08                 1328 	inc	r0
+   00F4 76 00              1329 	mov	@r0,#0x00
+                           1330 ;	../../../contiki-sensinode//core/net/rpl/rpl-of-etx.c:90: etx = (etx * RPL_DAG_MC_ETX_DIVISOR) / NEIGHBOR_INFO_ETX_DIVISOR;
+   00F6 E5 81              1331 	mov	a,sp
+   00F8 24 FD              1332 	add	a,#0xfd
+   00FA F8                 1333 	mov	r0,a
+   00FB 08                 1334 	inc	r0
+   00FC 08                 1335 	inc	r0
+   00FD 86 06              1336 	mov	ar6,@r0
+   00FF 08                 1337 	inc	r0
+   0100 E6                 1338 	mov	a,@r0
+   0101 54 01              1339 	anl	a,#0x01
+   0103 A2 E0              1340 	mov	c,acc.0
+   0105 CE                 1341 	xch	a,r6
+   0106 13                 1342 	rrc	a
+   0107 CE                 1343 	xch	a,r6
+   0108 13                 1344 	rrc	a
+   0109 CE                 1345 	xch	a,r6
+   010A FF                 1346 	mov	r7,a
+   010B 18                 1347 	dec	r0
+   010C 18                 1348 	dec	r0
+   010D E6                 1349 	mov	a,@r0
+   010E C3                 1350 	clr	c
+   010F 13                 1351 	rrc	a
+   0110 4E                 1352 	orl	a,r6
+   0111 FE                 1353 	mov	r6,a
+   0112 18                 1354 	dec	r0
+   0113 86 02              1355 	mov	ar2,@r0
+   0115 08                 1356 	inc	r0
+   0116 E6                 1357 	mov	a,@r0
+   0117 54 01              1358 	anl	a,#0x01
+   0119 A2 E0              1359 	mov	c,acc.0
+   011B CA                 1360 	xch	a,r2
+   011C 13                 1361 	rrc	a
+   011D CA                 1362 	xch	a,r2
+   011E 13                 1363 	rrc	a
+   011F CA                 1364 	xch	a,r2
+   0120 FD                 1365 	mov	r5,a
+   0121 C0 04              1366 	push	ar4
+   0123 C0 03              1367 	push	ar3
+   0125 74 10              1368 	mov	a,#0x10
+   0127 C0 E0              1369 	push	acc
+   0129 E4                 1370 	clr	a
+   012A C0 E0              1371 	push	acc
+   012C C0 E0              1372 	push	acc
+   012E C0 E0              1373 	push	acc
+   0130 8A 82              1374 	mov	dpl,r2
+   0132 8D 83              1375 	mov	dph,r5
+   0134 8E F0              1376 	mov	b,r6
+   0136 EF                 1377 	mov	a,r7
+   0137 12s00r00           1378 	lcall	__divslong
+   013A AA 82              1379 	mov	r2,dpl
+   013C AD 83              1380 	mov	r5,dph
+   013E AE F0              1381 	mov	r6,b
+   0140 FF                 1382 	mov	r7,a
+   0141 E5 81              1383 	mov	a,sp
+   0143 24 FC              1384 	add	a,#0xfc
+   0145 F5 81              1385 	mov	sp,a
+   0147 D0 03              1386 	pop	ar3
+   0149 D0 04              1387 	pop	ar4
+   014B E5 81              1388 	mov	a,sp
+   014D 24 FD              1389 	add	a,#0xfd
+   014F F8                 1390 	mov	r0,a
+   0150 A6 02              1391 	mov	@r0,ar2
+   0152 08                 1392 	inc	r0
+   0153 A6 05              1393 	mov	@r0,ar5
+   0155 08                 1394 	inc	r0
+   0156 A6 06              1395 	mov	@r0,ar6
+   0158 08                 1396 	inc	r0
+   0159 A6 07              1397 	mov	@r0,ar7
+                           1398 ;	../../../contiki-sensinode//core/net/rpl/rpl-of-etx.c:91: return p->mc.obj.etx + (uint16_t) etx;
+   015B E5 81              1399 	mov	a,sp
+   015D 24 FD              1400 	add	a,#0xfd
+   015F F8                 1401 	mov	r0,a
+   0160 86 05              1402 	mov	ar5,@r0
+   0162 08                 1403 	inc	r0
+   0163 86 07              1404 	mov	ar7,@r0
+   0165 ED                 1405 	mov	a,r5
+   0166 2B                 1406 	add	a,r3
+   0167 FB                 1407 	mov	r3,a
+   0168 EF                 1408 	mov	a,r7
+   0169 3C                 1409 	addc	a,r4
+   016A FC                 1410 	mov	r4,a
+   016B 8B 82              1411 	mov	dpl,r3
+   016D 8C 83              1412 	mov	dph,r4
+   016F                    1413 00106$:
+   016F E5 81              1414 	mov	a,sp
+   0171 24 F9              1415 	add	a,#0xF9
+   0173 F5 81              1416 	mov	sp,a
+   0175 02s00r00           1417 	ljmp	__sdcc_banked_ret
+                           1418 ;------------------------------------------------------------
+                           1419 ;Allocation info for local variables in function 'reset'
+                           1420 ;------------------------------------------------------------
+                           1421 ;sag                       Allocated to registers 
+                           1422 ;------------------------------------------------------------
+                           1423 ;	../../../contiki-sensinode//core/net/rpl/rpl-of-etx.c:96: reset(rpl_dag_t *sag)
+                           1424 ;	-----------------------------------------
+                           1425 ;	 function reset
+                           1426 ;	-----------------------------------------
+   0178                    1427 _reset:
+                           1428 ;	../../../contiki-sensinode//core/net/rpl/rpl-of-etx.c:98: }
+   0178 02s00r00           1429 	ljmp	__sdcc_banked_ret
+                           1430 ;------------------------------------------------------------
+                           1431 ;Allocation info for local variables in function 'parent_state_callback'
+                           1432 ;------------------------------------------------------------
+                           1433 ;known                     Allocated to stack - sp -4
+                           1434 ;etx                       Allocated to stack - sp -6
+                           1435 ;parent                    Allocated to registers 
+                           1436 ;------------------------------------------------------------
+                           1437 ;	../../../contiki-sensinode//core/net/rpl/rpl-of-etx.c:101: parent_state_callback(rpl_parent_t *parent, int known, int etx)
+                           1438 ;	-----------------------------------------
+                           1439 ;	 function parent_state_callback
+                           1440 ;	-----------------------------------------
+   017B                    1441 _parent_state_callback:
+                           1442 ;	../../../contiki-sensinode//core/net/rpl/rpl-of-etx.c:103: }
+   017B 02s00r00           1443 	ljmp	__sdcc_banked_ret
+                           1444 ;------------------------------------------------------------
+                           1445 ;Allocation info for local variables in function 'calculate_rank'
+                           1446 ;------------------------------------------------------------
+                           1447 ;base_rank                 Allocated to stack - sp -7
+                           1448 ;p                         Allocated to stack - sp -2
+                           1449 ;new_rank                  Allocated to registers r6 r7 
+                           1450 ;rank_increase             Allocated to registers r3 r4 
+                           1451 ;------------------------------------------------------------
+                           1452 ;	../../../contiki-sensinode//core/net/rpl/rpl-of-etx.c:106: calculate_rank(rpl_parent_t *p, rpl_rank_t base_rank)
+                           1453 ;	-----------------------------------------
+                           1454 ;	 function calculate_rank
+                           1455 ;	-----------------------------------------
+   017E                    1456 _calculate_rank:
+   017E C0 82              1457 	push	dpl
+   0180 C0 83              1458 	push	dph
+   0182 C0 F0              1459 	push	b
+                           1460 ;	../../../contiki-sensinode//core/net/rpl/rpl-of-etx.c:111: if(p == NULL) {
+   0184 A8 81              1461 	mov	r0,sp
+   0186 18                 1462 	dec	r0
+   0187 18                 1463 	dec	r0
+   0188 E6                 1464 	mov	a,@r0
+   0189 08                 1465 	inc	r0
+   018A 46                 1466 	orl	a,@r0
+   018B 70 17              1467 	jnz	00106$
+                           1468 ;	../../../contiki-sensinode//core/net/rpl/rpl-of-etx.c:112: if(base_rank == 0) {
+   018D E5 81              1469 	mov	a,sp
+   018F 24 F9              1470 	add	a,#0xf9
+   0191 F8                 1471 	mov	r0,a
+   0192 E6                 1472 	mov	a,@r0
+   0193 08                 1473 	inc	r0
+   0194 46                 1474 	orl	a,@r0
+   0195 70 06              1475 	jnz	00102$
+                           1476 ;	../../../contiki-sensinode//core/net/rpl/rpl-of-etx.c:113: return INFINITE_RANK;
+   0197 90 FF FF           1477 	mov	dptr,#0xFFFF
+   019A 02s02r98           1478 	ljmp	00111$
+   019D                    1479 00102$:
+                           1480 ;	../../../contiki-sensinode//core/net/rpl/rpl-of-etx.c:115: rank_increase = NEIGHBOR_INFO_FIX2ETX(INITIAL_LINK_METRIC) * RPL_MIN_HOPRANKINC;
+   019D 7B 00              1481 	mov	r3,#0x00
+   019F 7C 05              1482 	mov	r4,#0x05
+   01A1 02s02r68           1483 	ljmp	00107$
+   01A4                    1484 00106$:
+                           1485 ;	../../../contiki-sensinode//core/net/rpl/rpl-of-etx.c:118: rank_increase = NEIGHBOR_INFO_FIX2ETX(p->link_metric * p->dag->instance->min_hoprankinc);
+   01A4 A8 81              1486 	mov	r0,sp
+   01A6 18                 1487 	dec	r0
+   01A7 18                 1488 	dec	r0
+   01A8 74 1F              1489 	mov	a,#0x1F
+   01AA 26                 1490 	add	a,@r0
+   01AB FA                 1491 	mov	r2,a
+   01AC E4                 1492 	clr	a
+   01AD 08                 1493 	inc	r0
+   01AE 36                 1494 	addc	a,@r0
+   01AF FE                 1495 	mov	r6,a
+   01B0 08                 1496 	inc	r0
+   01B1 86 07              1497 	mov	ar7,@r0
+   01B3 8A 82              1498 	mov	dpl,r2
+   01B5 8E 83              1499 	mov	dph,r6
+   01B7 8F F0              1500 	mov	b,r7
+   01B9 12s00r00           1501 	lcall	__gptrget
+   01BC FA                 1502 	mov	r2,a
+   01BD A8 81              1503 	mov	r0,sp
+   01BF 18                 1504 	dec	r0
+   01C0 18                 1505 	dec	r0
+   01C1 74 03              1506 	mov	a,#0x03
+   01C3 26                 1507 	add	a,@r0
+   01C4 FD                 1508 	mov	r5,a
+   01C5 E4                 1509 	clr	a
+   01C6 08                 1510 	inc	r0
+   01C7 36                 1511 	addc	a,@r0
+   01C8 FE                 1512 	mov	r6,a
+   01C9 08                 1513 	inc	r0
+   01CA 86 07              1514 	mov	ar7,@r0
+   01CC 8D 82              1515 	mov	dpl,r5
+   01CE 8E 83              1516 	mov	dph,r6
+   01D0 8F F0              1517 	mov	b,r7
+   01D2 12s00r00           1518 	lcall	__gptrget
+   01D5 FD                 1519 	mov	r5,a
+   01D6 A3                 1520 	inc	dptr
+   01D7 12s00r00           1521 	lcall	__gptrget
+   01DA FE                 1522 	mov	r6,a
+   01DB A3                 1523 	inc	dptr
+   01DC 12s00r00           1524 	lcall	__gptrget
+   01DF FF                 1525 	mov	r7,a
+   01E0 74 1C              1526 	mov	a,#0x1C
+   01E2 2D                 1527 	add	a,r5
+   01E3 FD                 1528 	mov	r5,a
+   01E4 E4                 1529 	clr	a
+   01E5 3E                 1530 	addc	a,r6
+   01E6 FE                 1531 	mov	r6,a
+   01E7 8D 82              1532 	mov	dpl,r5
+   01E9 8E 83              1533 	mov	dph,r6
+   01EB 8F F0              1534 	mov	b,r7
+   01ED 12s00r00           1535 	lcall	__gptrget
+   01F0 FD                 1536 	mov	r5,a
+   01F1 A3                 1537 	inc	dptr
+   01F2 12s00r00           1538 	lcall	__gptrget
+   01F5 FE                 1539 	mov	r6,a
+   01F6 A3                 1540 	inc	dptr
+   01F7 12s00r00           1541 	lcall	__gptrget
+   01FA FF                 1542 	mov	r7,a
+   01FB 74 93              1543 	mov	a,#0x93
+   01FD 2D                 1544 	add	a,r5
+   01FE FD                 1545 	mov	r5,a
+   01FF E4                 1546 	clr	a
+   0200 3E                 1547 	addc	a,r6
+   0201 FE                 1548 	mov	r6,a
+   0202 8D 82              1549 	mov	dpl,r5
+   0204 8E 83              1550 	mov	dph,r6
+   0206 8F F0              1551 	mov	b,r7
+   0208 12s00r00           1552 	lcall	__gptrget
+   020B FD                 1553 	mov	r5,a
+   020C A3                 1554 	inc	dptr
+   020D 12s00r00           1555 	lcall	__gptrget
+   0210 FE                 1556 	mov	r6,a
+   0211 7F 00              1557 	mov	r7,#0x00
+   0213 C0 05              1558 	push	ar5
+   0215 C0 06              1559 	push	ar6
+   0217 8A 82              1560 	mov	dpl,r2
+   0219 8F 83              1561 	mov	dph,r7
+   021B 12s00r00           1562 	lcall	__mulint
+   021E AE 82              1563 	mov	r6,dpl
+   0220 AF 83              1564 	mov	r7,dph
+   0222 15 81              1565 	dec	sp
+   0224 15 81              1566 	dec	sp
+   0226 8E 03              1567 	mov	ar3,r6
+   0228 EF                 1568 	mov	a,r7
+   0229 C4                 1569 	swap	a
+   022A CB                 1570 	xch	a,r3
+   022B C4                 1571 	swap	a
+   022C 54 0F              1572 	anl	a,#0x0F
+   022E 6B                 1573 	xrl	a,r3
+   022F CB                 1574 	xch	a,r3
+   0230 54 0F              1575 	anl	a,#0x0F
+   0232 CB                 1576 	xch	a,r3
+   0233 6B                 1577 	xrl	a,r3
+   0234 CB                 1578 	xch	a,r3
+   0235 FC                 1579 	mov	r4,a
+                           1580 ;	../../../contiki-sensinode//core/net/rpl/rpl-of-etx.c:119: if(base_rank == 0) {
+   0236 E5 81              1581 	mov	a,sp
+   0238 24 F9              1582 	add	a,#0xf9
+   023A F8                 1583 	mov	r0,a
+   023B E6                 1584 	mov	a,@r0
+   023C 08                 1585 	inc	r0
+   023D 46                 1586 	orl	a,@r0
+   023E 70 28              1587 	jnz	00107$
+                           1588 ;	../../../contiki-sensinode//core/net/rpl/rpl-of-etx.c:120: base_rank = p->rank;
+   0240 A8 81              1589 	mov	r0,sp
+   0242 18                 1590 	dec	r0
+   0243 18                 1591 	dec	r0
+   0244 74 1D              1592 	mov	a,#0x1D
+   0246 26                 1593 	add	a,@r0
+   0247 FD                 1594 	mov	r5,a
+   0248 E4                 1595 	clr	a
+   0249 08                 1596 	inc	r0
+   024A 36                 1597 	addc	a,@r0
+   024B FE                 1598 	mov	r6,a
+   024C 08                 1599 	inc	r0
+   024D 86 07              1600 	mov	ar7,@r0
+   024F 8D 82              1601 	mov	dpl,r5
+   0251 8E 83              1602 	mov	dph,r6
+   0253 8F F0              1603 	mov	b,r7
+   0255 12s00r00           1604 	lcall	__gptrget
+   0258 FD                 1605 	mov	r5,a
+   0259 A3                 1606 	inc	dptr
+   025A 12s00r00           1607 	lcall	__gptrget
+   025D FE                 1608 	mov	r6,a
+   025E E5 81              1609 	mov	a,sp
+   0260 24 F9              1610 	add	a,#0xf9
+   0262 F8                 1611 	mov	r0,a
+   0263 A6 05              1612 	mov	@r0,ar5
+   0265 08                 1613 	inc	r0
+   0266 A6 06              1614 	mov	@r0,ar6
+   0268                    1615 00107$:
+                           1616 ;	../../../contiki-sensinode//core/net/rpl/rpl-of-etx.c:124: if(INFINITE_RANK - base_rank < rank_increase) {
+   0268 E5 81              1617 	mov	a,sp
+   026A 24 F9              1618 	add	a,#0xf9
+   026C F8                 1619 	mov	r0,a
+   026D 74 FF              1620 	mov	a,#0xFF
+   026F C3                 1621 	clr	c
+   0270 96                 1622 	subb	a,@r0
+   0271 FE                 1623 	mov	r6,a
+   0272 74 FF              1624 	mov	a,#0xFF
+   0274 08                 1625 	inc	r0
+   0275 96                 1626 	subb	a,@r0
+   0276 FF                 1627 	mov	r7,a
+   0277 C3                 1628 	clr	c
+   0278 EE                 1629 	mov	a,r6
+   0279 9B                 1630 	subb	a,r3
+   027A EF                 1631 	mov	a,r7
+   027B 9C                 1632 	subb	a,r4
+   027C 50 06              1633 	jnc	00109$
+                           1634 ;	../../../contiki-sensinode//core/net/rpl/rpl-of-etx.c:126: new_rank = INFINITE_RANK;
+   027E 7E FF              1635 	mov	r6,#0xFF
+   0280 7F FF              1636 	mov	r7,#0xFF
+   0282 80 10              1637 	sjmp	00110$
+   0284                    1638 00109$:
+                           1639 ;	../../../contiki-sensinode//core/net/rpl/rpl-of-etx.c:130: new_rank = base_rank + rank_increase;
+   0284 E5 81              1640 	mov	a,sp
+   0286 24 F9              1641 	add	a,#0xf9
+   0288 F8                 1642 	mov	r0,a
+   0289 EB                 1643 	mov	a,r3
+   028A 26                 1644 	add	a,@r0
+   028B FB                 1645 	mov	r3,a
+   028C EC                 1646 	mov	a,r4
+   028D 08                 1647 	inc	r0
+   028E 36                 1648 	addc	a,@r0
+   028F FC                 1649 	mov	r4,a
+   0290 8B 06              1650 	mov	ar6,r3
+   0292 8C 07              1651 	mov	ar7,r4
+   0294                    1652 00110$:
+                           1653 ;	../../../contiki-sensinode//core/net/rpl/rpl-of-etx.c:133: return new_rank;
+   0294 8E 82              1654 	mov	dpl,r6
+   0296 8F 83              1655 	mov	dph,r7
+   0298                    1656 00111$:
+   0298 15 81              1657 	dec	sp
+   029A 15 81              1658 	dec	sp
+   029C 15 81              1659 	dec	sp
+   029E 02s00r00           1660 	ljmp	__sdcc_banked_ret
+                           1661 ;------------------------------------------------------------
+                           1662 ;Allocation info for local variables in function 'best_dag'
+                           1663 ;------------------------------------------------------------
+                           1664 ;d2                        Allocated to stack - sp -11
+                           1665 ;d1                        Allocated to stack - sp -5
+                           1666 ;sloc0                     Allocated to stack - sp -2
+                           1667 ;------------------------------------------------------------
+                           1668 ;	../../../contiki-sensinode//core/net/rpl/rpl-of-etx.c:137: best_dag(rpl_dag_t *d1, rpl_dag_t *d2)
+                           1669 ;	-----------------------------------------
+                           1670 ;	 function best_dag
+                           1671 ;	-----------------------------------------
+   02A1                    1672 _best_dag:
+   02A1 C0 82              1673 	push	dpl
+   02A3 C0 83              1674 	push	dph
+   02A5 C0 F0              1675 	push	b
+   02A7 05 81              1676 	inc	sp
+   02A9 05 81              1677 	inc	sp
+   02AB 05 81              1678 	inc	sp
+                           1679 ;	../../../contiki-sensinode//core/net/rpl/rpl-of-etx.c:139: if(d1->grounded != d2->grounded) {
+   02AD E5 81              1680 	mov	a,sp
+   02AF 24 FB              1681 	add	a,#0xfb
+   02B1 F8                 1682 	mov	r0,a
+   02B2 74 13              1683 	mov	a,#0x13
+   02B4 26                 1684 	add	a,@r0
+   02B5 FA                 1685 	mov	r2,a
+   02B6 E4                 1686 	clr	a
+   02B7 08                 1687 	inc	r0
+   02B8 36                 1688 	addc	a,@r0
+   02B9 FB                 1689 	mov	r3,a
+   02BA 08                 1690 	inc	r0
+   02BB 86 04              1691 	mov	ar4,@r0
+   02BD 8A 82              1692 	mov	dpl,r2
+   02BF 8B 83              1693 	mov	dph,r3
+   02C1 8C F0              1694 	mov	b,r4
+   02C3 12s00r00           1695 	lcall	__gptrget
+   02C6 FC                 1696 	mov	r4,a
+   02C7 E5 81              1697 	mov	a,sp
+   02C9 24 F5              1698 	add	a,#0xf5
+   02CB F8                 1699 	mov	r0,a
+   02CC A9 81              1700 	mov	r1,sp
+   02CE 19                 1701 	dec	r1
+   02CF 19                 1702 	dec	r1
+   02D0 E6                 1703 	mov	a,@r0
+   02D1 F7                 1704 	mov	@r1,a
+   02D2 08                 1705 	inc	r0
+   02D3 09                 1706 	inc	r1
+   02D4 E6                 1707 	mov	a,@r0
+   02D5 F7                 1708 	mov	@r1,a
+   02D6 08                 1709 	inc	r0
+   02D7 09                 1710 	inc	r1
+   02D8 E6                 1711 	mov	a,@r0
+   02D9 F7                 1712 	mov	@r1,a
+   02DA A8 81              1713 	mov	r0,sp
+   02DC 18                 1714 	dec	r0
+   02DD 18                 1715 	dec	r0
+   02DE 74 13              1716 	mov	a,#0x13
+   02E0 26                 1717 	add	a,@r0
+   02E1 FA                 1718 	mov	r2,a
+   02E2 E4                 1719 	clr	a
+   02E3 08                 1720 	inc	r0
+   02E4 36                 1721 	addc	a,@r0
+   02E5 FB                 1722 	mov	r3,a
+   02E6 08                 1723 	inc	r0
+   02E7 86 07              1724 	mov	ar7,@r0
+   02E9 8A 82              1725 	mov	dpl,r2
+   02EB 8B 83              1726 	mov	dph,r3
+   02ED 8F F0              1727 	mov	b,r7
+   02EF 12s00r00           1728 	lcall	__gptrget
+   02F2 FA                 1729 	mov	r2,a
+   02F3 EC                 1730 	mov	a,r4
+   02F4 B5 02 02           1731 	cjne	a,ar2,00123$
+   02F7 80 27              1732 	sjmp	00102$
+   02F9                    1733 00123$:
+                           1734 ;	../../../contiki-sensinode//core/net/rpl/rpl-of-etx.c:140: return d1->grounded ? d1 : d2;
+   02F9 EC                 1735 	mov	a,r4
+   02FA 60 0F              1736 	jz	00107$
+   02FC E5 81              1737 	mov	a,sp
+   02FE 24 FB              1738 	add	a,#0xfb
+   0300 F8                 1739 	mov	r0,a
+   0301 86 05              1740 	mov	ar5,@r0
+   0303 08                 1741 	inc	r0
+   0304 86 06              1742 	mov	ar6,@r0
+   0306 08                 1743 	inc	r0
+   0307 86 07              1744 	mov	ar7,@r0
+   0309 80 0C              1745 	sjmp	00108$
+   030B                    1746 00107$:
+   030B A8 81              1747 	mov	r0,sp
+   030D 18                 1748 	dec	r0
+   030E 18                 1749 	dec	r0
+   030F 86 05              1750 	mov	ar5,@r0
+   0311 08                 1751 	inc	r0
+   0312 86 06              1752 	mov	ar6,@r0
+   0314 08                 1753 	inc	r0
+   0315 86 07              1754 	mov	ar7,@r0
+   0317                    1755 00108$:
+   0317 8D 82              1756 	mov	dpl,r5
+   0319 8E 83              1757 	mov	dph,r6
+   031B 8F F0              1758 	mov	b,r7
+   031D 02s03rE6           1759 	ljmp	00105$
+   0320                    1760 00102$:
+                           1761 ;	../../../contiki-sensinode//core/net/rpl/rpl-of-etx.c:143: if(d1->preference != d2->preference) {
+   0320 E5 81              1762 	mov	a,sp
+   0322 24 FB              1763 	add	a,#0xfb
+   0324 F8                 1764 	mov	r0,a
+   0325 74 14              1765 	mov	a,#0x14
+   0327 26                 1766 	add	a,@r0
+   0328 FD                 1767 	mov	r5,a
+   0329 E4                 1768 	clr	a
+   032A 08                 1769 	inc	r0
+   032B 36                 1770 	addc	a,@r0
+   032C FE                 1771 	mov	r6,a
+   032D 08                 1772 	inc	r0
+   032E 86 07              1773 	mov	ar7,@r0
+   0330 8D 82              1774 	mov	dpl,r5
+   0332 8E 83              1775 	mov	dph,r6
+   0334 8F F0              1776 	mov	b,r7
+   0336 12s00r00           1777 	lcall	__gptrget
+   0339 FF                 1778 	mov	r7,a
+   033A A8 81              1779 	mov	r0,sp
+   033C 18                 1780 	dec	r0
+   033D 18                 1781 	dec	r0
+   033E 74 14              1782 	mov	a,#0x14
+   0340 26                 1783 	add	a,@r0
+   0341 FC                 1784 	mov	r4,a
+   0342 E4                 1785 	clr	a
+   0343 08                 1786 	inc	r0
+   0344 36                 1787 	addc	a,@r0
+   0345 FD                 1788 	mov	r5,a
+   0346 08                 1789 	inc	r0
+   0347 86 06              1790 	mov	ar6,@r0
+   0349 8C 82              1791 	mov	dpl,r4
+   034B 8D 83              1792 	mov	dph,r5
+   034D 8E F0              1793 	mov	b,r6
+   034F 12s00r00           1794 	lcall	__gptrget
+   0352 FE                 1795 	mov	r6,a
+   0353 EF                 1796 	mov	a,r7
+   0354 B5 06 02           1797 	cjne	a,ar6,00125$
+   0357 80 28              1798 	sjmp	00104$
+   0359                    1799 00125$:
+                           1800 ;	../../../contiki-sensinode//core/net/rpl/rpl-of-etx.c:144: return d1->preference > d2->preference ? d1 : d2;
+   0359 C3                 1801 	clr	c
+   035A EE                 1802 	mov	a,r6
+   035B 9F                 1803 	subb	a,r7
+   035C 50 0F              1804 	jnc	00109$
+   035E E5 81              1805 	mov	a,sp
+   0360 24 FB              1806 	add	a,#0xfb
+   0362 F8                 1807 	mov	r0,a
+   0363 86 05              1808 	mov	ar5,@r0
+   0365 08                 1809 	inc	r0
+   0366 86 06              1810 	mov	ar6,@r0
+   0368 08                 1811 	inc	r0
+   0369 86 07              1812 	mov	ar7,@r0
+   036B 80 0C              1813 	sjmp	00110$
+   036D                    1814 00109$:
+   036D A8 81              1815 	mov	r0,sp
+   036F 18                 1816 	dec	r0
+   0370 18                 1817 	dec	r0
+   0371 86 05              1818 	mov	ar5,@r0
+   0373 08                 1819 	inc	r0
+   0374 86 06              1820 	mov	ar6,@r0
+   0376 08                 1821 	inc	r0
+   0377 86 07              1822 	mov	ar7,@r0
+   0379                    1823 00110$:
+   0379 8D 82              1824 	mov	dpl,r5
+   037B 8E 83              1825 	mov	dph,r6
+   037D 8F F0              1826 	mov	b,r7
+   037F 80 65              1827 	sjmp	00105$
+   0381                    1828 00104$:
+                           1829 ;	../../../contiki-sensinode//core/net/rpl/rpl-of-etx.c:147: return d1->rank < d2->rank ? d1 : d2;
+   0381 E5 81              1830 	mov	a,sp
+   0383 24 FB              1831 	add	a,#0xfb
+   0385 F8                 1832 	mov	r0,a
+   0386 74 1A              1833 	mov	a,#0x1A
+   0388 26                 1834 	add	a,@r0
+   0389 FD                 1835 	mov	r5,a
+   038A E4                 1836 	clr	a
+   038B 08                 1837 	inc	r0
+   038C 36                 1838 	addc	a,@r0
+   038D FE                 1839 	mov	r6,a
+   038E 08                 1840 	inc	r0
+   038F 86 07              1841 	mov	ar7,@r0
+   0391 8D 82              1842 	mov	dpl,r5
+   0393 8E 83              1843 	mov	dph,r6
+   0395 8F F0              1844 	mov	b,r7
+   0397 12s00r00           1845 	lcall	__gptrget
+   039A FD                 1846 	mov	r5,a
+   039B A3                 1847 	inc	dptr
+   039C 12s00r00           1848 	lcall	__gptrget
+   039F FE                 1849 	mov	r6,a
+   03A0 A8 81              1850 	mov	r0,sp
+   03A2 18                 1851 	dec	r0
+   03A3 18                 1852 	dec	r0
+   03A4 74 1A              1853 	mov	a,#0x1A
+   03A6 26                 1854 	add	a,@r0
+   03A7 FB                 1855 	mov	r3,a
+   03A8 E4                 1856 	clr	a
+   03A9 08                 1857 	inc	r0
+   03AA 36                 1858 	addc	a,@r0
+   03AB FC                 1859 	mov	r4,a
+   03AC 08                 1860 	inc	r0
+   03AD 86 07              1861 	mov	ar7,@r0
+   03AF 8B 82              1862 	mov	dpl,r3
+   03B1 8C 83              1863 	mov	dph,r4
+   03B3 8F F0              1864 	mov	b,r7
+   03B5 12s00r00           1865 	lcall	__gptrget
+   03B8 FB                 1866 	mov	r3,a
+   03B9 A3                 1867 	inc	dptr
+   03BA 12s00r00           1868 	lcall	__gptrget
+   03BD FC                 1869 	mov	r4,a
+   03BE C3                 1870 	clr	c
+   03BF ED                 1871 	mov	a,r5
+   03C0 9B                 1872 	subb	a,r3
+   03C1 EE                 1873 	mov	a,r6
+   03C2 9C                 1874 	subb	a,r4
+   03C3 50 0F              1875 	jnc	00111$
+   03C5 E5 81              1876 	mov	a,sp
+   03C7 24 FB              1877 	add	a,#0xfb
+   03C9 F8                 1878 	mov	r0,a
+   03CA 86 05              1879 	mov	ar5,@r0
+   03CC 08                 1880 	inc	r0
+   03CD 86 06              1881 	mov	ar6,@r0
+   03CF 08                 1882 	inc	r0
+   03D0 86 07              1883 	mov	ar7,@r0
+   03D2 80 0C              1884 	sjmp	00112$
+   03D4                    1885 00111$:
+   03D4 A8 81              1886 	mov	r0,sp
+   03D6 18                 1887 	dec	r0
+   03D7 18                 1888 	dec	r0
+   03D8 86 05              1889 	mov	ar5,@r0
+   03DA 08                 1890 	inc	r0
+   03DB 86 06              1891 	mov	ar6,@r0
+   03DD 08                 1892 	inc	r0
+   03DE 86 07              1893 	mov	ar7,@r0
+   03E0                    1894 00112$:
+   03E0 8D 82              1895 	mov	dpl,r5
+   03E2 8E 83              1896 	mov	dph,r6
+   03E4 8F F0              1897 	mov	b,r7
+   03E6                    1898 00105$:
+   03E6 C8                 1899 	xch	a,r0
+   03E7 E5 81              1900 	mov	a,sp
+   03E9 24 FA              1901 	add	a,#0xFA
+   03EB F5 81              1902 	mov	sp,a
+   03ED C8                 1903 	xch	a,r0
+   03EE 02s00r00           1904 	ljmp	__sdcc_banked_ret
+                           1905 ;------------------------------------------------------------
+                           1906 ;Allocation info for local variables in function 'best_parent'
+                           1907 ;------------------------------------------------------------
+                           1908 ;p2                        Allocated to stack - sp -12
+                           1909 ;p1                        Allocated to registers r5 r6 r7 
+                           1910 ;dag                       Allocated to stack - sp -6
+                           1911 ;min_diff                  Allocated to registers 
+                           1912 ;p1_metric                 Allocated to stack - sp -3
+                           1913 ;p2_metric                 Allocated to stack - sp -1
+                           1914 ;------------------------------------------------------------
+                           1915 ;	../../../contiki-sensinode//core/net/rpl/rpl-of-etx.c:151: best_parent(rpl_parent_t *p1, rpl_parent_t *p2)
+                           1916 ;	-----------------------------------------
+                           1917 ;	 function best_parent
+                           1918 ;	-----------------------------------------
+   03F1                    1919 _best_parent:
+   03F1 E5 81              1920 	mov	a,sp
+   03F3 24 07              1921 	add	a,#0x07
+   03F5 F5 81              1922 	mov	sp,a
+   03F7 AD 82              1923 	mov	r5,dpl
+   03F9 AE 83              1924 	mov	r6,dph
+   03FB AF F0              1925 	mov	r7,b
+                           1926 ;	../../../contiki-sensinode//core/net/rpl/rpl-of-etx.c:158: dag = p1->dag; /* Both parents must be in the same DAG. */
+   03FD 74 03              1927 	mov	a,#0x03
+   03FF 2D                 1928 	add	a,r5
+   0400 FA                 1929 	mov	r2,a
+   0401 E4                 1930 	clr	a
+   0402 3E                 1931 	addc	a,r6
+   0403 FB                 1932 	mov	r3,a
+   0404 8F 04              1933 	mov	ar4,r7
+   0406 8A 82              1934 	mov	dpl,r2
+   0408 8B 83              1935 	mov	dph,r3
+   040A 8C F0              1936 	mov	b,r4
+   040C E5 81              1937 	mov	a,sp
+   040E 24 FA              1938 	add	a,#0xfa
+   0410 F8                 1939 	mov	r0,a
+   0411 12s00r00           1940 	lcall	__gptrget
+   0414 F6                 1941 	mov	@r0,a
+   0415 A3                 1942 	inc	dptr
+   0416 12s00r00           1943 	lcall	__gptrget
+   0419 08                 1944 	inc	r0
+   041A F6                 1945 	mov	@r0,a
+   041B A3                 1946 	inc	dptr
+   041C 12s00r00           1947 	lcall	__gptrget
+   041F 08                 1948 	inc	r0
+   0420 F6                 1949 	mov	@r0,a
+                           1950 ;	../../../contiki-sensinode//core/net/rpl/rpl-of-etx.c:163: p1_metric = calculate_path_metric(p1);
+   0421 8D 82              1951 	mov	dpl,r5
+   0423 8E 83              1952 	mov	dph,r6
+   0425 8F F0              1953 	mov	b,r7
+   0427 C0 07              1954 	push	ar7
+   0429 C0 06              1955 	push	ar6
+   042B C0 05              1956 	push	ar5
+   042D 78r00              1957 	mov	r0,#_calculate_path_metric
+   042F 79s00              1958 	mov	r1,#(_calculate_path_metric >> 8)
+   0431 7As00              1959 	mov	r2,#(_calculate_path_metric >> 16)
+   0433 12s00r00           1960 	lcall	__sdcc_banked_call
+   0436 AB 82              1961 	mov	r3,dpl
+   0438 AC 83              1962 	mov	r4,dph
+   043A D0 05              1963 	pop	ar5
+   043C D0 06              1964 	pop	ar6
+   043E D0 07              1965 	pop	ar7
+   0440 E5 81              1966 	mov	a,sp
+   0442 24 FD              1967 	add	a,#0xfd
+   0444 F8                 1968 	mov	r0,a
+   0445 A6 03              1969 	mov	@r0,ar3
+   0447 08                 1970 	inc	r0
+   0448 A6 04              1971 	mov	@r0,ar4
+                           1972 ;	../../../contiki-sensinode//core/net/rpl/rpl-of-etx.c:164: p2_metric = calculate_path_metric(p2);
+   044A E5 81              1973 	mov	a,sp
+   044C 24 F4              1974 	add	a,#0xf4
+   044E F8                 1975 	mov	r0,a
+   044F 86 82              1976 	mov	dpl,@r0
+   0451 08                 1977 	inc	r0
+   0452 86 83              1978 	mov	dph,@r0
+   0454 08                 1979 	inc	r0
+   0455 86 F0              1980 	mov	b,@r0
+   0457 C0 07              1981 	push	ar7
+   0459 C0 06              1982 	push	ar6
+   045B C0 05              1983 	push	ar5
+   045D 78r00              1984 	mov	r0,#_calculate_path_metric
+   045F 79s00              1985 	mov	r1,#(_calculate_path_metric >> 8)
+   0461 7As00              1986 	mov	r2,#(_calculate_path_metric >> 16)
+   0463 12s00r00           1987 	lcall	__sdcc_banked_call
+   0466 AC 82              1988 	mov	r4,dpl
+   0468 AB 83              1989 	mov	r3,dph
+   046A D0 05              1990 	pop	ar5
+   046C D0 06              1991 	pop	ar6
+   046E D0 07              1992 	pop	ar7
+   0470 A8 81              1993 	mov	r0,sp
+   0472 18                 1994 	dec	r0
+   0473 A6 04              1995 	mov	@r0,ar4
+   0475 08                 1996 	inc	r0
+   0476 A6 03              1997 	mov	@r0,ar3
+                           1998 ;	../../../contiki-sensinode//core/net/rpl/rpl-of-etx.c:167: if(p1 == dag->preferred_parent || p2 == dag->preferred_parent) {
+   0478 E5 81              1999 	mov	a,sp
+   047A 24 FA              2000 	add	a,#0xfa
+   047C F8                 2001 	mov	r0,a
+   047D 74 17              2002 	mov	a,#0x17
+   047F 26                 2003 	add	a,@r0
+   0480 FA                 2004 	mov	r2,a
+   0481 E4                 2005 	clr	a
+   0482 08                 2006 	inc	r0
+   0483 36                 2007 	addc	a,@r0
+   0484 FB                 2008 	mov	r3,a
+   0485 08                 2009 	inc	r0
+   0486 86 04              2010 	mov	ar4,@r0
+   0488 8A 82              2011 	mov	dpl,r2
+   048A 8B 83              2012 	mov	dph,r3
+   048C 8C F0              2013 	mov	b,r4
+   048E 12s00r00           2014 	lcall	__gptrget
+   0491 FA                 2015 	mov	r2,a
+   0492 A3                 2016 	inc	dptr
+   0493 12s00r00           2017 	lcall	__gptrget
+   0496 FB                 2018 	mov	r3,a
+   0497 A3                 2019 	inc	dptr
+   0498 12s00r00           2020 	lcall	__gptrget
+   049B FC                 2021 	mov	r4,a
+   049C C0 02              2022 	push	ar2
+   049E C0 03              2023 	push	ar3
+   04A0 C0 04              2024 	push	ar4
+   04A2 8D 82              2025 	mov	dpl,r5
+   04A4 8E 83              2026 	mov	dph,r6
+   04A6 8F F0              2027 	mov	b,r7
+   04A8 12s00r00           2028 	lcall	___gptr_cmp
+   04AB 15 81              2029 	dec	sp
+   04AD 15 81              2030 	dec	sp
+   04AF 15 81              2031 	dec	sp
+   04B1 60 20              2032 	jz	00104$
+   04B3 E5 81              2033 	mov	a,sp
+   04B5 24 F4              2034 	add	a,#0xf4
+   04B7 F8                 2035 	mov	r0,a
+   04B8 C0 02              2036 	push	ar2
+   04BA C0 03              2037 	push	ar3
+   04BC C0 04              2038 	push	ar4
+   04BE 86 82              2039 	mov	dpl,@r0
+   04C0 08                 2040 	inc	r0
+   04C1 86 83              2041 	mov	dph,@r0
+   04C3 08                 2042 	inc	r0
+   04C4 86 F0              2043 	mov	b,@r0
+   04C6 12s00r00           2044 	lcall	___gptr_cmp
+   04C9 15 81              2045 	dec	sp
+   04CB 15 81              2046 	dec	sp
+   04CD 15 81              2047 	dec	sp
+   04CF 60 02              2048 	jz	00121$
+   04D1 80 55              2049 	sjmp	00105$
+   04D3                    2050 00121$:
+   04D3                    2051 00104$:
+                           2052 ;	../../../contiki-sensinode//core/net/rpl/rpl-of-etx.c:168: if(p1_metric < p2_metric + min_diff &&
+   04D3 C0 02              2053 	push	ar2
+   04D5 C0 03              2054 	push	ar3
+   04D7 C0 04              2055 	push	ar4
+   04D9 E5 81              2056 	mov	a,sp
+   04DB 24 FC              2057 	add	a,#0xfc
+   04DD F8                 2058 	mov	r0,a
+   04DE 74 40              2059 	mov	a,#0x40
+   04E0 26                 2060 	add	a,@r0
+   04E1 FB                 2061 	mov	r3,a
+   04E2 E4                 2062 	clr	a
+   04E3 08                 2063 	inc	r0
+   04E4 36                 2064 	addc	a,@r0
+   04E5 FC                 2065 	mov	r4,a
+   04E6 E5 81              2066 	mov	a,sp
+   04E8 24 FA              2067 	add	a,#0xfa
+   04EA F8                 2068 	mov	r0,a
+   04EB C3                 2069 	clr	c
+   04EC E6                 2070 	mov	a,@r0
+   04ED 9B                 2071 	subb	a,r3
+   04EE 08                 2072 	inc	r0
+   04EF E6                 2073 	mov	a,@r0
+   04F0 9C                 2074 	subb	a,r4
+   04F1 D0 04              2075 	pop	ar4
+   04F3 D0 03              2076 	pop	ar3
+   04F5 D0 02              2077 	pop	ar2
+   04F7 50 2F              2078 	jnc	00105$
+                           2079 ;	../../../contiki-sensinode//core/net/rpl/rpl-of-etx.c:169: p1_metric > p2_metric - min_diff) {
+   04F9 C0 02              2080 	push	ar2
+   04FB C0 03              2081 	push	ar3
+   04FD C0 04              2082 	push	ar4
+   04FF E5 81              2083 	mov	a,sp
+   0501 24 FC              2084 	add	a,#0xfc
+   0503 F8                 2085 	mov	r0,a
+   0504 E6                 2086 	mov	a,@r0
+   0505 24 C0              2087 	add	a,#0xC0
+   0507 FB                 2088 	mov	r3,a
+   0508 08                 2089 	inc	r0
+   0509 E6                 2090 	mov	a,@r0
+   050A 34 FF              2091 	addc	a,#0xFF
+   050C FC                 2092 	mov	r4,a
+   050D E5 81              2093 	mov	a,sp
+   050F 24 FA              2094 	add	a,#0xfa
+   0511 F8                 2095 	mov	r0,a
+   0512 C3                 2096 	clr	c
+   0513 EB                 2097 	mov	a,r3
+   0514 96                 2098 	subb	a,@r0
+   0515 EC                 2099 	mov	a,r4
+   0516 08                 2100 	inc	r0
+   0517 96                 2101 	subb	a,@r0
+   0518 D0 04              2102 	pop	ar4
+   051A D0 03              2103 	pop	ar3
+   051C D0 02              2104 	pop	ar2
+   051E 50 08              2105 	jnc	00105$
+                           2106 ;	../../../contiki-sensinode//core/net/rpl/rpl-of-etx.c:174: return dag->preferred_parent;
+   0520 8A 82              2107 	mov	dpl,r2
+   0522 8B 83              2108 	mov	dph,r3
+   0524 8C F0              2109 	mov	b,r4
+   0526 80 26              2110 	sjmp	00107$
+   0528                    2111 00105$:
+                           2112 ;	../../../contiki-sensinode//core/net/rpl/rpl-of-etx.c:178: return p1_metric < p2_metric ? p1 : p2;
+   0528 E5 81              2113 	mov	a,sp
+   052A 24 FD              2114 	add	a,#0xfd
+   052C F8                 2115 	mov	r0,a
+   052D A9 81              2116 	mov	r1,sp
+   052F 19                 2117 	dec	r1
+   0530 C3                 2118 	clr	c
+   0531 E6                 2119 	mov	a,@r0
+   0532 97                 2120 	subb	a,@r1
+   0533 08                 2121 	inc	r0
+   0534 E6                 2122 	mov	a,@r0
+   0535 09                 2123 	inc	r1
+   0536 97                 2124 	subb	a,@r1
+   0537 50 02              2125 	jnc	00109$
+   0539 80 0D              2126 	sjmp	00110$
+   053B                    2127 00109$:
+   053B E5 81              2128 	mov	a,sp
+   053D 24 F4              2129 	add	a,#0xf4
+   053F F8                 2130 	mov	r0,a
+   0540 86 05              2131 	mov	ar5,@r0
+   0542 08                 2132 	inc	r0
+   0543 86 06              2133 	mov	ar6,@r0
+   0545 08                 2134 	inc	r0
+   0546 86 07              2135 	mov	ar7,@r0
+   0548                    2136 00110$:
+   0548 8D 82              2137 	mov	dpl,r5
+   054A 8E 83              2138 	mov	dph,r6
+   054C 8F F0              2139 	mov	b,r7
+   054E                    2140 00107$:
+   054E C8                 2141 	xch	a,r0
+   054F E5 81              2142 	mov	a,sp
+   0551 24 F9              2143 	add	a,#0xF9
+   0553 F5 81              2144 	mov	sp,a
+   0555 C8                 2145 	xch	a,r0
+   0556 02s00r00           2146 	ljmp	__sdcc_banked_ret
+                           2147 ;------------------------------------------------------------
+                           2148 ;Allocation info for local variables in function 'update_metric_container'
+                           2149 ;------------------------------------------------------------
+                           2150 ;instance                  Allocated to stack - sp -5
+                           2151 ;path_metric               Allocated to registers r6 r7 
+                           2152 ;dag                       Allocated to stack - sp -2
+                           2153 ;------------------------------------------------------------
+                           2154 ;	../../../contiki-sensinode//core/net/rpl/rpl-of-etx.c:182: update_metric_container(rpl_instance_t *instance)
+                           2155 ;	-----------------------------------------
+                           2156 ;	 function update_metric_container
+                           2157 ;	-----------------------------------------
+   0559                    2158 _update_metric_container:
+   0559 C0 82              2159 	push	dpl
+   055B C0 83              2160 	push	dph
+   055D C0 F0              2161 	push	b
+   055F 05 81              2162 	inc	sp
+   0561 05 81              2163 	inc	sp
+   0563 05 81              2164 	inc	sp
+                           2165 ;	../../../contiki-sensinode//core/net/rpl/rpl-of-etx.c:190: instance->mc.flags = RPL_DAG_MC_FLAG_P;
+   0565 E5 81              2166 	mov	a,sp
+   0567 24 FB              2167 	add	a,#0xfb
+   0569 F8                 2168 	mov	r0,a
+   056A 74 01              2169 	mov	a,#0x01
+   056C 26                 2170 	add	a,@r0
+   056D FA                 2171 	mov	r2,a
+   056E E4                 2172 	clr	a
+   056F 08                 2173 	inc	r0
+   0570 36                 2174 	addc	a,@r0
+   0571 FB                 2175 	mov	r3,a
+   0572 08                 2176 	inc	r0
+   0573 86 04              2177 	mov	ar4,@r0
+   0575 8A 82              2178 	mov	dpl,r2
+   0577 8B 83              2179 	mov	dph,r3
+   0579 8C F0              2180 	mov	b,r4
+   057B 74 08              2181 	mov	a,#0x08
+   057D 12s00r00           2182 	lcall	__gptrput
+                           2183 ;	../../../contiki-sensinode//core/net/rpl/rpl-of-etx.c:191: instance->mc.aggr = RPL_DAG_MC_AGGR_ADDITIVE;
+   0580 E5 81              2184 	mov	a,sp
+   0582 24 FB              2185 	add	a,#0xfb
+   0584 F8                 2186 	mov	r0,a
+   0585 74 02              2187 	mov	a,#0x02
+   0587 26                 2188 	add	a,@r0
+   0588 FA                 2189 	mov	r2,a
+   0589 E4                 2190 	clr	a
+   058A 08                 2191 	inc	r0
+   058B 36                 2192 	addc	a,@r0
+   058C FB                 2193 	mov	r3,a
+   058D 08                 2194 	inc	r0
+   058E 86 04              2195 	mov	ar4,@r0
+   0590 8A 82              2196 	mov	dpl,r2
+   0592 8B 83              2197 	mov	dph,r3
+   0594 8C F0              2198 	mov	b,r4
+   0596 E4                 2199 	clr	a
+   0597 12s00r00           2200 	lcall	__gptrput
+                           2201 ;	../../../contiki-sensinode//core/net/rpl/rpl-of-etx.c:192: instance->mc.prec = 0;
+   059A E5 81              2202 	mov	a,sp
+   059C 24 FB              2203 	add	a,#0xfb
+   059E F8                 2204 	mov	r0,a
+   059F 74 03              2205 	mov	a,#0x03
+   05A1 26                 2206 	add	a,@r0
+   05A2 FA                 2207 	mov	r2,a
+   05A3 E4                 2208 	clr	a
+   05A4 08                 2209 	inc	r0
+   05A5 36                 2210 	addc	a,@r0
+   05A6 FB                 2211 	mov	r3,a
+   05A7 08                 2212 	inc	r0
+   05A8 86 04              2213 	mov	ar4,@r0
+   05AA 8A 82              2214 	mov	dpl,r2
+   05AC 8B 83              2215 	mov	dph,r3
+   05AE 8C F0              2216 	mov	b,r4
+   05B0 E4                 2217 	clr	a
+   05B1 12s00r00           2218 	lcall	__gptrput
+                           2219 ;	../../../contiki-sensinode//core/net/rpl/rpl-of-etx.c:194: dag = instance->current_dag;
+   05B4 E5 81              2220 	mov	a,sp
+   05B6 24 FB              2221 	add	a,#0xfb
+   05B8 F8                 2222 	mov	r0,a
+   05B9 74 0A              2223 	mov	a,#0x0A
+   05BB 26                 2224 	add	a,@r0
+   05BC FA                 2225 	mov	r2,a
+   05BD E4                 2226 	clr	a
+   05BE 08                 2227 	inc	r0
+   05BF 36                 2228 	addc	a,@r0
+   05C0 FB                 2229 	mov	r3,a
+   05C1 08                 2230 	inc	r0
+   05C2 86 04              2231 	mov	ar4,@r0
+   05C4 8A 82              2232 	mov	dpl,r2
+   05C6 8B 83              2233 	mov	dph,r3
+   05C8 8C F0              2234 	mov	b,r4
+   05CA 12s00r00           2235 	lcall	__gptrget
+   05CD FA                 2236 	mov	r2,a
+   05CE A3                 2237 	inc	dptr
+   05CF 12s00r00           2238 	lcall	__gptrget
+   05D2 FB                 2239 	mov	r3,a
+   05D3 A3                 2240 	inc	dptr
+   05D4 12s00r00           2241 	lcall	__gptrget
+   05D7 FC                 2242 	mov	r4,a
+   05D8 A8 81              2243 	mov	r0,sp
+   05DA 18                 2244 	dec	r0
+   05DB 18                 2245 	dec	r0
+   05DC A6 02              2246 	mov	@r0,ar2
+   05DE 08                 2247 	inc	r0
+   05DF A6 03              2248 	mov	@r0,ar3
+   05E1 08                 2249 	inc	r0
+   05E2 A6 04              2250 	mov	@r0,ar4
+                           2251 ;	../../../contiki-sensinode//core/net/rpl/rpl-of-etx.c:196: if (!dag->joined) {
+   05E4 A8 81              2252 	mov	r0,sp
+   05E6 18                 2253 	dec	r0
+   05E7 18                 2254 	dec	r0
+   05E8 74 16              2255 	mov	a,#0x16
+   05EA 26                 2256 	add	a,@r0
+   05EB FA                 2257 	mov	r2,a
+   05EC E4                 2258 	clr	a
+   05ED 08                 2259 	inc	r0
+   05EE 36                 2260 	addc	a,@r0
+   05EF FB                 2261 	mov	r3,a
+   05F0 08                 2262 	inc	r0
+   05F1 86 04              2263 	mov	ar4,@r0
+   05F3 8A 82              2264 	mov	dpl,r2
+   05F5 8B 83              2265 	mov	dph,r3
+   05F7 8C F0              2266 	mov	b,r4
+   05F9 12s00r00           2267 	lcall	__gptrget
+   05FC 70 03              2268 	jnz	00102$
+                           2269 ;	../../../contiki-sensinode//core/net/rpl/rpl-of-etx.c:198: return;
+   05FE 02s06rD2           2270 	ljmp	00106$
+   0601                    2271 00102$:
+                           2272 ;	../../../contiki-sensinode//core/net/rpl/rpl-of-etx.c:201: if(dag->rank == ROOT_RANK(instance)) {
+   0601 A8 81              2273 	mov	r0,sp
+   0603 18                 2274 	dec	r0
+   0604 18                 2275 	dec	r0
+   0605 74 1A              2276 	mov	a,#0x1A
+   0607 26                 2277 	add	a,@r0
+   0608 FA                 2278 	mov	r2,a
+   0609 E4                 2279 	clr	a
+   060A 08                 2280 	inc	r0
+   060B 36                 2281 	addc	a,@r0
+   060C FB                 2282 	mov	r3,a
+   060D 08                 2283 	inc	r0
+   060E 86 04              2284 	mov	ar4,@r0
+   0610 8A 82              2285 	mov	dpl,r2
+   0612 8B 83              2286 	mov	dph,r3
+   0614 8C F0              2287 	mov	b,r4
+   0616 12s00r00           2288 	lcall	__gptrget
+   0619 FA                 2289 	mov	r2,a
+   061A A3                 2290 	inc	dptr
+   061B 12s00r00           2291 	lcall	__gptrget
+   061E FB                 2292 	mov	r3,a
+   061F E5 81              2293 	mov	a,sp
+   0621 24 FB              2294 	add	a,#0xfb
+   0623 F8                 2295 	mov	r0,a
+   0624 74 93              2296 	mov	a,#0x93
+   0626 26                 2297 	add	a,@r0
+   0627 FC                 2298 	mov	r4,a
+   0628 E4                 2299 	clr	a
+   0629 08                 2300 	inc	r0
+   062A 36                 2301 	addc	a,@r0
+   062B FE                 2302 	mov	r6,a
+   062C 08                 2303 	inc	r0
+   062D 86 07              2304 	mov	ar7,@r0
+   062F 8C 82              2305 	mov	dpl,r4
+   0631 8E 83              2306 	mov	dph,r6
+   0633 8F F0              2307 	mov	b,r7
+   0635 12s00r00           2308 	lcall	__gptrget
+   0638 FC                 2309 	mov	r4,a
+   0639 A3                 2310 	inc	dptr
+   063A 12s00r00           2311 	lcall	__gptrget
+   063D FE                 2312 	mov	r6,a
+   063E EA                 2313 	mov	a,r2
+   063F B5 04 0A           2314 	cjne	a,ar4,00104$
+   0642 EB                 2315 	mov	a,r3
+   0643 B5 06 06           2316 	cjne	a,ar6,00104$
+                           2317 ;	../../../contiki-sensinode//core/net/rpl/rpl-of-etx.c:202: path_metric = 0;
+   0646 7E 00              2318 	mov	r6,#0x00
+   0648 7F 00              2319 	mov	r7,#0x00
+   064A 80 3A              2320 	sjmp	00105$
+   064C                    2321 00104$:
+                           2322 ;	../../../contiki-sensinode//core/net/rpl/rpl-of-etx.c:204: path_metric = calculate_path_metric(dag->preferred_parent);
+   064C A8 81              2323 	mov	r0,sp
+   064E 18                 2324 	dec	r0
+   064F 18                 2325 	dec	r0
+   0650 74 17              2326 	mov	a,#0x17
+   0652 26                 2327 	add	a,@r0
+   0653 FB                 2328 	mov	r3,a
+   0654 E4                 2329 	clr	a
+   0655 08                 2330 	inc	r0
+   0656 36                 2331 	addc	a,@r0
+   0657 FC                 2332 	mov	r4,a
+   0658 08                 2333 	inc	r0
+   0659 86 05              2334 	mov	ar5,@r0
+   065B 8B 82              2335 	mov	dpl,r3
+   065D 8C 83              2336 	mov	dph,r4
+   065F 8D F0              2337 	mov	b,r5
+   0661 12s00r00           2338 	lcall	__gptrget
+   0664 FB                 2339 	mov	r3,a
+   0665 A3                 2340 	inc	dptr
+   0666 12s00r00           2341 	lcall	__gptrget
+   0669 FC                 2342 	mov	r4,a
+   066A A3                 2343 	inc	dptr
+   066B 12s00r00           2344 	lcall	__gptrget
+   066E FD                 2345 	mov	r5,a
+   066F 8B 82              2346 	mov	dpl,r3
+   0671 8C 83              2347 	mov	dph,r4
+   0673 8D F0              2348 	mov	b,r5
+   0675 78r00              2349 	mov	r0,#_calculate_path_metric
+   0677 79s00              2350 	mov	r1,#(_calculate_path_metric >> 8)
+   0679 7As00              2351 	mov	r2,#(_calculate_path_metric >> 16)
+   067B 12s00r00           2352 	lcall	__sdcc_banked_call
+   067E AC 82              2353 	mov	r4,dpl
+   0680 AD 83              2354 	mov	r5,dph
+   0682 8C 06              2355 	mov	ar6,r4
+   0684 8D 07              2356 	mov	ar7,r5
+   0686                    2357 00105$:
+                           2358 ;	../../../contiki-sensinode//core/net/rpl/rpl-of-etx.c:209: instance->mc.type = RPL_DAG_MC_ETX;
+   0686 E5 81              2359 	mov	a,sp
+   0688 24 FB              2360 	add	a,#0xfb
+   068A F8                 2361 	mov	r0,a
+   068B 86 82              2362 	mov	dpl,@r0
+   068D 08                 2363 	inc	r0
+   068E 86 83              2364 	mov	dph,@r0
+   0690 08                 2365 	inc	r0
+   0691 86 F0              2366 	mov	b,@r0
+   0693 74 07              2367 	mov	a,#0x07
+   0695 12s00r00           2368 	lcall	__gptrput
+                           2369 ;	../../../contiki-sensinode//core/net/rpl/rpl-of-etx.c:210: instance->mc.length = sizeof(instance->mc.obj.etx);
+   0698 E5 81              2370 	mov	a,sp
+   069A 24 FB              2371 	add	a,#0xfb
+   069C F8                 2372 	mov	r0,a
+   069D 74 04              2373 	mov	a,#0x04
+   069F 26                 2374 	add	a,@r0
+   06A0 FB                 2375 	mov	r3,a
+   06A1 E4                 2376 	clr	a
+   06A2 08                 2377 	inc	r0
+   06A3 36                 2378 	addc	a,@r0
+   06A4 FC                 2379 	mov	r4,a
+   06A5 08                 2380 	inc	r0
+   06A6 86 05              2381 	mov	ar5,@r0
+   06A8 8B 82              2382 	mov	dpl,r3
+   06AA 8C 83              2383 	mov	dph,r4
+   06AC 8D F0              2384 	mov	b,r5
+   06AE 74 02              2385 	mov	a,#0x02
+   06B0 12s00r00           2386 	lcall	__gptrput
+                           2387 ;	../../../contiki-sensinode//core/net/rpl/rpl-of-etx.c:211: instance->mc.obj.etx = path_metric;
+   06B3 E5 81              2388 	mov	a,sp
+   06B5 24 FB              2389 	add	a,#0xfb
+   06B7 F8                 2390 	mov	r0,a
+   06B8 74 05              2391 	mov	a,#0x05
+   06BA 26                 2392 	add	a,@r0
+   06BB FB                 2393 	mov	r3,a
+   06BC E4                 2394 	clr	a
+   06BD 08                 2395 	inc	r0
+   06BE 36                 2396 	addc	a,@r0
+   06BF FC                 2397 	mov	r4,a
+   06C0 08                 2398 	inc	r0
+   06C1 86 05              2399 	mov	ar5,@r0
+   06C3 8B 82              2400 	mov	dpl,r3
+   06C5 8C 83              2401 	mov	dph,r4
+   06C7 8D F0              2402 	mov	b,r5
+   06C9 EE                 2403 	mov	a,r6
+   06CA 12s00r00           2404 	lcall	__gptrput
+   06CD A3                 2405 	inc	dptr
+   06CE EF                 2406 	mov	a,r7
+   06CF 12s00r00           2407 	lcall	__gptrput
+   06D2                    2408 00106$:
+   06D2 E5 81              2409 	mov	a,sp
+   06D4 24 FA              2410 	add	a,#0xFA
+   06D6 F5 81              2411 	mov	sp,a
+   06D8 02s00r00           2412 	ljmp	__sdcc_banked_ret
+                           2413 	.area CSEG    (CODE)
+                           2414 	.area CONST   (CODE)
+                           2415 	.area XINIT   (CODE)
+   0000                    2416 __xinit__rpl_of_etx:
+   0000r78s01s00           2417 	.byte _reset,(_reset >> 8),(_reset >> 16)
+   0003r7Bs01s00           2418 	.byte _parent_state_callback,(_parent_state_callback >> 8),(_parent_state_callback >> 16)
+   0006rF1s03s00           2419 	.byte _best_parent,(_best_parent >> 8),(_best_parent >> 16)
+   0009rA1s02s00           2420 	.byte _best_dag,(_best_dag >> 8),(_best_dag >> 16)
+   000Cr7Es01s00           2421 	.byte _calculate_rank,(_calculate_rank >> 8),(_calculate_rank >> 16)
+   000Fr59s05s00           2422 	.byte _update_metric_container,(_update_metric_container >> 8),(_update_metric_container >> 16)
+   0012 01 00              2423 	.byte #0x01,#0x00	; 1
+                           2424 	.area CABS    (ABS,CODE)

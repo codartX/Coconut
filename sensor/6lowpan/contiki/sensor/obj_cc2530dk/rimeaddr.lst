@@ -1,0 +1,298 @@
+                              1 ;--------------------------------------------------------
+                              2 ; File Created by SDCC : free open source ANSI-C Compiler
+                              3 ; Version 3.1.1 #7100 (Oct 29 2014) (Linux)
+                              4 ; This file was generated Wed Dec  2 18:10:49 2015
+                              5 ;--------------------------------------------------------
+                              6 	.module rimeaddr
+                              7 	.optsdcc -mmcs51 --model-huge
+                              8 	
+                              9 ;--------------------------------------------------------
+                             10 ; Public variables in this module
+                             11 ;--------------------------------------------------------
+                             12 	.globl _rimeaddr_null
+                             13 	.globl _rimeaddr_node_addr
+                             14 	.globl _rimeaddr_copy
+                             15 	.globl _rimeaddr_cmp
+                             16 	.globl _rimeaddr_set_node_addr
+                             17 ;--------------------------------------------------------
+                             18 ; special function registers
+                             19 ;--------------------------------------------------------
+                             20 	.area RSEG    (ABS,DATA)
+   0000                      21 	.org 0x0000
+                             22 ;--------------------------------------------------------
+                             23 ; special function bits
+                             24 ;--------------------------------------------------------
+                             25 	.area RSEG    (ABS,DATA)
+   0000                      26 	.org 0x0000
+                             27 ;--------------------------------------------------------
+                             28 ; overlayable register banks
+                             29 ;--------------------------------------------------------
+                             30 	.area REG_BANK_0	(REL,OVR,DATA)
+   0000                      31 	.ds 8
+                             32 ;--------------------------------------------------------
+                             33 ; internal ram data
+                             34 ;--------------------------------------------------------
+                             35 	.area DSEG    (DATA)
+                             36 ;--------------------------------------------------------
+                             37 ; overlayable items in internal ram 
+                             38 ;--------------------------------------------------------
+                             39 	.area OSEG    (OVR,DATA)
+                             40 ;--------------------------------------------------------
+                             41 ; indirectly addressable internal ram data
+                             42 ;--------------------------------------------------------
+                             43 	.area ISEG    (DATA)
+                             44 ;--------------------------------------------------------
+                             45 ; absolute internal ram data
+                             46 ;--------------------------------------------------------
+                             47 	.area IABS    (ABS,DATA)
+                             48 	.area IABS    (ABS,DATA)
+                             49 ;--------------------------------------------------------
+                             50 ; bit data
+                             51 ;--------------------------------------------------------
+                             52 	.area BSEG    (BIT)
+                             53 ;--------------------------------------------------------
+                             54 ; paged external ram data
+                             55 ;--------------------------------------------------------
+                             56 	.area PSEG    (PAG,XDATA)
+                             57 ;--------------------------------------------------------
+                             58 ; external ram data
+                             59 ;--------------------------------------------------------
+                             60 	.area XSEG    (XDATA)
+   0000                      61 _rimeaddr_node_addr::
+   0000                      62 	.ds 8
+                             63 ;--------------------------------------------------------
+                             64 ; absolute external ram data
+                             65 ;--------------------------------------------------------
+                             66 	.area XABS    (ABS,XDATA)
+                             67 ;--------------------------------------------------------
+                             68 ; external initialized ram data
+                             69 ;--------------------------------------------------------
+                             70 	.area XISEG   (XDATA)
+                             71 	.area HOME    (CODE)
+                             72 	.area GSINIT0 (CODE)
+                             73 	.area GSINIT1 (CODE)
+                             74 	.area GSINIT2 (CODE)
+                             75 	.area GSINIT3 (CODE)
+                             76 	.area GSINIT4 (CODE)
+                             77 	.area GSINIT5 (CODE)
+                             78 	.area GSINIT  (CODE)
+                             79 	.area GSFINAL (CODE)
+                             80 	.area CSEG    (CODE)
+                             81 ;--------------------------------------------------------
+                             82 ; global & static initialisations
+                             83 ;--------------------------------------------------------
+                             84 	.area HOME    (CODE)
+                             85 	.area GSINIT  (CODE)
+                             86 	.area GSFINAL (CODE)
+                             87 	.area GSINIT  (CODE)
+                             88 ;--------------------------------------------------------
+                             89 ; Home
+                             90 ;--------------------------------------------------------
+                             91 	.area HOME    (CODE)
+                             92 	.area HOME    (CODE)
+                             93 ;--------------------------------------------------------
+                             94 ; code
+                             95 ;--------------------------------------------------------
+                             96 	.area BANK1   (CODE)
+                             97 ;------------------------------------------------------------
+                             98 ;Allocation info for local variables in function 'rimeaddr_copy'
+                             99 ;------------------------------------------------------------
+                            100 ;src                       Allocated to stack - sp -9
+                            101 ;dest                      Allocated to stack - sp -3
+                            102 ;i                         Allocated to stack - sp +0
+                            103 ;------------------------------------------------------------
+                            104 ;	../../../contiki-sensinode//core/net/rime/rimeaddr.c:59: rimeaddr_copy(rimeaddr_t *dest, const rimeaddr_t *src)
+                            105 ;	-----------------------------------------
+                            106 ;	 function rimeaddr_copy
+                            107 ;	-----------------------------------------
+   0000                     108 _rimeaddr_copy:
+                    0007    109 	ar7 = 0x07
+                    0006    110 	ar6 = 0x06
+                    0005    111 	ar5 = 0x05
+                    0004    112 	ar4 = 0x04
+                    0003    113 	ar3 = 0x03
+                    0002    114 	ar2 = 0x02
+                    0001    115 	ar1 = 0x01
+                    0000    116 	ar0 = 0x00
+   0000 C0 82               117 	push	dpl
+   0002 C0 83               118 	push	dph
+   0004 C0 F0               119 	push	b
+   0006 05 81               120 	inc	sp
+                            121 ;	../../../contiki-sensinode//core/net/rime/rimeaddr.c:62: for(i = 0; i < RIMEADDR_SIZE; i++) {
+   0008 A8 81               122 	mov	r0,sp
+   000A 76 00               123 	mov	@r0,#0x00
+   000C                     124 00101$:
+   000C A8 81               125 	mov	r0,sp
+   000E B6 08 00            126 	cjne	@r0,#0x08,00112$
+   0011                     127 00112$:
+   0011 50 3E               128 	jnc	00105$
+                            129 ;	../../../contiki-sensinode//core/net/rime/rimeaddr.c:63: dest->u8[i] = src->u8[i];
+   0013 E5 81               130 	mov	a,sp
+   0015 24 FD               131 	add	a,#0xfd
+   0017 F8                  132 	mov	r0,a
+   0018 A9 81               133 	mov	r1,sp
+   001A E7                  134 	mov	a,@r1
+   001B 26                  135 	add	a,@r0
+   001C FA                  136 	mov	r2,a
+   001D E4                  137 	clr	a
+   001E 08                  138 	inc	r0
+   001F 36                  139 	addc	a,@r0
+   0020 FB                  140 	mov	r3,a
+   0021 08                  141 	inc	r0
+   0022 86 07               142 	mov	ar7,@r0
+   0024 E5 81               143 	mov	a,sp
+   0026 24 F7               144 	add	a,#0xf7
+   0028 F8                  145 	mov	r0,a
+   0029 86 04               146 	mov	ar4,@r0
+   002B 08                  147 	inc	r0
+   002C 86 05               148 	mov	ar5,@r0
+   002E 08                  149 	inc	r0
+   002F 86 06               150 	mov	ar6,@r0
+   0031 A8 81               151 	mov	r0,sp
+   0033 E6                  152 	mov	a,@r0
+   0034 2C                  153 	add	a,r4
+   0035 FC                  154 	mov	r4,a
+   0036 E4                  155 	clr	a
+   0037 3D                  156 	addc	a,r5
+   0038 FD                  157 	mov	r5,a
+   0039 8C 82               158 	mov	dpl,r4
+   003B 8D 83               159 	mov	dph,r5
+   003D 8E F0               160 	mov	b,r6
+   003F 12s00r00            161 	lcall	__gptrget
+   0042 FC                  162 	mov	r4,a
+   0043 8A 82               163 	mov	dpl,r2
+   0045 8B 83               164 	mov	dph,r3
+   0047 8F F0               165 	mov	b,r7
+   0049 12s00r00            166 	lcall	__gptrput
+                            167 ;	../../../contiki-sensinode//core/net/rime/rimeaddr.c:62: for(i = 0; i < RIMEADDR_SIZE; i++) {
+   004C A8 81               168 	mov	r0,sp
+   004E 06                  169 	inc	@r0
+   004F 80 BB               170 	sjmp	00101$
+   0051                     171 00105$:
+   0051 E5 81               172 	mov	a,sp
+   0053 24 FC               173 	add	a,#0xFC
+   0055 F5 81               174 	mov	sp,a
+   0057 02s00r00            175 	ljmp	__sdcc_banked_ret
+                            176 ;------------------------------------------------------------
+                            177 ;Allocation info for local variables in function 'rimeaddr_cmp'
+                            178 ;------------------------------------------------------------
+                            179 ;addr2                     Allocated to stack - sp -9
+                            180 ;addr1                     Allocated to stack - sp -3
+                            181 ;i                         Allocated to stack - sp +0
+                            182 ;------------------------------------------------------------
+                            183 ;	../../../contiki-sensinode//core/net/rime/rimeaddr.c:68: rimeaddr_cmp(const rimeaddr_t *addr1, const rimeaddr_t *addr2)
+                            184 ;	-----------------------------------------
+                            185 ;	 function rimeaddr_cmp
+                            186 ;	-----------------------------------------
+   005A                     187 _rimeaddr_cmp:
+   005A C0 82               188 	push	dpl
+   005C C0 83               189 	push	dph
+   005E C0 F0               190 	push	b
+   0060 05 81               191 	inc	sp
+                            192 ;	../../../contiki-sensinode//core/net/rime/rimeaddr.c:71: for(i = 0; i < RIMEADDR_SIZE; i++) {
+   0062 A8 81               193 	mov	r0,sp
+   0064 76 00               194 	mov	@r0,#0x00
+   0066                     195 00103$:
+   0066 A8 81               196 	mov	r0,sp
+   0068 B6 08 00            197 	cjne	@r0,#0x08,00115$
+   006B                     198 00115$:
+   006B 50 4A               199 	jnc	00106$
+                            200 ;	../../../contiki-sensinode//core/net/rime/rimeaddr.c:72: if(addr1->u8[i] != addr2->u8[i]) {
+   006D E5 81               201 	mov	a,sp
+   006F 24 FD               202 	add	a,#0xfd
+   0071 F8                  203 	mov	r0,a
+   0072 A9 81               204 	mov	r1,sp
+   0074 E7                  205 	mov	a,@r1
+   0075 26                  206 	add	a,@r0
+   0076 FA                  207 	mov	r2,a
+   0077 E4                  208 	clr	a
+   0078 08                  209 	inc	r0
+   0079 36                  210 	addc	a,@r0
+   007A FB                  211 	mov	r3,a
+   007B 08                  212 	inc	r0
+   007C 86 07               213 	mov	ar7,@r0
+   007E E5 81               214 	mov	a,sp
+   0080 24 F7               215 	add	a,#0xf7
+   0082 F8                  216 	mov	r0,a
+   0083 86 04               217 	mov	ar4,@r0
+   0085 08                  218 	inc	r0
+   0086 86 05               219 	mov	ar5,@r0
+   0088 08                  220 	inc	r0
+   0089 86 06               221 	mov	ar6,@r0
+   008B A8 81               222 	mov	r0,sp
+   008D E6                  223 	mov	a,@r0
+   008E 2C                  224 	add	a,r4
+   008F FC                  225 	mov	r4,a
+   0090 E4                  226 	clr	a
+   0091 3D                  227 	addc	a,r5
+   0092 FD                  228 	mov	r5,a
+   0093 8A 82               229 	mov	dpl,r2
+   0095 8B 83               230 	mov	dph,r3
+   0097 8F F0               231 	mov	b,r7
+   0099 12s00r00            232 	lcall	__gptrget
+   009C FA                  233 	mov	r2,a
+   009D 8C 82               234 	mov	dpl,r4
+   009F 8D 83               235 	mov	dph,r5
+   00A1 8E F0               236 	mov	b,r6
+   00A3 12s00r00            237 	lcall	__gptrget
+   00A6 FC                  238 	mov	r4,a
+   00A7 EA                  239 	mov	a,r2
+   00A8 B5 04 02            240 	cjne	a,ar4,00117$
+   00AB 80 05               241 	sjmp	00105$
+   00AD                     242 00117$:
+                            243 ;	../../../contiki-sensinode//core/net/rime/rimeaddr.c:73: return 0;
+   00AD 90 00 00            244 	mov	dptr,#0x0000
+   00B0 80 08               245 	sjmp	00107$
+   00B2                     246 00105$:
+                            247 ;	../../../contiki-sensinode//core/net/rime/rimeaddr.c:71: for(i = 0; i < RIMEADDR_SIZE; i++) {
+   00B2 A8 81               248 	mov	r0,sp
+   00B4 06                  249 	inc	@r0
+   00B5 80 AF               250 	sjmp	00103$
+   00B7                     251 00106$:
+                            252 ;	../../../contiki-sensinode//core/net/rime/rimeaddr.c:76: return 1;
+   00B7 90 00 01            253 	mov	dptr,#0x0001
+   00BA                     254 00107$:
+   00BA E5 81               255 	mov	a,sp
+   00BC 24 FC               256 	add	a,#0xFC
+   00BE F5 81               257 	mov	sp,a
+   00C0 02s00r00            258 	ljmp	__sdcc_banked_ret
+                            259 ;------------------------------------------------------------
+                            260 ;Allocation info for local variables in function 'rimeaddr_set_node_addr'
+                            261 ;------------------------------------------------------------
+                            262 ;t                         Allocated to registers r5 r6 r7 
+                            263 ;------------------------------------------------------------
+                            264 ;	../../../contiki-sensinode//core/net/rime/rimeaddr.c:80: rimeaddr_set_node_addr(rimeaddr_t *t)
+                            265 ;	-----------------------------------------
+                            266 ;	 function rimeaddr_set_node_addr
+                            267 ;	-----------------------------------------
+   00C3                     268 _rimeaddr_set_node_addr:
+   00C3 AD 82               269 	mov	r5,dpl
+   00C5 AE 83               270 	mov	r6,dph
+   00C7 AF F0               271 	mov	r7,b
+                            272 ;	../../../contiki-sensinode//core/net/rime/rimeaddr.c:82: rimeaddr_copy(&rimeaddr_node_addr, t);
+   00C9 C0 05               273 	push	ar5
+   00CB C0 06               274 	push	ar6
+   00CD C0 07               275 	push	ar7
+   00CF 90s00r00            276 	mov	dptr,#_rimeaddr_node_addr
+   00D2 75 F0 00            277 	mov	b,#0x00
+   00D5 78r00               278 	mov	r0,#_rimeaddr_copy
+   00D7 79s00               279 	mov	r1,#(_rimeaddr_copy >> 8)
+   00D9 7As00               280 	mov	r2,#(_rimeaddr_copy >> 16)
+   00DB 12s00r00            281 	lcall	__sdcc_banked_call
+   00DE 15 81               282 	dec	sp
+   00E0 15 81               283 	dec	sp
+   00E2 15 81               284 	dec	sp
+   00E4 02s00r00            285 	ljmp	__sdcc_banked_ret
+                            286 	.area CSEG    (CODE)
+                            287 	.area CONST   (CODE)
+   0000                     288 _rimeaddr_null:
+   0000 00                  289 	.db #0x00	; 0
+   0001 00                  290 	.db #0x00	; 0
+   0002 00                  291 	.db #0x00	; 0
+   0003 00                  292 	.db #0x00	; 0
+   0004 00                  293 	.db #0x00	; 0
+   0005 00                  294 	.db #0x00	; 0
+   0006 00                  295 	.db #0x00	; 0
+   0007 00                  296 	.db #0x00	; 0
+                            297 	.area XINIT   (CODE)
+                            298 	.area CABS    (ABS,CODE)

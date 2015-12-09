@@ -1,0 +1,388 @@
+                              1 ;--------------------------------------------------------
+                              2 ; File Created by SDCC : free open source ANSI-C Compiler
+                              3 ; Version 3.1.1 #7100 (Oct 29 2014) (Linux)
+                              4 ; This file was generated Wed Dec  2 18:10:54 2015
+                              5 ;--------------------------------------------------------
+                              6 	.module autostart
+                              7 	.optsdcc -mmcs51 --model-huge
+                              8 	
+                              9 ;--------------------------------------------------------
+                             10 ; Public variables in this module
+                             11 ;--------------------------------------------------------
+                             12 	.globl _process_exit
+                             13 	.globl _process_start
+                             14 	.globl _autostart_start
+                             15 	.globl _autostart_exit
+                             16 ;--------------------------------------------------------
+                             17 ; special function registers
+                             18 ;--------------------------------------------------------
+                             19 	.area RSEG    (ABS,DATA)
+   0000                      20 	.org 0x0000
+                             21 ;--------------------------------------------------------
+                             22 ; special function bits
+                             23 ;--------------------------------------------------------
+                             24 	.area RSEG    (ABS,DATA)
+   0000                      25 	.org 0x0000
+                             26 ;--------------------------------------------------------
+                             27 ; overlayable register banks
+                             28 ;--------------------------------------------------------
+                             29 	.area REG_BANK_0	(REL,OVR,DATA)
+   0000                      30 	.ds 8
+                             31 ;--------------------------------------------------------
+                             32 ; internal ram data
+                             33 ;--------------------------------------------------------
+                             34 	.area DSEG    (DATA)
+                             35 ;--------------------------------------------------------
+                             36 ; overlayable items in internal ram 
+                             37 ;--------------------------------------------------------
+                             38 	.area OSEG    (OVR,DATA)
+                             39 ;--------------------------------------------------------
+                             40 ; indirectly addressable internal ram data
+                             41 ;--------------------------------------------------------
+                             42 	.area ISEG    (DATA)
+                             43 ;--------------------------------------------------------
+                             44 ; absolute internal ram data
+                             45 ;--------------------------------------------------------
+                             46 	.area IABS    (ABS,DATA)
+                             47 	.area IABS    (ABS,DATA)
+                             48 ;--------------------------------------------------------
+                             49 ; bit data
+                             50 ;--------------------------------------------------------
+                             51 	.area BSEG    (BIT)
+                             52 ;--------------------------------------------------------
+                             53 ; paged external ram data
+                             54 ;--------------------------------------------------------
+                             55 	.area PSEG    (PAG,XDATA)
+                             56 ;--------------------------------------------------------
+                             57 ; external ram data
+                             58 ;--------------------------------------------------------
+                             59 	.area XSEG    (XDATA)
+                             60 ;--------------------------------------------------------
+                             61 ; absolute external ram data
+                             62 ;--------------------------------------------------------
+                             63 	.area XABS    (ABS,XDATA)
+                             64 ;--------------------------------------------------------
+                             65 ; external initialized ram data
+                             66 ;--------------------------------------------------------
+                             67 	.area XISEG   (XDATA)
+                             68 	.area HOME    (CODE)
+                             69 	.area GSINIT0 (CODE)
+                             70 	.area GSINIT1 (CODE)
+                             71 	.area GSINIT2 (CODE)
+                             72 	.area GSINIT3 (CODE)
+                             73 	.area GSINIT4 (CODE)
+                             74 	.area GSINIT5 (CODE)
+                             75 	.area GSINIT  (CODE)
+                             76 	.area GSFINAL (CODE)
+                             77 	.area CSEG    (CODE)
+                             78 ;--------------------------------------------------------
+                             79 ; global & static initialisations
+                             80 ;--------------------------------------------------------
+                             81 	.area HOME    (CODE)
+                             82 	.area GSINIT  (CODE)
+                             83 	.area GSFINAL (CODE)
+                             84 	.area GSINIT  (CODE)
+                             85 ;--------------------------------------------------------
+                             86 ; Home
+                             87 ;--------------------------------------------------------
+                             88 	.area HOME    (CODE)
+                             89 	.area HOME    (CODE)
+                             90 ;--------------------------------------------------------
+                             91 ; code
+                             92 ;--------------------------------------------------------
+                             93 	.area BANK1   (CODE)
+                             94 ;------------------------------------------------------------
+                             95 ;Allocation info for local variables in function 'autostart_start'
+                             96 ;------------------------------------------------------------
+                             97 ;processes                 Allocated to registers r5 r6 r7 
+                             98 ;i                         Allocated to registers r3 r4 
+                             99 ;sloc0                     Allocated to stack - sp -4
+                            100 ;sloc1                     Allocated to stack - sp -2
+                            101 ;------------------------------------------------------------
+                            102 ;	../../../contiki-sensinode//core/sys/autostart.c:52: autostart_start(struct process * const processes[])
+                            103 ;	-----------------------------------------
+                            104 ;	 function autostart_start
+                            105 ;	-----------------------------------------
+   0000                     106 _autostart_start:
+                    0007    107 	ar7 = 0x07
+                    0006    108 	ar6 = 0x06
+                    0005    109 	ar5 = 0x05
+                    0004    110 	ar4 = 0x04
+                    0003    111 	ar3 = 0x03
+                    0002    112 	ar2 = 0x02
+                    0001    113 	ar1 = 0x01
+                    0000    114 	ar0 = 0x00
+   0000 E5 81               115 	mov	a,sp
+   0002 24 05               116 	add	a,#0x05
+   0004 F5 81               117 	mov	sp,a
+   0006 AD 82               118 	mov	r5,dpl
+   0008 AE 83               119 	mov	r6,dph
+   000A AF F0               120 	mov	r7,b
+                            121 ;	../../../contiki-sensinode//core/sys/autostart.c:56: for(i = 0; processes[i] != NULL; ++i) {
+   000C E4                  122 	clr	a
+   000D FB                  123 	mov	r3,a
+   000E FC                  124 	mov	r4,a
+   000F E5 81               125 	mov	a,sp
+   0011 24 FC               126 	add	a,#0xfc
+   0013 F8                  127 	mov	r0,a
+   0014 E4                  128 	clr	a
+   0015 F6                  129 	mov	@r0,a
+   0016 08                  130 	inc	r0
+   0017 F6                  131 	mov	@r0,a
+   0018                     132 00101$:
+   0018 C0 03               133 	push	ar3
+   001A C0 04               134 	push	ar4
+   001C E5 81               135 	mov	a,sp
+   001E 24 FA               136 	add	a,#0xfa
+   0020 F8                  137 	mov	r0,a
+   0021 E5 81               138 	mov	a,sp
+   0023 24 FC               139 	add	a,#0xfc
+   0025 F9                  140 	mov	r1,a
+   0026 E6                  141 	mov	a,@r0
+   0027 2D                  142 	add	a,r5
+   0028 F7                  143 	mov	@r1,a
+   0029 08                  144 	inc	r0
+   002A E6                  145 	mov	a,@r0
+   002B 3E                  146 	addc	a,r6
+   002C 09                  147 	inc	r1
+   002D F7                  148 	mov	@r1,a
+   002E 09                  149 	inc	r1
+   002F A7 07               150 	mov	@r1,ar7
+   0031 E5 81               151 	mov	a,sp
+   0033 24 FC               152 	add	a,#0xfc
+   0035 F8                  153 	mov	r0,a
+   0036 86 82               154 	mov	dpl,@r0
+   0038 08                  155 	inc	r0
+   0039 86 83               156 	mov	dph,@r0
+   003B 08                  157 	inc	r0
+   003C 86 F0               158 	mov	b,@r0
+   003E 12s00r00            159 	lcall	__gptrget
+   0041 18                  160 	dec	r0
+   0042 18                  161 	dec	r0
+   0043 F6                  162 	mov	@r0,a
+   0044 A3                  163 	inc	dptr
+   0045 12s00r00            164 	lcall	__gptrget
+   0048 08                  165 	inc	r0
+   0049 F6                  166 	mov	@r0,a
+   004A A3                  167 	inc	dptr
+   004B 12s00r00            168 	lcall	__gptrget
+   004E 08                  169 	inc	r0
+   004F F6                  170 	mov	@r0,a
+   0050 E5 81               171 	mov	a,sp
+   0052 24 FC               172 	add	a,#0xfc
+   0054 F8                  173 	mov	r0,a
+   0055 E4                  174 	clr	a
+   0056 C0 E0               175 	push	acc
+   0058 E4                  176 	clr	a
+   0059 C0 E0               177 	push	acc
+   005B E4                  178 	clr	a
+   005C C0 E0               179 	push	acc
+   005E 86 82               180 	mov	dpl,@r0
+   0060 08                  181 	inc	r0
+   0061 86 83               182 	mov	dph,@r0
+   0063 08                  183 	inc	r0
+   0064 86 F0               184 	mov	b,@r0
+   0066 12s00r00            185 	lcall	___gptr_cmp
+   0069 15 81               186 	dec	sp
+   006B 15 81               187 	dec	sp
+   006D 15 81               188 	dec	sp
+   006F 70 06               189 	jnz	00112$
+   0071 D0 04               190 	pop	ar4
+   0073 D0 03               191 	pop	ar3
+   0075 80 50               192 	sjmp	00105$
+   0077                     193 00112$:
+   0077 D0 04               194 	pop	ar4
+   0079 D0 03               195 	pop	ar3
+                            196 ;	../../../contiki-sensinode//core/sys/autostart.c:57: process_start(processes[i], NULL);
+   007B C0 07               197 	push	ar7
+   007D C0 06               198 	push	ar6
+   007F C0 05               199 	push	ar5
+   0081 C0 04               200 	push	ar4
+   0083 C0 03               201 	push	ar3
+   0085 E4                  202 	clr	a
+   0086 C0 E0               203 	push	acc
+   0088 C0 E0               204 	push	acc
+   008A C0 E0               205 	push	acc
+   008C E5 81               206 	mov	a,sp
+   008E 24 F6               207 	add	a,#0xf6
+   0090 F8                  208 	mov	r0,a
+   0091 86 82               209 	mov	dpl,@r0
+   0093 08                  210 	inc	r0
+   0094 86 83               211 	mov	dph,@r0
+   0096 08                  212 	inc	r0
+   0097 86 F0               213 	mov	b,@r0
+   0099 78r00               214 	mov	r0,#_process_start
+   009B 79s00               215 	mov	r1,#(_process_start >> 8)
+   009D 7As00               216 	mov	r2,#(_process_start >> 16)
+   009F 12s00r00            217 	lcall	__sdcc_banked_call
+   00A2 15 81               218 	dec	sp
+   00A4 15 81               219 	dec	sp
+   00A6 15 81               220 	dec	sp
+   00A8 D0 03               221 	pop	ar3
+   00AA D0 04               222 	pop	ar4
+   00AC D0 05               223 	pop	ar5
+   00AE D0 06               224 	pop	ar6
+   00B0 D0 07               225 	pop	ar7
+                            226 ;	../../../contiki-sensinode//core/sys/autostart.c:56: for(i = 0; processes[i] != NULL; ++i) {
+   00B2 E5 81               227 	mov	a,sp
+   00B4 24 FC               228 	add	a,#0xfc
+   00B6 F8                  229 	mov	r0,a
+   00B7 74 03               230 	mov	a,#0x03
+   00B9 26                  231 	add	a,@r0
+   00BA F6                  232 	mov	@r0,a
+   00BB E4                  233 	clr	a
+   00BC 08                  234 	inc	r0
+   00BD 36                  235 	addc	a,@r0
+   00BE F6                  236 	mov	@r0,a
+   00BF 0B                  237 	inc	r3
+   00C0 BB 00 01            238 	cjne	r3,#0x00,00113$
+   00C3 0C                  239 	inc	r4
+   00C4                     240 00113$:
+   00C4 02s00r18            241 	ljmp	00101$
+   00C7                     242 00105$:
+   00C7 E5 81               243 	mov	a,sp
+   00C9 24 FB               244 	add	a,#0xFB
+   00CB F5 81               245 	mov	sp,a
+   00CD 02s00r00            246 	ljmp	__sdcc_banked_ret
+                            247 ;------------------------------------------------------------
+                            248 ;Allocation info for local variables in function 'autostart_exit'
+                            249 ;------------------------------------------------------------
+                            250 ;processes                 Allocated to registers r5 r6 r7 
+                            251 ;i                         Allocated to registers r3 r4 
+                            252 ;sloc0                     Allocated to stack - sp -4
+                            253 ;sloc1                     Allocated to stack - sp -2
+                            254 ;------------------------------------------------------------
+                            255 ;	../../../contiki-sensinode//core/sys/autostart.c:63: autostart_exit(struct process * const processes[])
+                            256 ;	-----------------------------------------
+                            257 ;	 function autostart_exit
+                            258 ;	-----------------------------------------
+   00D0                     259 _autostart_exit:
+   00D0 E5 81               260 	mov	a,sp
+   00D2 24 05               261 	add	a,#0x05
+   00D4 F5 81               262 	mov	sp,a
+   00D6 AD 82               263 	mov	r5,dpl
+   00D8 AE 83               264 	mov	r6,dph
+   00DA AF F0               265 	mov	r7,b
+                            266 ;	../../../contiki-sensinode//core/sys/autostart.c:67: for(i = 0; processes[i] != NULL; ++i) {
+   00DC E4                  267 	clr	a
+   00DD FB                  268 	mov	r3,a
+   00DE FC                  269 	mov	r4,a
+   00DF E5 81               270 	mov	a,sp
+   00E1 24 FC               271 	add	a,#0xfc
+   00E3 F8                  272 	mov	r0,a
+   00E4 E4                  273 	clr	a
+   00E5 F6                  274 	mov	@r0,a
+   00E6 08                  275 	inc	r0
+   00E7 F6                  276 	mov	@r0,a
+   00E8                     277 00101$:
+   00E8 C0 03               278 	push	ar3
+   00EA C0 04               279 	push	ar4
+   00EC E5 81               280 	mov	a,sp
+   00EE 24 FA               281 	add	a,#0xfa
+   00F0 F8                  282 	mov	r0,a
+   00F1 E5 81               283 	mov	a,sp
+   00F3 24 FC               284 	add	a,#0xfc
+   00F5 F9                  285 	mov	r1,a
+   00F6 E6                  286 	mov	a,@r0
+   00F7 2D                  287 	add	a,r5
+   00F8 F7                  288 	mov	@r1,a
+   00F9 08                  289 	inc	r0
+   00FA E6                  290 	mov	a,@r0
+   00FB 3E                  291 	addc	a,r6
+   00FC 09                  292 	inc	r1
+   00FD F7                  293 	mov	@r1,a
+   00FE 09                  294 	inc	r1
+   00FF A7 07               295 	mov	@r1,ar7
+   0101 E5 81               296 	mov	a,sp
+   0103 24 FC               297 	add	a,#0xfc
+   0105 F8                  298 	mov	r0,a
+   0106 86 82               299 	mov	dpl,@r0
+   0108 08                  300 	inc	r0
+   0109 86 83               301 	mov	dph,@r0
+   010B 08                  302 	inc	r0
+   010C 86 F0               303 	mov	b,@r0
+   010E 12s00r00            304 	lcall	__gptrget
+   0111 18                  305 	dec	r0
+   0112 18                  306 	dec	r0
+   0113 F6                  307 	mov	@r0,a
+   0114 A3                  308 	inc	dptr
+   0115 12s00r00            309 	lcall	__gptrget
+   0118 08                  310 	inc	r0
+   0119 F6                  311 	mov	@r0,a
+   011A A3                  312 	inc	dptr
+   011B 12s00r00            313 	lcall	__gptrget
+   011E 08                  314 	inc	r0
+   011F F6                  315 	mov	@r0,a
+   0120 E5 81               316 	mov	a,sp
+   0122 24 FC               317 	add	a,#0xfc
+   0124 F8                  318 	mov	r0,a
+   0125 E4                  319 	clr	a
+   0126 C0 E0               320 	push	acc
+   0128 E4                  321 	clr	a
+   0129 C0 E0               322 	push	acc
+   012B E4                  323 	clr	a
+   012C C0 E0               324 	push	acc
+   012E 86 82               325 	mov	dpl,@r0
+   0130 08                  326 	inc	r0
+   0131 86 83               327 	mov	dph,@r0
+   0133 08                  328 	inc	r0
+   0134 86 F0               329 	mov	b,@r0
+   0136 12s00r00            330 	lcall	___gptr_cmp
+   0139 15 81               331 	dec	sp
+   013B 15 81               332 	dec	sp
+   013D 15 81               333 	dec	sp
+   013F 70 06               334 	jnz	00112$
+   0141 D0 04               335 	pop	ar4
+   0143 D0 03               336 	pop	ar3
+   0145 80 42               337 	sjmp	00105$
+   0147                     338 00112$:
+   0147 D0 04               339 	pop	ar4
+   0149 D0 03               340 	pop	ar3
+                            341 ;	../../../contiki-sensinode//core/sys/autostart.c:68: process_exit(processes[i]);
+   014B A8 81               342 	mov	r0,sp
+   014D 18                  343 	dec	r0
+   014E 18                  344 	dec	r0
+   014F 86 82               345 	mov	dpl,@r0
+   0151 08                  346 	inc	r0
+   0152 86 83               347 	mov	dph,@r0
+   0154 08                  348 	inc	r0
+   0155 86 F0               349 	mov	b,@r0
+   0157 C0 07               350 	push	ar7
+   0159 C0 06               351 	push	ar6
+   015B C0 05               352 	push	ar5
+   015D C0 04               353 	push	ar4
+   015F C0 03               354 	push	ar3
+   0161 78r00               355 	mov	r0,#_process_exit
+   0163 79s00               356 	mov	r1,#(_process_exit >> 8)
+   0165 7As00               357 	mov	r2,#(_process_exit >> 16)
+   0167 12s00r00            358 	lcall	__sdcc_banked_call
+   016A D0 03               359 	pop	ar3
+   016C D0 04               360 	pop	ar4
+   016E D0 05               361 	pop	ar5
+   0170 D0 06               362 	pop	ar6
+   0172 D0 07               363 	pop	ar7
+                            364 ;	../../../contiki-sensinode//core/sys/autostart.c:67: for(i = 0; processes[i] != NULL; ++i) {
+   0174 E5 81               365 	mov	a,sp
+   0176 24 FC               366 	add	a,#0xfc
+   0178 F8                  367 	mov	r0,a
+   0179 74 03               368 	mov	a,#0x03
+   017B 26                  369 	add	a,@r0
+   017C F6                  370 	mov	@r0,a
+   017D E4                  371 	clr	a
+   017E 08                  372 	inc	r0
+   017F 36                  373 	addc	a,@r0
+   0180 F6                  374 	mov	@r0,a
+   0181 0B                  375 	inc	r3
+   0182 BB 00 01            376 	cjne	r3,#0x00,00113$
+   0185 0C                  377 	inc	r4
+   0186                     378 00113$:
+   0186 02s00rE8            379 	ljmp	00101$
+   0189                     380 00105$:
+   0189 E5 81               381 	mov	a,sp
+   018B 24 FB               382 	add	a,#0xFB
+   018D F5 81               383 	mov	sp,a
+   018F 02s00r00            384 	ljmp	__sdcc_banked_ret
+                            385 	.area CSEG    (CODE)
+                            386 	.area CONST   (CODE)
+                            387 	.area XINIT   (CODE)
+                            388 	.area CABS    (ABS,CODE)

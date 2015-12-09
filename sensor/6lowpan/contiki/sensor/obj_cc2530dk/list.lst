@@ -1,0 +1,1266 @@
+                              1 ;--------------------------------------------------------
+                              2 ; File Created by SDCC : free open source ANSI-C Compiler
+                              3 ; Version 3.1.1 #7100 (Oct 29 2014) (Linux)
+                              4 ; This file was generated Wed Dec  2 18:10:56 2015
+                              5 ;--------------------------------------------------------
+                              6 	.module list
+                              7 	.optsdcc -mmcs51 --model-huge
+                              8 	
+                              9 ;--------------------------------------------------------
+                             10 ; Public variables in this module
+                             11 ;--------------------------------------------------------
+                             12 	.globl _list_init
+                             13 	.globl _list_head
+                             14 	.globl _list_copy
+                             15 	.globl _list_tail
+                             16 	.globl _list_add
+                             17 	.globl _list_push
+                             18 	.globl _list_chop
+                             19 	.globl _list_pop
+                             20 	.globl _list_remove
+                             21 	.globl _list_length
+                             22 	.globl _list_insert
+                             23 	.globl _list_item_next
+                             24 ;--------------------------------------------------------
+                             25 ; special function registers
+                             26 ;--------------------------------------------------------
+                             27 	.area RSEG    (ABS,DATA)
+   0000                      28 	.org 0x0000
+                             29 ;--------------------------------------------------------
+                             30 ; special function bits
+                             31 ;--------------------------------------------------------
+                             32 	.area RSEG    (ABS,DATA)
+   0000                      33 	.org 0x0000
+                             34 ;--------------------------------------------------------
+                             35 ; overlayable register banks
+                             36 ;--------------------------------------------------------
+                             37 	.area REG_BANK_0	(REL,OVR,DATA)
+   0000                      38 	.ds 8
+                             39 ;--------------------------------------------------------
+                             40 ; internal ram data
+                             41 ;--------------------------------------------------------
+                             42 	.area DSEG    (DATA)
+                             43 ;--------------------------------------------------------
+                             44 ; overlayable items in internal ram 
+                             45 ;--------------------------------------------------------
+                             46 	.area OSEG    (OVR,DATA)
+                             47 ;--------------------------------------------------------
+                             48 ; indirectly addressable internal ram data
+                             49 ;--------------------------------------------------------
+                             50 	.area ISEG    (DATA)
+                             51 ;--------------------------------------------------------
+                             52 ; absolute internal ram data
+                             53 ;--------------------------------------------------------
+                             54 	.area IABS    (ABS,DATA)
+                             55 	.area IABS    (ABS,DATA)
+                             56 ;--------------------------------------------------------
+                             57 ; bit data
+                             58 ;--------------------------------------------------------
+                             59 	.area BSEG    (BIT)
+                             60 ;--------------------------------------------------------
+                             61 ; paged external ram data
+                             62 ;--------------------------------------------------------
+                             63 	.area PSEG    (PAG,XDATA)
+                             64 ;--------------------------------------------------------
+                             65 ; external ram data
+                             66 ;--------------------------------------------------------
+                             67 	.area XSEG    (XDATA)
+                             68 ;--------------------------------------------------------
+                             69 ; absolute external ram data
+                             70 ;--------------------------------------------------------
+                             71 	.area XABS    (ABS,XDATA)
+                             72 ;--------------------------------------------------------
+                             73 ; external initialized ram data
+                             74 ;--------------------------------------------------------
+                             75 	.area XISEG   (XDATA)
+                             76 	.area HOME    (CODE)
+                             77 	.area GSINIT0 (CODE)
+                             78 	.area GSINIT1 (CODE)
+                             79 	.area GSINIT2 (CODE)
+                             80 	.area GSINIT3 (CODE)
+                             81 	.area GSINIT4 (CODE)
+                             82 	.area GSINIT5 (CODE)
+                             83 	.area GSINIT  (CODE)
+                             84 	.area GSFINAL (CODE)
+                             85 	.area CSEG    (CODE)
+                             86 ;--------------------------------------------------------
+                             87 ; global & static initialisations
+                             88 ;--------------------------------------------------------
+                             89 	.area HOME    (CODE)
+                             90 	.area GSINIT  (CODE)
+                             91 	.area GSFINAL (CODE)
+                             92 	.area GSINIT  (CODE)
+                             93 ;--------------------------------------------------------
+                             94 ; Home
+                             95 ;--------------------------------------------------------
+                             96 	.area HOME    (CODE)
+                             97 	.area HOME    (CODE)
+                             98 ;--------------------------------------------------------
+                             99 ; code
+                            100 ;--------------------------------------------------------
+                            101 	.area BANK1   (CODE)
+                            102 ;------------------------------------------------------------
+                            103 ;Allocation info for local variables in function 'list_init'
+                            104 ;------------------------------------------------------------
+                            105 ;list                      Allocated to registers r5 r6 r7 
+                            106 ;------------------------------------------------------------
+                            107 ;	../../../contiki-sensinode//core/lib/list.c:65: list_init(list_t list)
+                            108 ;	-----------------------------------------
+                            109 ;	 function list_init
+                            110 ;	-----------------------------------------
+   0000                     111 _list_init:
+                    0007    112 	ar7 = 0x07
+                    0006    113 	ar6 = 0x06
+                    0005    114 	ar5 = 0x05
+                    0004    115 	ar4 = 0x04
+                    0003    116 	ar3 = 0x03
+                    0002    117 	ar2 = 0x02
+                    0001    118 	ar1 = 0x01
+                    0000    119 	ar0 = 0x00
+                            120 ;	../../../contiki-sensinode//core/lib/list.c:67: *list = NULL;
+   0000 AD 82               121 	mov	r5,dpl
+   0002 AE 83               122 	mov	r6,dph
+   0004 AF F0               123 	mov	r7,b
+   0006 E4                  124 	clr	a
+   0007 12s00r00            125 	lcall	__gptrput
+   000A A3                  126 	inc	dptr
+   000B E4                  127 	clr	a
+   000C 12s00r00            128 	lcall	__gptrput
+   000F A3                  129 	inc	dptr
+   0010 E4                  130 	clr	a
+   0011 12s00r00            131 	lcall	__gptrput
+   0014 02s00r00            132 	ljmp	__sdcc_banked_ret
+                            133 ;------------------------------------------------------------
+                            134 ;Allocation info for local variables in function 'list_head'
+                            135 ;------------------------------------------------------------
+                            136 ;list                      Allocated to registers r5 r6 r7 
+                            137 ;------------------------------------------------------------
+                            138 ;	../../../contiki-sensinode//core/lib/list.c:82: list_head(list_t list)
+                            139 ;	-----------------------------------------
+                            140 ;	 function list_head
+                            141 ;	-----------------------------------------
+   0017                     142 _list_head:
+                            143 ;	../../../contiki-sensinode//core/lib/list.c:84: return *list;
+   0017 12s00r00            144 	lcall	__gptrget
+   001A FD                  145 	mov	r5,a
+   001B A3                  146 	inc	dptr
+   001C 12s00r00            147 	lcall	__gptrget
+   001F FE                  148 	mov	r6,a
+   0020 A3                  149 	inc	dptr
+   0021 12s00r00            150 	lcall	__gptrget
+   0024 FF                  151 	mov	r7,a
+   0025 8D 82               152 	mov	dpl,r5
+   0027 8E 83               153 	mov	dph,r6
+   0029 8F F0               154 	mov	b,r7
+   002B 02s00r00            155 	ljmp	__sdcc_banked_ret
+                            156 ;------------------------------------------------------------
+                            157 ;Allocation info for local variables in function 'list_copy'
+                            158 ;------------------------------------------------------------
+                            159 ;src                       Allocated to stack - sp -5
+                            160 ;dest                      Allocated to registers r5 r6 r7 
+                            161 ;------------------------------------------------------------
+                            162 ;	../../../contiki-sensinode//core/lib/list.c:100: list_copy(list_t dest, list_t src)
+                            163 ;	-----------------------------------------
+                            164 ;	 function list_copy
+                            165 ;	-----------------------------------------
+   002E                     166 _list_copy:
+   002E AD 82               167 	mov	r5,dpl
+   0030 AE 83               168 	mov	r6,dph
+   0032 AF F0               169 	mov	r7,b
+                            170 ;	../../../contiki-sensinode//core/lib/list.c:102: *dest = *src;
+   0034 E5 81               171 	mov	a,sp
+   0036 24 FB               172 	add	a,#0xfb
+   0038 F8                  173 	mov	r0,a
+   0039 86 02               174 	mov	ar2,@r0
+   003B 08                  175 	inc	r0
+   003C 86 03               176 	mov	ar3,@r0
+   003E 08                  177 	inc	r0
+   003F 86 04               178 	mov	ar4,@r0
+   0041 8A 82               179 	mov	dpl,r2
+   0043 8B 83               180 	mov	dph,r3
+   0045 8C F0               181 	mov	b,r4
+   0047 12s00r00            182 	lcall	__gptrget
+   004A FA                  183 	mov	r2,a
+   004B A3                  184 	inc	dptr
+   004C 12s00r00            185 	lcall	__gptrget
+   004F FB                  186 	mov	r3,a
+   0050 A3                  187 	inc	dptr
+   0051 12s00r00            188 	lcall	__gptrget
+   0054 FC                  189 	mov	r4,a
+   0055 8D 82               190 	mov	dpl,r5
+   0057 8E 83               191 	mov	dph,r6
+   0059 8F F0               192 	mov	b,r7
+   005B EA                  193 	mov	a,r2
+   005C 12s00r00            194 	lcall	__gptrput
+   005F A3                  195 	inc	dptr
+   0060 EB                  196 	mov	a,r3
+   0061 12s00r00            197 	lcall	__gptrput
+   0064 A3                  198 	inc	dptr
+   0065 EC                  199 	mov	a,r4
+   0066 12s00r00            200 	lcall	__gptrput
+   0069 02s00r00            201 	ljmp	__sdcc_banked_ret
+                            202 ;------------------------------------------------------------
+                            203 ;Allocation info for local variables in function 'list_tail'
+                            204 ;------------------------------------------------------------
+                            205 ;list                      Allocated to registers r5 r6 r7 
+                            206 ;l                         Allocated to registers r5 r6 r7 
+                            207 ;------------------------------------------------------------
+                            208 ;	../../../contiki-sensinode//core/lib/list.c:117: list_tail(list_t list)
+                            209 ;	-----------------------------------------
+                            210 ;	 function list_tail
+                            211 ;	-----------------------------------------
+   006C                     212 _list_tail:
+                            213 ;	../../../contiki-sensinode//core/lib/list.c:121: if(*list == NULL) {
+   006C 12s00r00            214 	lcall	__gptrget
+   006F FD                  215 	mov	r5,a
+   0070 A3                  216 	inc	dptr
+   0071 12s00r00            217 	lcall	__gptrget
+   0074 FE                  218 	mov	r6,a
+   0075 A3                  219 	inc	dptr
+   0076 12s00r00            220 	lcall	__gptrget
+   0079 FF                  221 	mov	r7,a
+   007A ED                  222 	mov	a,r5
+   007B 4E                  223 	orl	a,r6
+                            224 ;	../../../contiki-sensinode//core/lib/list.c:122: return NULL;
+   007C 70 07               225 	jnz	00102$
+   007E 90 00 00            226 	mov	dptr,#0x0000
+   0081 F5 F0               227 	mov	b,a
+   0083 80 3C               228 	sjmp	00107$
+   0085                     229 00102$:
+                            230 ;	../../../contiki-sensinode//core/lib/list.c:125: for(l = *list; l->next != NULL; l = l->next);
+   0085                     231 00103$:
+   0085 8D 82               232 	mov	dpl,r5
+   0087 8E 83               233 	mov	dph,r6
+   0089 8F F0               234 	mov	b,r7
+   008B 12s00r00            235 	lcall	__gptrget
+   008E FA                  236 	mov	r2,a
+   008F A3                  237 	inc	dptr
+   0090 12s00r00            238 	lcall	__gptrget
+   0093 FB                  239 	mov	r3,a
+   0094 A3                  240 	inc	dptr
+   0095 12s00r00            241 	lcall	__gptrget
+   0098 FC                  242 	mov	r4,a
+   0099 E4                  243 	clr	a
+   009A C0 E0               244 	push	acc
+   009C E4                  245 	clr	a
+   009D C0 E0               246 	push	acc
+   009F E4                  247 	clr	a
+   00A0 C0 E0               248 	push	acc
+   00A2 8A 82               249 	mov	dpl,r2
+   00A4 8B 83               250 	mov	dph,r3
+   00A6 8C F0               251 	mov	b,r4
+   00A8 12s00r00            252 	lcall	___gptr_cmp
+   00AB 15 81               253 	dec	sp
+   00AD 15 81               254 	dec	sp
+   00AF 15 81               255 	dec	sp
+   00B1 60 08               256 	jz	00106$
+   00B3 8A 05               257 	mov	ar5,r2
+   00B5 8B 06               258 	mov	ar6,r3
+   00B7 8C 07               259 	mov	ar7,r4
+   00B9 80 CA               260 	sjmp	00103$
+   00BB                     261 00106$:
+                            262 ;	../../../contiki-sensinode//core/lib/list.c:127: return l;
+   00BB 8D 82               263 	mov	dpl,r5
+   00BD 8E 83               264 	mov	dph,r6
+   00BF 8F F0               265 	mov	b,r7
+   00C1                     266 00107$:
+   00C1 02s00r00            267 	ljmp	__sdcc_banked_ret
+                            268 ;------------------------------------------------------------
+                            269 ;Allocation info for local variables in function 'list_add'
+                            270 ;------------------------------------------------------------
+                            271 ;item                      Allocated to stack - sp -5
+                            272 ;list                      Allocated to registers r5 r6 r7 
+                            273 ;l                         Allocated to registers r2 r3 r4 
+                            274 ;------------------------------------------------------------
+                            275 ;	../../../contiki-sensinode//core/lib/list.c:142: list_add(list_t list, void *item)
+                            276 ;	-----------------------------------------
+                            277 ;	 function list_add
+                            278 ;	-----------------------------------------
+   00C4                     279 _list_add:
+   00C4 AD 82               280 	mov	r5,dpl
+   00C6 AE 83               281 	mov	r6,dph
+   00C8 AF F0               282 	mov	r7,b
+                            283 ;	../../../contiki-sensinode//core/lib/list.c:147: list_remove(list, item);
+   00CA C0 07               284 	push	ar7
+   00CC C0 06               285 	push	ar6
+   00CE C0 05               286 	push	ar5
+   00D0 E5 81               287 	mov	a,sp
+   00D2 24 F8               288 	add	a,#0xf8
+   00D4 F8                  289 	mov	r0,a
+   00D5 E6                  290 	mov	a,@r0
+   00D6 C0 E0               291 	push	acc
+   00D8 08                  292 	inc	r0
+   00D9 E6                  293 	mov	a,@r0
+   00DA C0 E0               294 	push	acc
+   00DC 08                  295 	inc	r0
+   00DD E6                  296 	mov	a,@r0
+   00DE C0 E0               297 	push	acc
+   00E0 8D 82               298 	mov	dpl,r5
+   00E2 8E 83               299 	mov	dph,r6
+   00E4 8F F0               300 	mov	b,r7
+   00E6 78rD0               301 	mov	r0,#_list_remove
+   00E8 79s03               302 	mov	r1,#(_list_remove >> 8)
+   00EA 7As00               303 	mov	r2,#(_list_remove >> 16)
+   00EC 12s00r00            304 	lcall	__sdcc_banked_call
+   00EF 15 81               305 	dec	sp
+   00F1 15 81               306 	dec	sp
+   00F3 15 81               307 	dec	sp
+   00F5 D0 05               308 	pop	ar5
+   00F7 D0 06               309 	pop	ar6
+   00F9 D0 07               310 	pop	ar7
+                            311 ;	../../../contiki-sensinode//core/lib/list.c:149: ((struct list *)item)->next = NULL;
+   00FB E5 81               312 	mov	a,sp
+   00FD 24 FB               313 	add	a,#0xfb
+   00FF F8                  314 	mov	r0,a
+   0100 86 02               315 	mov	ar2,@r0
+   0102 08                  316 	inc	r0
+   0103 86 03               317 	mov	ar3,@r0
+   0105 08                  318 	inc	r0
+   0106 86 04               319 	mov	ar4,@r0
+   0108 8A 82               320 	mov	dpl,r2
+   010A 8B 83               321 	mov	dph,r3
+   010C 8C F0               322 	mov	b,r4
+   010E E4                  323 	clr	a
+   010F 12s00r00            324 	lcall	__gptrput
+   0112 A3                  325 	inc	dptr
+   0113 E4                  326 	clr	a
+   0114 12s00r00            327 	lcall	__gptrput
+   0117 A3                  328 	inc	dptr
+   0118 E4                  329 	clr	a
+   0119 12s00r00            330 	lcall	__gptrput
+                            331 ;	../../../contiki-sensinode//core/lib/list.c:151: l = list_tail(list);
+   011C 8D 82               332 	mov	dpl,r5
+   011E 8E 83               333 	mov	dph,r6
+   0120 8F F0               334 	mov	b,r7
+   0122 C0 07               335 	push	ar7
+   0124 C0 06               336 	push	ar6
+   0126 C0 05               337 	push	ar5
+   0128 78r6C               338 	mov	r0,#_list_tail
+   012A 79s00               339 	mov	r1,#(_list_tail >> 8)
+   012C 7As00               340 	mov	r2,#(_list_tail >> 16)
+   012E 12s00r00            341 	lcall	__sdcc_banked_call
+   0131 AA 82               342 	mov	r2,dpl
+   0133 AB 83               343 	mov	r3,dph
+   0135 AC F0               344 	mov	r4,b
+   0137 D0 05               345 	pop	ar5
+   0139 D0 06               346 	pop	ar6
+   013B D0 07               347 	pop	ar7
+                            348 ;	../../../contiki-sensinode//core/lib/list.c:153: if(l == NULL) {
+   013D EA                  349 	mov	a,r2
+   013E 4B                  350 	orl	a,r3
+   013F 70 1D               351 	jnz	00102$
+                            352 ;	../../../contiki-sensinode//core/lib/list.c:154: *list = item;
+   0141 8D 82               353 	mov	dpl,r5
+   0143 8E 83               354 	mov	dph,r6
+   0145 8F F0               355 	mov	b,r7
+   0147 E5 81               356 	mov	a,sp
+   0149 24 FB               357 	add	a,#0xfb
+   014B F8                  358 	mov	r0,a
+   014C E6                  359 	mov	a,@r0
+   014D 12s00r00            360 	lcall	__gptrput
+   0150 A3                  361 	inc	dptr
+   0151 08                  362 	inc	r0
+   0152 E6                  363 	mov	a,@r0
+   0153 12s00r00            364 	lcall	__gptrput
+   0156 A3                  365 	inc	dptr
+   0157 08                  366 	inc	r0
+   0158 E6                  367 	mov	a,@r0
+   0159 12s00r00            368 	lcall	__gptrput
+   015C 80 21               369 	sjmp	00104$
+   015E                     370 00102$:
+                            371 ;	../../../contiki-sensinode//core/lib/list.c:156: l->next = item;
+   015E E5 81               372 	mov	a,sp
+   0160 24 FB               373 	add	a,#0xfb
+   0162 F8                  374 	mov	r0,a
+   0163 86 05               375 	mov	ar5,@r0
+   0165 08                  376 	inc	r0
+   0166 86 06               377 	mov	ar6,@r0
+   0168 08                  378 	inc	r0
+   0169 86 07               379 	mov	ar7,@r0
+   016B 8A 82               380 	mov	dpl,r2
+   016D 8B 83               381 	mov	dph,r3
+   016F 8C F0               382 	mov	b,r4
+   0171 ED                  383 	mov	a,r5
+   0172 12s00r00            384 	lcall	__gptrput
+   0175 A3                  385 	inc	dptr
+   0176 EE                  386 	mov	a,r6
+   0177 12s00r00            387 	lcall	__gptrput
+   017A A3                  388 	inc	dptr
+   017B EF                  389 	mov	a,r7
+   017C 12s00r00            390 	lcall	__gptrput
+   017F                     391 00104$:
+   017F 02s00r00            392 	ljmp	__sdcc_banked_ret
+                            393 ;------------------------------------------------------------
+                            394 ;Allocation info for local variables in function 'list_push'
+                            395 ;------------------------------------------------------------
+                            396 ;item                      Allocated to stack - sp -8
+                            397 ;list                      Allocated to stack - sp -2
+                            398 ;------------------------------------------------------------
+                            399 ;	../../../contiki-sensinode//core/lib/list.c:164: list_push(list_t list, void *item)
+                            400 ;	-----------------------------------------
+                            401 ;	 function list_push
+                            402 ;	-----------------------------------------
+   0182                     403 _list_push:
+   0182 C0 82               404 	push	dpl
+   0184 C0 83               405 	push	dph
+   0186 C0 F0               406 	push	b
+                            407 ;	../../../contiki-sensinode//core/lib/list.c:169: list_remove(list, item);
+   0188 E5 81               408 	mov	a,sp
+   018A 24 F8               409 	add	a,#0xf8
+   018C F8                  410 	mov	r0,a
+   018D E6                  411 	mov	a,@r0
+   018E C0 E0               412 	push	acc
+   0190 08                  413 	inc	r0
+   0191 E6                  414 	mov	a,@r0
+   0192 C0 E0               415 	push	acc
+   0194 08                  416 	inc	r0
+   0195 E6                  417 	mov	a,@r0
+   0196 C0 E0               418 	push	acc
+   0198 E5 81               419 	mov	a,sp
+   019A 24 FB               420 	add	a,#0xfb
+   019C F8                  421 	mov	r0,a
+   019D 86 82               422 	mov	dpl,@r0
+   019F 08                  423 	inc	r0
+   01A0 86 83               424 	mov	dph,@r0
+   01A2 08                  425 	inc	r0
+   01A3 86 F0               426 	mov	b,@r0
+   01A5 78rD0               427 	mov	r0,#_list_remove
+   01A7 79s03               428 	mov	r1,#(_list_remove >> 8)
+   01A9 7As00               429 	mov	r2,#(_list_remove >> 16)
+   01AB 12s00r00            430 	lcall	__sdcc_banked_call
+   01AE 15 81               431 	dec	sp
+   01B0 15 81               432 	dec	sp
+   01B2 15 81               433 	dec	sp
+                            434 ;	../../../contiki-sensinode//core/lib/list.c:171: ((struct list *)item)->next = *list;
+   01B4 E5 81               435 	mov	a,sp
+   01B6 24 F8               436 	add	a,#0xf8
+   01B8 F8                  437 	mov	r0,a
+   01B9 86 02               438 	mov	ar2,@r0
+   01BB 08                  439 	inc	r0
+   01BC 86 03               440 	mov	ar3,@r0
+   01BE 08                  441 	inc	r0
+   01BF 86 04               442 	mov	ar4,@r0
+   01C1 A8 81               443 	mov	r0,sp
+   01C3 18                  444 	dec	r0
+   01C4 18                  445 	dec	r0
+   01C5 86 82               446 	mov	dpl,@r0
+   01C7 08                  447 	inc	r0
+   01C8 86 83               448 	mov	dph,@r0
+   01CA 08                  449 	inc	r0
+   01CB 86 F0               450 	mov	b,@r0
+   01CD 12s00r00            451 	lcall	__gptrget
+   01D0 FD                  452 	mov	r5,a
+   01D1 A3                  453 	inc	dptr
+   01D2 12s00r00            454 	lcall	__gptrget
+   01D5 FE                  455 	mov	r6,a
+   01D6 A3                  456 	inc	dptr
+   01D7 12s00r00            457 	lcall	__gptrget
+   01DA FF                  458 	mov	r7,a
+   01DB 8A 82               459 	mov	dpl,r2
+   01DD 8B 83               460 	mov	dph,r3
+   01DF 8C F0               461 	mov	b,r4
+   01E1 ED                  462 	mov	a,r5
+   01E2 12s00r00            463 	lcall	__gptrput
+   01E5 A3                  464 	inc	dptr
+   01E6 EE                  465 	mov	a,r6
+   01E7 12s00r00            466 	lcall	__gptrput
+   01EA A3                  467 	inc	dptr
+   01EB EF                  468 	mov	a,r7
+   01EC 12s00r00            469 	lcall	__gptrput
+                            470 ;	../../../contiki-sensinode//core/lib/list.c:172: *list = item;
+   01EF A8 81               471 	mov	r0,sp
+   01F1 18                  472 	dec	r0
+   01F2 18                  473 	dec	r0
+   01F3 86 82               474 	mov	dpl,@r0
+   01F5 08                  475 	inc	r0
+   01F6 86 83               476 	mov	dph,@r0
+   01F8 08                  477 	inc	r0
+   01F9 86 F0               478 	mov	b,@r0
+   01FB E5 81               479 	mov	a,sp
+   01FD 24 F8               480 	add	a,#0xf8
+   01FF F9                  481 	mov	r1,a
+   0200 E7                  482 	mov	a,@r1
+   0201 12s00r00            483 	lcall	__gptrput
+   0204 A3                  484 	inc	dptr
+   0205 09                  485 	inc	r1
+   0206 E7                  486 	mov	a,@r1
+   0207 12s00r00            487 	lcall	__gptrput
+   020A A3                  488 	inc	dptr
+   020B 09                  489 	inc	r1
+   020C E7                  490 	mov	a,@r1
+   020D 12s00r00            491 	lcall	__gptrput
+   0210 15 81               492 	dec	sp
+   0212 15 81               493 	dec	sp
+   0214 15 81               494 	dec	sp
+   0216 02s00r00            495 	ljmp	__sdcc_banked_ret
+                            496 ;------------------------------------------------------------
+                            497 ;Allocation info for local variables in function 'list_chop'
+                            498 ;------------------------------------------------------------
+                            499 ;list                      Allocated to stack - sp -5
+                            500 ;l                         Allocated to stack - sp -2
+                            501 ;r                         Allocated to registers r5 r6 r7 
+                            502 ;------------------------------------------------------------
+                            503 ;	../../../contiki-sensinode//core/lib/list.c:185: list_chop(list_t list)
+                            504 ;	-----------------------------------------
+                            505 ;	 function list_chop
+                            506 ;	-----------------------------------------
+   0219                     507 _list_chop:
+   0219 C0 82               508 	push	dpl
+   021B C0 83               509 	push	dph
+   021D C0 F0               510 	push	b
+   021F 05 81               511 	inc	sp
+   0221 05 81               512 	inc	sp
+   0223 05 81               513 	inc	sp
+                            514 ;	../../../contiki-sensinode//core/lib/list.c:189: if(*list == NULL) {
+   0225 E5 81               515 	mov	a,sp
+   0227 24 FB               516 	add	a,#0xfb
+   0229 F8                  517 	mov	r0,a
+   022A 86 82               518 	mov	dpl,@r0
+   022C 08                  519 	inc	r0
+   022D 86 83               520 	mov	dph,@r0
+   022F 08                  521 	inc	r0
+   0230 86 F0               522 	mov	b,@r0
+   0232 12s00r00            523 	lcall	__gptrget
+   0235 FA                  524 	mov	r2,a
+   0236 A3                  525 	inc	dptr
+   0237 12s00r00            526 	lcall	__gptrget
+   023A FB                  527 	mov	r3,a
+   023B A3                  528 	inc	dptr
+   023C 12s00r00            529 	lcall	__gptrget
+   023F FC                  530 	mov	r4,a
+   0240 EA                  531 	mov	a,r2
+   0241 4B                  532 	orl	a,r3
+                            533 ;	../../../contiki-sensinode//core/lib/list.c:190: return NULL;
+   0242 70 08               534 	jnz	00102$
+   0244 90 00 00            535 	mov	dptr,#0x0000
+   0247 F5 F0               536 	mov	b,a
+   0249 02s03r5A            537 	ljmp	00109$
+   024C                     538 00102$:
+                            539 ;	../../../contiki-sensinode//core/lib/list.c:192: if(((struct list *)*list)->next == NULL) {
+   024C 8A 05               540 	mov	ar5,r2
+   024E 8B 06               541 	mov	ar6,r3
+   0250 8C 07               542 	mov	ar7,r4
+   0252 8D 82               543 	mov	dpl,r5
+   0254 8E 83               544 	mov	dph,r6
+   0256 8F F0               545 	mov	b,r7
+   0258 12s00r00            546 	lcall	__gptrget
+   025B FD                  547 	mov	r5,a
+   025C A3                  548 	inc	dptr
+   025D 12s00r00            549 	lcall	__gptrget
+   0260 FE                  550 	mov	r6,a
+   0261 A3                  551 	inc	dptr
+   0262 12s00r00            552 	lcall	__gptrget
+   0265 FF                  553 	mov	r7,a
+   0266 ED                  554 	mov	a,r5
+   0267 4E                  555 	orl	a,r6
+   0268 70 42               556 	jnz	00104$
+                            557 ;	../../../contiki-sensinode//core/lib/list.c:193: l = *list;
+   026A 8A 05               558 	mov	ar5,r2
+   026C 8B 06               559 	mov	ar6,r3
+   026E 8C 07               560 	mov	ar7,r4
+   0270 A8 81               561 	mov	r0,sp
+   0272 18                  562 	dec	r0
+   0273 18                  563 	dec	r0
+   0274 A6 05               564 	mov	@r0,ar5
+   0276 08                  565 	inc	r0
+   0277 A6 06               566 	mov	@r0,ar6
+   0279 08                  567 	inc	r0
+   027A A6 07               568 	mov	@r0,ar7
+                            569 ;	../../../contiki-sensinode//core/lib/list.c:194: *list = NULL;
+   027C E5 81               570 	mov	a,sp
+   027E 24 FB               571 	add	a,#0xfb
+   0280 F8                  572 	mov	r0,a
+   0281 86 82               573 	mov	dpl,@r0
+   0283 08                  574 	inc	r0
+   0284 86 83               575 	mov	dph,@r0
+   0286 08                  576 	inc	r0
+   0287 86 F0               577 	mov	b,@r0
+   0289 E4                  578 	clr	a
+   028A 12s00r00            579 	lcall	__gptrput
+   028D A3                  580 	inc	dptr
+   028E E4                  581 	clr	a
+   028F 12s00r00            582 	lcall	__gptrput
+   0292 A3                  583 	inc	dptr
+   0293 E4                  584 	clr	a
+   0294 12s00r00            585 	lcall	__gptrput
+                            586 ;	../../../contiki-sensinode//core/lib/list.c:195: return l;
+   0297 A8 81               587 	mov	r0,sp
+   0299 18                  588 	dec	r0
+   029A 18                  589 	dec	r0
+   029B 86 05               590 	mov	ar5,@r0
+   029D 08                  591 	inc	r0
+   029E 86 06               592 	mov	ar6,@r0
+   02A0 08                  593 	inc	r0
+   02A1 86 07               594 	mov	ar7,@r0
+   02A3 8D 82               595 	mov	dpl,r5
+   02A5 8E 83               596 	mov	dph,r6
+   02A7 8F F0               597 	mov	b,r7
+   02A9 02s03r5A            598 	ljmp	00109$
+   02AC                     599 00104$:
+                            600 ;	../../../contiki-sensinode//core/lib/list.c:198: for(l = *list; l->next->next != NULL; l = l->next);
+   02AC A8 81               601 	mov	r0,sp
+   02AE 18                  602 	dec	r0
+   02AF 18                  603 	dec	r0
+   02B0 A6 02               604 	mov	@r0,ar2
+   02B2 08                  605 	inc	r0
+   02B3 A6 03               606 	mov	@r0,ar3
+   02B5 08                  607 	inc	r0
+   02B6 A6 04               608 	mov	@r0,ar4
+   02B8                     609 00105$:
+   02B8 A8 81               610 	mov	r0,sp
+   02BA 18                  611 	dec	r0
+   02BB 18                  612 	dec	r0
+   02BC 86 82               613 	mov	dpl,@r0
+   02BE 08                  614 	inc	r0
+   02BF 86 83               615 	mov	dph,@r0
+   02C1 08                  616 	inc	r0
+   02C2 86 F0               617 	mov	b,@r0
+   02C4 12s00r00            618 	lcall	__gptrget
+   02C7 FD                  619 	mov	r5,a
+   02C8 A3                  620 	inc	dptr
+   02C9 12s00r00            621 	lcall	__gptrget
+   02CC FE                  622 	mov	r6,a
+   02CD A3                  623 	inc	dptr
+   02CE 12s00r00            624 	lcall	__gptrget
+   02D1 FF                  625 	mov	r7,a
+   02D2 8D 82               626 	mov	dpl,r5
+   02D4 8E 83               627 	mov	dph,r6
+   02D6 8F F0               628 	mov	b,r7
+   02D8 12s00r00            629 	lcall	__gptrget
+   02DB FD                  630 	mov	r5,a
+   02DC A3                  631 	inc	dptr
+   02DD 12s00r00            632 	lcall	__gptrget
+   02E0 FE                  633 	mov	r6,a
+   02E1 A3                  634 	inc	dptr
+   02E2 12s00r00            635 	lcall	__gptrget
+   02E5 FF                  636 	mov	r7,a
+   02E6 E4                  637 	clr	a
+   02E7 C0 E0               638 	push	acc
+   02E9 E4                  639 	clr	a
+   02EA C0 E0               640 	push	acc
+   02EC E4                  641 	clr	a
+   02ED C0 E0               642 	push	acc
+   02EF 8D 82               643 	mov	dpl,r5
+   02F1 8E 83               644 	mov	dph,r6
+   02F3 8F F0               645 	mov	b,r7
+   02F5 12s00r00            646 	lcall	___gptr_cmp
+   02F8 15 81               647 	dec	sp
+   02FA 15 81               648 	dec	sp
+   02FC 15 81               649 	dec	sp
+   02FE 60 20               650 	jz	00108$
+   0300 A8 81               651 	mov	r0,sp
+   0302 18                  652 	dec	r0
+   0303 18                  653 	dec	r0
+   0304 86 82               654 	mov	dpl,@r0
+   0306 08                  655 	inc	r0
+   0307 86 83               656 	mov	dph,@r0
+   0309 08                  657 	inc	r0
+   030A 86 F0               658 	mov	b,@r0
+   030C 12s00r00            659 	lcall	__gptrget
+   030F 18                  660 	dec	r0
+   0310 18                  661 	dec	r0
+   0311 F6                  662 	mov	@r0,a
+   0312 A3                  663 	inc	dptr
+   0313 12s00r00            664 	lcall	__gptrget
+   0316 08                  665 	inc	r0
+   0317 F6                  666 	mov	@r0,a
+   0318 A3                  667 	inc	dptr
+   0319 12s00r00            668 	lcall	__gptrget
+   031C 08                  669 	inc	r0
+   031D F6                  670 	mov	@r0,a
+   031E 80 98               671 	sjmp	00105$
+   0320                     672 00108$:
+                            673 ;	../../../contiki-sensinode//core/lib/list.c:200: r = l->next;
+   0320 A8 81               674 	mov	r0,sp
+   0322 18                  675 	dec	r0
+   0323 18                  676 	dec	r0
+   0324 86 82               677 	mov	dpl,@r0
+   0326 08                  678 	inc	r0
+   0327 86 83               679 	mov	dph,@r0
+   0329 08                  680 	inc	r0
+   032A 86 F0               681 	mov	b,@r0
+   032C 12s00r00            682 	lcall	__gptrget
+   032F FD                  683 	mov	r5,a
+   0330 A3                  684 	inc	dptr
+   0331 12s00r00            685 	lcall	__gptrget
+   0334 FE                  686 	mov	r6,a
+   0335 A3                  687 	inc	dptr
+   0336 12s00r00            688 	lcall	__gptrget
+   0339 FF                  689 	mov	r7,a
+                            690 ;	../../../contiki-sensinode//core/lib/list.c:201: l->next = NULL;
+   033A A8 81               691 	mov	r0,sp
+   033C 18                  692 	dec	r0
+   033D 18                  693 	dec	r0
+   033E 86 82               694 	mov	dpl,@r0
+   0340 08                  695 	inc	r0
+   0341 86 83               696 	mov	dph,@r0
+   0343 08                  697 	inc	r0
+   0344 86 F0               698 	mov	b,@r0
+   0346 E4                  699 	clr	a
+   0347 12s00r00            700 	lcall	__gptrput
+   034A A3                  701 	inc	dptr
+   034B E4                  702 	clr	a
+   034C 12s00r00            703 	lcall	__gptrput
+   034F A3                  704 	inc	dptr
+   0350 E4                  705 	clr	a
+   0351 12s00r00            706 	lcall	__gptrput
+                            707 ;	../../../contiki-sensinode//core/lib/list.c:203: return r;
+   0354 8D 82               708 	mov	dpl,r5
+   0356 8E 83               709 	mov	dph,r6
+   0358 8F F0               710 	mov	b,r7
+   035A                     711 00109$:
+   035A E5 81               712 	mov	a,sp
+   035C 24 FA               713 	add	a,#0xFA
+   035E F5 81               714 	mov	sp,a
+   0360 02s00r00            715 	ljmp	__sdcc_banked_ret
+                            716 ;------------------------------------------------------------
+                            717 ;Allocation info for local variables in function 'list_pop'
+                            718 ;------------------------------------------------------------
+                            719 ;list                      Allocated to registers r5 r6 r7 
+                            720 ;l                         Allocated to stack - sp -2
+                            721 ;------------------------------------------------------------
+                            722 ;	../../../contiki-sensinode//core/lib/list.c:217: list_pop(list_t list)
+                            723 ;	-----------------------------------------
+                            724 ;	 function list_pop
+                            725 ;	-----------------------------------------
+   0363                     726 _list_pop:
+   0363 05 81               727 	inc	sp
+   0365 05 81               728 	inc	sp
+   0367 05 81               729 	inc	sp
+                            730 ;	../../../contiki-sensinode//core/lib/list.c:220: l = *list;
+   0369 AD 82               731 	mov	r5,dpl
+   036B AE 83               732 	mov	r6,dph
+   036D AF F0               733 	mov	r7,b
+   036F 12s00r00            734 	lcall	__gptrget
+   0372 FA                  735 	mov	r2,a
+   0373 A3                  736 	inc	dptr
+   0374 12s00r00            737 	lcall	__gptrget
+   0377 FB                  738 	mov	r3,a
+   0378 A3                  739 	inc	dptr
+   0379 12s00r00            740 	lcall	__gptrget
+   037C FC                  741 	mov	r4,a
+   037D A8 81               742 	mov	r0,sp
+   037F 18                  743 	dec	r0
+   0380 18                  744 	dec	r0
+   0381 A6 02               745 	mov	@r0,ar2
+   0383 08                  746 	inc	r0
+   0384 A6 03               747 	mov	@r0,ar3
+   0386 08                  748 	inc	r0
+   0387 A6 04               749 	mov	@r0,ar4
+                            750 ;	../../../contiki-sensinode//core/lib/list.c:221: if(*list != NULL) {
+   0389 EA                  751 	mov	a,r2
+   038A 4B                  752 	orl	a,r3
+   038B 60 28               753 	jz	00102$
+                            754 ;	../../../contiki-sensinode//core/lib/list.c:222: *list = ((struct list *)*list)->next;
+   038D 8A 82               755 	mov	dpl,r2
+   038F 8B 83               756 	mov	dph,r3
+   0391 8C F0               757 	mov	b,r4
+   0393 12s00r00            758 	lcall	__gptrget
+   0396 FA                  759 	mov	r2,a
+   0397 A3                  760 	inc	dptr
+   0398 12s00r00            761 	lcall	__gptrget
+   039B FB                  762 	mov	r3,a
+   039C A3                  763 	inc	dptr
+   039D 12s00r00            764 	lcall	__gptrget
+   03A0 FC                  765 	mov	r4,a
+   03A1 8D 82               766 	mov	dpl,r5
+   03A3 8E 83               767 	mov	dph,r6
+   03A5 8F F0               768 	mov	b,r7
+   03A7 EA                  769 	mov	a,r2
+   03A8 12s00r00            770 	lcall	__gptrput
+   03AB A3                  771 	inc	dptr
+   03AC EB                  772 	mov	a,r3
+   03AD 12s00r00            773 	lcall	__gptrput
+   03B0 A3                  774 	inc	dptr
+   03B1 EC                  775 	mov	a,r4
+   03B2 12s00r00            776 	lcall	__gptrput
+   03B5                     777 00102$:
+                            778 ;	../../../contiki-sensinode//core/lib/list.c:225: return l;
+   03B5 A8 81               779 	mov	r0,sp
+   03B7 18                  780 	dec	r0
+   03B8 18                  781 	dec	r0
+   03B9 86 05               782 	mov	ar5,@r0
+   03BB 08                  783 	inc	r0
+   03BC 86 06               784 	mov	ar6,@r0
+   03BE 08                  785 	inc	r0
+   03BF 86 07               786 	mov	ar7,@r0
+   03C1 8D 82               787 	mov	dpl,r5
+   03C3 8E 83               788 	mov	dph,r6
+   03C5 8F F0               789 	mov	b,r7
+   03C7 15 81               790 	dec	sp
+   03C9 15 81               791 	dec	sp
+   03CB 15 81               792 	dec	sp
+   03CD 02s00r00            793 	ljmp	__sdcc_banked_ret
+                            794 ;------------------------------------------------------------
+                            795 ;Allocation info for local variables in function 'list_remove'
+                            796 ;------------------------------------------------------------
+                            797 ;item                      Allocated to stack - sp -11
+                            798 ;list                      Allocated to stack - sp -5
+                            799 ;l                         Allocated to stack - sp -2
+                            800 ;r                         Allocated to registers r5 r6 r7 
+                            801 ;------------------------------------------------------------
+                            802 ;	../../../contiki-sensinode//core/lib/list.c:239: list_remove(list_t list, void *item)
+                            803 ;	-----------------------------------------
+                            804 ;	 function list_remove
+                            805 ;	-----------------------------------------
+   03D0                     806 _list_remove:
+   03D0 C0 82               807 	push	dpl
+   03D2 C0 83               808 	push	dph
+   03D4 C0 F0               809 	push	b
+   03D6 05 81               810 	inc	sp
+   03D8 05 81               811 	inc	sp
+   03DA 05 81               812 	inc	sp
+                            813 ;	../../../contiki-sensinode//core/lib/list.c:243: if(*list == NULL) {
+   03DC E5 81               814 	mov	a,sp
+   03DE 24 FB               815 	add	a,#0xfb
+   03E0 F8                  816 	mov	r0,a
+   03E1 86 82               817 	mov	dpl,@r0
+   03E3 08                  818 	inc	r0
+   03E4 86 83               819 	mov	dph,@r0
+   03E6 08                  820 	inc	r0
+   03E7 86 F0               821 	mov	b,@r0
+   03E9 12s00r00            822 	lcall	__gptrget
+   03EC FA                  823 	mov	r2,a
+   03ED A3                  824 	inc	dptr
+   03EE 12s00r00            825 	lcall	__gptrget
+   03F1 FB                  826 	mov	r3,a
+   03F2 A3                  827 	inc	dptr
+   03F3 12s00r00            828 	lcall	__gptrget
+   03F6 FC                  829 	mov	r4,a
+   03F7 EA                  830 	mov	a,r2
+   03F8 4B                  831 	orl	a,r3
+   03F9 70 03               832 	jnz	00102$
+                            833 ;	../../../contiki-sensinode//core/lib/list.c:244: return;
+   03FB 02s05r25            834 	ljmp	00112$
+   03FE                     835 00102$:
+                            836 ;	../../../contiki-sensinode//core/lib/list.c:247: r = NULL;
+   03FE 7D 00               837 	mov	r5,#0x00
+   0400 7E 00               838 	mov	r6,#0x00
+   0402 7F 00               839 	mov	r7,#0x00
+                            840 ;	../../../contiki-sensinode//core/lib/list.c:248: for(l = *list; l != NULL; l = l->next) {
+   0404 A8 81               841 	mov	r0,sp
+   0406 18                  842 	dec	r0
+   0407 18                  843 	dec	r0
+   0408 A6 02               844 	mov	@r0,ar2
+   040A 08                  845 	inc	r0
+   040B A6 03               846 	mov	@r0,ar3
+   040D 08                  847 	inc	r0
+   040E A6 04               848 	mov	@r0,ar4
+   0410                     849 00108$:
+   0410 A8 81               850 	mov	r0,sp
+   0412 18                  851 	dec	r0
+   0413 18                  852 	dec	r0
+   0414 E4                  853 	clr	a
+   0415 C0 E0               854 	push	acc
+   0417 E4                  855 	clr	a
+   0418 C0 E0               856 	push	acc
+   041A E4                  857 	clr	a
+   041B C0 E0               858 	push	acc
+   041D 86 82               859 	mov	dpl,@r0
+   041F 08                  860 	inc	r0
+   0420 86 83               861 	mov	dph,@r0
+   0422 08                  862 	inc	r0
+   0423 86 F0               863 	mov	b,@r0
+   0425 12s00r00            864 	lcall	___gptr_cmp
+   0428 15 81               865 	dec	sp
+   042A 15 81               866 	dec	sp
+   042C 15 81               867 	dec	sp
+   042E 70 03               868 	jnz	00125$
+   0430 02s05r25            869 	ljmp	00112$
+   0433                     870 00125$:
+                            871 ;	../../../contiki-sensinode//core/lib/list.c:249: if(l == item) {
+   0433 C0 05               872 	push	ar5
+   0435 C0 06               873 	push	ar6
+   0437 C0 07               874 	push	ar7
+   0439 E5 81               875 	mov	a,sp
+   043B 24 F2               876 	add	a,#0xf2
+   043D F8                  877 	mov	r0,a
+   043E 86 05               878 	mov	ar5,@r0
+   0440 08                  879 	inc	r0
+   0441 86 06               880 	mov	ar6,@r0
+   0443 08                  881 	inc	r0
+   0444 86 07               882 	mov	ar7,@r0
+   0446 E5 81               883 	mov	a,sp
+   0448 24 FB               884 	add	a,#0xfb
+   044A F8                  885 	mov	r0,a
+   044B C0 05               886 	push	ar5
+   044D C0 06               887 	push	ar6
+   044F C0 07               888 	push	ar7
+   0451 86 82               889 	mov	dpl,@r0
+   0453 08                  890 	inc	r0
+   0454 86 83               891 	mov	dph,@r0
+   0456 08                  892 	inc	r0
+   0457 86 F0               893 	mov	b,@r0
+   0459 12s00r00            894 	lcall	___gptr_cmp
+   045C 15 81               895 	dec	sp
+   045E 15 81               896 	dec	sp
+   0460 15 81               897 	dec	sp
+   0462 60 09               898 	jz	00127$
+   0464 D0 07               899 	pop	ar7
+   0466 D0 06               900 	pop	ar6
+   0468 D0 05               901 	pop	ar5
+   046A 02s04rF8            902 	ljmp	00107$
+   046D                     903 00127$:
+   046D D0 07               904 	pop	ar7
+   046F D0 06               905 	pop	ar6
+   0471 D0 05               906 	pop	ar5
+                            907 ;	../../../contiki-sensinode//core/lib/list.c:250: if(r == NULL) {
+   0473 ED                  908 	mov	a,r5
+   0474 4E                  909 	orl	a,r6
+   0475 70 37               910 	jnz	00104$
+                            911 ;	../../../contiki-sensinode//core/lib/list.c:252: *list = l->next;
+   0477 A8 81               912 	mov	r0,sp
+   0479 18                  913 	dec	r0
+   047A 18                  914 	dec	r0
+   047B 86 82               915 	mov	dpl,@r0
+   047D 08                  916 	inc	r0
+   047E 86 83               917 	mov	dph,@r0
+   0480 08                  918 	inc	r0
+   0481 86 F0               919 	mov	b,@r0
+   0483 12s00r00            920 	lcall	__gptrget
+   0486 FA                  921 	mov	r2,a
+   0487 A3                  922 	inc	dptr
+   0488 12s00r00            923 	lcall	__gptrget
+   048B FB                  924 	mov	r3,a
+   048C A3                  925 	inc	dptr
+   048D 12s00r00            926 	lcall	__gptrget
+   0490 FC                  927 	mov	r4,a
+   0491 E5 81               928 	mov	a,sp
+   0493 24 FB               929 	add	a,#0xfb
+   0495 F8                  930 	mov	r0,a
+   0496 86 82               931 	mov	dpl,@r0
+   0498 08                  932 	inc	r0
+   0499 86 83               933 	mov	dph,@r0
+   049B 08                  934 	inc	r0
+   049C 86 F0               935 	mov	b,@r0
+   049E EA                  936 	mov	a,r2
+   049F 12s00r00            937 	lcall	__gptrput
+   04A2 A3                  938 	inc	dptr
+   04A3 EB                  939 	mov	a,r3
+   04A4 12s00r00            940 	lcall	__gptrput
+   04A7 A3                  941 	inc	dptr
+   04A8 EC                  942 	mov	a,r4
+   04A9 12s00r00            943 	lcall	__gptrput
+   04AC 80 2E               944 	sjmp	00105$
+   04AE                     945 00104$:
+                            946 ;	../../../contiki-sensinode//core/lib/list.c:255: r->next = l->next;
+   04AE A8 81               947 	mov	r0,sp
+   04B0 18                  948 	dec	r0
+   04B1 18                  949 	dec	r0
+   04B2 86 82               950 	mov	dpl,@r0
+   04B4 08                  951 	inc	r0
+   04B5 86 83               952 	mov	dph,@r0
+   04B7 08                  953 	inc	r0
+   04B8 86 F0               954 	mov	b,@r0
+   04BA 12s00r00            955 	lcall	__gptrget
+   04BD FA                  956 	mov	r2,a
+   04BE A3                  957 	inc	dptr
+   04BF 12s00r00            958 	lcall	__gptrget
+   04C2 FB                  959 	mov	r3,a
+   04C3 A3                  960 	inc	dptr
+   04C4 12s00r00            961 	lcall	__gptrget
+   04C7 FC                  962 	mov	r4,a
+   04C8 8D 82               963 	mov	dpl,r5
+   04CA 8E 83               964 	mov	dph,r6
+   04CC 8F F0               965 	mov	b,r7
+   04CE EA                  966 	mov	a,r2
+   04CF 12s00r00            967 	lcall	__gptrput
+   04D2 A3                  968 	inc	dptr
+   04D3 EB                  969 	mov	a,r3
+   04D4 12s00r00            970 	lcall	__gptrput
+   04D7 A3                  971 	inc	dptr
+   04D8 EC                  972 	mov	a,r4
+   04D9 12s00r00            973 	lcall	__gptrput
+   04DC                     974 00105$:
+                            975 ;	../../../contiki-sensinode//core/lib/list.c:257: l->next = NULL;
+   04DC A8 81               976 	mov	r0,sp
+   04DE 18                  977 	dec	r0
+   04DF 18                  978 	dec	r0
+   04E0 86 82               979 	mov	dpl,@r0
+   04E2 08                  980 	inc	r0
+   04E3 86 83               981 	mov	dph,@r0
+   04E5 08                  982 	inc	r0
+   04E6 86 F0               983 	mov	b,@r0
+   04E8 E4                  984 	clr	a
+   04E9 12s00r00            985 	lcall	__gptrput
+   04EC A3                  986 	inc	dptr
+   04ED E4                  987 	clr	a
+   04EE 12s00r00            988 	lcall	__gptrput
+   04F1 A3                  989 	inc	dptr
+   04F2 E4                  990 	clr	a
+   04F3 12s00r00            991 	lcall	__gptrput
+                            992 ;	../../../contiki-sensinode//core/lib/list.c:258: return;
+   04F6 80 2D               993 	sjmp	00112$
+   04F8                     994 00107$:
+                            995 ;	../../../contiki-sensinode//core/lib/list.c:260: r = l;
+   04F8 A8 81               996 	mov	r0,sp
+   04FA 18                  997 	dec	r0
+   04FB 18                  998 	dec	r0
+   04FC 86 05               999 	mov	ar5,@r0
+   04FE 08                 1000 	inc	r0
+   04FF 86 06              1001 	mov	ar6,@r0
+   0501 08                 1002 	inc	r0
+   0502 86 07              1003 	mov	ar7,@r0
+                           1004 ;	../../../contiki-sensinode//core/lib/list.c:248: for(l = *list; l != NULL; l = l->next) {
+   0504 A8 81              1005 	mov	r0,sp
+   0506 18                 1006 	dec	r0
+   0507 18                 1007 	dec	r0
+   0508 86 82              1008 	mov	dpl,@r0
+   050A 08                 1009 	inc	r0
+   050B 86 83              1010 	mov	dph,@r0
+   050D 08                 1011 	inc	r0
+   050E 86 F0              1012 	mov	b,@r0
+   0510 12s00r00           1013 	lcall	__gptrget
+   0513 18                 1014 	dec	r0
+   0514 18                 1015 	dec	r0
+   0515 F6                 1016 	mov	@r0,a
+   0516 A3                 1017 	inc	dptr
+   0517 12s00r00           1018 	lcall	__gptrget
+   051A 08                 1019 	inc	r0
+   051B F6                 1020 	mov	@r0,a
+   051C A3                 1021 	inc	dptr
+   051D 12s00r00           1022 	lcall	__gptrget
+   0520 08                 1023 	inc	r0
+   0521 F6                 1024 	mov	@r0,a
+   0522 02s04r10           1025 	ljmp	00108$
+   0525                    1026 00112$:
+   0525 E5 81              1027 	mov	a,sp
+   0527 24 FA              1028 	add	a,#0xFA
+   0529 F5 81              1029 	mov	sp,a
+   052B 02s00r00           1030 	ljmp	__sdcc_banked_ret
+                           1031 ;------------------------------------------------------------
+                           1032 ;Allocation info for local variables in function 'list_length'
+                           1033 ;------------------------------------------------------------
+                           1034 ;list                      Allocated to registers r5 r6 r7 
+                           1035 ;l                         Allocated to registers r5 r6 r7 
+                           1036 ;n                         Allocated to registers r3 r4 
+                           1037 ;------------------------------------------------------------
+                           1038 ;	../../../contiki-sensinode//core/lib/list.c:274: list_length(list_t list)
+                           1039 ;	-----------------------------------------
+                           1040 ;	 function list_length
+                           1041 ;	-----------------------------------------
+   052E                    1042 _list_length:
+                           1043 ;	../../../contiki-sensinode//core/lib/list.c:279: for(l = *list; l != NULL; l = l->next) {
+   052E 12s00r00           1044 	lcall	__gptrget
+   0531 FD                 1045 	mov	r5,a
+   0532 A3                 1046 	inc	dptr
+   0533 12s00r00           1047 	lcall	__gptrget
+   0536 FE                 1048 	mov	r6,a
+   0537 A3                 1049 	inc	dptr
+   0538 12s00r00           1050 	lcall	__gptrget
+   053B FF                 1051 	mov	r7,a
+   053C 7B 00              1052 	mov	r3,#0x00
+   053E 7C 00              1053 	mov	r4,#0x00
+   0540                    1054 00101$:
+   0540 E4                 1055 	clr	a
+   0541 C0 E0              1056 	push	acc
+   0543 E4                 1057 	clr	a
+   0544 C0 E0              1058 	push	acc
+   0546 E4                 1059 	clr	a
+   0547 C0 E0              1060 	push	acc
+   0549 8D 82              1061 	mov	dpl,r5
+   054B 8E 83              1062 	mov	dph,r6
+   054D 8F F0              1063 	mov	b,r7
+   054F 12s00r00           1064 	lcall	___gptr_cmp
+   0552 15 81              1065 	dec	sp
+   0554 15 81              1066 	dec	sp
+   0556 15 81              1067 	dec	sp
+   0558 60 1B              1068 	jz	00104$
+                           1069 ;	../../../contiki-sensinode//core/lib/list.c:280: ++n;
+   055A 0B                 1070 	inc	r3
+   055B BB 00 01           1071 	cjne	r3,#0x00,00113$
+   055E 0C                 1072 	inc	r4
+   055F                    1073 00113$:
+                           1074 ;	../../../contiki-sensinode//core/lib/list.c:279: for(l = *list; l != NULL; l = l->next) {
+   055F 8D 82              1075 	mov	dpl,r5
+   0561 8E 83              1076 	mov	dph,r6
+   0563 8F F0              1077 	mov	b,r7
+   0565 12s00r00           1078 	lcall	__gptrget
+   0568 FD                 1079 	mov	r5,a
+   0569 A3                 1080 	inc	dptr
+   056A 12s00r00           1081 	lcall	__gptrget
+   056D FE                 1082 	mov	r6,a
+   056E A3                 1083 	inc	dptr
+   056F 12s00r00           1084 	lcall	__gptrget
+   0572 FF                 1085 	mov	r7,a
+   0573 80 CB              1086 	sjmp	00101$
+   0575                    1087 00104$:
+                           1088 ;	../../../contiki-sensinode//core/lib/list.c:283: return n;
+   0575 8B 82              1089 	mov	dpl,r3
+   0577 8C 83              1090 	mov	dph,r4
+   0579 02s00r00           1091 	ljmp	__sdcc_banked_ret
+                           1092 ;------------------------------------------------------------
+                           1093 ;Allocation info for local variables in function 'list_insert'
+                           1094 ;------------------------------------------------------------
+                           1095 ;previtem                  Allocated to stack - sp -8
+                           1096 ;newitem                   Allocated to stack - sp -11
+                           1097 ;list                      Allocated to registers r5 r6 r7 
+                           1098 ;sloc0                     Allocated to stack - sp -2
+                           1099 ;------------------------------------------------------------
+                           1100 ;	../../../contiki-sensinode//core/lib/list.c:302: list_insert(list_t list, void *previtem, void *newitem)
+                           1101 ;	-----------------------------------------
+                           1102 ;	 function list_insert
+                           1103 ;	-----------------------------------------
+   057C                    1104 _list_insert:
+   057C 05 81              1105 	inc	sp
+   057E 05 81              1106 	inc	sp
+   0580 05 81              1107 	inc	sp
+   0582 AD 82              1108 	mov	r5,dpl
+   0584 AE 83              1109 	mov	r6,dph
+   0586 AF F0              1110 	mov	r7,b
+                           1111 ;	../../../contiki-sensinode//core/lib/list.c:304: if(previtem == NULL) {
+   0588 E5 81              1112 	mov	a,sp
+   058A 24 F8              1113 	add	a,#0xf8
+   058C F8                 1114 	mov	r0,a
+   058D E6                 1115 	mov	a,@r0
+   058E 08                 1116 	inc	r0
+   058F 46                 1117 	orl	a,@r0
+   0590 70 27              1118 	jnz	00102$
+                           1119 ;	../../../contiki-sensinode//core/lib/list.c:305: list_push(list, newitem);
+   0592 E5 81              1120 	mov	a,sp
+   0594 24 F5              1121 	add	a,#0xf5
+   0596 F8                 1122 	mov	r0,a
+   0597 E6                 1123 	mov	a,@r0
+   0598 C0 E0              1124 	push	acc
+   059A 08                 1125 	inc	r0
+   059B E6                 1126 	mov	a,@r0
+   059C C0 E0              1127 	push	acc
+   059E 08                 1128 	inc	r0
+   059F E6                 1129 	mov	a,@r0
+   05A0 C0 E0              1130 	push	acc
+   05A2 8D 82              1131 	mov	dpl,r5
+   05A4 8E 83              1132 	mov	dph,r6
+   05A6 8F F0              1133 	mov	b,r7
+   05A8 78r82              1134 	mov	r0,#_list_push
+   05AA 79s01              1135 	mov	r1,#(_list_push >> 8)
+   05AC 7As00              1136 	mov	r2,#(_list_push >> 16)
+   05AE 12s00r00           1137 	lcall	__sdcc_banked_call
+   05B1 15 81              1138 	dec	sp
+   05B3 15 81              1139 	dec	sp
+   05B5 15 81              1140 	dec	sp
+   05B7 80 6F              1141 	sjmp	00104$
+   05B9                    1142 00102$:
+                           1143 ;	../../../contiki-sensinode//core/lib/list.c:308: ((struct list *)newitem)->next = ((struct list *)previtem)->next;
+   05B9 E5 81              1144 	mov	a,sp
+   05BB 24 F5              1145 	add	a,#0xf5
+   05BD F8                 1146 	mov	r0,a
+   05BE A9 81              1147 	mov	r1,sp
+   05C0 19                 1148 	dec	r1
+   05C1 19                 1149 	dec	r1
+   05C2 E6                 1150 	mov	a,@r0
+   05C3 F7                 1151 	mov	@r1,a
+   05C4 08                 1152 	inc	r0
+   05C5 09                 1153 	inc	r1
+   05C6 E6                 1154 	mov	a,@r0
+   05C7 F7                 1155 	mov	@r1,a
+   05C8 08                 1156 	inc	r0
+   05C9 09                 1157 	inc	r1
+   05CA E6                 1158 	mov	a,@r0
+   05CB F7                 1159 	mov	@r1,a
+   05CC E5 81              1160 	mov	a,sp
+   05CE 24 F8              1161 	add	a,#0xf8
+   05D0 F8                 1162 	mov	r0,a
+   05D1 86 02              1163 	mov	ar2,@r0
+   05D3 08                 1164 	inc	r0
+   05D4 86 03              1165 	mov	ar3,@r0
+   05D6 08                 1166 	inc	r0
+   05D7 86 04              1167 	mov	ar4,@r0
+   05D9 8A 82              1168 	mov	dpl,r2
+   05DB 8B 83              1169 	mov	dph,r3
+   05DD 8C F0              1170 	mov	b,r4
+   05DF 12s00r00           1171 	lcall	__gptrget
+   05E2 FD                 1172 	mov	r5,a
+   05E3 A3                 1173 	inc	dptr
+   05E4 12s00r00           1174 	lcall	__gptrget
+   05E7 FE                 1175 	mov	r6,a
+   05E8 A3                 1176 	inc	dptr
+   05E9 12s00r00           1177 	lcall	__gptrget
+   05EC FF                 1178 	mov	r7,a
+   05ED A8 81              1179 	mov	r0,sp
+   05EF 18                 1180 	dec	r0
+   05F0 18                 1181 	dec	r0
+   05F1 86 82              1182 	mov	dpl,@r0
+   05F3 08                 1183 	inc	r0
+   05F4 86 83              1184 	mov	dph,@r0
+   05F6 08                 1185 	inc	r0
+   05F7 86 F0              1186 	mov	b,@r0
+   05F9 ED                 1187 	mov	a,r5
+   05FA 12s00r00           1188 	lcall	__gptrput
+   05FD A3                 1189 	inc	dptr
+   05FE EE                 1190 	mov	a,r6
+   05FF 12s00r00           1191 	lcall	__gptrput
+   0602 A3                 1192 	inc	dptr
+   0603 EF                 1193 	mov	a,r7
+   0604 12s00r00           1194 	lcall	__gptrput
+                           1195 ;	../../../contiki-sensinode//core/lib/list.c:309: ((struct list *)previtem)->next = newitem;
+   0607 E5 81              1196 	mov	a,sp
+   0609 24 F5              1197 	add	a,#0xf5
+   060B F8                 1198 	mov	r0,a
+   060C 86 05              1199 	mov	ar5,@r0
+   060E 08                 1200 	inc	r0
+   060F 86 06              1201 	mov	ar6,@r0
+   0611 08                 1202 	inc	r0
+   0612 86 07              1203 	mov	ar7,@r0
+   0614 8A 82              1204 	mov	dpl,r2
+   0616 8B 83              1205 	mov	dph,r3
+   0618 8C F0              1206 	mov	b,r4
+   061A ED                 1207 	mov	a,r5
+   061B 12s00r00           1208 	lcall	__gptrput
+   061E A3                 1209 	inc	dptr
+   061F EE                 1210 	mov	a,r6
+   0620 12s00r00           1211 	lcall	__gptrput
+   0623 A3                 1212 	inc	dptr
+   0624 EF                 1213 	mov	a,r7
+   0625 12s00r00           1214 	lcall	__gptrput
+   0628                    1215 00104$:
+   0628 15 81              1216 	dec	sp
+   062A 15 81              1217 	dec	sp
+   062C 15 81              1218 	dec	sp
+   062E 02s00r00           1219 	ljmp	__sdcc_banked_ret
+                           1220 ;------------------------------------------------------------
+                           1221 ;Allocation info for local variables in function 'list_item_next'
+                           1222 ;------------------------------------------------------------
+                           1223 ;item                      Allocated to registers r5 r6 r7 
+                           1224 ;------------------------------------------------------------
+                           1225 ;	../../../contiki-sensinode//core/lib/list.c:324: list_item_next(void *item)
+                           1226 ;	-----------------------------------------
+                           1227 ;	 function list_item_next
+                           1228 ;	-----------------------------------------
+   0631                    1229 _list_item_next:
+   0631 AD 82              1230 	mov	r5,dpl
+   0633 AE 83              1231 	mov	r6,dph
+   0635 AF F0              1232 	mov	r7,b
+                           1233 ;	../../../contiki-sensinode//core/lib/list.c:326: return item == NULL? NULL: ((struct list *)item)->next;
+   0637 ED                 1234 	mov	a,r5
+   0638 4E                 1235 	orl	a,r6
+   0639 B4 01 00           1236 	cjne	a,#0x01,00107$
+   063C                    1237 00107$:
+   063C E4                 1238 	clr	a
+   063D 33                 1239 	rlc	a
+   063E FC                 1240 	mov	r4,a
+   063F 60 08              1241 	jz	00103$
+   0641 7A 00              1242 	mov	r2,#0x00
+   0643 7B 00              1243 	mov	r3,#0x00
+   0645 7C 00              1244 	mov	r4,#0x00
+   0647 80 14              1245 	sjmp	00104$
+   0649                    1246 00103$:
+   0649 8D 82              1247 	mov	dpl,r5
+   064B 8E 83              1248 	mov	dph,r6
+   064D 8F F0              1249 	mov	b,r7
+   064F 12s00r00           1250 	lcall	__gptrget
+   0652 FA                 1251 	mov	r2,a
+   0653 A3                 1252 	inc	dptr
+   0654 12s00r00           1253 	lcall	__gptrget
+   0657 FB                 1254 	mov	r3,a
+   0658 A3                 1255 	inc	dptr
+   0659 12s00r00           1256 	lcall	__gptrget
+   065C FC                 1257 	mov	r4,a
+   065D                    1258 00104$:
+   065D 8A 82              1259 	mov	dpl,r2
+   065F 8B 83              1260 	mov	dph,r3
+   0661 8C F0              1261 	mov	b,r4
+   0663 02s00r00           1262 	ljmp	__sdcc_banked_ret
+                           1263 	.area CSEG    (CODE)
+                           1264 	.area CONST   (CODE)
+                           1265 	.area XINIT   (CODE)
+                           1266 	.area CABS    (ABS,CODE)

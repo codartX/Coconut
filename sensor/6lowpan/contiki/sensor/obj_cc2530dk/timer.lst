@@ -1,0 +1,389 @@
+                              1 ;--------------------------------------------------------
+                              2 ; File Created by SDCC : free open source ANSI-C Compiler
+                              3 ; Version 3.1.1 #7100 (Oct 29 2014) (Linux)
+                              4 ; This file was generated Wed Dec  2 18:10:56 2015
+                              5 ;--------------------------------------------------------
+                              6 	.module timer
+                              7 	.optsdcc -mmcs51 --model-huge
+                              8 	
+                              9 ;--------------------------------------------------------
+                             10 ; Public variables in this module
+                             11 ;--------------------------------------------------------
+                             12 	.globl _clock_time
+                             13 	.globl _timer_set
+                             14 	.globl _timer_reset
+                             15 	.globl _timer_restart
+                             16 	.globl _timer_expired
+                             17 	.globl _timer_remaining
+                             18 ;--------------------------------------------------------
+                             19 ; special function registers
+                             20 ;--------------------------------------------------------
+                             21 	.area RSEG    (ABS,DATA)
+   0000                      22 	.org 0x0000
+                             23 ;--------------------------------------------------------
+                             24 ; special function bits
+                             25 ;--------------------------------------------------------
+                             26 	.area RSEG    (ABS,DATA)
+   0000                      27 	.org 0x0000
+                             28 ;--------------------------------------------------------
+                             29 ; overlayable register banks
+                             30 ;--------------------------------------------------------
+                             31 	.area REG_BANK_0	(REL,OVR,DATA)
+   0000                      32 	.ds 8
+                             33 ;--------------------------------------------------------
+                             34 ; internal ram data
+                             35 ;--------------------------------------------------------
+                             36 	.area DSEG    (DATA)
+                             37 ;--------------------------------------------------------
+                             38 ; overlayable items in internal ram 
+                             39 ;--------------------------------------------------------
+                             40 	.area OSEG    (OVR,DATA)
+                             41 ;--------------------------------------------------------
+                             42 ; indirectly addressable internal ram data
+                             43 ;--------------------------------------------------------
+                             44 	.area ISEG    (DATA)
+                             45 ;--------------------------------------------------------
+                             46 ; absolute internal ram data
+                             47 ;--------------------------------------------------------
+                             48 	.area IABS    (ABS,DATA)
+                             49 	.area IABS    (ABS,DATA)
+                             50 ;--------------------------------------------------------
+                             51 ; bit data
+                             52 ;--------------------------------------------------------
+                             53 	.area BSEG    (BIT)
+                             54 ;--------------------------------------------------------
+                             55 ; paged external ram data
+                             56 ;--------------------------------------------------------
+                             57 	.area PSEG    (PAG,XDATA)
+                             58 ;--------------------------------------------------------
+                             59 ; external ram data
+                             60 ;--------------------------------------------------------
+                             61 	.area XSEG    (XDATA)
+                             62 ;--------------------------------------------------------
+                             63 ; absolute external ram data
+                             64 ;--------------------------------------------------------
+                             65 	.area XABS    (ABS,XDATA)
+                             66 ;--------------------------------------------------------
+                             67 ; external initialized ram data
+                             68 ;--------------------------------------------------------
+                             69 	.area XISEG   (XDATA)
+                             70 	.area HOME    (CODE)
+                             71 	.area GSINIT0 (CODE)
+                             72 	.area GSINIT1 (CODE)
+                             73 	.area GSINIT2 (CODE)
+                             74 	.area GSINIT3 (CODE)
+                             75 	.area GSINIT4 (CODE)
+                             76 	.area GSINIT5 (CODE)
+                             77 	.area GSINIT  (CODE)
+                             78 	.area GSFINAL (CODE)
+                             79 	.area CSEG    (CODE)
+                             80 ;--------------------------------------------------------
+                             81 ; global & static initialisations
+                             82 ;--------------------------------------------------------
+                             83 	.area HOME    (CODE)
+                             84 	.area GSINIT  (CODE)
+                             85 	.area GSFINAL (CODE)
+                             86 	.area GSINIT  (CODE)
+                             87 ;--------------------------------------------------------
+                             88 ; Home
+                             89 ;--------------------------------------------------------
+                             90 	.area HOME    (CODE)
+                             91 	.area HOME    (CODE)
+                             92 ;--------------------------------------------------------
+                             93 ; code
+                             94 ;--------------------------------------------------------
+                             95 	.area BANK1   (CODE)
+                             96 ;------------------------------------------------------------
+                             97 ;Allocation info for local variables in function 'timer_set'
+                             98 ;------------------------------------------------------------
+                             99 ;interval                  Allocated to stack - sp -4
+                            100 ;t                         Allocated to registers r5 r6 r7 
+                            101 ;------------------------------------------------------------
+                            102 ;	../../../contiki-sensinode//core/sys/timer.c:64: timer_set(struct timer *t, clock_time_t interval)
+                            103 ;	-----------------------------------------
+                            104 ;	 function timer_set
+                            105 ;	-----------------------------------------
+   0000                     106 _timer_set:
+                    0007    107 	ar7 = 0x07
+                    0006    108 	ar6 = 0x06
+                    0005    109 	ar5 = 0x05
+                    0004    110 	ar4 = 0x04
+                    0003    111 	ar3 = 0x03
+                    0002    112 	ar2 = 0x02
+                    0001    113 	ar1 = 0x01
+                    0000    114 	ar0 = 0x00
+   0000 AD 82               115 	mov	r5,dpl
+   0002 AE 83               116 	mov	r6,dph
+   0004 AF F0               117 	mov	r7,b
+                            118 ;	../../../contiki-sensinode//core/sys/timer.c:66: t->interval = interval;
+   0006 74 02               119 	mov	a,#0x02
+   0008 2D                  120 	add	a,r5
+   0009 FA                  121 	mov	r2,a
+   000A E4                  122 	clr	a
+   000B 3E                  123 	addc	a,r6
+   000C FB                  124 	mov	r3,a
+   000D 8F 04               125 	mov	ar4,r7
+   000F 8A 82               126 	mov	dpl,r2
+   0011 8B 83               127 	mov	dph,r3
+   0013 8C F0               128 	mov	b,r4
+   0015 E5 81               129 	mov	a,sp
+   0017 24 FC               130 	add	a,#0xfc
+   0019 F8                  131 	mov	r0,a
+   001A E6                  132 	mov	a,@r0
+   001B 12s00r00            133 	lcall	__gptrput
+   001E A3                  134 	inc	dptr
+   001F 08                  135 	inc	r0
+   0020 E6                  136 	mov	a,@r0
+   0021 12s00r00            137 	lcall	__gptrput
+                            138 ;	../../../contiki-sensinode//core/sys/timer.c:67: t->start = clock_time();
+   0024 C0 07               139 	push	ar7
+   0026 C0 06               140 	push	ar6
+   0028 C0 05               141 	push	ar5
+   002A 78r00               142 	mov	r0,#_clock_time
+   002C 79s00               143 	mov	r1,#(_clock_time >> 8)
+   002E 7As00               144 	mov	r2,#(_clock_time >> 16)
+   0030 12s00r00            145 	lcall	__sdcc_banked_call
+   0033 AB 82               146 	mov	r3,dpl
+   0035 AC 83               147 	mov	r4,dph
+   0037 D0 05               148 	pop	ar5
+   0039 D0 06               149 	pop	ar6
+   003B D0 07               150 	pop	ar7
+   003D 8D 82               151 	mov	dpl,r5
+   003F 8E 83               152 	mov	dph,r6
+   0041 8F F0               153 	mov	b,r7
+   0043 EB                  154 	mov	a,r3
+   0044 12s00r00            155 	lcall	__gptrput
+   0047 A3                  156 	inc	dptr
+   0048 EC                  157 	mov	a,r4
+   0049 12s00r00            158 	lcall	__gptrput
+   004C 02s00r00            159 	ljmp	__sdcc_banked_ret
+                            160 ;------------------------------------------------------------
+                            161 ;Allocation info for local variables in function 'timer_reset'
+                            162 ;------------------------------------------------------------
+                            163 ;t                         Allocated to registers r5 r6 r7 
+                            164 ;------------------------------------------------------------
+                            165 ;	../../../contiki-sensinode//core/sys/timer.c:84: timer_reset(struct timer *t)
+                            166 ;	-----------------------------------------
+                            167 ;	 function timer_reset
+                            168 ;	-----------------------------------------
+   004F                     169 _timer_reset:
+                            170 ;	../../../contiki-sensinode//core/sys/timer.c:86: t->start += t->interval;
+   004F AD 82               171 	mov	r5,dpl
+   0051 AE 83               172 	mov	r6,dph
+   0053 AF F0               173 	mov	r7,b
+   0055 12s00r00            174 	lcall	__gptrget
+   0058 FB                  175 	mov	r3,a
+   0059 A3                  176 	inc	dptr
+   005A 12s00r00            177 	lcall	__gptrget
+   005D FC                  178 	mov	r4,a
+   005E 74 02               179 	mov	a,#0x02
+   0060 2D                  180 	add	a,r5
+   0061 F8                  181 	mov	r0,a
+   0062 E4                  182 	clr	a
+   0063 3E                  183 	addc	a,r6
+   0064 F9                  184 	mov	r1,a
+   0065 8F 02               185 	mov	ar2,r7
+   0067 88 82               186 	mov	dpl,r0
+   0069 89 83               187 	mov	dph,r1
+   006B 8A F0               188 	mov	b,r2
+   006D 12s00r00            189 	lcall	__gptrget
+   0070 F8                  190 	mov	r0,a
+   0071 A3                  191 	inc	dptr
+   0072 12s00r00            192 	lcall	__gptrget
+   0075 F9                  193 	mov	r1,a
+   0076 E8                  194 	mov	a,r0
+   0077 2B                  195 	add	a,r3
+   0078 FB                  196 	mov	r3,a
+   0079 E9                  197 	mov	a,r1
+   007A 3C                  198 	addc	a,r4
+   007B FC                  199 	mov	r4,a
+   007C 8D 82               200 	mov	dpl,r5
+   007E 8E 83               201 	mov	dph,r6
+   0080 8F F0               202 	mov	b,r7
+   0082 EB                  203 	mov	a,r3
+   0083 12s00r00            204 	lcall	__gptrput
+   0086 A3                  205 	inc	dptr
+   0087 EC                  206 	mov	a,r4
+   0088 12s00r00            207 	lcall	__gptrput
+   008B 02s00r00            208 	ljmp	__sdcc_banked_ret
+                            209 ;------------------------------------------------------------
+                            210 ;Allocation info for local variables in function 'timer_restart'
+                            211 ;------------------------------------------------------------
+                            212 ;t                         Allocated to registers r5 r6 r7 
+                            213 ;------------------------------------------------------------
+                            214 ;	../../../contiki-sensinode//core/sys/timer.c:104: timer_restart(struct timer *t)
+                            215 ;	-----------------------------------------
+                            216 ;	 function timer_restart
+                            217 ;	-----------------------------------------
+   008E                     218 _timer_restart:
+   008E AD 82               219 	mov	r5,dpl
+   0090 AE 83               220 	mov	r6,dph
+   0092 AF F0               221 	mov	r7,b
+                            222 ;	../../../contiki-sensinode//core/sys/timer.c:106: t->start = clock_time();
+   0094 C0 07               223 	push	ar7
+   0096 C0 06               224 	push	ar6
+   0098 C0 05               225 	push	ar5
+   009A 78r00               226 	mov	r0,#_clock_time
+   009C 79s00               227 	mov	r1,#(_clock_time >> 8)
+   009E 7As00               228 	mov	r2,#(_clock_time >> 16)
+   00A0 12s00r00            229 	lcall	__sdcc_banked_call
+   00A3 AB 82               230 	mov	r3,dpl
+   00A5 AC 83               231 	mov	r4,dph
+   00A7 D0 05               232 	pop	ar5
+   00A9 D0 06               233 	pop	ar6
+   00AB D0 07               234 	pop	ar7
+   00AD 8D 82               235 	mov	dpl,r5
+   00AF 8E 83               236 	mov	dph,r6
+   00B1 8F F0               237 	mov	b,r7
+   00B3 EB                  238 	mov	a,r3
+   00B4 12s00r00            239 	lcall	__gptrput
+   00B7 A3                  240 	inc	dptr
+   00B8 EC                  241 	mov	a,r4
+   00B9 12s00r00            242 	lcall	__gptrput
+   00BC 02s00r00            243 	ljmp	__sdcc_banked_ret
+                            244 ;------------------------------------------------------------
+                            245 ;Allocation info for local variables in function 'timer_expired'
+                            246 ;------------------------------------------------------------
+                            247 ;t                         Allocated to stack - sp -2
+                            248 ;diff                      Allocated to registers r3 r4 
+                            249 ;------------------------------------------------------------
+                            250 ;	../../../contiki-sensinode//core/sys/timer.c:121: timer_expired(struct timer *t)
+                            251 ;	-----------------------------------------
+                            252 ;	 function timer_expired
+                            253 ;	-----------------------------------------
+   00BF                     254 _timer_expired:
+   00BF C0 82               255 	push	dpl
+   00C1 C0 83               256 	push	dph
+   00C3 C0 F0               257 	push	b
+                            258 ;	../../../contiki-sensinode//core/sys/timer.c:125: clock_time_t diff = (clock_time() - t->start) + 1;
+   00C5 78r00               259 	mov	r0,#_clock_time
+   00C7 79s00               260 	mov	r1,#(_clock_time >> 8)
+   00C9 7As00               261 	mov	r2,#(_clock_time >> 16)
+   00CB 12s00r00            262 	lcall	__sdcc_banked_call
+   00CE AB 82               263 	mov	r3,dpl
+   00D0 AC 83               264 	mov	r4,dph
+   00D2 A8 81               265 	mov	r0,sp
+   00D4 18                  266 	dec	r0
+   00D5 18                  267 	dec	r0
+   00D6 86 82               268 	mov	dpl,@r0
+   00D8 08                  269 	inc	r0
+   00D9 86 83               270 	mov	dph,@r0
+   00DB 08                  271 	inc	r0
+   00DC 86 F0               272 	mov	b,@r0
+   00DE 12s00r00            273 	lcall	__gptrget
+   00E1 FA                  274 	mov	r2,a
+   00E2 A3                  275 	inc	dptr
+   00E3 12s00r00            276 	lcall	__gptrget
+   00E6 FF                  277 	mov	r7,a
+   00E7 EB                  278 	mov	a,r3
+   00E8 C3                  279 	clr	c
+   00E9 9A                  280 	subb	a,r2
+   00EA FB                  281 	mov	r3,a
+   00EB EC                  282 	mov	a,r4
+   00EC 9F                  283 	subb	a,r7
+   00ED FC                  284 	mov	r4,a
+   00EE 0B                  285 	inc	r3
+   00EF BB 00 01            286 	cjne	r3,#0x00,00103$
+   00F2 0C                  287 	inc	r4
+   00F3                     288 00103$:
+                            289 ;	../../../contiki-sensinode//core/sys/timer.c:126: return t->interval < diff;
+   00F3 A8 81               290 	mov	r0,sp
+   00F5 18                  291 	dec	r0
+   00F6 18                  292 	dec	r0
+   00F7 74 02               293 	mov	a,#0x02
+   00F9 26                  294 	add	a,@r0
+   00FA FD                  295 	mov	r5,a
+   00FB E4                  296 	clr	a
+   00FC 08                  297 	inc	r0
+   00FD 36                  298 	addc	a,@r0
+   00FE FE                  299 	mov	r6,a
+   00FF 08                  300 	inc	r0
+   0100 86 07               301 	mov	ar7,@r0
+   0102 8D 82               302 	mov	dpl,r5
+   0104 8E 83               303 	mov	dph,r6
+   0106 8F F0               304 	mov	b,r7
+   0108 12s00r00            305 	lcall	__gptrget
+   010B FD                  306 	mov	r5,a
+   010C A3                  307 	inc	dptr
+   010D 12s00r00            308 	lcall	__gptrget
+   0110 FE                  309 	mov	r6,a
+   0111 C3                  310 	clr	c
+   0112 ED                  311 	mov	a,r5
+   0113 9B                  312 	subb	a,r3
+   0114 EE                  313 	mov	a,r6
+   0115 9C                  314 	subb	a,r4
+   0116 E4                  315 	clr	a
+   0117 33                  316 	rlc	a
+   0118 FB                  317 	mov	r3,a
+   0119 33                  318 	rlc	a
+   011A 95 E0               319 	subb	a,acc
+   011C FF                  320 	mov	r7,a
+   011D 8B 82               321 	mov	dpl,r3
+   011F 8F 83               322 	mov	dph,r7
+   0121 15 81               323 	dec	sp
+   0123 15 81               324 	dec	sp
+   0125 15 81               325 	dec	sp
+   0127 02s00r00            326 	ljmp	__sdcc_banked_ret
+                            327 ;------------------------------------------------------------
+                            328 ;Allocation info for local variables in function 'timer_remaining'
+                            329 ;------------------------------------------------------------
+                            330 ;t                         Allocated to registers r5 r6 r7 
+                            331 ;------------------------------------------------------------
+                            332 ;	../../../contiki-sensinode//core/sys/timer.c:141: timer_remaining(struct timer *t)
+                            333 ;	-----------------------------------------
+                            334 ;	 function timer_remaining
+                            335 ;	-----------------------------------------
+   012A                     336 _timer_remaining:
+                            337 ;	../../../contiki-sensinode//core/sys/timer.c:143: return t->start + t->interval - clock_time();
+   012A AD 82               338 	mov	r5,dpl
+   012C AE 83               339 	mov	r6,dph
+   012E AF F0               340 	mov	r7,b
+   0130 12s00r00            341 	lcall	__gptrget
+   0133 FB                  342 	mov	r3,a
+   0134 A3                  343 	inc	dptr
+   0135 12s00r00            344 	lcall	__gptrget
+   0138 FC                  345 	mov	r4,a
+   0139 74 02               346 	mov	a,#0x02
+   013B 2D                  347 	add	a,r5
+   013C FD                  348 	mov	r5,a
+   013D E4                  349 	clr	a
+   013E 3E                  350 	addc	a,r6
+   013F FE                  351 	mov	r6,a
+   0140 8D 82               352 	mov	dpl,r5
+   0142 8E 83               353 	mov	dph,r6
+   0144 8F F0               354 	mov	b,r7
+   0146 12s00r00            355 	lcall	__gptrget
+   0149 FD                  356 	mov	r5,a
+   014A A3                  357 	inc	dptr
+   014B 12s00r00            358 	lcall	__gptrget
+   014E FE                  359 	mov	r6,a
+   014F ED                  360 	mov	a,r5
+   0150 2B                  361 	add	a,r3
+   0151 FB                  362 	mov	r3,a
+   0152 EE                  363 	mov	a,r6
+   0153 3C                  364 	addc	a,r4
+   0154 FC                  365 	mov	r4,a
+   0155 C0 04               366 	push	ar4
+   0157 C0 03               367 	push	ar3
+   0159 78r00               368 	mov	r0,#_clock_time
+   015B 79s00               369 	mov	r1,#(_clock_time >> 8)
+   015D 7As00               370 	mov	r2,#(_clock_time >> 16)
+   015F 12s00r00            371 	lcall	__sdcc_banked_call
+   0162 AE 82               372 	mov	r6,dpl
+   0164 AF 83               373 	mov	r7,dph
+   0166 D0 03               374 	pop	ar3
+   0168 D0 04               375 	pop	ar4
+   016A EB                  376 	mov	a,r3
+   016B C3                  377 	clr	c
+   016C 9E                  378 	subb	a,r6
+   016D FB                  379 	mov	r3,a
+   016E EC                  380 	mov	a,r4
+   016F 9F                  381 	subb	a,r7
+   0170 FC                  382 	mov	r4,a
+   0171 8B 82               383 	mov	dpl,r3
+   0173 8C 83               384 	mov	dph,r4
+   0175 02s00r00            385 	ljmp	__sdcc_banked_ret
+                            386 	.area CSEG    (CODE)
+                            387 	.area CONST   (CODE)
+                            388 	.area XINIT   (CODE)
+                            389 	.area CABS    (ABS,CODE)

@@ -1,0 +1,2028 @@
+                              1 ;--------------------------------------------------------
+                              2 ; File Created by SDCC : free open source ANSI-C Compiler
+                              3 ; Version 3.1.1 #7100 (Oct 29 2014) (Linux)
+                              4 ; This file was generated Wed Dec  2 18:10:56 2015
+                              5 ;--------------------------------------------------------
+                              6 	.module etimer
+                              7 	.optsdcc -mmcs51 --model-huge
+                              8 	
+                              9 ;--------------------------------------------------------
+                             10 ; Public variables in this module
+                             11 ;--------------------------------------------------------
+                             12 	.globl _process_poll
+                             13 	.globl _process_post
+                             14 	.globl _timer_expired
+                             15 	.globl _timer_restart
+                             16 	.globl _timer_reset
+                             17 	.globl _timer_set
+                             18 	.globl _clock_time
+                             19 	.globl _etimer_process
+                             20 	.globl _etimer_request_poll
+                             21 	.globl _etimer_set
+                             22 	.globl _etimer_reset
+                             23 	.globl _etimer_restart
+                             24 	.globl _etimer_adjust
+                             25 	.globl _etimer_expired
+                             26 	.globl _etimer_expiration_time
+                             27 	.globl _etimer_start_time
+                             28 	.globl _etimer_pending
+                             29 	.globl _etimer_next_expiration_time
+                             30 	.globl _etimer_stop
+                             31 ;--------------------------------------------------------
+                             32 ; special function registers
+                             33 ;--------------------------------------------------------
+                             34 	.area RSEG    (ABS,DATA)
+   0000                      35 	.org 0x0000
+                             36 ;--------------------------------------------------------
+                             37 ; special function bits
+                             38 ;--------------------------------------------------------
+                             39 	.area RSEG    (ABS,DATA)
+   0000                      40 	.org 0x0000
+                             41 ;--------------------------------------------------------
+                             42 ; overlayable register banks
+                             43 ;--------------------------------------------------------
+                             44 	.area REG_BANK_0	(REL,OVR,DATA)
+   0000                      45 	.ds 8
+                             46 ;--------------------------------------------------------
+                             47 ; internal ram data
+                             48 ;--------------------------------------------------------
+                             49 	.area DSEG    (DATA)
+                             50 ;--------------------------------------------------------
+                             51 ; overlayable items in internal ram 
+                             52 ;--------------------------------------------------------
+                             53 	.area OSEG    (OVR,DATA)
+                             54 ;--------------------------------------------------------
+                             55 ; indirectly addressable internal ram data
+                             56 ;--------------------------------------------------------
+                             57 	.area ISEG    (DATA)
+                             58 ;--------------------------------------------------------
+                             59 ; absolute internal ram data
+                             60 ;--------------------------------------------------------
+                             61 	.area IABS    (ABS,DATA)
+                             62 	.area IABS    (ABS,DATA)
+                             63 ;--------------------------------------------------------
+                             64 ; bit data
+                             65 ;--------------------------------------------------------
+                             66 	.area BSEG    (BIT)
+                             67 ;--------------------------------------------------------
+                             68 ; paged external ram data
+                             69 ;--------------------------------------------------------
+                             70 	.area PSEG    (PAG,XDATA)
+                             71 ;--------------------------------------------------------
+                             72 ; external ram data
+                             73 ;--------------------------------------------------------
+                             74 	.area XSEG    (XDATA)
+   0000                      75 _timerlist:
+   0000                      76 	.ds 3
+   0003                      77 _next_expiration:
+   0003                      78 	.ds 2
+                             79 ;--------------------------------------------------------
+                             80 ; absolute external ram data
+                             81 ;--------------------------------------------------------
+                             82 	.area XABS    (ABS,XDATA)
+                             83 ;--------------------------------------------------------
+                             84 ; external initialized ram data
+                             85 ;--------------------------------------------------------
+                             86 	.area XISEG   (XDATA)
+   0000                      87 _etimer_process::
+   0000                      88 	.ds 10
+                             89 	.area HOME    (CODE)
+                             90 	.area GSINIT0 (CODE)
+                             91 	.area GSINIT1 (CODE)
+                             92 	.area GSINIT2 (CODE)
+                             93 	.area GSINIT3 (CODE)
+                             94 	.area GSINIT4 (CODE)
+                             95 	.area GSINIT5 (CODE)
+                             96 	.area GSINIT  (CODE)
+                             97 	.area GSFINAL (CODE)
+                             98 	.area CSEG    (CODE)
+                             99 ;--------------------------------------------------------
+                            100 ; global & static initialisations
+                            101 ;--------------------------------------------------------
+                            102 	.area HOME    (CODE)
+                            103 	.area GSINIT  (CODE)
+                            104 	.area GSFINAL (CODE)
+                            105 	.area GSINIT  (CODE)
+                            106 ;--------------------------------------------------------
+                            107 ; Home
+                            108 ;--------------------------------------------------------
+                            109 	.area HOME    (CODE)
+                            110 	.area HOME    (CODE)
+                            111 ;--------------------------------------------------------
+                            112 ; code
+                            113 ;--------------------------------------------------------
+                            114 	.area BANK1   (CODE)
+                            115 ;------------------------------------------------------------
+                            116 ;Allocation info for local variables in function 'update_time'
+                            117 ;------------------------------------------------------------
+                            118 ;tdist                     Allocated to stack - sp -6
+                            119 ;now                       Allocated to stack - sp -4
+                            120 ;t                         Allocated to stack - sp -2
+                            121 ;------------------------------------------------------------
+                            122 ;	../../../contiki-sensinode//core/sys/etimer.c:58: update_time(void)
+                            123 ;	-----------------------------------------
+                            124 ;	 function update_time
+                            125 ;	-----------------------------------------
+   0000                     126 _update_time:
+                    0007    127 	ar7 = 0x07
+                    0006    128 	ar6 = 0x06
+                    0005    129 	ar5 = 0x05
+                    0004    130 	ar4 = 0x04
+                    0003    131 	ar3 = 0x03
+                    0002    132 	ar2 = 0x02
+                    0001    133 	ar1 = 0x01
+                    0000    134 	ar0 = 0x00
+   0000 E5 81               135 	mov	a,sp
+   0002 24 07               136 	add	a,#0x07
+   0004 F5 81               137 	mov	sp,a
+                            138 ;	../../../contiki-sensinode//core/sys/etimer.c:64: if (timerlist == NULL) {
+   0006 90s00r00            139 	mov	dptr,#_timerlist
+   0009 E0                  140 	movx	a,@dptr
+   000A FD                  141 	mov	r5,a
+   000B A3                  142 	inc	dptr
+   000C E0                  143 	movx	a,@dptr
+   000D FE                  144 	mov	r6,a
+   000E A3                  145 	inc	dptr
+   000F E0                  146 	movx	a,@dptr
+   0010 FF                  147 	mov	r7,a
+   0011 ED                  148 	mov	a,r5
+   0012 4E                  149 	orl	a,r6
+   0013 70 0A               150 	jnz	00104$
+                            151 ;	../../../contiki-sensinode//core/sys/etimer.c:65: next_expiration = 0;
+   0015 90s00r03            152 	mov	dptr,#_next_expiration
+   0018 E4                  153 	clr	a
+   0019 F0                  154 	movx	@dptr,a
+   001A A3                  155 	inc	dptr
+   001B F0                  156 	movx	@dptr,a
+   001C 02s01rA7            157 	ljmp	00110$
+   001F                     158 00104$:
+                            159 ;	../../../contiki-sensinode//core/sys/etimer.c:67: now = clock_time();
+   001F 78r00               160 	mov	r0,#_clock_time
+   0021 79s00               161 	mov	r1,#(_clock_time >> 8)
+   0023 7As00               162 	mov	r2,#(_clock_time >> 16)
+   0025 12s00r00            163 	lcall	__sdcc_banked_call
+   0028 AE 82               164 	mov	r6,dpl
+   002A AF 83               165 	mov	r7,dph
+   002C E5 81               166 	mov	a,sp
+   002E 24 FC               167 	add	a,#0xfc
+   0030 F8                  168 	mov	r0,a
+   0031 A6 06               169 	mov	@r0,ar6
+   0033 08                  170 	inc	r0
+   0034 A6 07               171 	mov	@r0,ar7
+                            172 ;	../../../contiki-sensinode//core/sys/etimer.c:68: t = timerlist;
+   0036 90s00r00            173 	mov	dptr,#_timerlist
+   0039 E0                  174 	movx	a,@dptr
+   003A FB                  175 	mov	r3,a
+   003B A3                  176 	inc	dptr
+   003C E0                  177 	movx	a,@dptr
+   003D FC                  178 	mov	r4,a
+   003E A3                  179 	inc	dptr
+   003F E0                  180 	movx	a,@dptr
+   0040 FD                  181 	mov	r5,a
+   0041 A8 81               182 	mov	r0,sp
+   0043 18                  183 	dec	r0
+   0044 18                  184 	dec	r0
+   0045 A6 03               185 	mov	@r0,ar3
+   0047 08                  186 	inc	r0
+   0048 A6 04               187 	mov	@r0,ar4
+   004A 08                  188 	inc	r0
+   004B A6 05               189 	mov	@r0,ar5
+                            190 ;	../../../contiki-sensinode//core/sys/etimer.c:70: tdist = t->timer.start + t->timer.interval - now;
+   004D A8 81               191 	mov	r0,sp
+   004F 18                  192 	dec	r0
+   0050 18                  193 	dec	r0
+   0051 86 82               194 	mov	dpl,@r0
+   0053 08                  195 	inc	r0
+   0054 86 83               196 	mov	dph,@r0
+   0056 08                  197 	inc	r0
+   0057 86 F0               198 	mov	b,@r0
+   0059 12s00r00            199 	lcall	__gptrget
+   005C FA                  200 	mov	r2,a
+   005D A3                  201 	inc	dptr
+   005E 12s00r00            202 	lcall	__gptrget
+   0061 FF                  203 	mov	r7,a
+   0062 A8 81               204 	mov	r0,sp
+   0064 18                  205 	dec	r0
+   0065 18                  206 	dec	r0
+   0066 74 02               207 	mov	a,#0x02
+   0068 26                  208 	add	a,@r0
+   0069 FC                  209 	mov	r4,a
+   006A E4                  210 	clr	a
+   006B 08                  211 	inc	r0
+   006C 36                  212 	addc	a,@r0
+   006D FD                  213 	mov	r5,a
+   006E 08                  214 	inc	r0
+   006F 86 06               215 	mov	ar6,@r0
+   0071 8C 82               216 	mov	dpl,r4
+   0073 8D 83               217 	mov	dph,r5
+   0075 8E F0               218 	mov	b,r6
+   0077 12s00r00            219 	lcall	__gptrget
+   007A FC                  220 	mov	r4,a
+   007B A3                  221 	inc	dptr
+   007C 12s00r00            222 	lcall	__gptrget
+   007F FD                  223 	mov	r5,a
+   0080 EC                  224 	mov	a,r4
+   0081 2A                  225 	add	a,r2
+   0082 FA                  226 	mov	r2,a
+   0083 ED                  227 	mov	a,r5
+   0084 3F                  228 	addc	a,r7
+   0085 FF                  229 	mov	r7,a
+   0086 E5 81               230 	mov	a,sp
+   0088 24 FC               231 	add	a,#0xfc
+   008A F8                  232 	mov	r0,a
+   008B EA                  233 	mov	a,r2
+   008C C3                  234 	clr	c
+   008D 96                  235 	subb	a,@r0
+   008E FA                  236 	mov	r2,a
+   008F EF                  237 	mov	a,r7
+   0090 08                  238 	inc	r0
+   0091 96                  239 	subb	a,@r0
+   0092 FF                  240 	mov	r7,a
+   0093 E5 81               241 	mov	a,sp
+   0095 24 FA               242 	add	a,#0xfa
+   0097 F8                  243 	mov	r0,a
+   0098 A6 02               244 	mov	@r0,ar2
+   009A 08                  245 	inc	r0
+   009B A6 07               246 	mov	@r0,ar7
+                            247 ;	../../../contiki-sensinode//core/sys/etimer.c:71: for(t = t->next; t != NULL; t = t->next) {
+   009D A8 81               248 	mov	r0,sp
+   009F 18                  249 	dec	r0
+   00A0 18                  250 	dec	r0
+   00A1 74 04               251 	mov	a,#0x04
+   00A3 26                  252 	add	a,@r0
+   00A4 FB                  253 	mov	r3,a
+   00A5 E4                  254 	clr	a
+   00A6 08                  255 	inc	r0
+   00A7 36                  256 	addc	a,@r0
+   00A8 FC                  257 	mov	r4,a
+   00A9 08                  258 	inc	r0
+   00AA 86 05               259 	mov	ar5,@r0
+   00AC 8B 82               260 	mov	dpl,r3
+   00AE 8C 83               261 	mov	dph,r4
+   00B0 8D F0               262 	mov	b,r5
+   00B2 12s00r00            263 	lcall	__gptrget
+   00B5 FB                  264 	mov	r3,a
+   00B6 A3                  265 	inc	dptr
+   00B7 12s00r00            266 	lcall	__gptrget
+   00BA FC                  267 	mov	r4,a
+   00BB A3                  268 	inc	dptr
+   00BC 12s00r00            269 	lcall	__gptrget
+   00BF FD                  270 	mov	r5,a
+   00C0 A8 81               271 	mov	r0,sp
+   00C2 18                  272 	dec	r0
+   00C3 18                  273 	dec	r0
+   00C4 A6 03               274 	mov	@r0,ar3
+   00C6 08                  275 	inc	r0
+   00C7 A6 04               276 	mov	@r0,ar4
+   00C9 08                  277 	inc	r0
+   00CA A6 05               278 	mov	@r0,ar5
+   00CC                     279 00106$:
+   00CC A8 81               280 	mov	r0,sp
+   00CE 18                  281 	dec	r0
+   00CF 18                  282 	dec	r0
+   00D0 E4                  283 	clr	a
+   00D1 C0 E0               284 	push	acc
+   00D3 E4                  285 	clr	a
+   00D4 C0 E0               286 	push	acc
+   00D6 E4                  287 	clr	a
+   00D7 C0 E0               288 	push	acc
+   00D9 86 82               289 	mov	dpl,@r0
+   00DB 08                  290 	inc	r0
+   00DC 86 83               291 	mov	dph,@r0
+   00DE 08                  292 	inc	r0
+   00DF 86 F0               293 	mov	b,@r0
+   00E1 12s00r00            294 	lcall	___gptr_cmp
+   00E4 15 81               295 	dec	sp
+   00E6 15 81               296 	dec	sp
+   00E8 15 81               297 	dec	sp
+   00EA 70 03               298 	jnz	00121$
+   00EC 02s01r91            299 	ljmp	00109$
+   00EF                     300 00121$:
+                            301 ;	../../../contiki-sensinode//core/sys/etimer.c:72: if(t->timer.start + t->timer.interval - now < tdist) {
+   00EF A8 81               302 	mov	r0,sp
+   00F1 18                  303 	dec	r0
+   00F2 18                  304 	dec	r0
+   00F3 86 82               305 	mov	dpl,@r0
+   00F5 08                  306 	inc	r0
+   00F6 86 83               307 	mov	dph,@r0
+   00F8 08                  308 	inc	r0
+   00F9 86 F0               309 	mov	b,@r0
+   00FB 12s00r00            310 	lcall	__gptrget
+   00FE FC                  311 	mov	r4,a
+   00FF A3                  312 	inc	dptr
+   0100 12s00r00            313 	lcall	__gptrget
+   0103 FD                  314 	mov	r5,a
+   0104 A8 81               315 	mov	r0,sp
+   0106 18                  316 	dec	r0
+   0107 18                  317 	dec	r0
+   0108 74 02               318 	mov	a,#0x02
+   010A 26                  319 	add	a,@r0
+   010B FA                  320 	mov	r2,a
+   010C E4                  321 	clr	a
+   010D 08                  322 	inc	r0
+   010E 36                  323 	addc	a,@r0
+   010F FB                  324 	mov	r3,a
+   0110 08                  325 	inc	r0
+   0111 86 07               326 	mov	ar7,@r0
+   0113 8A 82               327 	mov	dpl,r2
+   0115 8B 83               328 	mov	dph,r3
+   0117 8F F0               329 	mov	b,r7
+   0119 12s00r00            330 	lcall	__gptrget
+   011C FE                  331 	mov	r6,a
+   011D A3                  332 	inc	dptr
+   011E 12s00r00            333 	lcall	__gptrget
+   0121 FF                  334 	mov	r7,a
+   0122 EE                  335 	mov	a,r6
+   0123 2C                  336 	add	a,r4
+   0124 FA                  337 	mov	r2,a
+   0125 EF                  338 	mov	a,r7
+   0126 3D                  339 	addc	a,r5
+   0127 FB                  340 	mov	r3,a
+   0128 E5 81               341 	mov	a,sp
+   012A 24 FC               342 	add	a,#0xfc
+   012C F8                  343 	mov	r0,a
+   012D EA                  344 	mov	a,r2
+   012E C3                  345 	clr	c
+   012F 96                  346 	subb	a,@r0
+   0130 FA                  347 	mov	r2,a
+   0131 EB                  348 	mov	a,r3
+   0132 08                  349 	inc	r0
+   0133 96                  350 	subb	a,@r0
+   0134 FB                  351 	mov	r3,a
+   0135 E5 81               352 	mov	a,sp
+   0137 24 FA               353 	add	a,#0xfa
+   0139 F8                  354 	mov	r0,a
+   013A C3                  355 	clr	c
+   013B EA                  356 	mov	a,r2
+   013C 96                  357 	subb	a,@r0
+   013D EB                  358 	mov	a,r3
+   013E 08                  359 	inc	r0
+   013F 96                  360 	subb	a,@r0
+   0140 50 1D               361 	jnc	00108$
+                            362 ;	../../../contiki-sensinode//core/sys/etimer.c:73: tdist = t->timer.start + t->timer.interval - now;
+   0142 EE                  363 	mov	a,r6
+   0143 2C                  364 	add	a,r4
+   0144 FC                  365 	mov	r4,a
+   0145 EF                  366 	mov	a,r7
+   0146 3D                  367 	addc	a,r5
+   0147 FD                  368 	mov	r5,a
+   0148 E5 81               369 	mov	a,sp
+   014A 24 FC               370 	add	a,#0xfc
+   014C F8                  371 	mov	r0,a
+   014D EC                  372 	mov	a,r4
+   014E C3                  373 	clr	c
+   014F 96                  374 	subb	a,@r0
+   0150 FC                  375 	mov	r4,a
+   0151 ED                  376 	mov	a,r5
+   0152 08                  377 	inc	r0
+   0153 96                  378 	subb	a,@r0
+   0154 FD                  379 	mov	r5,a
+   0155 E5 81               380 	mov	a,sp
+   0157 24 FA               381 	add	a,#0xfa
+   0159 F8                  382 	mov	r0,a
+   015A A6 04               383 	mov	@r0,ar4
+   015C 08                  384 	inc	r0
+   015D A6 05               385 	mov	@r0,ar5
+   015F                     386 00108$:
+                            387 ;	../../../contiki-sensinode//core/sys/etimer.c:71: for(t = t->next; t != NULL; t = t->next) {
+   015F A8 81               388 	mov	r0,sp
+   0161 18                  389 	dec	r0
+   0162 18                  390 	dec	r0
+   0163 74 04               391 	mov	a,#0x04
+   0165 26                  392 	add	a,@r0
+   0166 FD                  393 	mov	r5,a
+   0167 E4                  394 	clr	a
+   0168 08                  395 	inc	r0
+   0169 36                  396 	addc	a,@r0
+   016A FE                  397 	mov	r6,a
+   016B 08                  398 	inc	r0
+   016C 86 07               399 	mov	ar7,@r0
+   016E 8D 82               400 	mov	dpl,r5
+   0170 8E 83               401 	mov	dph,r6
+   0172 8F F0               402 	mov	b,r7
+   0174 12s00r00            403 	lcall	__gptrget
+   0177 FD                  404 	mov	r5,a
+   0178 A3                  405 	inc	dptr
+   0179 12s00r00            406 	lcall	__gptrget
+   017C FE                  407 	mov	r6,a
+   017D A3                  408 	inc	dptr
+   017E 12s00r00            409 	lcall	__gptrget
+   0181 FF                  410 	mov	r7,a
+   0182 A8 81               411 	mov	r0,sp
+   0184 18                  412 	dec	r0
+   0185 18                  413 	dec	r0
+   0186 A6 05               414 	mov	@r0,ar5
+   0188 08                  415 	inc	r0
+   0189 A6 06               416 	mov	@r0,ar6
+   018B 08                  417 	inc	r0
+   018C A6 07               418 	mov	@r0,ar7
+   018E 02s00rCC            419 	ljmp	00106$
+   0191                     420 00109$:
+                            421 ;	../../../contiki-sensinode//core/sys/etimer.c:76: next_expiration = now + tdist;
+   0191 E5 81               422 	mov	a,sp
+   0193 24 FC               423 	add	a,#0xfc
+   0195 F8                  424 	mov	r0,a
+   0196 E5 81               425 	mov	a,sp
+   0198 24 FA               426 	add	a,#0xfa
+   019A F9                  427 	mov	r1,a
+   019B 90s00r03            428 	mov	dptr,#_next_expiration
+   019E E7                  429 	mov	a,@r1
+   019F 26                  430 	add	a,@r0
+   01A0 F0                  431 	movx	@dptr,a
+   01A1 09                  432 	inc	r1
+   01A2 E7                  433 	mov	a,@r1
+   01A3 08                  434 	inc	r0
+   01A4 36                  435 	addc	a,@r0
+   01A5 A3                  436 	inc	dptr
+   01A6 F0                  437 	movx	@dptr,a
+   01A7                     438 00110$:
+   01A7 E5 81               439 	mov	a,sp
+   01A9 24 F9               440 	add	a,#0xF9
+   01AB F5 81               441 	mov	sp,a
+   01AD 02s00r00            442 	ljmp	__sdcc_banked_ret
+                            443 ;------------------------------------------------------------
+                            444 ;Allocation info for local variables in function 'process_thread_etimer_process'
+                            445 ;------------------------------------------------------------
+                            446 ;ev                        Allocated to stack - sp -15
+                            447 ;data                      Allocated to stack - sp -18
+                            448 ;process_pt                Allocated to registers r5 r6 r7 
+                            449 ;t                         Allocated to stack - sp -11
+                            450 ;u                         Allocated to stack - sp -8
+                            451 ;PT_YIELD_FLAG             Allocated to registers r4 
+                            452 ;p                         Allocated to stack - sp -5
+                            453 ;sloc0                     Allocated to stack - sp -2
+                            454 ;------------------------------------------------------------
+                            455 ;	../../../contiki-sensinode//core/sys/etimer.c:80: PROCESS_THREAD(etimer_process, ev, data)
+                            456 ;	-----------------------------------------
+                            457 ;	 function process_thread_etimer_process
+                            458 ;	-----------------------------------------
+   01B0                     459 _process_thread_etimer_process:
+   01B0 E5 81               460 	mov	a,sp
+   01B2 24 0C               461 	add	a,#0x0C
+   01B4 F5 81               462 	mov	sp,a
+                            463 ;	../../../contiki-sensinode//core/sys/etimer.c:84: PROCESS_BEGIN();
+   01B6 AD 82               464 	mov	r5,dpl
+   01B8 AE 83               465 	mov	r6,dph
+   01BA AF F0               466 	mov	r7,b
+   01BC 7C 01               467 	mov	r4,#0x01
+   01BE 12s00r00            468 	lcall	__gptrget
+   01C1 FA                  469 	mov	r2,a
+   01C2 A3                  470 	inc	dptr
+   01C3 12s00r00            471 	lcall	__gptrget
+   01C6 FB                  472 	mov	r3,a
+   01C7 BA 00 05            473 	cjne	r2,#0x00,00180$
+   01CA BB 00 02            474 	cjne	r3,#0x00,00180$
+   01CD 80 0B               475 	sjmp	00101$
+   01CF                     476 00180$:
+   01CF BA 59 05            477 	cjne	r2,#0x59,00181$
+   01D2 BB 00 02            478 	cjne	r3,#0x00,00181$
+   01D5 80 1E               479 	sjmp	00102$
+   01D7                     480 00181$:
+   01D7 02s05rEE            481 	ljmp	00137$
+   01DA                     482 00101$:
+                            483 ;	../../../contiki-sensinode//core/sys/etimer.c:86: timerlist = NULL;
+   01DA 90s00r00            484 	mov	dptr,#_timerlist
+   01DD E4                  485 	clr	a
+   01DE F0                  486 	movx	@dptr,a
+   01DF A3                  487 	inc	dptr
+   01E0 F0                  488 	movx	@dptr,a
+   01E1 A3                  489 	inc	dptr
+   01E2 F0                  490 	movx	@dptr,a
+                            491 ;	../../../contiki-sensinode//core/sys/etimer.c:88: while(1) {
+   01E3                     492 00135$:
+                            493 ;	../../../contiki-sensinode//core/sys/etimer.c:89: PROCESS_YIELD();
+   01E3 7C 00               494 	mov	r4,#0x00
+   01E5 8D 82               495 	mov	dpl,r5
+   01E7 8E 83               496 	mov	dph,r6
+   01E9 8F F0               497 	mov	b,r7
+   01EB 74 59               498 	mov	a,#0x59
+   01ED 12s00r00            499 	lcall	__gptrput
+   01F0 A3                  500 	inc	dptr
+   01F1 E4                  501 	clr	a
+   01F2 12s00r00            502 	lcall	__gptrput
+   01F5                     503 00102$:
+   01F5 EC                  504 	mov	a,r4
+   01F6 70 06               505 	jnz	00106$
+   01F8 75 82 01            506 	mov	dpl,#0x01
+   01FB 02s06r00            507 	ljmp	00142$
+   01FE                     508 00106$:
+                            509 ;	../../../contiki-sensinode//core/sys/etimer.c:91: if(ev == PROCESS_EVENT_EXITED) {
+   01FE E5 81               510 	mov	a,sp
+   0200 24 F1               511 	add	a,#0xf1
+   0202 F8                  512 	mov	r0,a
+   0203 B6 87 02            513 	cjne	@r0,#0x87,00183$
+   0206 80 03               514 	sjmp	00184$
+   0208                     515 00183$:
+   0208 02s03rB0            516 	ljmp	00123$
+   020B                     517 00184$:
+                            518 ;	../../../contiki-sensinode//core/sys/etimer.c:92: struct process *p = data;
+   020B E5 81               519 	mov	a,sp
+   020D 24 EE               520 	add	a,#0xee
+   020F F8                  521 	mov	r0,a
+   0210 E5 81               522 	mov	a,sp
+   0212 24 FB               523 	add	a,#0xfb
+   0214 F9                  524 	mov	r1,a
+   0215 E6                  525 	mov	a,@r0
+   0216 F7                  526 	mov	@r1,a
+   0217 08                  527 	inc	r0
+   0218 09                  528 	inc	r1
+   0219 E6                  529 	mov	a,@r0
+   021A F7                  530 	mov	@r1,a
+   021B 08                  531 	inc	r0
+   021C 09                  532 	inc	r1
+   021D E6                  533 	mov	a,@r0
+   021E F7                  534 	mov	@r1,a
+                            535 ;	../../../contiki-sensinode//core/sys/etimer.c:94: while(timerlist != NULL && timerlist->p == p) {
+   021F                     536 00109$:
+   021F 90s00r00            537 	mov	dptr,#_timerlist
+   0222 E0                  538 	movx	a,@dptr
+   0223 FA                  539 	mov	r2,a
+   0224 A3                  540 	inc	dptr
+   0225 E0                  541 	movx	a,@dptr
+   0226 FB                  542 	mov	r3,a
+   0227 A3                  543 	inc	dptr
+   0228 E0                  544 	movx	a,@dptr
+   0229 FC                  545 	mov	r4,a
+   022A EA                  546 	mov	a,r2
+   022B 4B                  547 	orl	a,r3
+   022C 60 78               548 	jz	00111$
+   022E C0 05               549 	push	ar5
+   0230 C0 06               550 	push	ar6
+   0232 C0 07               551 	push	ar7
+   0234 74 07               552 	mov	a,#0x07
+   0236 2A                  553 	add	a,r2
+   0237 FD                  554 	mov	r5,a
+   0238 E4                  555 	clr	a
+   0239 3B                  556 	addc	a,r3
+   023A FE                  557 	mov	r6,a
+   023B 8C 07               558 	mov	ar7,r4
+   023D 8D 82               559 	mov	dpl,r5
+   023F 8E 83               560 	mov	dph,r6
+   0241 8F F0               561 	mov	b,r7
+   0243 12s00r00            562 	lcall	__gptrget
+   0246 FD                  563 	mov	r5,a
+   0247 A3                  564 	inc	dptr
+   0248 12s00r00            565 	lcall	__gptrget
+   024B FE                  566 	mov	r6,a
+   024C A3                  567 	inc	dptr
+   024D 12s00r00            568 	lcall	__gptrget
+   0250 FF                  569 	mov	r7,a
+   0251 E5 81               570 	mov	a,sp
+   0253 24 F8               571 	add	a,#0xf8
+   0255 F8                  572 	mov	r0,a
+   0256 C0 05               573 	push	ar5
+   0258 C0 06               574 	push	ar6
+   025A C0 07               575 	push	ar7
+   025C 86 82               576 	mov	dpl,@r0
+   025E 08                  577 	inc	r0
+   025F 86 83               578 	mov	dph,@r0
+   0261 08                  579 	inc	r0
+   0262 86 F0               580 	mov	b,@r0
+   0264 12s00r00            581 	lcall	___gptr_cmp
+   0267 15 81               582 	dec	sp
+   0269 15 81               583 	dec	sp
+   026B 15 81               584 	dec	sp
+   026D 60 08               585 	jz	00187$
+   026F D0 07               586 	pop	ar7
+   0271 D0 06               587 	pop	ar6
+   0273 D0 05               588 	pop	ar5
+   0275 80 2F               589 	sjmp	00111$
+   0277                     590 00187$:
+   0277 D0 07               591 	pop	ar7
+   0279 D0 06               592 	pop	ar6
+   027B D0 05               593 	pop	ar5
+                            594 ;	../../../contiki-sensinode//core/sys/etimer.c:95: timerlist = timerlist->next;
+   027D 74 04               595 	mov	a,#0x04
+   027F 2A                  596 	add	a,r2
+   0280 FA                  597 	mov	r2,a
+   0281 E4                  598 	clr	a
+   0282 3B                  599 	addc	a,r3
+   0283 FB                  600 	mov	r3,a
+   0284 8A 82               601 	mov	dpl,r2
+   0286 8B 83               602 	mov	dph,r3
+   0288 8C F0               603 	mov	b,r4
+   028A 12s00r00            604 	lcall	__gptrget
+   028D FA                  605 	mov	r2,a
+   028E A3                  606 	inc	dptr
+   028F 12s00r00            607 	lcall	__gptrget
+   0292 FB                  608 	mov	r3,a
+   0293 A3                  609 	inc	dptr
+   0294 12s00r00            610 	lcall	__gptrget
+   0297 FC                  611 	mov	r4,a
+   0298 90s00r00            612 	mov	dptr,#_timerlist
+   029B EA                  613 	mov	a,r2
+   029C F0                  614 	movx	@dptr,a
+   029D A3                  615 	inc	dptr
+   029E EB                  616 	mov	a,r3
+   029F F0                  617 	movx	@dptr,a
+   02A0 A3                  618 	inc	dptr
+   02A1 EC                  619 	mov	a,r4
+   02A2 F0                  620 	movx	@dptr,a
+   02A3 02s02r1F            621 	ljmp	00109$
+   02A6                     622 00111$:
+                            623 ;	../../../contiki-sensinode//core/sys/etimer.c:98: if(timerlist != NULL) {
+   02A6 90s00r00            624 	mov	dptr,#_timerlist
+   02A9 E0                  625 	movx	a,@dptr
+   02AA FA                  626 	mov	r2,a
+   02AB A3                  627 	inc	dptr
+   02AC E0                  628 	movx	a,@dptr
+   02AD FB                  629 	mov	r3,a
+   02AE A3                  630 	inc	dptr
+   02AF E0                  631 	movx	a,@dptr
+   02B0 FC                  632 	mov	r4,a
+   02B1 EA                  633 	mov	a,r2
+   02B2 4B                  634 	orl	a,r3
+   02B3 70 03               635 	jnz	00188$
+   02B5 02s01rE3            636 	ljmp	00135$
+   02B8                     637 00188$:
+                            638 ;	../../../contiki-sensinode//core/sys/etimer.c:99: t = timerlist;
+   02B8 E5 81               639 	mov	a,sp
+   02BA 24 F5               640 	add	a,#0xf5
+   02BC F8                  641 	mov	r0,a
+   02BD A6 02               642 	mov	@r0,ar2
+   02BF 08                  643 	inc	r0
+   02C0 A6 03               644 	mov	@r0,ar3
+   02C2 08                  645 	inc	r0
+   02C3 A6 04               646 	mov	@r0,ar4
+                            647 ;	../../../contiki-sensinode//core/sys/etimer.c:100: while(t->next != NULL) {
+   02C5                     648 00115$:
+   02C5 E5 81               649 	mov	a,sp
+   02C7 24 F5               650 	add	a,#0xf5
+   02C9 F8                  651 	mov	r0,a
+   02CA 74 04               652 	mov	a,#0x04
+   02CC 26                  653 	add	a,@r0
+   02CD FA                  654 	mov	r2,a
+   02CE E4                  655 	clr	a
+   02CF 08                  656 	inc	r0
+   02D0 36                  657 	addc	a,@r0
+   02D1 FB                  658 	mov	r3,a
+   02D2 08                  659 	inc	r0
+   02D3 86 04               660 	mov	ar4,@r0
+   02D5 8A 82               661 	mov	dpl,r2
+   02D7 8B 83               662 	mov	dph,r3
+   02D9 8C F0               663 	mov	b,r4
+   02DB A8 81               664 	mov	r0,sp
+   02DD 18                  665 	dec	r0
+   02DE 18                  666 	dec	r0
+   02DF 12s00r00            667 	lcall	__gptrget
+   02E2 F6                  668 	mov	@r0,a
+   02E3 A3                  669 	inc	dptr
+   02E4 12s00r00            670 	lcall	__gptrget
+   02E7 08                  671 	inc	r0
+   02E8 F6                  672 	mov	@r0,a
+   02E9 A3                  673 	inc	dptr
+   02EA 12s00r00            674 	lcall	__gptrget
+   02ED 08                  675 	inc	r0
+   02EE F6                  676 	mov	@r0,a
+   02EF A8 81               677 	mov	r0,sp
+   02F1 18                  678 	dec	r0
+   02F2 18                  679 	dec	r0
+   02F3 E6                  680 	mov	a,@r0
+   02F4 08                  681 	inc	r0
+   02F5 46                  682 	orl	a,@r0
+   02F6 70 03               683 	jnz	00189$
+   02F8 02s01rE3            684 	ljmp	00135$
+   02FB                     685 00189$:
+                            686 ;	../../../contiki-sensinode//core/sys/etimer.c:101: if(t->next->p == p) {
+   02FB C0 05               687 	push	ar5
+   02FD C0 06               688 	push	ar6
+   02FF C0 07               689 	push	ar7
+   0301 E5 81               690 	mov	a,sp
+   0303 24 FB               691 	add	a,#0xfb
+   0305 F8                  692 	mov	r0,a
+   0306 74 07               693 	mov	a,#0x07
+   0308 26                  694 	add	a,@r0
+   0309 FD                  695 	mov	r5,a
+   030A E4                  696 	clr	a
+   030B 08                  697 	inc	r0
+   030C 36                  698 	addc	a,@r0
+   030D FE                  699 	mov	r6,a
+   030E 08                  700 	inc	r0
+   030F 86 07               701 	mov	ar7,@r0
+   0311 8D 82               702 	mov	dpl,r5
+   0313 8E 83               703 	mov	dph,r6
+   0315 8F F0               704 	mov	b,r7
+   0317 12s00r00            705 	lcall	__gptrget
+   031A FD                  706 	mov	r5,a
+   031B A3                  707 	inc	dptr
+   031C 12s00r00            708 	lcall	__gptrget
+   031F FE                  709 	mov	r6,a
+   0320 A3                  710 	inc	dptr
+   0321 12s00r00            711 	lcall	__gptrget
+   0324 FF                  712 	mov	r7,a
+   0325 E5 81               713 	mov	a,sp
+   0327 24 F8               714 	add	a,#0xf8
+   0329 F8                  715 	mov	r0,a
+   032A C0 05               716 	push	ar5
+   032C C0 06               717 	push	ar6
+   032E C0 07               718 	push	ar7
+   0330 86 82               719 	mov	dpl,@r0
+   0332 08                  720 	inc	r0
+   0333 86 83               721 	mov	dph,@r0
+   0335 08                  722 	inc	r0
+   0336 86 F0               723 	mov	b,@r0
+   0338 12s00r00            724 	lcall	___gptr_cmp
+   033B 15 81               725 	dec	sp
+   033D 15 81               726 	dec	sp
+   033F 15 81               727 	dec	sp
+   0341 60 08               728 	jz	00191$
+   0343 D0 07               729 	pop	ar7
+   0345 D0 06               730 	pop	ar6
+   0347 D0 05               731 	pop	ar5
+   0349 80 41               732 	sjmp	00113$
+   034B                     733 00191$:
+                            734 ;	../../../contiki-sensinode//core/sys/etimer.c:102: t->next = t->next->next;
+   034B E5 81               735 	mov	a,sp
+   034D 24 FB               736 	add	a,#0xfb
+   034F F8                  737 	mov	r0,a
+   0350 74 04               738 	mov	a,#0x04
+   0352 26                  739 	add	a,@r0
+   0353 FD                  740 	mov	r5,a
+   0354 E4                  741 	clr	a
+   0355 08                  742 	inc	r0
+   0356 36                  743 	addc	a,@r0
+   0357 FE                  744 	mov	r6,a
+   0358 08                  745 	inc	r0
+   0359 86 07               746 	mov	ar7,@r0
+   035B 8D 82               747 	mov	dpl,r5
+   035D 8E 83               748 	mov	dph,r6
+   035F 8F F0               749 	mov	b,r7
+   0361 12s00r00            750 	lcall	__gptrget
+   0364 FD                  751 	mov	r5,a
+   0365 A3                  752 	inc	dptr
+   0366 12s00r00            753 	lcall	__gptrget
+   0369 FE                  754 	mov	r6,a
+   036A A3                  755 	inc	dptr
+   036B 12s00r00            756 	lcall	__gptrget
+   036E FF                  757 	mov	r7,a
+   036F 8A 82               758 	mov	dpl,r2
+   0371 8B 83               759 	mov	dph,r3
+   0373 8C F0               760 	mov	b,r4
+   0375 ED                  761 	mov	a,r5
+   0376 12s00r00            762 	lcall	__gptrput
+   0379 A3                  763 	inc	dptr
+   037A EE                  764 	mov	a,r6
+   037B 12s00r00            765 	lcall	__gptrput
+   037E A3                  766 	inc	dptr
+   037F EF                  767 	mov	a,r7
+   0380 12s00r00            768 	lcall	__gptrput
+   0383 D0 07               769 	pop	ar7
+   0385 D0 06               770 	pop	ar6
+   0387 D0 05               771 	pop	ar5
+   0389 02s02rC5            772 	ljmp	00115$
+   038C                     773 00113$:
+                            774 ;	../../../contiki-sensinode//core/sys/etimer.c:104: t = t->next;
+   038C 8A 82               775 	mov	dpl,r2
+   038E 8B 83               776 	mov	dph,r3
+   0390 8C F0               777 	mov	b,r4
+   0392 12s00r00            778 	lcall	__gptrget
+   0395 FA                  779 	mov	r2,a
+   0396 A3                  780 	inc	dptr
+   0397 12s00r00            781 	lcall	__gptrget
+   039A FB                  782 	mov	r3,a
+   039B A3                  783 	inc	dptr
+   039C 12s00r00            784 	lcall	__gptrget
+   039F FC                  785 	mov	r4,a
+   03A0 E5 81               786 	mov	a,sp
+   03A2 24 F5               787 	add	a,#0xf5
+   03A4 F8                  788 	mov	r0,a
+   03A5 A6 02               789 	mov	@r0,ar2
+   03A7 08                  790 	inc	r0
+   03A8 A6 03               791 	mov	@r0,ar3
+   03AA 08                  792 	inc	r0
+   03AB A6 04               793 	mov	@r0,ar4
+   03AD 02s02rC5            794 	ljmp	00115$
+                            795 ;	../../../contiki-sensinode//core/sys/etimer.c:107: continue;
+   03B0                     796 00123$:
+                            797 ;	../../../contiki-sensinode//core/sys/etimer.c:108: } else if(ev != PROCESS_EVENT_POLL) {
+   03B0 E5 81               798 	mov	a,sp
+   03B2 24 F1               799 	add	a,#0xf1
+   03B4 F8                  800 	mov	r0,a
+   03B5 B6 82 02            801 	cjne	@r0,#0x82,00192$
+   03B8 80 03               802 	sjmp	00193$
+   03BA                     803 00192$:
+   03BA 02s01rE3            804 	ljmp	00135$
+   03BD                     805 00193$:
+                            806 ;	../../../contiki-sensinode//core/sys/etimer.c:112: again:
+   03BD                     807 00125$:
+                            808 ;	../../../contiki-sensinode//core/sys/etimer.c:114: u = NULL;
+   03BD E5 81               809 	mov	a,sp
+   03BF 24 F8               810 	add	a,#0xf8
+   03C1 F8                  811 	mov	r0,a
+   03C2 E4                  812 	clr	a
+   03C3 F6                  813 	mov	@r0,a
+   03C4 08                  814 	inc	r0
+   03C5 F6                  815 	mov	@r0,a
+   03C6 08                  816 	inc	r0
+   03C7 76 00               817 	mov	@r0,#0x00
+                            818 ;	../../../contiki-sensinode//core/sys/etimer.c:116: for(t = timerlist; t != NULL; t = t->next) {
+   03C9 90s00r00            819 	mov	dptr,#_timerlist
+   03CC E0                  820 	movx	a,@dptr
+   03CD FA                  821 	mov	r2,a
+   03CE A3                  822 	inc	dptr
+   03CF E0                  823 	movx	a,@dptr
+   03D0 FB                  824 	mov	r3,a
+   03D1 A3                  825 	inc	dptr
+   03D2 E0                  826 	movx	a,@dptr
+   03D3 FC                  827 	mov	r4,a
+   03D4 E5 81               828 	mov	a,sp
+   03D6 24 F5               829 	add	a,#0xf5
+   03D8 F8                  830 	mov	r0,a
+   03D9 A6 02               831 	mov	@r0,ar2
+   03DB 08                  832 	inc	r0
+   03DC A6 03               833 	mov	@r0,ar3
+   03DE 08                  834 	inc	r0
+   03DF A6 04               835 	mov	@r0,ar4
+   03E1                     836 00138$:
+   03E1 E5 81               837 	mov	a,sp
+   03E3 24 F5               838 	add	a,#0xf5
+   03E5 F8                  839 	mov	r0,a
+   03E6 E4                  840 	clr	a
+   03E7 C0 E0               841 	push	acc
+   03E9 E4                  842 	clr	a
+   03EA C0 E0               843 	push	acc
+   03EC E4                  844 	clr	a
+   03ED C0 E0               845 	push	acc
+   03EF 86 82               846 	mov	dpl,@r0
+   03F1 08                  847 	inc	r0
+   03F2 86 83               848 	mov	dph,@r0
+   03F4 08                  849 	inc	r0
+   03F5 86 F0               850 	mov	b,@r0
+   03F7 12s00r00            851 	lcall	___gptr_cmp
+   03FA 15 81               852 	dec	sp
+   03FC 15 81               853 	dec	sp
+   03FE 15 81               854 	dec	sp
+   0400 70 03               855 	jnz	00194$
+   0402 02s01rE3            856 	ljmp	00135$
+   0405                     857 00194$:
+                            858 ;	../../../contiki-sensinode//core/sys/etimer.c:117: if(timer_expired(&t->timer)) {
+   0405 E5 81               859 	mov	a,sp
+   0407 24 F5               860 	add	a,#0xf5
+   0409 F8                  861 	mov	r0,a
+   040A 86 82               862 	mov	dpl,@r0
+   040C 08                  863 	inc	r0
+   040D 86 83               864 	mov	dph,@r0
+   040F 08                  865 	inc	r0
+   0410 86 F0               866 	mov	b,@r0
+   0412 C0 07               867 	push	ar7
+   0414 C0 06               868 	push	ar6
+   0416 C0 05               869 	push	ar5
+   0418 78r00               870 	mov	r0,#_timer_expired
+   041A 79s00               871 	mov	r1,#(_timer_expired >> 8)
+   041C 7As00               872 	mov	r2,#(_timer_expired >> 16)
+   041E 12s00r00            873 	lcall	__sdcc_banked_call
+   0421 E5 82               874 	mov	a,dpl
+   0423 85 83 F0            875 	mov	b,dph
+   0426 D0 05               876 	pop	ar5
+   0428 D0 06               877 	pop	ar6
+   042A D0 07               878 	pop	ar7
+   042C 45 F0               879 	orl	a,b
+   042E 70 03               880 	jnz	00195$
+   0430 02s05rA6            881 	ljmp	00133$
+   0433                     882 00195$:
+                            883 ;	../../../contiki-sensinode//core/sys/etimer.c:118: if(process_post(t->p, PROCESS_EVENT_TIMER, t) == PROCESS_ERR_OK) {
+   0433 C0 05               884 	push	ar5
+   0435 C0 06               885 	push	ar6
+   0437 C0 07               886 	push	ar7
+   0439 E5 81               887 	mov	a,sp
+   043B 24 F2               888 	add	a,#0xf2
+   043D F8                  889 	mov	r0,a
+   043E 86 02               890 	mov	ar2,@r0
+   0440 08                  891 	inc	r0
+   0441 86 03               892 	mov	ar3,@r0
+   0443 08                  893 	inc	r0
+   0444 86 04               894 	mov	ar4,@r0
+   0446 E5 81               895 	mov	a,sp
+   0448 24 F2               896 	add	a,#0xf2
+   044A F8                  897 	mov	r0,a
+   044B E5 81               898 	mov	a,sp
+   044D 24 FB               899 	add	a,#0xfb
+   044F F9                  900 	mov	r1,a
+   0450 74 07               901 	mov	a,#0x07
+   0452 26                  902 	add	a,@r0
+   0453 F7                  903 	mov	@r1,a
+   0454 E4                  904 	clr	a
+   0455 08                  905 	inc	r0
+   0456 36                  906 	addc	a,@r0
+   0457 09                  907 	inc	r1
+   0458 F7                  908 	mov	@r1,a
+   0459 08                  909 	inc	r0
+   045A 09                  910 	inc	r1
+   045B E6                  911 	mov	a,@r0
+   045C F7                  912 	mov	@r1,a
+   045D E5 81               913 	mov	a,sp
+   045F 24 FB               914 	add	a,#0xfb
+   0461 F8                  915 	mov	r0,a
+   0462 86 82               916 	mov	dpl,@r0
+   0464 08                  917 	inc	r0
+   0465 86 83               918 	mov	dph,@r0
+   0467 08                  919 	inc	r0
+   0468 86 F0               920 	mov	b,@r0
+   046A 12s00r00            921 	lcall	__gptrget
+   046D FD                  922 	mov	r5,a
+   046E A3                  923 	inc	dptr
+   046F 12s00r00            924 	lcall	__gptrget
+   0472 FE                  925 	mov	r6,a
+   0473 A3                  926 	inc	dptr
+   0474 12s00r00            927 	lcall	__gptrget
+   0477 FF                  928 	mov	r7,a
+   0478 C0 05               929 	push	ar5
+   047A C0 02               930 	push	ar2
+   047C C0 03               931 	push	ar3
+   047E C0 04               932 	push	ar4
+   0480 74 88               933 	mov	a,#0x88
+   0482 C0 E0               934 	push	acc
+   0484 8D 82               935 	mov	dpl,r5
+   0486 8E 83               936 	mov	dph,r6
+   0488 8F F0               937 	mov	b,r7
+   048A 78r00               938 	mov	r0,#_process_post
+   048C 79s00               939 	mov	r1,#(_process_post >> 8)
+   048E 7As00               940 	mov	r2,#(_process_post >> 16)
+   0490 12s00r00            941 	lcall	__sdcc_banked_call
+   0493 AE 82               942 	mov	r6,dpl
+   0495 AF 83               943 	mov	r7,dph
+   0497 E5 81               944 	mov	a,sp
+   0499 24 FC               945 	add	a,#0xfc
+   049B F5 81               946 	mov	sp,a
+   049D D0 05               947 	pop	ar5
+   049F EE                  948 	mov	a,r6
+   04A0 4F                  949 	orl	a,r7
+   04A1 D0 07               950 	pop	ar7
+   04A3 D0 06               951 	pop	ar6
+   04A5 D0 05               952 	pop	ar5
+   04A7 60 03               953 	jz	00196$
+   04A9 02s05r91            954 	ljmp	00130$
+   04AC                     955 00196$:
+                            956 ;	../../../contiki-sensinode//core/sys/etimer.c:123: t->p = PROCESS_NONE;
+   04AC A8 81               957 	mov	r0,sp
+   04AE 18                  958 	dec	r0
+   04AF 18                  959 	dec	r0
+   04B0 86 82               960 	mov	dpl,@r0
+   04B2 08                  961 	inc	r0
+   04B3 86 83               962 	mov	dph,@r0
+   04B5 08                  963 	inc	r0
+   04B6 86 F0               964 	mov	b,@r0
+   04B8 E4                  965 	clr	a
+   04B9 12s00r00            966 	lcall	__gptrput
+   04BC A3                  967 	inc	dptr
+   04BD E4                  968 	clr	a
+   04BE 12s00r00            969 	lcall	__gptrput
+   04C1 A3                  970 	inc	dptr
+   04C2 E4                  971 	clr	a
+   04C3 12s00r00            972 	lcall	__gptrput
+                            973 ;	../../../contiki-sensinode//core/sys/etimer.c:124: if(u != NULL) {
+   04C6 E5 81               974 	mov	a,sp
+   04C8 24 F8               975 	add	a,#0xf8
+   04CA F8                  976 	mov	r0,a
+   04CB E6                  977 	mov	a,@r0
+   04CC 08                  978 	inc	r0
+   04CD 46                  979 	orl	a,@r0
+   04CE 60 56               980 	jz	00127$
+                            981 ;	../../../contiki-sensinode//core/sys/etimer.c:125: u->next = t->next;
+   04D0 C0 05               982 	push	ar5
+   04D2 C0 06               983 	push	ar6
+   04D4 C0 07               984 	push	ar7
+   04D6 E5 81               985 	mov	a,sp
+   04D8 24 F5               986 	add	a,#0xf5
+   04DA F8                  987 	mov	r0,a
+   04DB 74 04               988 	mov	a,#0x04
+   04DD 26                  989 	add	a,@r0
+   04DE FA                  990 	mov	r2,a
+   04DF E4                  991 	clr	a
+   04E0 08                  992 	inc	r0
+   04E1 36                  993 	addc	a,@r0
+   04E2 FB                  994 	mov	r3,a
+   04E3 08                  995 	inc	r0
+   04E4 86 04               996 	mov	ar4,@r0
+   04E6 E5 81               997 	mov	a,sp
+   04E8 24 F2               998 	add	a,#0xf2
+   04EA F8                  999 	mov	r0,a
+   04EB 74 04              1000 	mov	a,#0x04
+   04ED 26                 1001 	add	a,@r0
+   04EE FD                 1002 	mov	r5,a
+   04EF E4                 1003 	clr	a
+   04F0 08                 1004 	inc	r0
+   04F1 36                 1005 	addc	a,@r0
+   04F2 FE                 1006 	mov	r6,a
+   04F3 08                 1007 	inc	r0
+   04F4 86 07              1008 	mov	ar7,@r0
+   04F6 8D 82              1009 	mov	dpl,r5
+   04F8 8E 83              1010 	mov	dph,r6
+   04FA 8F F0              1011 	mov	b,r7
+   04FC 12s00r00           1012 	lcall	__gptrget
+   04FF FD                 1013 	mov	r5,a
+   0500 A3                 1014 	inc	dptr
+   0501 12s00r00           1015 	lcall	__gptrget
+   0504 FE                 1016 	mov	r6,a
+   0505 A3                 1017 	inc	dptr
+   0506 12s00r00           1018 	lcall	__gptrget
+   0509 FF                 1019 	mov	r7,a
+   050A 8A 82              1020 	mov	dpl,r2
+   050C 8B 83              1021 	mov	dph,r3
+   050E 8C F0              1022 	mov	b,r4
+   0510 ED                 1023 	mov	a,r5
+   0511 12s00r00           1024 	lcall	__gptrput
+   0514 A3                 1025 	inc	dptr
+   0515 EE                 1026 	mov	a,r6
+   0516 12s00r00           1027 	lcall	__gptrput
+   0519 A3                 1028 	inc	dptr
+   051A EF                 1029 	mov	a,r7
+   051B 12s00r00           1030 	lcall	__gptrput
+   051E D0 07              1031 	pop	ar7
+   0520 D0 06              1032 	pop	ar6
+   0522 D0 05              1033 	pop	ar5
+   0524 80 2F              1034 	sjmp	00128$
+   0526                    1035 00127$:
+                           1036 ;	../../../contiki-sensinode//core/sys/etimer.c:127: timerlist = t->next;
+   0526 E5 81              1037 	mov	a,sp
+   0528 24 F5              1038 	add	a,#0xf5
+   052A F8                 1039 	mov	r0,a
+   052B 74 04              1040 	mov	a,#0x04
+   052D 26                 1041 	add	a,@r0
+   052E FA                 1042 	mov	r2,a
+   052F E4                 1043 	clr	a
+   0530 08                 1044 	inc	r0
+   0531 36                 1045 	addc	a,@r0
+   0532 FB                 1046 	mov	r3,a
+   0533 08                 1047 	inc	r0
+   0534 86 04              1048 	mov	ar4,@r0
+   0536 8A 82              1049 	mov	dpl,r2
+   0538 8B 83              1050 	mov	dph,r3
+   053A 8C F0              1051 	mov	b,r4
+   053C 12s00r00           1052 	lcall	__gptrget
+   053F FA                 1053 	mov	r2,a
+   0540 A3                 1054 	inc	dptr
+   0541 12s00r00           1055 	lcall	__gptrget
+   0544 FB                 1056 	mov	r3,a
+   0545 A3                 1057 	inc	dptr
+   0546 12s00r00           1058 	lcall	__gptrget
+   0549 FC                 1059 	mov	r4,a
+   054A 90s00r00           1060 	mov	dptr,#_timerlist
+   054D EA                 1061 	mov	a,r2
+   054E F0                 1062 	movx	@dptr,a
+   054F A3                 1063 	inc	dptr
+   0550 EB                 1064 	mov	a,r3
+   0551 F0                 1065 	movx	@dptr,a
+   0552 A3                 1066 	inc	dptr
+   0553 EC                 1067 	mov	a,r4
+   0554 F0                 1068 	movx	@dptr,a
+   0555                    1069 00128$:
+                           1070 ;	../../../contiki-sensinode//core/sys/etimer.c:129: t->next = NULL;
+   0555 E5 81              1071 	mov	a,sp
+   0557 24 F5              1072 	add	a,#0xf5
+   0559 F8                 1073 	mov	r0,a
+   055A 74 04              1074 	mov	a,#0x04
+   055C 26                 1075 	add	a,@r0
+   055D FA                 1076 	mov	r2,a
+   055E E4                 1077 	clr	a
+   055F 08                 1078 	inc	r0
+   0560 36                 1079 	addc	a,@r0
+   0561 FB                 1080 	mov	r3,a
+   0562 08                 1081 	inc	r0
+   0563 86 04              1082 	mov	ar4,@r0
+   0565 8A 82              1083 	mov	dpl,r2
+   0567 8B 83              1084 	mov	dph,r3
+   0569 8C F0              1085 	mov	b,r4
+   056B E4                 1086 	clr	a
+   056C 12s00r00           1087 	lcall	__gptrput
+   056F A3                 1088 	inc	dptr
+   0570 E4                 1089 	clr	a
+   0571 12s00r00           1090 	lcall	__gptrput
+   0574 A3                 1091 	inc	dptr
+   0575 E4                 1092 	clr	a
+   0576 12s00r00           1093 	lcall	__gptrput
+                           1094 ;	../../../contiki-sensinode//core/sys/etimer.c:130: update_time();
+   0579 C0 07              1095 	push	ar7
+   057B C0 06              1096 	push	ar6
+   057D C0 05              1097 	push	ar5
+   057F 78r00              1098 	mov	r0,#_update_time
+   0581 79s00              1099 	mov	r1,#(_update_time >> 8)
+   0583 7As00              1100 	mov	r2,#(_update_time >> 16)
+   0585 12s00r00           1101 	lcall	__sdcc_banked_call
+   0588 D0 05              1102 	pop	ar5
+   058A D0 06              1103 	pop	ar6
+   058C D0 07              1104 	pop	ar7
+                           1105 ;	../../../contiki-sensinode//core/sys/etimer.c:131: goto again;
+   058E 02s03rBD           1106 	ljmp	00125$
+   0591                    1107 00130$:
+                           1108 ;	../../../contiki-sensinode//core/sys/etimer.c:133: etimer_request_poll();
+   0591 C0 07              1109 	push	ar7
+   0593 C0 06              1110 	push	ar6
+   0595 C0 05              1111 	push	ar5
+   0597 78r09              1112 	mov	r0,#_etimer_request_poll
+   0599 79s06              1113 	mov	r1,#(_etimer_request_poll >> 8)
+   059B 7As00              1114 	mov	r2,#(_etimer_request_poll >> 16)
+   059D 12s00r00           1115 	lcall	__sdcc_banked_call
+   05A0 D0 05              1116 	pop	ar5
+   05A2 D0 06              1117 	pop	ar6
+   05A4 D0 07              1118 	pop	ar7
+   05A6                    1119 00133$:
+                           1120 ;	../../../contiki-sensinode//core/sys/etimer.c:136: u = t;
+   05A6 E5 81              1121 	mov	a,sp
+   05A8 24 F5              1122 	add	a,#0xf5
+   05AA F8                 1123 	mov	r0,a
+   05AB E5 81              1124 	mov	a,sp
+   05AD 24 F8              1125 	add	a,#0xf8
+   05AF F9                 1126 	mov	r1,a
+   05B0 E6                 1127 	mov	a,@r0
+   05B1 F7                 1128 	mov	@r1,a
+   05B2 08                 1129 	inc	r0
+   05B3 09                 1130 	inc	r1
+   05B4 E6                 1131 	mov	a,@r0
+   05B5 F7                 1132 	mov	@r1,a
+   05B6 08                 1133 	inc	r0
+   05B7 09                 1134 	inc	r1
+   05B8 E6                 1135 	mov	a,@r0
+   05B9 F7                 1136 	mov	@r1,a
+                           1137 ;	../../../contiki-sensinode//core/sys/etimer.c:116: for(t = timerlist; t != NULL; t = t->next) {
+   05BA E5 81              1138 	mov	a,sp
+   05BC 24 F5              1139 	add	a,#0xf5
+   05BE F8                 1140 	mov	r0,a
+   05BF 74 04              1141 	mov	a,#0x04
+   05C1 26                 1142 	add	a,@r0
+   05C2 FA                 1143 	mov	r2,a
+   05C3 E4                 1144 	clr	a
+   05C4 08                 1145 	inc	r0
+   05C5 36                 1146 	addc	a,@r0
+   05C6 FB                 1147 	mov	r3,a
+   05C7 08                 1148 	inc	r0
+   05C8 86 04              1149 	mov	ar4,@r0
+   05CA 8A 82              1150 	mov	dpl,r2
+   05CC 8B 83              1151 	mov	dph,r3
+   05CE 8C F0              1152 	mov	b,r4
+   05D0 12s00r00           1153 	lcall	__gptrget
+   05D3 FA                 1154 	mov	r2,a
+   05D4 A3                 1155 	inc	dptr
+   05D5 12s00r00           1156 	lcall	__gptrget
+   05D8 FB                 1157 	mov	r3,a
+   05D9 A3                 1158 	inc	dptr
+   05DA 12s00r00           1159 	lcall	__gptrget
+   05DD FC                 1160 	mov	r4,a
+   05DE E5 81              1161 	mov	a,sp
+   05E0 24 F5              1162 	add	a,#0xf5
+   05E2 F8                 1163 	mov	r0,a
+   05E3 A6 02              1164 	mov	@r0,ar2
+   05E5 08                 1165 	inc	r0
+   05E6 A6 03              1166 	mov	@r0,ar3
+   05E8 08                 1167 	inc	r0
+   05E9 A6 04              1168 	mov	@r0,ar4
+   05EB 02s03rE1           1169 	ljmp	00138$
+                           1170 ;	../../../contiki-sensinode//core/sys/etimer.c:141: PROCESS_END();
+   05EE                    1171 00137$:
+   05EE 8D 82              1172 	mov	dpl,r5
+   05F0 8E 83              1173 	mov	dph,r6
+   05F2 8F F0              1174 	mov	b,r7
+   05F4 E4                 1175 	clr	a
+   05F5 12s00r00           1176 	lcall	__gptrput
+   05F8 A3                 1177 	inc	dptr
+   05F9 E4                 1178 	clr	a
+   05FA 12s00r00           1179 	lcall	__gptrput
+   05FD 75 82 03           1180 	mov	dpl,#0x03
+   0600                    1181 00142$:
+   0600 E5 81              1182 	mov	a,sp
+   0602 24 F4              1183 	add	a,#0xF4
+   0604 F5 81              1184 	mov	sp,a
+   0606 02s00r00           1185 	ljmp	__sdcc_banked_ret
+                           1186 ;------------------------------------------------------------
+                           1187 ;Allocation info for local variables in function 'etimer_request_poll'
+                           1188 ;------------------------------------------------------------
+                           1189 ;	../../../contiki-sensinode//core/sys/etimer.c:145: etimer_request_poll(void)
+                           1190 ;	-----------------------------------------
+                           1191 ;	 function etimer_request_poll
+                           1192 ;	-----------------------------------------
+   0609                    1193 _etimer_request_poll:
+                           1194 ;	../../../contiki-sensinode//core/sys/etimer.c:147: process_poll(&etimer_process);
+   0609 90s00r00           1195 	mov	dptr,#_etimer_process
+   060C 75 F0 00           1196 	mov	b,#0x00
+   060F 78r00              1197 	mov	r0,#_process_poll
+   0611 79s00              1198 	mov	r1,#(_process_poll >> 8)
+   0613 7As00              1199 	mov	r2,#(_process_poll >> 16)
+   0615 12s00r00           1200 	lcall	__sdcc_banked_call
+   0618 02s00r00           1201 	ljmp	__sdcc_banked_ret
+                           1202 ;------------------------------------------------------------
+                           1203 ;Allocation info for local variables in function 'add_timer'
+                           1204 ;------------------------------------------------------------
+                           1205 ;timer                     Allocated to stack - sp -2
+                           1206 ;t                         Allocated to registers r5 r6 r7 
+                           1207 ;------------------------------------------------------------
+                           1208 ;	../../../contiki-sensinode//core/sys/etimer.c:151: add_timer(struct etimer *timer)
+                           1209 ;	-----------------------------------------
+                           1210 ;	 function add_timer
+                           1211 ;	-----------------------------------------
+   061B                    1212 _add_timer:
+   061B C0 82              1213 	push	dpl
+   061D C0 83              1214 	push	dph
+   061F C0 F0              1215 	push	b
+                           1216 ;	../../../contiki-sensinode//core/sys/etimer.c:155: etimer_request_poll();
+   0621 78r09              1217 	mov	r0,#_etimer_request_poll
+   0623 79s06              1218 	mov	r1,#(_etimer_request_poll >> 8)
+   0625 7As00              1219 	mov	r2,#(_etimer_request_poll >> 16)
+   0627 12s00r00           1220 	lcall	__sdcc_banked_call
+                           1221 ;	../../../contiki-sensinode//core/sys/etimer.c:157: if(timer->p != PROCESS_NONE) {
+   062A A8 81              1222 	mov	r0,sp
+   062C 18                 1223 	dec	r0
+   062D 18                 1224 	dec	r0
+   062E 74 07              1225 	mov	a,#0x07
+   0630 26                 1226 	add	a,@r0
+   0631 FA                 1227 	mov	r2,a
+   0632 E4                 1228 	clr	a
+   0633 08                 1229 	inc	r0
+   0634 36                 1230 	addc	a,@r0
+   0635 FB                 1231 	mov	r3,a
+   0636 08                 1232 	inc	r0
+   0637 86 04              1233 	mov	ar4,@r0
+   0639 8A 82              1234 	mov	dpl,r2
+   063B 8B 83              1235 	mov	dph,r3
+   063D 8C F0              1236 	mov	b,r4
+   063F 12s00r00           1237 	lcall	__gptrget
+   0642 FD                 1238 	mov	r5,a
+   0643 A3                 1239 	inc	dptr
+   0644 12s00r00           1240 	lcall	__gptrget
+   0647 FE                 1241 	mov	r6,a
+   0648 A3                 1242 	inc	dptr
+   0649 12s00r00           1243 	lcall	__gptrget
+   064C FF                 1244 	mov	r7,a
+   064D ED                 1245 	mov	a,r5
+   064E 4E                 1246 	orl	a,r6
+   064F 70 03              1247 	jnz	00119$
+   0651 02s06rD5           1248 	ljmp	00104$
+   0654                    1249 00119$:
+                           1250 ;	../../../contiki-sensinode//core/sys/etimer.c:160: for(t = timerlist; t != NULL; t = t->next) {
+   0654 90s00r00           1251 	mov	dptr,#_timerlist
+   0657 E0                 1252 	movx	a,@dptr
+   0658 FD                 1253 	mov	r5,a
+   0659 A3                 1254 	inc	dptr
+   065A E0                 1255 	movx	a,@dptr
+   065B FE                 1256 	mov	r6,a
+   065C A3                 1257 	inc	dptr
+   065D E0                 1258 	movx	a,@dptr
+   065E FF                 1259 	mov	r7,a
+   065F                    1260 00105$:
+   065F E4                 1261 	clr	a
+   0660 C0 E0              1262 	push	acc
+   0662 E4                 1263 	clr	a
+   0663 C0 E0              1264 	push	acc
+   0665 E4                 1265 	clr	a
+   0666 C0 E0              1266 	push	acc
+   0668 8D 82              1267 	mov	dpl,r5
+   066A 8E 83              1268 	mov	dph,r6
+   066C 8F F0              1269 	mov	b,r7
+   066E 12s00r00           1270 	lcall	___gptr_cmp
+   0671 15 81              1271 	dec	sp
+   0673 15 81              1272 	dec	sp
+   0675 15 81              1273 	dec	sp
+   0677 60 5C              1274 	jz	00104$
+                           1275 ;	../../../contiki-sensinode//core/sys/etimer.c:161: if(t == timer) {
+   0679 A8 81              1276 	mov	r0,sp
+   067B 18                 1277 	dec	r0
+   067C 18                 1278 	dec	r0
+   067D C0 05              1279 	push	ar5
+   067F C0 06              1280 	push	ar6
+   0681 C0 07              1281 	push	ar7
+   0683 86 82              1282 	mov	dpl,@r0
+   0685 08                 1283 	inc	r0
+   0686 86 83              1284 	mov	dph,@r0
+   0688 08                 1285 	inc	r0
+   0689 86 F0              1286 	mov	b,@r0
+   068B 12s00r00           1287 	lcall	___gptr_cmp
+   068E 15 81              1288 	dec	sp
+   0690 15 81              1289 	dec	sp
+   0692 15 81              1290 	dec	sp
+   0694 60 02              1291 	jz	00122$
+   0696 80 0C              1292 	sjmp	00107$
+   0698                    1293 00122$:
+                           1294 ;	../../../contiki-sensinode//core/sys/etimer.c:163: update_time();
+   0698 78r00              1295 	mov	r0,#_update_time
+   069A 79s00              1296 	mov	r1,#(_update_time >> 8)
+   069C 7As00              1297 	mov	r2,#(_update_time >> 16)
+   069E 12s00r00           1298 	lcall	__sdcc_banked_call
+                           1299 ;	../../../contiki-sensinode//core/sys/etimer.c:164: return;
+   06A1 02s07r3C           1300 	ljmp	00109$
+   06A4                    1301 00107$:
+                           1302 ;	../../../contiki-sensinode//core/sys/etimer.c:160: for(t = timerlist; t != NULL; t = t->next) {
+   06A4 C0 02              1303 	push	ar2
+   06A6 C0 03              1304 	push	ar3
+   06A8 C0 04              1305 	push	ar4
+   06AA 74 04              1306 	mov	a,#0x04
+   06AC 2D                 1307 	add	a,r5
+   06AD FA                 1308 	mov	r2,a
+   06AE E4                 1309 	clr	a
+   06AF 3E                 1310 	addc	a,r6
+   06B0 FB                 1311 	mov	r3,a
+   06B1 8F 04              1312 	mov	ar4,r7
+   06B3 8A 82              1313 	mov	dpl,r2
+   06B5 8B 83              1314 	mov	dph,r3
+   06B7 8C F0              1315 	mov	b,r4
+   06B9 12s00r00           1316 	lcall	__gptrget
+   06BC FA                 1317 	mov	r2,a
+   06BD A3                 1318 	inc	dptr
+   06BE 12s00r00           1319 	lcall	__gptrget
+   06C1 FB                 1320 	mov	r3,a
+   06C2 A3                 1321 	inc	dptr
+   06C3 12s00r00           1322 	lcall	__gptrget
+   06C6 FC                 1323 	mov	r4,a
+   06C7 8A 05              1324 	mov	ar5,r2
+   06C9 8B 06              1325 	mov	ar6,r3
+   06CB 8C 07              1326 	mov	ar7,r4
+   06CD D0 04              1327 	pop	ar4
+   06CF D0 03              1328 	pop	ar3
+   06D1 D0 02              1329 	pop	ar2
+   06D3 80 8A              1330 	sjmp	00105$
+   06D5                    1331 00104$:
+                           1332 ;	../../../contiki-sensinode//core/sys/etimer.c:169: timer->p = PROCESS_CURRENT();
+   06D5 90s00r00           1333 	mov	dptr,#_process_current
+   06D8 E0                 1334 	movx	a,@dptr
+   06D9 FD                 1335 	mov	r5,a
+   06DA A3                 1336 	inc	dptr
+   06DB E0                 1337 	movx	a,@dptr
+   06DC FE                 1338 	mov	r6,a
+   06DD A3                 1339 	inc	dptr
+   06DE E0                 1340 	movx	a,@dptr
+   06DF FF                 1341 	mov	r7,a
+   06E0 8A 82              1342 	mov	dpl,r2
+   06E2 8B 83              1343 	mov	dph,r3
+   06E4 8C F0              1344 	mov	b,r4
+   06E6 ED                 1345 	mov	a,r5
+   06E7 12s00r00           1346 	lcall	__gptrput
+   06EA A3                 1347 	inc	dptr
+   06EB EE                 1348 	mov	a,r6
+   06EC 12s00r00           1349 	lcall	__gptrput
+   06EF A3                 1350 	inc	dptr
+   06F0 EF                 1351 	mov	a,r7
+   06F1 12s00r00           1352 	lcall	__gptrput
+                           1353 ;	../../../contiki-sensinode//core/sys/etimer.c:170: timer->next = timerlist;
+   06F4 A8 81              1354 	mov	r0,sp
+   06F6 18                 1355 	dec	r0
+   06F7 18                 1356 	dec	r0
+   06F8 74 04              1357 	mov	a,#0x04
+   06FA 26                 1358 	add	a,@r0
+   06FB FD                 1359 	mov	r5,a
+   06FC E4                 1360 	clr	a
+   06FD 08                 1361 	inc	r0
+   06FE 36                 1362 	addc	a,@r0
+   06FF FE                 1363 	mov	r6,a
+   0700 08                 1364 	inc	r0
+   0701 86 07              1365 	mov	ar7,@r0
+   0703 90s00r00           1366 	mov	dptr,#_timerlist
+   0706 E0                 1367 	movx	a,@dptr
+   0707 FA                 1368 	mov	r2,a
+   0708 A3                 1369 	inc	dptr
+   0709 E0                 1370 	movx	a,@dptr
+   070A FB                 1371 	mov	r3,a
+   070B A3                 1372 	inc	dptr
+   070C E0                 1373 	movx	a,@dptr
+   070D FC                 1374 	mov	r4,a
+   070E 8D 82              1375 	mov	dpl,r5
+   0710 8E 83              1376 	mov	dph,r6
+   0712 8F F0              1377 	mov	b,r7
+   0714 EA                 1378 	mov	a,r2
+   0715 12s00r00           1379 	lcall	__gptrput
+   0718 A3                 1380 	inc	dptr
+   0719 EB                 1381 	mov	a,r3
+   071A 12s00r00           1382 	lcall	__gptrput
+   071D A3                 1383 	inc	dptr
+   071E EC                 1384 	mov	a,r4
+   071F 12s00r00           1385 	lcall	__gptrput
+                           1386 ;	../../../contiki-sensinode//core/sys/etimer.c:171: timerlist = timer;
+   0722 A8 81              1387 	mov	r0,sp
+   0724 18                 1388 	dec	r0
+   0725 18                 1389 	dec	r0
+   0726 90s00r00           1390 	mov	dptr,#_timerlist
+   0729 E6                 1391 	mov	a,@r0
+   072A F0                 1392 	movx	@dptr,a
+   072B 08                 1393 	inc	r0
+   072C A3                 1394 	inc	dptr
+   072D E6                 1395 	mov	a,@r0
+   072E F0                 1396 	movx	@dptr,a
+   072F 08                 1397 	inc	r0
+   0730 A3                 1398 	inc	dptr
+   0731 E6                 1399 	mov	a,@r0
+   0732 F0                 1400 	movx	@dptr,a
+                           1401 ;	../../../contiki-sensinode//core/sys/etimer.c:173: update_time();
+   0733 78r00              1402 	mov	r0,#_update_time
+   0735 79s00              1403 	mov	r1,#(_update_time >> 8)
+   0737 7As00              1404 	mov	r2,#(_update_time >> 16)
+   0739 12s00r00           1405 	lcall	__sdcc_banked_call
+   073C                    1406 00109$:
+   073C 15 81              1407 	dec	sp
+   073E 15 81              1408 	dec	sp
+   0740 15 81              1409 	dec	sp
+   0742 02s00r00           1410 	ljmp	__sdcc_banked_ret
+                           1411 ;------------------------------------------------------------
+                           1412 ;Allocation info for local variables in function 'etimer_set'
+                           1413 ;------------------------------------------------------------
+                           1414 ;interval                  Allocated to stack - sp -4
+                           1415 ;et                        Allocated to registers r5 r6 r7 
+                           1416 ;------------------------------------------------------------
+                           1417 ;	../../../contiki-sensinode//core/sys/etimer.c:177: etimer_set(struct etimer *et, clock_time_t interval)
+                           1418 ;	-----------------------------------------
+                           1419 ;	 function etimer_set
+                           1420 ;	-----------------------------------------
+   0745                    1421 _etimer_set:
+   0745 AD 82              1422 	mov	r5,dpl
+   0747 AE 83              1423 	mov	r6,dph
+   0749 AF F0              1424 	mov	r7,b
+                           1425 ;	../../../contiki-sensinode//core/sys/etimer.c:179: timer_set(&et->timer, interval);
+   074B C0 07              1426 	push	ar7
+   074D C0 06              1427 	push	ar6
+   074F C0 05              1428 	push	ar5
+   0751 E5 81              1429 	mov	a,sp
+   0753 24 F9              1430 	add	a,#0xf9
+   0755 F8                 1431 	mov	r0,a
+   0756 E6                 1432 	mov	a,@r0
+   0757 C0 E0              1433 	push	acc
+   0759 08                 1434 	inc	r0
+   075A E6                 1435 	mov	a,@r0
+   075B C0 E0              1436 	push	acc
+   075D 8D 82              1437 	mov	dpl,r5
+   075F 8E 83              1438 	mov	dph,r6
+   0761 8F F0              1439 	mov	b,r7
+   0763 78r00              1440 	mov	r0,#_timer_set
+   0765 79s00              1441 	mov	r1,#(_timer_set >> 8)
+   0767 7As00              1442 	mov	r2,#(_timer_set >> 16)
+   0769 12s00r00           1443 	lcall	__sdcc_banked_call
+   076C 15 81              1444 	dec	sp
+   076E 15 81              1445 	dec	sp
+   0770 D0 05              1446 	pop	ar5
+   0772 D0 06              1447 	pop	ar6
+   0774 D0 07              1448 	pop	ar7
+                           1449 ;	../../../contiki-sensinode//core/sys/etimer.c:180: add_timer(et);
+   0776 8D 82              1450 	mov	dpl,r5
+   0778 8E 83              1451 	mov	dph,r6
+   077A 8F F0              1452 	mov	b,r7
+   077C 78r1B              1453 	mov	r0,#_add_timer
+   077E 79s06              1454 	mov	r1,#(_add_timer >> 8)
+   0780 7As00              1455 	mov	r2,#(_add_timer >> 16)
+   0782 12s00r00           1456 	lcall	__sdcc_banked_call
+   0785 02s00r00           1457 	ljmp	__sdcc_banked_ret
+                           1458 ;------------------------------------------------------------
+                           1459 ;Allocation info for local variables in function 'etimer_reset'
+                           1460 ;------------------------------------------------------------
+                           1461 ;et                        Allocated to registers r5 r6 r7 
+                           1462 ;------------------------------------------------------------
+                           1463 ;	../../../contiki-sensinode//core/sys/etimer.c:184: etimer_reset(struct etimer *et)
+                           1464 ;	-----------------------------------------
+                           1465 ;	 function etimer_reset
+                           1466 ;	-----------------------------------------
+   0788                    1467 _etimer_reset:
+                           1468 ;	../../../contiki-sensinode//core/sys/etimer.c:186: timer_reset(&et->timer);
+   0788 AD 82              1469 	mov	r5,dpl
+   078A AE 83              1470 	mov	r6,dph
+   078C AF F0              1471 	mov	r7,b
+   078E C0 07              1472 	push	ar7
+   0790 C0 06              1473 	push	ar6
+   0792 C0 05              1474 	push	ar5
+   0794 78r00              1475 	mov	r0,#_timer_reset
+   0796 79s00              1476 	mov	r1,#(_timer_reset >> 8)
+   0798 7As00              1477 	mov	r2,#(_timer_reset >> 16)
+   079A 12s00r00           1478 	lcall	__sdcc_banked_call
+   079D D0 05              1479 	pop	ar5
+   079F D0 06              1480 	pop	ar6
+   07A1 D0 07              1481 	pop	ar7
+                           1482 ;	../../../contiki-sensinode//core/sys/etimer.c:187: add_timer(et);
+   07A3 8D 82              1483 	mov	dpl,r5
+   07A5 8E 83              1484 	mov	dph,r6
+   07A7 8F F0              1485 	mov	b,r7
+   07A9 78r1B              1486 	mov	r0,#_add_timer
+   07AB 79s06              1487 	mov	r1,#(_add_timer >> 8)
+   07AD 7As00              1488 	mov	r2,#(_add_timer >> 16)
+   07AF 12s00r00           1489 	lcall	__sdcc_banked_call
+   07B2 02s00r00           1490 	ljmp	__sdcc_banked_ret
+                           1491 ;------------------------------------------------------------
+                           1492 ;Allocation info for local variables in function 'etimer_restart'
+                           1493 ;------------------------------------------------------------
+                           1494 ;et                        Allocated to registers r5 r6 r7 
+                           1495 ;------------------------------------------------------------
+                           1496 ;	../../../contiki-sensinode//core/sys/etimer.c:191: etimer_restart(struct etimer *et)
+                           1497 ;	-----------------------------------------
+                           1498 ;	 function etimer_restart
+                           1499 ;	-----------------------------------------
+   07B5                    1500 _etimer_restart:
+                           1501 ;	../../../contiki-sensinode//core/sys/etimer.c:193: timer_restart(&et->timer);
+   07B5 AD 82              1502 	mov	r5,dpl
+   07B7 AE 83              1503 	mov	r6,dph
+   07B9 AF F0              1504 	mov	r7,b
+   07BB C0 07              1505 	push	ar7
+   07BD C0 06              1506 	push	ar6
+   07BF C0 05              1507 	push	ar5
+   07C1 78r00              1508 	mov	r0,#_timer_restart
+   07C3 79s00              1509 	mov	r1,#(_timer_restart >> 8)
+   07C5 7As00              1510 	mov	r2,#(_timer_restart >> 16)
+   07C7 12s00r00           1511 	lcall	__sdcc_banked_call
+   07CA D0 05              1512 	pop	ar5
+   07CC D0 06              1513 	pop	ar6
+   07CE D0 07              1514 	pop	ar7
+                           1515 ;	../../../contiki-sensinode//core/sys/etimer.c:194: add_timer(et);
+   07D0 8D 82              1516 	mov	dpl,r5
+   07D2 8E 83              1517 	mov	dph,r6
+   07D4 8F F0              1518 	mov	b,r7
+   07D6 78r1B              1519 	mov	r0,#_add_timer
+   07D8 79s06              1520 	mov	r1,#(_add_timer >> 8)
+   07DA 7As00              1521 	mov	r2,#(_add_timer >> 16)
+   07DC 12s00r00           1522 	lcall	__sdcc_banked_call
+   07DF 02s00r00           1523 	ljmp	__sdcc_banked_ret
+                           1524 ;------------------------------------------------------------
+                           1525 ;Allocation info for local variables in function 'etimer_adjust'
+                           1526 ;------------------------------------------------------------
+                           1527 ;timediff                  Allocated to stack - sp -7
+                           1528 ;et                        Allocated to stack - sp -2
+                           1529 ;------------------------------------------------------------
+                           1530 ;	../../../contiki-sensinode//core/sys/etimer.c:198: etimer_adjust(struct etimer *et, int timediff)
+                           1531 ;	-----------------------------------------
+                           1532 ;	 function etimer_adjust
+                           1533 ;	-----------------------------------------
+   07E2                    1534 _etimer_adjust:
+   07E2 C0 82              1535 	push	dpl
+   07E4 C0 83              1536 	push	dph
+   07E6 C0 F0              1537 	push	b
+                           1538 ;	../../../contiki-sensinode//core/sys/etimer.c:200: et->timer.start += timediff;
+   07E8 A8 81              1539 	mov	r0,sp
+   07EA 18                 1540 	dec	r0
+   07EB 18                 1541 	dec	r0
+   07EC 86 82              1542 	mov	dpl,@r0
+   07EE 08                 1543 	inc	r0
+   07EF 86 83              1544 	mov	dph,@r0
+   07F1 08                 1545 	inc	r0
+   07F2 86 F0              1546 	mov	b,@r0
+   07F4 12s00r00           1547 	lcall	__gptrget
+   07F7 FB                 1548 	mov	r3,a
+   07F8 A3                 1549 	inc	dptr
+   07F9 12s00r00           1550 	lcall	__gptrget
+   07FC FC                 1551 	mov	r4,a
+   07FD E5 81              1552 	mov	a,sp
+   07FF 24 F9              1553 	add	a,#0xf9
+   0801 F8                 1554 	mov	r0,a
+   0802 86 02              1555 	mov	ar2,@r0
+   0804 08                 1556 	inc	r0
+   0805 86 07              1557 	mov	ar7,@r0
+   0807 EA                 1558 	mov	a,r2
+   0808 2B                 1559 	add	a,r3
+   0809 FB                 1560 	mov	r3,a
+   080A EF                 1561 	mov	a,r7
+   080B 3C                 1562 	addc	a,r4
+   080C FC                 1563 	mov	r4,a
+   080D A8 81              1564 	mov	r0,sp
+   080F 18                 1565 	dec	r0
+   0810 18                 1566 	dec	r0
+   0811 86 82              1567 	mov	dpl,@r0
+   0813 08                 1568 	inc	r0
+   0814 86 83              1569 	mov	dph,@r0
+   0816 08                 1570 	inc	r0
+   0817 86 F0              1571 	mov	b,@r0
+   0819 EB                 1572 	mov	a,r3
+   081A 12s00r00           1573 	lcall	__gptrput
+   081D A3                 1574 	inc	dptr
+   081E EC                 1575 	mov	a,r4
+   081F 12s00r00           1576 	lcall	__gptrput
+                           1577 ;	../../../contiki-sensinode//core/sys/etimer.c:201: update_time();
+   0822 78r00              1578 	mov	r0,#_update_time
+   0824 79s00              1579 	mov	r1,#(_update_time >> 8)
+   0826 7As00              1580 	mov	r2,#(_update_time >> 16)
+   0828 12s00r00           1581 	lcall	__sdcc_banked_call
+   082B 15 81              1582 	dec	sp
+   082D 15 81              1583 	dec	sp
+   082F 15 81              1584 	dec	sp
+   0831 02s00r00           1585 	ljmp	__sdcc_banked_ret
+                           1586 ;------------------------------------------------------------
+                           1587 ;Allocation info for local variables in function 'etimer_expired'
+                           1588 ;------------------------------------------------------------
+                           1589 ;et                        Allocated to registers r5 r6 r7 
+                           1590 ;------------------------------------------------------------
+                           1591 ;	../../../contiki-sensinode//core/sys/etimer.c:205: etimer_expired(struct etimer *et)
+                           1592 ;	-----------------------------------------
+                           1593 ;	 function etimer_expired
+                           1594 ;	-----------------------------------------
+   0834                    1595 _etimer_expired:
+   0834 AD 82              1596 	mov	r5,dpl
+   0836 AE 83              1597 	mov	r6,dph
+   0838 AF F0              1598 	mov	r7,b
+                           1599 ;	../../../contiki-sensinode//core/sys/etimer.c:207: return et->p == PROCESS_NONE;
+   083A 74 07              1600 	mov	a,#0x07
+   083C 2D                 1601 	add	a,r5
+   083D FD                 1602 	mov	r5,a
+   083E E4                 1603 	clr	a
+   083F 3E                 1604 	addc	a,r6
+   0840 FE                 1605 	mov	r6,a
+   0841 8D 82              1606 	mov	dpl,r5
+   0843 8E 83              1607 	mov	dph,r6
+   0845 8F F0              1608 	mov	b,r7
+   0847 12s00r00           1609 	lcall	__gptrget
+   084A FD                 1610 	mov	r5,a
+   084B A3                 1611 	inc	dptr
+   084C 12s00r00           1612 	lcall	__gptrget
+   084F FE                 1613 	mov	r6,a
+   0850 A3                 1614 	inc	dptr
+   0851 12s00r00           1615 	lcall	__gptrget
+   0854 FF                 1616 	mov	r7,a
+   0855 E4                 1617 	clr	a
+   0856 C0 E0              1618 	push	acc
+   0858 E4                 1619 	clr	a
+   0859 C0 E0              1620 	push	acc
+   085B E4                 1621 	clr	a
+   085C C0 E0              1622 	push	acc
+   085E 8D 82              1623 	mov	dpl,r5
+   0860 8E 83              1624 	mov	dph,r6
+   0862 8F F0              1625 	mov	b,r7
+   0864 12s00r00           1626 	lcall	___gptr_cmp
+   0867 15 81              1627 	dec	sp
+   0869 15 81              1628 	dec	sp
+   086B 15 81              1629 	dec	sp
+   086D 70 04              1630 	jnz	00103$
+   086F 74 01              1631 	mov	a,#0x01
+   0871 80 01              1632 	sjmp	00104$
+   0873                    1633 00103$:
+   0873 E4                 1634 	clr	a
+   0874                    1635 00104$:
+   0874 FD                 1636 	mov	r5,a
+   0875 33                 1637 	rlc	a
+   0876 95 E0              1638 	subb	a,acc
+   0878 FF                 1639 	mov	r7,a
+   0879 8D 82              1640 	mov	dpl,r5
+   087B 8F 83              1641 	mov	dph,r7
+   087D 02s00r00           1642 	ljmp	__sdcc_banked_ret
+                           1643 ;------------------------------------------------------------
+                           1644 ;Allocation info for local variables in function 'etimer_expiration_time'
+                           1645 ;------------------------------------------------------------
+                           1646 ;et                        Allocated to registers r5 r6 r7 
+                           1647 ;------------------------------------------------------------
+                           1648 ;	../../../contiki-sensinode//core/sys/etimer.c:211: etimer_expiration_time(struct etimer *et)
+                           1649 ;	-----------------------------------------
+                           1650 ;	 function etimer_expiration_time
+                           1651 ;	-----------------------------------------
+   0880                    1652 _etimer_expiration_time:
+                           1653 ;	../../../contiki-sensinode//core/sys/etimer.c:213: return et->timer.start + et->timer.interval;
+   0880 AD 82              1654 	mov	r5,dpl
+   0882 AE 83              1655 	mov	r6,dph
+   0884 AF F0              1656 	mov	r7,b
+   0886 12s00r00           1657 	lcall	__gptrget
+   0889 FB                 1658 	mov	r3,a
+   088A A3                 1659 	inc	dptr
+   088B 12s00r00           1660 	lcall	__gptrget
+   088E FC                 1661 	mov	r4,a
+   088F 74 02              1662 	mov	a,#0x02
+   0891 2D                 1663 	add	a,r5
+   0892 FD                 1664 	mov	r5,a
+   0893 E4                 1665 	clr	a
+   0894 3E                 1666 	addc	a,r6
+   0895 FE                 1667 	mov	r6,a
+   0896 8D 82              1668 	mov	dpl,r5
+   0898 8E 83              1669 	mov	dph,r6
+   089A 8F F0              1670 	mov	b,r7
+   089C 12s00r00           1671 	lcall	__gptrget
+   089F FD                 1672 	mov	r5,a
+   08A0 A3                 1673 	inc	dptr
+   08A1 12s00r00           1674 	lcall	__gptrget
+   08A4 FE                 1675 	mov	r6,a
+   08A5 ED                 1676 	mov	a,r5
+   08A6 2B                 1677 	add	a,r3
+   08A7 FB                 1678 	mov	r3,a
+   08A8 EE                 1679 	mov	a,r6
+   08A9 3C                 1680 	addc	a,r4
+   08AA FC                 1681 	mov	r4,a
+   08AB 8B 82              1682 	mov	dpl,r3
+   08AD 8C 83              1683 	mov	dph,r4
+   08AF 02s00r00           1684 	ljmp	__sdcc_banked_ret
+                           1685 ;------------------------------------------------------------
+                           1686 ;Allocation info for local variables in function 'etimer_start_time'
+                           1687 ;------------------------------------------------------------
+                           1688 ;et                        Allocated to registers r5 r6 r7 
+                           1689 ;------------------------------------------------------------
+                           1690 ;	../../../contiki-sensinode//core/sys/etimer.c:217: etimer_start_time(struct etimer *et)
+                           1691 ;	-----------------------------------------
+                           1692 ;	 function etimer_start_time
+                           1693 ;	-----------------------------------------
+   08B2                    1694 _etimer_start_time:
+                           1695 ;	../../../contiki-sensinode//core/sys/etimer.c:219: return et->timer.start;
+   08B2 AF F0              1696 	mov	r7,b
+   08B4 12s00r00           1697 	lcall	__gptrget
+   08B7 FD                 1698 	mov	r5,a
+   08B8 A3                 1699 	inc	dptr
+   08B9 12s00r00           1700 	lcall	__gptrget
+   08BC FE                 1701 	mov	r6,a
+   08BD 8D 82              1702 	mov	dpl,r5
+   08BF 8E 83              1703 	mov	dph,r6
+   08C1 02s00r00           1704 	ljmp	__sdcc_banked_ret
+                           1705 ;------------------------------------------------------------
+                           1706 ;Allocation info for local variables in function 'etimer_pending'
+                           1707 ;------------------------------------------------------------
+                           1708 ;	../../../contiki-sensinode//core/sys/etimer.c:223: etimer_pending(void)
+                           1709 ;	-----------------------------------------
+                           1710 ;	 function etimer_pending
+                           1711 ;	-----------------------------------------
+   08C4                    1712 _etimer_pending:
+                           1713 ;	../../../contiki-sensinode//core/sys/etimer.c:225: return timerlist != NULL;
+   08C4 90s00r00           1714 	mov	dptr,#_timerlist
+   08C7 E0                 1715 	movx	a,@dptr
+   08C8 FD                 1716 	mov	r5,a
+   08C9 A3                 1717 	inc	dptr
+   08CA E0                 1718 	movx	a,@dptr
+   08CB FE                 1719 	mov	r6,a
+   08CC A3                 1720 	inc	dptr
+   08CD E0                 1721 	movx	a,@dptr
+   08CE FF                 1722 	mov	r7,a
+   08CF E4                 1723 	clr	a
+   08D0 C0 E0              1724 	push	acc
+   08D2 E4                 1725 	clr	a
+   08D3 C0 E0              1726 	push	acc
+   08D5 E4                 1727 	clr	a
+   08D6 C0 E0              1728 	push	acc
+   08D8 8D 82              1729 	mov	dpl,r5
+   08DA 8E 83              1730 	mov	dph,r6
+   08DC 8F F0              1731 	mov	b,r7
+   08DE 12s00r00           1732 	lcall	___gptr_cmp
+   08E1 15 81              1733 	dec	sp
+   08E3 15 81              1734 	dec	sp
+   08E5 15 81              1735 	dec	sp
+   08E7 70 04              1736 	jnz	00103$
+   08E9 74 01              1737 	mov	a,#0x01
+   08EB 80 01              1738 	sjmp	00104$
+   08ED                    1739 00103$:
+   08ED E4                 1740 	clr	a
+   08EE                    1741 00104$:
+   08EE FD                 1742 	mov	r5,a
+   08EF B4 01 00           1743 	cjne	a,#0x01,00105$
+   08F2                    1744 00105$:
+   08F2 E4                 1745 	clr	a
+   08F3 33                 1746 	rlc	a
+   08F4 FD                 1747 	mov	r5,a
+   08F5 7F 00              1748 	mov	r7,#0x00
+   08F7 8D 82              1749 	mov	dpl,r5
+   08F9 8F 83              1750 	mov	dph,r7
+   08FB 02s00r00           1751 	ljmp	__sdcc_banked_ret
+                           1752 ;------------------------------------------------------------
+                           1753 ;Allocation info for local variables in function 'etimer_next_expiration_time'
+                           1754 ;------------------------------------------------------------
+                           1755 ;	../../../contiki-sensinode//core/sys/etimer.c:229: etimer_next_expiration_time(void)
+                           1756 ;	-----------------------------------------
+                           1757 ;	 function etimer_next_expiration_time
+                           1758 ;	-----------------------------------------
+   08FE                    1759 _etimer_next_expiration_time:
+                           1760 ;	../../../contiki-sensinode//core/sys/etimer.c:231: return etimer_pending() ? next_expiration : 0;
+   08FE 78rC4              1761 	mov	r0,#_etimer_pending
+   0900 79s08              1762 	mov	r1,#(_etimer_pending >> 8)
+   0902 7As00              1763 	mov	r2,#(_etimer_pending >> 16)
+   0904 12s00r00           1764 	lcall	__sdcc_banked_call
+   0907 E5 82              1765 	mov	a,dpl
+   0909 85 83 F0           1766 	mov	b,dph
+   090C 45 F0              1767 	orl	a,b
+   090E 60 0A              1768 	jz	00103$
+   0910 90s00r03           1769 	mov	dptr,#_next_expiration
+   0913 E0                 1770 	movx	a,@dptr
+   0914 FE                 1771 	mov	r6,a
+   0915 A3                 1772 	inc	dptr
+   0916 E0                 1773 	movx	a,@dptr
+   0917 FF                 1774 	mov	r7,a
+   0918 80 04              1775 	sjmp	00104$
+   091A                    1776 00103$:
+   091A 7E 00              1777 	mov	r6,#0x00
+   091C 7F 00              1778 	mov	r7,#0x00
+   091E                    1779 00104$:
+   091E 8E 82              1780 	mov	dpl,r6
+   0920 8F 83              1781 	mov	dph,r7
+   0922 02s00r00           1782 	ljmp	__sdcc_banked_ret
+                           1783 ;------------------------------------------------------------
+                           1784 ;Allocation info for local variables in function 'etimer_stop'
+                           1785 ;------------------------------------------------------------
+                           1786 ;et                        Allocated to stack - sp -2
+                           1787 ;t                         Allocated to registers r2 r3 r4 
+                           1788 ;------------------------------------------------------------
+                           1789 ;	../../../contiki-sensinode//core/sys/etimer.c:235: etimer_stop(struct etimer *et)
+                           1790 ;	-----------------------------------------
+                           1791 ;	 function etimer_stop
+                           1792 ;	-----------------------------------------
+   0925                    1793 _etimer_stop:
+   0925 C0 82              1794 	push	dpl
+   0927 C0 83              1795 	push	dph
+   0929 C0 F0              1796 	push	b
+                           1797 ;	../../../contiki-sensinode//core/sys/etimer.c:240: if(et == timerlist) {
+   092B 90s00r00           1798 	mov	dptr,#_timerlist
+   092E E0                 1799 	movx	a,@dptr
+   092F FA                 1800 	mov	r2,a
+   0930 A3                 1801 	inc	dptr
+   0931 E0                 1802 	movx	a,@dptr
+   0932 FB                 1803 	mov	r3,a
+   0933 A3                 1804 	inc	dptr
+   0934 E0                 1805 	movx	a,@dptr
+   0935 FC                 1806 	mov	r4,a
+   0936 A8 81              1807 	mov	r0,sp
+   0938 18                 1808 	dec	r0
+   0939 18                 1809 	dec	r0
+   093A C0 02              1810 	push	ar2
+   093C C0 03              1811 	push	ar3
+   093E C0 04              1812 	push	ar4
+   0940 86 82              1813 	mov	dpl,@r0
+   0942 08                 1814 	inc	r0
+   0943 86 83              1815 	mov	dph,@r0
+   0945 08                 1816 	inc	r0
+   0946 86 F0              1817 	mov	b,@r0
+   0948 12s00r00           1818 	lcall	___gptr_cmp
+   094B 15 81              1819 	dec	sp
+   094D 15 81              1820 	dec	sp
+   094F 15 81              1821 	dec	sp
+   0951 60 02              1822 	jz	00124$
+   0953 80 34              1823 	sjmp	00104$
+   0955                    1824 00124$:
+                           1825 ;	../../../contiki-sensinode//core/sys/etimer.c:241: timerlist = timerlist->next;
+   0955 74 04              1826 	mov	a,#0x04
+   0957 2A                 1827 	add	a,r2
+   0958 FD                 1828 	mov	r5,a
+   0959 E4                 1829 	clr	a
+   095A 3B                 1830 	addc	a,r3
+   095B FE                 1831 	mov	r6,a
+   095C 8C 07              1832 	mov	ar7,r4
+   095E 8D 82              1833 	mov	dpl,r5
+   0960 8E 83              1834 	mov	dph,r6
+   0962 8F F0              1835 	mov	b,r7
+   0964 12s00r00           1836 	lcall	__gptrget
+   0967 FD                 1837 	mov	r5,a
+   0968 A3                 1838 	inc	dptr
+   0969 12s00r00           1839 	lcall	__gptrget
+   096C FE                 1840 	mov	r6,a
+   096D A3                 1841 	inc	dptr
+   096E 12s00r00           1842 	lcall	__gptrget
+   0971 FF                 1843 	mov	r7,a
+   0972 90s00r00           1844 	mov	dptr,#_timerlist
+   0975 ED                 1845 	mov	a,r5
+   0976 F0                 1846 	movx	@dptr,a
+   0977 A3                 1847 	inc	dptr
+   0978 EE                 1848 	mov	a,r6
+   0979 F0                 1849 	movx	@dptr,a
+   097A A3                 1850 	inc	dptr
+   097B EF                 1851 	mov	a,r7
+   097C F0                 1852 	movx	@dptr,a
+                           1853 ;	../../../contiki-sensinode//core/sys/etimer.c:242: update_time();
+   097D 78r00              1854 	mov	r0,#_update_time
+   097F 79s00              1855 	mov	r1,#(_update_time >> 8)
+   0981 7As00              1856 	mov	r2,#(_update_time >> 16)
+   0983 12s00r00           1857 	lcall	__sdcc_banked_call
+   0986 02s0Ar30           1858 	ljmp	00105$
+   0989                    1859 00104$:
+                           1860 ;	../../../contiki-sensinode//core/sys/etimer.c:246: for(t = timerlist; t != NULL && t->next != et; t = t->next);
+   0989                    1861 00107$:
+   0989 E4                 1862 	clr	a
+   098A C0 E0              1863 	push	acc
+   098C E4                 1864 	clr	a
+   098D C0 E0              1865 	push	acc
+   098F E4                 1866 	clr	a
+   0990 C0 E0              1867 	push	acc
+   0992 8A 82              1868 	mov	dpl,r2
+   0994 8B 83              1869 	mov	dph,r3
+   0996 8C F0              1870 	mov	b,r4
+   0998 12s00r00           1871 	lcall	___gptr_cmp
+   099B 15 81              1872 	dec	sp
+   099D 15 81              1873 	dec	sp
+   099F 15 81              1874 	dec	sp
+   09A1 60 42              1875 	jz	00110$
+   09A3 74 04              1876 	mov	a,#0x04
+   09A5 2A                 1877 	add	a,r2
+   09A6 FD                 1878 	mov	r5,a
+   09A7 E4                 1879 	clr	a
+   09A8 3B                 1880 	addc	a,r3
+   09A9 FE                 1881 	mov	r6,a
+   09AA 8C 07              1882 	mov	ar7,r4
+   09AC 8D 82              1883 	mov	dpl,r5
+   09AE 8E 83              1884 	mov	dph,r6
+   09B0 8F F0              1885 	mov	b,r7
+   09B2 12s00r00           1886 	lcall	__gptrget
+   09B5 FD                 1887 	mov	r5,a
+   09B6 A3                 1888 	inc	dptr
+   09B7 12s00r00           1889 	lcall	__gptrget
+   09BA FE                 1890 	mov	r6,a
+   09BB A3                 1891 	inc	dptr
+   09BC 12s00r00           1892 	lcall	__gptrget
+   09BF FF                 1893 	mov	r7,a
+   09C0 A8 81              1894 	mov	r0,sp
+   09C2 18                 1895 	dec	r0
+   09C3 18                 1896 	dec	r0
+   09C4 C0 05              1897 	push	ar5
+   09C6 C0 06              1898 	push	ar6
+   09C8 C0 07              1899 	push	ar7
+   09CA 86 82              1900 	mov	dpl,@r0
+   09CC 08                 1901 	inc	r0
+   09CD 86 83              1902 	mov	dph,@r0
+   09CF 08                 1903 	inc	r0
+   09D0 86 F0              1904 	mov	b,@r0
+   09D2 12s00r00           1905 	lcall	___gptr_cmp
+   09D5 15 81              1906 	dec	sp
+   09D7 15 81              1907 	dec	sp
+   09D9 15 81              1908 	dec	sp
+   09DB 60 08              1909 	jz	00110$
+   09DD 8D 02              1910 	mov	ar2,r5
+   09DF 8E 03              1911 	mov	ar3,r6
+   09E1 8F 04              1912 	mov	ar4,r7
+   09E3 80 A4              1913 	sjmp	00107$
+   09E5                    1914 00110$:
+                           1915 ;	../../../contiki-sensinode//core/sys/etimer.c:248: if(t != NULL) {
+   09E5 EA                 1916 	mov	a,r2
+   09E6 4B                 1917 	orl	a,r3
+   09E7 60 47              1918 	jz	00105$
+                           1919 ;	../../../contiki-sensinode//core/sys/etimer.c:252: t->next = et->next;
+   09E9 74 04              1920 	mov	a,#0x04
+   09EB 2A                 1921 	add	a,r2
+   09EC FA                 1922 	mov	r2,a
+   09ED E4                 1923 	clr	a
+   09EE 3B                 1924 	addc	a,r3
+   09EF FB                 1925 	mov	r3,a
+   09F0 A8 81              1926 	mov	r0,sp
+   09F2 18                 1927 	dec	r0
+   09F3 18                 1928 	dec	r0
+   09F4 74 04              1929 	mov	a,#0x04
+   09F6 26                 1930 	add	a,@r0
+   09F7 FD                 1931 	mov	r5,a
+   09F8 E4                 1932 	clr	a
+   09F9 08                 1933 	inc	r0
+   09FA 36                 1934 	addc	a,@r0
+   09FB FE                 1935 	mov	r6,a
+   09FC 08                 1936 	inc	r0
+   09FD 86 07              1937 	mov	ar7,@r0
+   09FF 8D 82              1938 	mov	dpl,r5
+   0A01 8E 83              1939 	mov	dph,r6
+   0A03 8F F0              1940 	mov	b,r7
+   0A05 12s00r00           1941 	lcall	__gptrget
+   0A08 FD                 1942 	mov	r5,a
+   0A09 A3                 1943 	inc	dptr
+   0A0A 12s00r00           1944 	lcall	__gptrget
+   0A0D FE                 1945 	mov	r6,a
+   0A0E A3                 1946 	inc	dptr
+   0A0F 12s00r00           1947 	lcall	__gptrget
+   0A12 FF                 1948 	mov	r7,a
+   0A13 8A 82              1949 	mov	dpl,r2
+   0A15 8B 83              1950 	mov	dph,r3
+   0A17 8C F0              1951 	mov	b,r4
+   0A19 ED                 1952 	mov	a,r5
+   0A1A 12s00r00           1953 	lcall	__gptrput
+   0A1D A3                 1954 	inc	dptr
+   0A1E EE                 1955 	mov	a,r6
+   0A1F 12s00r00           1956 	lcall	__gptrput
+   0A22 A3                 1957 	inc	dptr
+   0A23 EF                 1958 	mov	a,r7
+   0A24 12s00r00           1959 	lcall	__gptrput
+                           1960 ;	../../../contiki-sensinode//core/sys/etimer.c:254: update_time();
+   0A27 78r00              1961 	mov	r0,#_update_time
+   0A29 79s00              1962 	mov	r1,#(_update_time >> 8)
+   0A2B 7As00              1963 	mov	r2,#(_update_time >> 16)
+   0A2D 12s00r00           1964 	lcall	__sdcc_banked_call
+   0A30                    1965 00105$:
+                           1966 ;	../../../contiki-sensinode//core/sys/etimer.c:259: et->next = NULL;
+   0A30 A8 81              1967 	mov	r0,sp
+   0A32 18                 1968 	dec	r0
+   0A33 18                 1969 	dec	r0
+   0A34 74 04              1970 	mov	a,#0x04
+   0A36 26                 1971 	add	a,@r0
+   0A37 FD                 1972 	mov	r5,a
+   0A38 E4                 1973 	clr	a
+   0A39 08                 1974 	inc	r0
+   0A3A 36                 1975 	addc	a,@r0
+   0A3B FE                 1976 	mov	r6,a
+   0A3C 08                 1977 	inc	r0
+   0A3D 86 07              1978 	mov	ar7,@r0
+   0A3F 8D 82              1979 	mov	dpl,r5
+   0A41 8E 83              1980 	mov	dph,r6
+   0A43 8F F0              1981 	mov	b,r7
+   0A45 E4                 1982 	clr	a
+   0A46 12s00r00           1983 	lcall	__gptrput
+   0A49 A3                 1984 	inc	dptr
+   0A4A E4                 1985 	clr	a
+   0A4B 12s00r00           1986 	lcall	__gptrput
+   0A4E A3                 1987 	inc	dptr
+   0A4F E4                 1988 	clr	a
+   0A50 12s00r00           1989 	lcall	__gptrput
+                           1990 ;	../../../contiki-sensinode//core/sys/etimer.c:261: et->p = PROCESS_NONE;
+   0A53 A8 81              1991 	mov	r0,sp
+   0A55 18                 1992 	dec	r0
+   0A56 18                 1993 	dec	r0
+   0A57 74 07              1994 	mov	a,#0x07
+   0A59 26                 1995 	add	a,@r0
+   0A5A FD                 1996 	mov	r5,a
+   0A5B E4                 1997 	clr	a
+   0A5C 08                 1998 	inc	r0
+   0A5D 36                 1999 	addc	a,@r0
+   0A5E FE                 2000 	mov	r6,a
+   0A5F 08                 2001 	inc	r0
+   0A60 86 07              2002 	mov	ar7,@r0
+   0A62 8D 82              2003 	mov	dpl,r5
+   0A64 8E 83              2004 	mov	dph,r6
+   0A66 8F F0              2005 	mov	b,r7
+   0A68 E4                 2006 	clr	a
+   0A69 12s00r00           2007 	lcall	__gptrput
+   0A6C A3                 2008 	inc	dptr
+   0A6D E4                 2009 	clr	a
+   0A6E 12s00r00           2010 	lcall	__gptrput
+   0A71 A3                 2011 	inc	dptr
+   0A72 E4                 2012 	clr	a
+   0A73 12s00r00           2013 	lcall	__gptrput
+   0A76 15 81              2014 	dec	sp
+   0A78 15 81              2015 	dec	sp
+   0A7A 15 81              2016 	dec	sp
+   0A7C 02s00r00           2017 	ljmp	__sdcc_banked_ret
+                           2018 	.area CSEG    (CODE)
+                           2019 	.area CONST   (CODE)
+                           2020 	.area XINIT   (CODE)
+   0000                    2021 __xinit__etimer_process:
+                           2022 ; generic printIvalPtr
+   0000 00 00 00           2023 	.byte #0x00,#0x00,#0x00
+   0003rB0s01s00           2024 	.byte _process_thread_etimer_process,(_process_thread_etimer_process >> 8),(_process_thread_etimer_process >> 16)
+   0006 00 00              2025 	.byte #0x00,#0x00	; 0
+   0008 00                 2026 	.db #0x00	; 0
+   0009 00                 2027 	.db #0x00	; 0
+                           2028 	.area CABS    (ABS,CODE)

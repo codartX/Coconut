@@ -1,0 +1,2157 @@
+                              1 ;--------------------------------------------------------
+                              2 ; File Created by SDCC : free open source ANSI-C Compiler
+                              3 ; Version 3.1.1 #7100 (Oct 29 2014) (Linux)
+                              4 ; This file was generated Wed Dec  2 18:10:57 2015
+                              5 ;--------------------------------------------------------
+                              6 	.module ifft
+                              7 	.optsdcc -mmcs51 --model-huge
+                              8 	
+                              9 ;--------------------------------------------------------
+                             10 ; Public variables in this module
+                             11 ;--------------------------------------------------------
+                             12 	.globl _ifft
+                             13 ;--------------------------------------------------------
+                             14 ; special function registers
+                             15 ;--------------------------------------------------------
+                             16 	.area RSEG    (ABS,DATA)
+   0000                      17 	.org 0x0000
+                             18 ;--------------------------------------------------------
+                             19 ; special function bits
+                             20 ;--------------------------------------------------------
+                             21 	.area RSEG    (ABS,DATA)
+   0000                      22 	.org 0x0000
+                             23 ;--------------------------------------------------------
+                             24 ; overlayable register banks
+                             25 ;--------------------------------------------------------
+                             26 	.area REG_BANK_0	(REL,OVR,DATA)
+   0000                      27 	.ds 8
+                             28 ;--------------------------------------------------------
+                             29 ; internal ram data
+                             30 ;--------------------------------------------------------
+                             31 	.area DSEG    (DATA)
+                             32 ;--------------------------------------------------------
+                             33 ; overlayable items in internal ram 
+                             34 ;--------------------------------------------------------
+                             35 	.area OSEG    (OVR,DATA)
+                             36 ;--------------------------------------------------------
+                             37 ; indirectly addressable internal ram data
+                             38 ;--------------------------------------------------------
+                             39 	.area ISEG    (DATA)
+                             40 ;--------------------------------------------------------
+                             41 ; absolute internal ram data
+                             42 ;--------------------------------------------------------
+                             43 	.area IABS    (ABS,DATA)
+                             44 	.area IABS    (ABS,DATA)
+                             45 ;--------------------------------------------------------
+                             46 ; bit data
+                             47 ;--------------------------------------------------------
+                             48 	.area BSEG    (BIT)
+                             49 ;--------------------------------------------------------
+                             50 ; paged external ram data
+                             51 ;--------------------------------------------------------
+                             52 	.area PSEG    (PAG,XDATA)
+                             53 ;--------------------------------------------------------
+                             54 ; external ram data
+                             55 ;--------------------------------------------------------
+                             56 	.area XSEG    (XDATA)
+                             57 ;--------------------------------------------------------
+                             58 ; absolute external ram data
+                             59 ;--------------------------------------------------------
+                             60 	.area XABS    (ABS,XDATA)
+                             61 ;--------------------------------------------------------
+                             62 ; external initialized ram data
+                             63 ;--------------------------------------------------------
+                             64 	.area XISEG   (XDATA)
+                             65 	.area HOME    (CODE)
+                             66 	.area GSINIT0 (CODE)
+                             67 	.area GSINIT1 (CODE)
+                             68 	.area GSINIT2 (CODE)
+                             69 	.area GSINIT3 (CODE)
+                             70 	.area GSINIT4 (CODE)
+                             71 	.area GSINIT5 (CODE)
+                             72 	.area GSINIT  (CODE)
+                             73 	.area GSFINAL (CODE)
+                             74 	.area CSEG    (CODE)
+                             75 ;--------------------------------------------------------
+                             76 ; global & static initialisations
+                             77 ;--------------------------------------------------------
+                             78 	.area HOME    (CODE)
+                             79 	.area GSINIT  (CODE)
+                             80 	.area GSFINAL (CODE)
+                             81 	.area GSINIT  (CODE)
+                             82 ;--------------------------------------------------------
+                             83 ; Home
+                             84 ;--------------------------------------------------------
+                             85 	.area HOME    (CODE)
+                             86 	.area HOME    (CODE)
+                             87 ;--------------------------------------------------------
+                             88 ; code
+                             89 ;--------------------------------------------------------
+                             90 	.area BANK1   (CODE)
+                             91 ;------------------------------------------------------------
+                             92 ;Allocation info for local variables in function 'bitrev'
+                             93 ;------------------------------------------------------------
+                             94 ;nu                        Allocated to stack - sp -6
+                             95 ;j                         Allocated to stack - sp -1
+                             96 ;k                         Allocated to registers r7 r6 
+                             97 ;sloc0                     Allocated to stack - sp +3
+                             98 ;------------------------------------------------------------
+                             99 ;	../../../contiki-sensinode//core/lib/ifft.c:62: static uint16_t bitrev(uint16_t j, uint16_t nu)
+                            100 ;	-----------------------------------------
+                            101 ;	 function bitrev
+                            102 ;	-----------------------------------------
+   0000                     103 _bitrev:
+                    0007    104 	ar7 = 0x07
+                    0006    105 	ar6 = 0x06
+                    0005    106 	ar5 = 0x05
+                    0004    107 	ar4 = 0x04
+                    0003    108 	ar3 = 0x03
+                    0002    109 	ar2 = 0x02
+                    0001    110 	ar1 = 0x01
+                    0000    111 	ar0 = 0x00
+   0000 C0 82               112 	push	dpl
+   0002 C0 83               113 	push	dph
+                            114 ;	../../../contiki-sensinode//core/lib/ifft.c:65: k = 0;
+   0004 E4                  115 	clr	a
+   0005 FF                  116 	mov	r7,a
+   0006 FE                  117 	mov	r6,a
+   0007 E5 81               118 	mov	a,sp
+   0009 24 FA               119 	add	a,#0xfa
+   000B F8                  120 	mov	r0,a
+   000C 86 02               121 	mov	ar2,@r0
+   000E 08                  122 	inc	r0
+   000F 86 03               123 	mov	ar3,@r0
+   0011                     124 00101$:
+                            125 ;	../../../contiki-sensinode//core/lib/ifft.c:66: for (; nu > 0; nu--) {
+   0011 EA                  126 	mov	a,r2
+   0012 4B                  127 	orl	a,r3
+   0013 60 02               128 	jz	00107$
+   0015 74 01               129 	mov	a,#0x01
+   0017                     130 00107$:
+   0017 FD                  131 	mov	r5,a
+   0018 ED                  132 	mov	a,r5
+   0019 60 2C               133 	jz	00104$
+                            134 ;	../../../contiki-sensinode//core/lib/ifft.c:67: k  = (k << 1) + (j & 1);
+   001B 8F 04               135 	mov	ar4,r7
+   001D EE                  136 	mov	a,r6
+   001E CC                  137 	xch	a,r4
+   001F 25 E0               138 	add	a,acc
+   0021 CC                  139 	xch	a,r4
+   0022 33                  140 	rlc	a
+   0023 FD                  141 	mov	r5,a
+   0024 A8 81               142 	mov	r0,sp
+   0026 18                  143 	dec	r0
+   0027 74 01               144 	mov	a,#0x01
+   0029 56                  145 	anl	a,@r0
+   002A 7F 00               146 	mov	r7,#0x00
+   002C 2C                  147 	add	a,r4
+   002D FC                  148 	mov	r4,a
+   002E EF                  149 	mov	a,r7
+   002F 3D                  150 	addc	a,r5
+   0030 FD                  151 	mov	r5,a
+   0031 8C 07               152 	mov	ar7,r4
+   0033 8D 06               153 	mov	ar6,r5
+                            154 ;	../../../contiki-sensinode//core/lib/ifft.c:68: j = j >> 1;
+   0035 A8 81               155 	mov	r0,sp
+   0037 E6                  156 	mov	a,@r0
+   0038 18                  157 	dec	r0
+   0039 C3                  158 	clr	c
+   003A 13                  159 	rrc	a
+   003B C6                  160 	xch	a,@r0
+   003C 13                  161 	rrc	a
+   003D C6                  162 	xch	a,@r0
+   003E 08                  163 	inc	r0
+   003F F6                  164 	mov	@r0,a
+                            165 ;	../../../contiki-sensinode//core/lib/ifft.c:66: for (; nu > 0; nu--) {
+   0040 1A                  166 	dec	r2
+   0041 BA FF 01            167 	cjne	r2,#0xFF,00118$
+   0044 1B                  168 	dec	r3
+   0045                     169 00118$:
+   0045 80 CA               170 	sjmp	00101$
+   0047                     171 00104$:
+                            172 ;	../../../contiki-sensinode//core/lib/ifft.c:70: return k;
+   0047 8F 82               173 	mov	dpl,r7
+   0049 8E 83               174 	mov	dph,r6
+   004B 15 81               175 	dec	sp
+   004D 15 81               176 	dec	sp
+   004F 02s00r00            177 	ljmp	__sdcc_banked_ret
+                            178 ;------------------------------------------------------------
+                            179 ;Allocation info for local variables in function 'sinI'
+                            180 ;------------------------------------------------------------
+                            181 ;angleMilli                Allocated to registers r6 r7 
+                            182 ;pos                       Allocated to registers r4 r5 
+                            183 ;------------------------------------------------------------
+                            184 ;	../../../contiki-sensinode//core/lib/ifft.c:75: static int16_t sinI(uint16_t angleMilli)
+                            185 ;	-----------------------------------------
+                            186 ;	 function sinI
+                            187 ;	-----------------------------------------
+   0052                     188 _sinI:
+   0052 AE 82               189 	mov	r6,dpl
+   0054 AF 83               190 	mov	r7,dph
+                            191 ;	../../../contiki-sensinode//core/lib/ifft.c:78: pos = (uint16_t) ((SIN_TAB_LEN * (uint32_t) angleMilli) / 1000);
+   0056 7D 00               192 	mov	r5,#0x00
+   0058 7C 00               193 	mov	r4,#0x00
+   005A C0 06               194 	push	ar6
+   005C C0 07               195 	push	ar7
+   005E C0 05               196 	push	ar5
+   0060 C0 04               197 	push	ar4
+   0062 90 00 78            198 	mov	dptr,#(0x78&0x00ff)
+   0065 E4                  199 	clr	a
+   0066 F5 F0               200 	mov	b,a
+   0068 12s00r00            201 	lcall	__mullong
+   006B AC 82               202 	mov	r4,dpl
+   006D AD 83               203 	mov	r5,dph
+   006F AE F0               204 	mov	r6,b
+   0071 FF                  205 	mov	r7,a
+   0072 E5 81               206 	mov	a,sp
+   0074 24 FC               207 	add	a,#0xfc
+   0076 F5 81               208 	mov	sp,a
+   0078 74 E8               209 	mov	a,#0xE8
+   007A C0 E0               210 	push	acc
+   007C 74 03               211 	mov	a,#0x03
+   007E C0 E0               212 	push	acc
+   0080 E4                  213 	clr	a
+   0081 C0 E0               214 	push	acc
+   0083 C0 E0               215 	push	acc
+   0085 8C 82               216 	mov	dpl,r4
+   0087 8D 83               217 	mov	dph,r5
+   0089 8E F0               218 	mov	b,r6
+   008B EF                  219 	mov	a,r7
+   008C 12s00r00            220 	lcall	__divulong
+   008F AC 82               221 	mov	r4,dpl
+   0091 AD 83               222 	mov	r5,dph
+   0093 E5 81               223 	mov	a,sp
+   0095 24 FC               224 	add	a,#0xfc
+   0097 F5 81               225 	mov	sp,a
+                            226 ;	../../../contiki-sensinode//core/lib/ifft.c:79: return SIN_TAB[pos % SIN_TAB_LEN];
+   0099 74 78               227 	mov	a,#0x78
+   009B C0 E0               228 	push	acc
+   009D E4                  229 	clr	a
+   009E C0 E0               230 	push	acc
+   00A0 8C 82               231 	mov	dpl,r4
+   00A2 8D 83               232 	mov	dph,r5
+   00A4 12s00r00            233 	lcall	__moduint
+   00A7 AE 82               234 	mov	r6,dpl
+   00A9 AF 83               235 	mov	r7,dph
+   00AB 15 81               236 	dec	sp
+   00AD 15 81               237 	dec	sp
+   00AF EE                  238 	mov	a,r6
+   00B0 24r00               239 	add	a,#_SIN_TAB
+   00B2 F5 82               240 	mov	dpl,a
+   00B4 EF                  241 	mov	a,r7
+   00B5 34s00               242 	addc	a,#(_SIN_TAB >> 8)
+   00B7 F5 83               243 	mov	dph,a
+   00B9 E4                  244 	clr	a
+   00BA 93                  245 	movc	a,@a+dptr
+   00BB FF                  246 	mov	r7,a
+   00BC 33                  247 	rlc	a
+   00BD 95 E0               248 	subb	a,acc
+   00BF FE                  249 	mov	r6,a
+   00C0 8F 82               250 	mov	dpl,r7
+   00C2 8E 83               251 	mov	dph,r6
+   00C4 02s00r00            252 	ljmp	__sdcc_banked_ret
+                            253 ;------------------------------------------------------------
+                            254 ;Allocation info for local variables in function 'cosI'
+                            255 ;------------------------------------------------------------
+                            256 ;angleMilli                Allocated to registers r6 r7 
+                            257 ;------------------------------------------------------------
+                            258 ;	../../../contiki-sensinode//core/lib/ifft.c:82: static int16_t cosI(uint16_t angleMilli)
+                            259 ;	-----------------------------------------
+                            260 ;	 function cosI
+                            261 ;	-----------------------------------------
+   00C7                     262 _cosI:
+   00C7 AE 82               263 	mov	r6,dpl
+   00C9 AF 83               264 	mov	r7,dph
+                            265 ;	../../../contiki-sensinode//core/lib/ifft.c:84: return sinI(angleMilli + 250);
+   00CB 74 FA               266 	mov	a,#0xFA
+   00CD 2E                  267 	add	a,r6
+   00CE FE                  268 	mov	r6,a
+   00CF E4                  269 	clr	a
+   00D0 3F                  270 	addc	a,r7
+   00D1 FF                  271 	mov	r7,a
+   00D2 8E 82               272 	mov	dpl,r6
+   00D4 8F 83               273 	mov	dph,r7
+   00D6 78r52               274 	mov	r0,#_sinI
+   00D8 79s00               275 	mov	r1,#(_sinI >> 8)
+   00DA 7As00               276 	mov	r2,#(_sinI >> 16)
+   00DC 12s00r00            277 	lcall	__sdcc_banked_call
+   00DF AE 82               278 	mov	r6,dpl
+   00E1 AF 83               279 	mov  r7,dph
+   00E3 02s00r00            280 	ljmp	__sdcc_banked_ret
+                            281 ;------------------------------------------------------------
+                            282 ;Allocation info for local variables in function 'ilog2'
+                            283 ;------------------------------------------------------------
+                            284 ;val                       Allocated to registers r6 r7 
+                            285 ;log                       Allocated to registers r4 r5 
+                            286 ;------------------------------------------------------------
+                            287 ;	../../../contiki-sensinode//core/lib/ifft.c:87: static uint16_t ilog2(uint16_t val)
+                            288 ;	-----------------------------------------
+                            289 ;	 function ilog2
+                            290 ;	-----------------------------------------
+   00E6                     291 _ilog2:
+   00E6 AE 82               292 	mov	r6,dpl
+                            293 ;	../../../contiki-sensinode//core/lib/ifft.c:91: val = val >> 1; /* The 20 = 1 => log = 0 => val = 0 */
+   00E8 E5 83               294 	mov	a,dph
+   00EA C3                  295 	clr	c
+   00EB 13                  296 	rrc	a
+   00EC CE                  297 	xch	a,r6
+   00ED 13                  298 	rrc	a
+   00EE CE                  299 	xch	a,r6
+   00EF FF                  300 	mov	r7,a
+                            301 ;	../../../contiki-sensinode//core/lib/ifft.c:92: while (val > 0) {
+   00F0 7C 00               302 	mov	r4,#0x00
+   00F2 7D 00               303 	mov	r5,#0x00
+   00F4                     304 00101$:
+   00F4 EE                  305 	mov	a,r6
+   00F5 4F                  306 	orl	a,r7
+   00F6 60 0E               307 	jz	00103$
+                            308 ;	../../../contiki-sensinode//core/lib/ifft.c:93: val = val >> 1;
+   00F8 EF                  309 	mov	a,r7
+   00F9 C3                  310 	clr	c
+   00FA 13                  311 	rrc	a
+   00FB CE                  312 	xch	a,r6
+   00FC 13                  313 	rrc	a
+   00FD CE                  314 	xch	a,r6
+   00FE FF                  315 	mov	r7,a
+                            316 ;	../../../contiki-sensinode//core/lib/ifft.c:94: log++;
+   00FF 0C                  317 	inc	r4
+   0100 BC 00 F1            318 	cjne	r4,#0x00,00101$
+   0103 0D                  319 	inc	r5
+   0104 80 EE               320 	sjmp	00101$
+   0106                     321 00103$:
+                            322 ;	../../../contiki-sensinode//core/lib/ifft.c:96: return log;
+   0106 8C 82               323 	mov	dpl,r4
+   0108 8D 83               324 	mov	dph,r5
+   010A 02s00r00            325 	ljmp	__sdcc_banked_ret
+                            326 ;------------------------------------------------------------
+                            327 ;Allocation info for local variables in function 'ifft'
+                            328 ;------------------------------------------------------------
+                            329 ;xim                       Allocated to stack - sp -60
+                            330 ;n                         Allocated to stack - sp -62
+                            331 ;xre                       Allocated to stack - sp -54
+                            332 ;nu                        Allocated to stack - sp -51
+                            333 ;n2                        Allocated to stack - sp -49
+                            334 ;nu1                       Allocated to registers r7 r5 
+                            335 ;p                         Allocated to stack - sp -47
+                            336 ;k                         Allocated to registers r3 r7 
+                            337 ;l                         Allocated to stack - sp -45
+                            338 ;i                         Allocated to stack - sp -43
+                            339 ;c                         Allocated to registers r7 r4 r3 r2 
+                            340 ;s                         Allocated to stack - sp -41
+                            341 ;tr                        Allocated to stack - sp -37
+                            342 ;ti                        Allocated to registers r7 r4 r3 r2 
+                            343 ;sloc0                     Allocated to stack - sp -33
+                            344 ;sloc1                     Allocated to stack - sp -31
+                            345 ;sloc2                     Allocated to stack - sp -29
+                            346 ;sloc3                     Allocated to stack - sp -27
+                            347 ;sloc4                     Allocated to stack - sp -25
+                            348 ;sloc5                     Allocated to stack - sp -22
+                            349 ;sloc6                     Allocated to stack - sp -18
+                            350 ;sloc7                     Allocated to stack - sp -14
+                            351 ;sloc8                     Allocated to stack - sp -11
+                            352 ;sloc9                     Allocated to stack - sp -7
+                            353 ;sloc10                    Allocated to stack - sp -3
+                            354 ;------------------------------------------------------------
+                            355 ;	../../../contiki-sensinode//core/lib/ifft.c:114: ifft(int16_t xre[], int16_t xim[], uint16_t n)
+                            356 ;	-----------------------------------------
+                            357 ;	 function ifft
+                            358 ;	-----------------------------------------
+   010D                     359 _ifft:
+   010D C0 82               360 	push	dpl
+   010F C0 83               361 	push	dph
+   0111 C0 F0               362 	push	b
+   0113 E5 81               363 	mov	a,sp
+   0115 24 34               364 	add	a,#0x34
+                            365 ;	../../../contiki-sensinode//core/lib/ifft.c:122: nu = ilog2(n);
+   0117 F5 81               366 	mov	sp,a
+   0119 24 C2               367 	add	a,#0xc2
+   011B F8                  368 	mov	r0,a
+   011C 86 82               369 	mov	dpl,@r0
+   011E 08                  370 	inc	r0
+   011F 86 83               371 	mov	dph,@r0
+   0121 78rE6               372 	mov	r0,#_ilog2
+   0123 79s00               373 	mov	r1,#(_ilog2 >> 8)
+   0125 7As00               374 	mov	r2,#(_ilog2 >> 16)
+   0127 12s00r00            375 	lcall	__sdcc_banked_call
+   012A AB 82               376 	mov	r3,dpl
+   012C AC 83               377 	mov	r4,dph
+   012E E5 81               378 	mov	a,sp
+   0130 24 CD               379 	add	a,#0xcd
+   0132 F8                  380 	mov	r0,a
+   0133 A6 03               381 	mov	@r0,ar3
+   0135 08                  382 	inc	r0
+   0136 A6 04               383 	mov	@r0,ar4
+                            384 ;	../../../contiki-sensinode//core/lib/ifft.c:123: nu1 = nu - 1;
+   0138 E5 81               385 	mov	a,sp
+   013A 24 CD               386 	add	a,#0xcd
+   013C F8                  387 	mov	r0,a
+   013D E6                  388 	mov	a,@r0
+   013E 24 FF               389 	add	a,#0xFF
+   0140 FF                  390 	mov	r7,a
+   0141 08                  391 	inc	r0
+   0142 E6                  392 	mov	a,@r0
+   0143 34 FF               393 	addc	a,#0xFF
+   0145 FD                  394 	mov	r5,a
+                            395 ;	../../../contiki-sensinode//core/lib/ifft.c:124: n2 = n / 2;
+   0146 E5 81               396 	mov	a,sp
+   0148 24 C2               397 	add	a,#0xc2
+   014A F8                  398 	mov	r0,a
+   014B E5 81               399 	mov	a,sp
+   014D 24 E1               400 	add	a,#0xe1
+   014F F9                  401 	mov	r1,a
+   0150 E6                  402 	mov	a,@r0
+   0151 F7                  403 	mov	@r1,a
+   0152 08                  404 	inc	r0
+   0153 E6                  405 	mov	a,@r0
+   0154 C3                  406 	clr	c
+   0155 13                  407 	rrc	a
+   0156 C7                  408 	xch	a,@r1
+   0157 13                  409 	rrc	a
+   0158 C7                  410 	xch	a,@r1
+   0159 09                  411 	inc	r1
+   015A F7                  412 	mov	@r1,a
+   015B E5 81               413 	mov	a,sp
+   015D 24 E1               414 	add	a,#0xe1
+   015F F8                  415 	mov	r0,a
+   0160 E5 81               416 	mov	a,sp
+   0162 24 CF               417 	add	a,#0xcf
+   0164 F9                  418 	mov	r1,a
+   0165 E6                  419 	mov	a,@r0
+   0166 F7                  420 	mov	@r1,a
+   0167 08                  421 	inc	r0
+   0168 09                  422 	inc	r1
+   0169 E6                  423 	mov	a,@r0
+   016A F7                  424 	mov	@r1,a
+                            425 ;	../../../contiki-sensinode//core/lib/ifft.c:126: for (i = 0; i < n; i++)
+   016B E5 81               426 	mov	a,sp
+   016D 24 D5               427 	add	a,#0xd5
+   016F F8                  428 	mov	r0,a
+   0170 E4                  429 	clr	a
+   0171 F6                  430 	mov	@r0,a
+   0172 08                  431 	inc	r0
+   0173 F6                  432 	mov	@r0,a
+   0174                     433 00103$:
+   0174 E5 81               434 	mov	a,sp
+   0176 24 D5               435 	add	a,#0xd5
+   0178 F8                  436 	mov	r0,a
+   0179 86 02               437 	mov	ar2,@r0
+   017B 08                  438 	inc	r0
+   017C 86 04               439 	mov	ar4,@r0
+   017E E5 81               440 	mov	a,sp
+   0180 24 C2               441 	add	a,#0xc2
+   0182 F8                  442 	mov	r0,a
+   0183 C3                  443 	clr	c
+   0184 EA                  444 	mov	a,r2
+   0185 96                  445 	subb	a,@r0
+   0186 EC                  446 	mov	a,r4
+   0187 08                  447 	inc	r0
+   0188 96                  448 	subb	a,@r0
+   0189 50 3A               449 	jnc	00106$
+                            450 ;	../../../contiki-sensinode//core/lib/ifft.c:127: xim[i] = 0;
+   018B E5 81               451 	mov	a,sp
+   018D 24 D5               452 	add	a,#0xd5
+   018F F8                  453 	mov	r0,a
+   0190 86 02               454 	mov	ar2,@r0
+   0192 08                  455 	inc	r0
+   0193 E6                  456 	mov	a,@r0
+   0194 CA                  457 	xch	a,r2
+   0195 25 E0               458 	add	a,acc
+   0197 CA                  459 	xch	a,r2
+   0198 33                  460 	rlc	a
+   0199 FC                  461 	mov	r4,a
+   019A E5 81               462 	mov	a,sp
+   019C 24 C4               463 	add	a,#0xc4
+   019E F8                  464 	mov	r0,a
+   019F EA                  465 	mov	a,r2
+   01A0 26                  466 	add	a,@r0
+   01A1 FA                  467 	mov	r2,a
+   01A2 EC                  468 	mov	a,r4
+   01A3 08                  469 	inc	r0
+   01A4 36                  470 	addc	a,@r0
+   01A5 FC                  471 	mov	r4,a
+   01A6 08                  472 	inc	r0
+   01A7 86 06               473 	mov	ar6,@r0
+   01A9 8A 82               474 	mov	dpl,r2
+   01AB 8C 83               475 	mov	dph,r4
+   01AD 8E F0               476 	mov	b,r6
+   01AF E4                  477 	clr	a
+   01B0 12s00r00            478 	lcall	__gptrput
+   01B3 A3                  479 	inc	dptr
+   01B4 E4                  480 	clr	a
+   01B5 12s00r00            481 	lcall	__gptrput
+                            482 ;	../../../contiki-sensinode//core/lib/ifft.c:126: for (i = 0; i < n; i++)
+   01B8 E5 81               483 	mov	a,sp
+   01BA 24 D5               484 	add	a,#0xd5
+   01BC F8                  485 	mov	r0,a
+   01BD 06                  486 	inc	@r0
+   01BE B6 00 02            487 	cjne	@r0,#0x00,00169$
+   01C1 08                  488 	inc	r0
+   01C2 06                  489 	inc	@r0
+   01C3                     490 00169$:
+   01C3 80 AF               491 	sjmp	00103$
+   01C5                     492 00106$:
+                            493 ;	../../../contiki-sensinode//core/lib/ifft.c:129: for (l = 1; l <= nu; l++) {
+   01C5 E5 81               494 	mov	a,sp
+   01C7 24 E3               495 	add	a,#0xe3
+   01C9 F8                  496 	mov	r0,a
+   01CA A6 07               497 	mov	@r0,ar7
+   01CC 08                  498 	inc	r0
+   01CD A6 05               499 	mov	@r0,ar5
+   01CF E5 81               500 	mov	a,sp
+   01D1 24 D3               501 	add	a,#0xd3
+   01D3 F8                  502 	mov	r0,a
+   01D4 76 01               503 	mov	@r0,#0x01
+   01D6 08                  504 	inc	r0
+   01D7 76 00               505 	mov	@r0,#0x00
+   01D9                     506 00115$:
+   01D9 E5 81               507 	mov	a,sp
+   01DB 24 D3               508 	add	a,#0xd3
+   01DD F8                  509 	mov	r0,a
+   01DE 86 02               510 	mov	ar2,@r0
+   01E0 08                  511 	inc	r0
+   01E1 86 04               512 	mov	ar4,@r0
+   01E3 E5 81               513 	mov	a,sp
+   01E5 24 CD               514 	add	a,#0xcd
+   01E7 F8                  515 	mov	r0,a
+   01E8 C3                  516 	clr	c
+   01E9 E6                  517 	mov	a,@r0
+   01EA 9A                  518 	subb	a,r2
+   01EB 08                  519 	inc	r0
+   01EC E6                  520 	mov	a,@r0
+   01ED 9C                  521 	subb	a,r4
+   01EE 50 03               522 	jnc	00170$
+   01F0 02s07r9F            523 	ljmp	00118$
+   01F3                     524 00170$:
+                            525 ;	../../../contiki-sensinode//core/lib/ifft.c:130: for (k = 0; k < n; k += n2) {
+   01F3 7B 00               526 	mov	r3,#0x00
+   01F5 7F 00               527 	mov	r7,#0x00
+   01F7                     528 00111$:
+   01F7 8B 02               529 	mov	ar2,r3
+   01F9 8F 04               530 	mov	ar4,r7
+   01FB E5 81               531 	mov	a,sp
+   01FD 24 C2               532 	add	a,#0xc2
+   01FF F8                  533 	mov	r0,a
+   0200 C3                  534 	clr	c
+   0201 EA                  535 	mov	a,r2
+   0202 96                  536 	subb	a,@r0
+   0203 EC                  537 	mov	a,r4
+   0204 08                  538 	inc	r0
+   0205 96                  539 	subb	a,@r0
+   0206 40 03               540 	jc	00171$
+   0208 02s07r77            541 	ljmp	00114$
+   020B                     542 00171$:
+                            543 ;	../../../contiki-sensinode//core/lib/ifft.c:131: for (i = 1; i <= n2; i++) {
+   020B E5 81               544 	mov	a,sp
+   020D 24 DF               545 	add	a,#0xdf
+   020F F8                  546 	mov	r0,a
+   0210 A6 03               547 	mov	@r0,ar3
+   0212 08                  548 	inc	r0
+   0213 A6 07               549 	mov	@r0,ar7
+   0215 E5 81               550 	mov	a,sp
+   0217 24 D5               551 	add	a,#0xd5
+   0219 F8                  552 	mov	r0,a
+   021A 76 01               553 	mov	@r0,#0x01
+   021C 08                  554 	inc	r0
+   021D 76 00               555 	mov	@r0,#0x00
+   021F                     556 00107$:
+   021F E5 81               557 	mov	a,sp
+   0221 24 D5               558 	add	a,#0xd5
+   0223 F8                  559 	mov	r0,a
+   0224 86 05               560 	mov	ar5,@r0
+   0226 08                  561 	inc	r0
+   0227 86 06               562 	mov	ar6,@r0
+   0229 E5 81               563 	mov	a,sp
+   022B 24 CF               564 	add	a,#0xcf
+   022D F8                  565 	mov	r0,a
+   022E C3                  566 	clr	c
+   022F E6                  567 	mov	a,@r0
+   0230 9D                  568 	subb	a,r5
+   0231 08                  569 	inc	r0
+   0232 E6                  570 	mov	a,@r0
+   0233 9E                  571 	subb	a,r6
+   0234 50 03               572 	jnc	00172$
+   0236 02s07r5A            573 	ljmp	00113$
+   0239                     574 00172$:
+                            575 ;	../../../contiki-sensinode//core/lib/ifft.c:132: p = bitrev(k >> nu1, nu);
+   0239 E5 81               576 	mov	a,sp
+   023B 24 E3               577 	add	a,#0xe3
+   023D F8                  578 	mov	r0,a
+   023E 86 F0               579 	mov	b,@r0
+   0240 05 F0               580 	inc	b
+   0242 E5 81               581 	mov	a,sp
+   0244 24 DF               582 	add	a,#0xdf
+   0246 F8                  583 	mov	r0,a
+   0247 86 02               584 	mov	ar2,@r0
+   0249 08                  585 	inc	r0
+   024A 86 04               586 	mov	ar4,@r0
+   024C E6                  587 	mov	a,@r0
+   024D 33                  588 	rlc	a
+   024E 92 D2               589 	mov	ov,c
+   0250 80 08               590 	sjmp	00174$
+   0252                     591 00173$:
+   0252 A2 D2               592 	mov	c,ov
+   0254 EC                  593 	mov	a,r4
+   0255 13                  594 	rrc	a
+   0256 FC                  595 	mov	r4,a
+   0257 EA                  596 	mov	a,r2
+   0258 13                  597 	rrc	a
+   0259 FA                  598 	mov	r2,a
+   025A                     599 00174$:
+   025A D5 F0 F5            600 	djnz	b,00173$
+   025D E5 81               601 	mov	a,sp
+   025F 24 CD               602 	add	a,#0xcd
+   0261 F8                  603 	mov	r0,a
+   0262 E6                  604 	mov	a,@r0
+   0263 C0 E0               605 	push	acc
+   0265 08                  606 	inc	r0
+   0266 E6                  607 	mov	a,@r0
+   0267 C0 E0               608 	push	acc
+   0269 8A 82               609 	mov	dpl,r2
+   026B 8C 83               610 	mov	dph,r4
+   026D 78r00               611 	mov	r0,#_bitrev
+   026F 79s00               612 	mov	r1,#(_bitrev >> 8)
+   0271 7As00               613 	mov	r2,#(_bitrev >> 16)
+   0273 12s00r00            614 	lcall	__sdcc_banked_call
+   0276 AA 82               615 	mov	r2,dpl
+   0278 AC 83               616 	mov	r4,dph
+   027A 15 81               617 	dec	sp
+   027C 15 81               618 	dec	sp
+   027E E5 81               619 	mov	a,sp
+   0280 24 D1               620 	add	a,#0xd1
+   0282 F8                  621 	mov	r0,a
+   0283 A6 02               622 	mov	@r0,ar2
+   0285 08                  623 	inc	r0
+   0286 A6 04               624 	mov	@r0,ar4
+                            625 ;	../../../contiki-sensinode//core/lib/ifft.c:133: c = cosI((1000 * p) / n);
+   0288 E5 81               626 	mov	a,sp
+   028A 24 D1               627 	add	a,#0xd1
+   028C F8                  628 	mov	r0,a
+   028D E6                  629 	mov	a,@r0
+   028E C0 E0               630 	push	acc
+   0290 08                  631 	inc	r0
+   0291 E6                  632 	mov	a,@r0
+   0292 C0 E0               633 	push	acc
+   0294 90 03 E8            634 	mov	dptr,#0x03E8
+   0297 12s00r00            635 	lcall	__mulint
+   029A AD 82               636 	mov	r5,dpl
+   029C AE 83               637 	mov	r6,dph
+   029E 15 81               638 	dec	sp
+   02A0 15 81               639 	dec	sp
+   02A2 E5 81               640 	mov	a,sp
+   02A4 24 C2               641 	add	a,#0xc2
+   02A6 F8                  642 	mov	r0,a
+   02A7 E6                  643 	mov	a,@r0
+   02A8 C0 E0               644 	push	acc
+   02AA 08                  645 	inc	r0
+   02AB E6                  646 	mov	a,@r0
+   02AC C0 E0               647 	push	acc
+   02AE 8D 82               648 	mov	dpl,r5
+   02B0 8E 83               649 	mov	dph,r6
+   02B2 12s00r00            650 	lcall	__divuint
+   02B5 C8                  651 	xch	a,r0
+   02B6 E5 81               652 	mov	a,sp
+   02B8 24 E3               653 	add	a,#0xe3
+   02BA C8                  654 	xch	a,r0
+   02BB A6 82               655 	mov	@r0,dpl
+   02BD 08                  656 	inc	r0
+   02BE A6 83               657 	mov	@r0,dph
+   02C0 15 81               658 	dec	sp
+   02C2 15 81               659 	dec	sp
+   02C4 E5 81               660 	mov	a,sp
+   02C6 24 E5               661 	add	a,#0xe5
+   02C8 F8                  662 	mov	r0,a
+   02C9 86 82               663 	mov	dpl,@r0
+   02CB 08                  664 	inc	r0
+   02CC 86 83               665 	mov	dph,@r0
+   02CE 78rC7               666 	mov	r0,#_cosI
+   02D0 79s00               667 	mov	r1,#(_cosI >> 8)
+   02D2 7As00               668 	mov	r2,#(_cosI >> 16)
+   02D4 12s00r00            669 	lcall	__sdcc_banked_call
+   02D7 AD 82               670 	mov	r5,dpl
+   02D9 AE 83               671 	mov	r6,dph
+   02DB 8D 07               672 	mov	ar7,r5
+   02DD EE                  673 	mov	a,r6
+   02DE FC                  674 	mov	r4,a
+   02DF 33                  675 	rlc	a
+   02E0 95 E0               676 	subb	a,acc
+   02E2 FB                  677 	mov	r3,a
+   02E3 FA                  678 	mov	r2,a
+                            679 ;	../../../contiki-sensinode//core/lib/ifft.c:134: s = sinI((1000 * p) / n);
+   02E4 E5 81               680 	mov	a,sp
+   02E6 24 E5               681 	add	a,#0xe5
+   02E8 F8                  682 	mov	r0,a
+   02E9 86 82               683 	mov	dpl,@r0
+   02EB 08                  684 	inc	r0
+   02EC 86 83               685 	mov	dph,@r0
+   02EE C0 07               686 	push	ar7
+   02F0 C0 04               687 	push	ar4
+   02F2 C0 03               688 	push	ar3
+   02F4 C0 02               689 	push	ar2
+   02F6 78r52               690 	mov	r0,#_sinI
+   02F8 79s00               691 	mov	r1,#(_sinI >> 8)
+   02FA 7As00               692 	mov	r2,#(_sinI >> 16)
+   02FC 12s00r00            693 	lcall	__sdcc_banked_call
+   02FF AD 82               694 	mov	r5,dpl
+   0301 AE 83               695 	mov	r6,dph
+   0303 D0 02               696 	pop	ar2
+   0305 D0 03               697 	pop	ar3
+   0307 D0 04               698 	pop	ar4
+   0309 D0 07               699 	pop	ar7
+   030B E5 81               700 	mov	a,sp
+   030D 24 D7               701 	add	a,#0xd7
+   030F F8                  702 	mov	r0,a
+   0310 A6 05               703 	mov	@r0,ar5
+   0312 08                  704 	inc	r0
+   0313 A6 06               705 	mov	@r0,ar6
+   0315 EE                  706 	mov	a,r6
+   0316 33                  707 	rlc	a
+   0317 95 E0               708 	subb	a,acc
+   0319 08                  709 	inc	r0
+   031A F6                  710 	mov	@r0,a
+   031B 08                  711 	inc	r0
+   031C F6                  712 	mov	@r0,a
+                            713 ;	../../../contiki-sensinode//core/lib/ifft.c:136: tr = ((xre[k + n2] * c + xim[k + n2] * s) >> RESOLUTION);
+   031D E5 81               714 	mov	a,sp
+   031F 24 DF               715 	add	a,#0xdf
+   0321 F8                  716 	mov	r0,a
+   0322 86 05               717 	mov	ar5,@r0
+   0324 08                  718 	inc	r0
+   0325 86 06               719 	mov	ar6,@r0
+   0327 E5 81               720 	mov	a,sp
+   0329 24 CF               721 	add	a,#0xcf
+   032B F8                  722 	mov	r0,a
+   032C E6                  723 	mov	a,@r0
+   032D 2D                  724 	add	a,r5
+   032E FD                  725 	mov	r5,a
+   032F 08                  726 	inc	r0
+   0330 E6                  727 	mov	a,@r0
+   0331 3E                  728 	addc	a,r6
+   0332 FE                  729 	mov	r6,a
+   0333 E5 81               730 	mov	a,sp
+   0335 24 E5               731 	add	a,#0xe5
+   0337 F8                  732 	mov	r0,a
+   0338 A6 05               733 	mov	@r0,ar5
+   033A EE                  734 	mov	a,r6
+   033B C6                  735 	xch	a,@r0
+   033C 25 E0               736 	add	a,acc
+   033E C6                  737 	xch	a,@r0
+   033F 33                  738 	rlc	a
+   0340 08                  739 	inc	r0
+   0341 F6                  740 	mov	@r0,a
+   0342 E5 81               741 	mov	a,sp
+   0344 24 CA               742 	add	a,#0xca
+   0346 F8                  743 	mov	r0,a
+   0347 E5 81               744 	mov	a,sp
+   0349 24 E5               745 	add	a,#0xe5
+   034B F9                  746 	mov	r1,a
+   034C E7                  747 	mov	a,@r1
+   034D 26                  748 	add	a,@r0
+   034E C0 E0               749 	push	acc
+   0350 09                  750 	inc	r1
+   0351 E7                  751 	mov	a,@r1
+   0352 08                  752 	inc	r0
+   0353 36                  753 	addc	a,@r0
+   0354 C0 E0               754 	push	acc
+   0356 08                  755 	inc	r0
+   0357 E6                  756 	mov	a,@r0
+   0358 C0 E0               757 	push	acc
+   035A E5 81               758 	mov	a,sp
+   035C 24 E6               759 	add	a,#0xe6
+   035E F8                  760 	mov	r0,a
+   035F D0 E0               761 	pop	acc
+   0361 F6                  762 	mov	@r0,a
+   0362 18                  763 	dec	r0
+   0363 D0 E0               764 	pop	acc
+   0365 F6                  765 	mov	@r0,a
+   0366 18                  766 	dec	r0
+   0367 D0 E0               767 	pop	acc
+   0369 F6                  768 	mov	@r0,a
+   036A E5 81               769 	mov	a,sp
+   036C 24 E7               770 	add	a,#0xe7
+   036E F8                  771 	mov	r0,a
+   036F 86 82               772 	mov	dpl,@r0
+   0371 08                  773 	inc	r0
+   0372 86 83               774 	mov	dph,@r0
+   0374 08                  775 	inc	r0
+   0375 86 F0               776 	mov	b,@r0
+   0377 12s00r00            777 	lcall	__gptrget
+   037A FD                  778 	mov	r5,a
+   037B A3                  779 	inc	dptr
+   037C 12s00r00            780 	lcall	__gptrget
+   037F FE                  781 	mov	r6,a
+   0380 E5 81               782 	mov	a,sp
+   0382 24 EA               783 	add	a,#0xea
+   0384 F8                  784 	mov	r0,a
+   0385 A6 05               785 	mov	@r0,ar5
+   0387 08                  786 	inc	r0
+   0388 A6 06               787 	mov	@r0,ar6
+   038A EE                  788 	mov	a,r6
+   038B 33                  789 	rlc	a
+   038C 95 E0               790 	subb	a,acc
+   038E 08                  791 	inc	r0
+   038F F6                  792 	mov	@r0,a
+   0390 08                  793 	inc	r0
+   0391 F6                  794 	mov	@r0,a
+   0392 C0 07               795 	push	ar7
+   0394 C0 04               796 	push	ar4
+   0396 C0 03               797 	push	ar3
+   0398 C0 02               798 	push	ar2
+   039A C0 07               799 	push	ar7
+   039C C0 04               800 	push	ar4
+   039E C0 03               801 	push	ar3
+   03A0 C0 02               802 	push	ar2
+   03A2 E5 81               803 	mov	a,sp
+   03A4 24 E2               804 	add	a,#0xe2
+   03A6 F8                  805 	mov	r0,a
+   03A7 86 82               806 	mov	dpl,@r0
+   03A9 08                  807 	inc	r0
+   03AA 86 83               808 	mov	dph,@r0
+   03AC 08                  809 	inc	r0
+   03AD 86 F0               810 	mov	b,@r0
+   03AF 08                  811 	inc	r0
+   03B0 E6                  812 	mov	a,@r0
+   03B1 12s00r00            813 	lcall	__mullong
+   03B4 C8                  814 	xch	a,r0
+   03B5 E5 81               815 	mov	a,sp
+   03B7 24 E6               816 	add	a,#0xe6
+   03B9 C8                  817 	xch	a,r0
+   03BA A6 82               818 	mov	@r0,dpl
+   03BC 08                  819 	inc	r0
+   03BD A6 83               820 	mov	@r0,dph
+   03BF 08                  821 	inc	r0
+   03C0 A6 F0               822 	mov	@r0,b
+   03C2 08                  823 	inc	r0
+   03C3 F6                  824 	mov	@r0,a
+   03C4 E5 81               825 	mov	a,sp
+   03C6 24 FC               826 	add	a,#0xfc
+   03C8 F5 81               827 	mov	sp,a
+   03CA D0 02               828 	pop	ar2
+   03CC D0 03               829 	pop	ar3
+   03CE D0 04               830 	pop	ar4
+   03D0 D0 07               831 	pop	ar7
+   03D2 E5 81               832 	mov	a,sp
+   03D4 24 C4               833 	add	a,#0xc4
+   03D6 F8                  834 	mov	r0,a
+   03D7 E5 81               835 	mov	a,sp
+   03D9 24 E5               836 	add	a,#0xe5
+   03DB F9                  837 	mov	r1,a
+   03DC E7                  838 	mov	a,@r1
+   03DD 26                  839 	add	a,@r0
+   03DE C0 E0               840 	push	acc
+   03E0 09                  841 	inc	r1
+   03E1 E7                  842 	mov	a,@r1
+   03E2 08                  843 	inc	r0
+   03E3 36                  844 	addc	a,@r0
+   03E4 C0 E0               845 	push	acc
+   03E6 08                  846 	inc	r0
+   03E7 E6                  847 	mov	a,@r0
+   03E8 C0 E0               848 	push	acc
+   03EA E5 81               849 	mov	a,sp
+   03EC 24 F1               850 	add	a,#0xf1
+   03EE F8                  851 	mov	r0,a
+   03EF D0 E0               852 	pop	acc
+   03F1 F6                  853 	mov	@r0,a
+   03F2 18                  854 	dec	r0
+   03F3 D0 E0               855 	pop	acc
+   03F5 F6                  856 	mov	@r0,a
+   03F6 18                  857 	dec	r0
+   03F7 D0 E0               858 	pop	acc
+   03F9 F6                  859 	mov	@r0,a
+   03FA E5 81               860 	mov	a,sp
+   03FC 24 F2               861 	add	a,#0xf2
+   03FE F8                  862 	mov	r0,a
+   03FF 86 82               863 	mov	dpl,@r0
+   0401 08                  864 	inc	r0
+   0402 86 83               865 	mov	dph,@r0
+   0404 08                  866 	inc	r0
+   0405 86 F0               867 	mov	b,@r0
+   0407 12s00r00            868 	lcall	__gptrget
+   040A FD                  869 	mov	r5,a
+   040B A3                  870 	inc	dptr
+   040C 12s00r00            871 	lcall	__gptrget
+   040F FE                  872 	mov	r6,a
+   0410 E5 81               873 	mov	a,sp
+   0412 24 F5               874 	add	a,#0xf5
+   0414 F8                  875 	mov	r0,a
+   0415 A6 05               876 	mov	@r0,ar5
+   0417 08                  877 	inc	r0
+   0418 A6 06               878 	mov	@r0,ar6
+   041A EE                  879 	mov	a,r6
+   041B 33                  880 	rlc	a
+   041C 95 E0               881 	subb	a,acc
+   041E 08                  882 	inc	r0
+   041F F6                  883 	mov	@r0,a
+   0420 08                  884 	inc	r0
+   0421 F6                  885 	mov	@r0,a
+   0422 C0 07               886 	push	ar7
+   0424 C0 04               887 	push	ar4
+   0426 C0 03               888 	push	ar3
+   0428 C0 02               889 	push	ar2
+   042A E5 81               890 	mov	a,sp
+   042C 24 D3               891 	add	a,#0xd3
+   042E F8                  892 	mov	r0,a
+   042F E6                  893 	mov	a,@r0
+   0430 C0 E0               894 	push	acc
+   0432 08                  895 	inc	r0
+   0433 E6                  896 	mov	a,@r0
+   0434 C0 E0               897 	push	acc
+   0436 08                  898 	inc	r0
+   0437 E6                  899 	mov	a,@r0
+   0438 C0 E0               900 	push	acc
+   043A 08                  901 	inc	r0
+   043B E6                  902 	mov	a,@r0
+   043C C0 E0               903 	push	acc
+   043E E5 81               904 	mov	a,sp
+   0440 24 ED               905 	add	a,#0xed
+   0442 F8                  906 	mov	r0,a
+   0443 86 82               907 	mov	dpl,@r0
+   0445 08                  908 	inc	r0
+   0446 86 83               909 	mov	dph,@r0
+   0448 08                  910 	inc	r0
+   0449 86 F0               911 	mov	b,@r0
+   044B 08                  912 	inc	r0
+   044C E6                  913 	mov	a,@r0
+   044D 12s00r00            914 	lcall	__mullong
+   0450 C8                  915 	xch	a,r0
+   0451 E5 81               916 	mov	a,sp
+   0453 24 F1               917 	add	a,#0xf1
+   0455 C8                  918 	xch	a,r0
+   0456 A6 82               919 	mov	@r0,dpl
+   0458 08                  920 	inc	r0
+   0459 A6 83               921 	mov	@r0,dph
+   045B 08                  922 	inc	r0
+   045C A6 F0               923 	mov	@r0,b
+   045E 08                  924 	inc	r0
+   045F F6                  925 	mov	@r0,a
+   0460 E5 81               926 	mov	a,sp
+   0462 24 FC               927 	add	a,#0xfc
+   0464 F5 81               928 	mov	sp,a
+   0466 D0 02               929 	pop	ar2
+   0468 D0 03               930 	pop	ar3
+   046A D0 04               931 	pop	ar4
+   046C D0 07               932 	pop	ar7
+   046E E5 81               933 	mov	a,sp
+   0470 24 EE               934 	add	a,#0xee
+   0472 F8                  935 	mov	r0,a
+   0473 E5 81               936 	mov	a,sp
+   0475 24 F9               937 	add	a,#0xf9
+   0477 F9                  938 	mov	r1,a
+   0478 E7                  939 	mov	a,@r1
+   0479 26                  940 	add	a,@r0
+   047A F7                  941 	mov	@r1,a
+   047B 09                  942 	inc	r1
+   047C E7                  943 	mov	a,@r1
+   047D 08                  944 	inc	r0
+   047E 36                  945 	addc	a,@r0
+   047F F7                  946 	mov	@r1,a
+   0480 09                  947 	inc	r1
+   0481 E7                  948 	mov	a,@r1
+   0482 08                  949 	inc	r0
+   0483 36                  950 	addc	a,@r0
+   0484 F7                  951 	mov	@r1,a
+   0485 09                  952 	inc	r1
+   0486 E7                  953 	mov	a,@r1
+   0487 08                  954 	inc	r0
+   0488 36                  955 	addc	a,@r0
+   0489 F7                  956 	mov	@r1,a
+   048A E5 81               957 	mov	a,sp
+   048C 24 F9               958 	add	a,#0xf9
+   048E F8                  959 	mov	r0,a
+   048F E5 81               960 	mov	a,sp
+   0491 24 DB               961 	add	a,#0xdb
+   0493 F9                  962 	mov	r1,a
+   0494 E6                  963 	mov	a,@r0
+   0495 F7                  964 	mov	@r1,a
+   0496 08                  965 	inc	r0
+   0497 E6                  966 	mov	a,@r0
+   0498 A2 E7               967 	mov	c,acc.7
+   049A C7                  968 	xch	a,@r1
+   049B 33                  969 	rlc	a
+   049C C7                  970 	xch	a,@r1
+   049D 33                  971 	rlc	a
+   049E C7                  972 	xch	a,@r1
+   049F 54 01               973 	anl	a,#0x01
+   04A1 09                  974 	inc	r1
+   04A2 F7                  975 	mov	@r1,a
+   04A3 08                  976 	inc	r0
+   04A4 E6                  977 	mov	a,@r0
+   04A5 25 E0               978 	add	a,acc
+   04A7 47                  979 	orl	a,@r1
+   04A8 F7                  980 	mov	@r1,a
+   04A9 E6                  981 	mov	a,@r0
+   04AA 09                  982 	inc	r1
+   04AB F7                  983 	mov	@r1,a
+   04AC 08                  984 	inc	r0
+   04AD E6                  985 	mov	a,@r0
+   04AE A2 E7               986 	mov	c,acc.7
+   04B0 C7                  987 	xch	a,@r1
+   04B1 33                  988 	rlc	a
+   04B2 C7                  989 	xch	a,@r1
+   04B3 33                  990 	rlc	a
+   04B4 C7                  991 	xch	a,@r1
+   04B5 54 01               992 	anl	a,#0x01
+   04B7 30 E0 02            993 	jnb	acc.0,00175$
+   04BA 44 FE               994 	orl	a,#0xFE
+   04BC                     995 00175$:
+   04BC 09                  996 	inc	r1
+   04BD F7                  997 	mov	@r1,a
+                            998 ;	../../../contiki-sensinode//core/lib/ifft.c:137: ti = ((xim[k + n2] * c - xre[k + n2] * s) >> RESOLUTION);
+   04BE C0 07               999 	push	ar7
+   04C0 C0 04              1000 	push	ar4
+   04C2 C0 03              1001 	push	ar3
+   04C4 C0 02              1002 	push	ar2
+   04C6 E5 81              1003 	mov	a,sp
+   04C8 24 F1              1004 	add	a,#0xf1
+   04CA F8                 1005 	mov	r0,a
+   04CB 86 82              1006 	mov	dpl,@r0
+   04CD 08                 1007 	inc	r0
+   04CE 86 83              1008 	mov	dph,@r0
+   04D0 08                 1009 	inc	r0
+   04D1 86 F0              1010 	mov	b,@r0
+   04D3 08                 1011 	inc	r0
+   04D4 E6                 1012 	mov	a,@r0
+   04D5 12s00r00           1013 	lcall	__mullong
+   04D8 AF 82              1014 	mov	r7,dpl
+   04DA AE 83              1015 	mov	r6,dph
+   04DC AD F0              1016 	mov	r5,b
+   04DE FC                 1017 	mov	r4,a
+   04DF E5 81              1018 	mov	a,sp
+   04E1 24 FC              1019 	add	a,#0xfc
+   04E3 F5 81              1020 	mov	sp,a
+   04E5 C0 07              1021 	push	ar7
+   04E7 C0 06              1022 	push	ar6
+   04E9 C0 05              1023 	push	ar5
+   04EB C0 04              1024 	push	ar4
+   04ED E5 81              1025 	mov	a,sp
+   04EF 24 D3              1026 	add	a,#0xd3
+   04F1 F8                 1027 	mov	r0,a
+   04F2 E6                 1028 	mov	a,@r0
+   04F3 C0 E0              1029 	push	acc
+   04F5 08                 1030 	inc	r0
+   04F6 E6                 1031 	mov	a,@r0
+   04F7 C0 E0              1032 	push	acc
+   04F9 08                 1033 	inc	r0
+   04FA E6                 1034 	mov	a,@r0
+   04FB C0 E0              1035 	push	acc
+   04FD 08                 1036 	inc	r0
+   04FE E6                 1037 	mov	a,@r0
+   04FF C0 E0              1038 	push	acc
+   0501 E5 81              1039 	mov	a,sp
+   0503 24 E2              1040 	add	a,#0xe2
+   0505 F8                 1041 	mov	r0,a
+   0506 86 82              1042 	mov	dpl,@r0
+   0508 08                 1043 	inc	r0
+   0509 86 83              1044 	mov	dph,@r0
+   050B 08                 1045 	inc	r0
+   050C 86 F0              1046 	mov	b,@r0
+   050E 08                 1047 	inc	r0
+   050F E6                 1048 	mov	a,@r0
+   0510 12s00r00           1049 	lcall	__mullong
+   0513 C8                 1050 	xch	a,r0
+   0514 E5 81              1051 	mov	a,sp
+   0516 24 ED              1052 	add	a,#0xed
+   0518 C8                 1053 	xch	a,r0
+   0519 A6 82              1054 	mov	@r0,dpl
+   051B 08                 1055 	inc	r0
+   051C A6 83              1056 	mov	@r0,dph
+   051E 08                 1057 	inc	r0
+   051F A6 F0              1058 	mov	@r0,b
+   0521 08                 1059 	inc	r0
+   0522 F6                 1060 	mov	@r0,a
+   0523 E5 81              1061 	mov	a,sp
+   0525 24 FC              1062 	add	a,#0xfc
+   0527 F5 81              1063 	mov	sp,a
+   0529 D0 04              1064 	pop	ar4
+   052B D0 05              1065 	pop	ar5
+   052D D0 06              1066 	pop	ar6
+   052F D0 07              1067 	pop	ar7
+   0531 E5 81              1068 	mov	a,sp
+   0533 24 F5              1069 	add	a,#0xf5
+   0535 F8                 1070 	mov	r0,a
+   0536 E5 81              1071 	mov	a,sp
+   0538 24 F9              1072 	add	a,#0xf9
+   053A F9                 1073 	mov	r1,a
+   053B EF                 1074 	mov	a,r7
+   053C C3                 1075 	clr	c
+   053D 96                 1076 	subb	a,@r0
+   053E F7                 1077 	mov	@r1,a
+   053F EE                 1078 	mov	a,r6
+   0540 08                 1079 	inc	r0
+   0541 96                 1080 	subb	a,@r0
+   0542 09                 1081 	inc	r1
+   0543 F7                 1082 	mov	@r1,a
+   0544 ED                 1083 	mov	a,r5
+   0545 08                 1084 	inc	r0
+   0546 96                 1085 	subb	a,@r0
+   0547 09                 1086 	inc	r1
+   0548 F7                 1087 	mov	@r1,a
+   0549 EC                 1088 	mov	a,r4
+   054A 08                 1089 	inc	r0
+   054B 96                 1090 	subb	a,@r0
+   054C 09                 1091 	inc	r1
+   054D F7                 1092 	mov	@r1,a
+   054E E5 81              1093 	mov	a,sp
+   0550 24 F9              1094 	add	a,#0xf9
+   0552 F8                 1095 	mov	r0,a
+   0553 86 07              1096 	mov	ar7,@r0
+   0555 08                 1097 	inc	r0
+   0556 E6                 1098 	mov	a,@r0
+   0557 A2 E7              1099 	mov	c,acc.7
+   0559 CF                 1100 	xch	a,r7
+   055A 33                 1101 	rlc	a
+   055B CF                 1102 	xch	a,r7
+   055C 33                 1103 	rlc	a
+   055D CF                 1104 	xch	a,r7
+   055E 54 01              1105 	anl	a,#0x01
+   0560 FC                 1106 	mov	r4,a
+   0561 08                 1107 	inc	r0
+   0562 E6                 1108 	mov	a,@r0
+   0563 25 E0              1109 	add	a,acc
+   0565 4C                 1110 	orl	a,r4
+   0566 FC                 1111 	mov	r4,a
+   0567 86 03              1112 	mov	ar3,@r0
+   0569 08                 1113 	inc	r0
+   056A E6                 1114 	mov	a,@r0
+   056B A2 E7              1115 	mov	c,acc.7
+   056D CB                 1116 	xch	a,r3
+   056E 33                 1117 	rlc	a
+   056F CB                 1118 	xch	a,r3
+   0570 33                 1119 	rlc	a
+   0571 CB                 1120 	xch	a,r3
+   0572 54 01              1121 	anl	a,#0x01
+   0574 30 E0 02           1122 	jnb	acc.0,00176$
+   0577 44 FE              1123 	orl	a,#0xFE
+   0579                    1124 00176$:
+   0579 FA                 1125 	mov	r2,a
+                           1126 ;	../../../contiki-sensinode//core/lib/ifft.c:139: xre[k + n2] = xre[k] - tr;
+   057A E5 81              1127 	mov	a,sp
+   057C 24 DF              1128 	add	a,#0xdf
+   057E F8                 1129 	mov	r0,a
+   057F E5 81              1130 	mov	a,sp
+   0581 24 F9              1131 	add	a,#0xf9
+   0583 F9                 1132 	mov	r1,a
+   0584 E6                 1133 	mov	a,@r0
+   0585 F7                 1134 	mov	@r1,a
+   0586 08                 1135 	inc	r0
+   0587 E6                 1136 	mov	a,@r0
+   0588 C7                 1137 	xch	a,@r1
+   0589 25 E0              1138 	add	a,acc
+   058B C7                 1139 	xch	a,@r1
+   058C 33                 1140 	rlc	a
+   058D 09                 1141 	inc	r1
+   058E F7                 1142 	mov	@r1,a
+   058F E5 81              1143 	mov	a,sp
+   0591 24 CA              1144 	add	a,#0xca
+   0593 F8                 1145 	mov	r0,a
+   0594 E5 81              1146 	mov	a,sp
+   0596 24 F9              1147 	add	a,#0xf9
+   0598 F9                 1148 	mov	r1,a
+   0599 E7                 1149 	mov	a,@r1
+   059A 26                 1150 	add	a,@r0
+   059B C0 E0              1151 	push	acc
+   059D 09                 1152 	inc	r1
+   059E E7                 1153 	mov	a,@r1
+   059F 08                 1154 	inc	r0
+   05A0 36                 1155 	addc	a,@r0
+   05A1 C0 E0              1156 	push	acc
+   05A3 08                 1157 	inc	r0
+   05A4 E6                 1158 	mov	a,@r0
+   05A5 C0 E0              1159 	push	acc
+   05A7 E5 81              1160 	mov	a,sp
+   05A9 24 F4              1161 	add	a,#0xf4
+   05AB F8                 1162 	mov	r0,a
+   05AC D0 E0              1163 	pop	acc
+   05AE F6                 1164 	mov	@r0,a
+   05AF 18                 1165 	dec	r0
+   05B0 D0 E0              1166 	pop	acc
+   05B2 F6                 1167 	mov	@r0,a
+   05B3 18                 1168 	dec	r0
+   05B4 D0 E0              1169 	pop	acc
+   05B6 F6                 1170 	mov	@r0,a
+   05B7 E5 81              1171 	mov	a,sp
+   05B9 24 F5              1172 	add	a,#0xf5
+   05BB F8                 1173 	mov	r0,a
+   05BC 86 82              1174 	mov	dpl,@r0
+   05BE 08                 1175 	inc	r0
+   05BF 86 83              1176 	mov	dph,@r0
+   05C1 08                 1177 	inc	r0
+   05C2 86 F0              1178 	mov	b,@r0
+   05C4 12s00r00           1179 	lcall	__gptrget
+   05C7 FD                 1180 	mov	r5,a
+   05C8 A3                 1181 	inc	dptr
+   05C9 12s00r00           1182 	lcall	__gptrget
+   05CC FE                 1183 	mov	r6,a
+   05CD E5 81              1184 	mov	a,sp
+   05CF 24 EE              1185 	add	a,#0xee
+   05D1 F8                 1186 	mov	r0,a
+   05D2 A6 05              1187 	mov	@r0,ar5
+   05D4 08                 1188 	inc	r0
+   05D5 A6 06              1189 	mov	@r0,ar6
+   05D7 EE                 1190 	mov	a,r6
+   05D8 33                 1191 	rlc	a
+   05D9 95 E0              1192 	subb	a,acc
+   05DB 08                 1193 	inc	r0
+   05DC F6                 1194 	mov	@r0,a
+   05DD 08                 1195 	inc	r0
+   05DE F6                 1196 	mov	@r0,a
+   05DF E5 81              1197 	mov	a,sp
+   05E1 24 EE              1198 	add	a,#0xee
+   05E3 F8                 1199 	mov	r0,a
+   05E4 E5 81              1200 	mov	a,sp
+   05E6 24 DB              1201 	add	a,#0xdb
+   05E8 F9                 1202 	mov	r1,a
+   05E9 E6                 1203 	mov	a,@r0
+   05EA C3                 1204 	clr	c
+   05EB 97                 1205 	subb	a,@r1
+   05EC C0 E0              1206 	push	acc
+   05EE 08                 1207 	inc	r0
+   05EF E6                 1208 	mov	a,@r0
+   05F0 09                 1209 	inc	r1
+   05F1 97                 1210 	subb	a,@r1
+   05F2 C0 E0              1211 	push	acc
+   05F4 08                 1212 	inc	r0
+   05F5 E6                 1213 	mov	a,@r0
+   05F6 09                 1214 	inc	r1
+   05F7 97                 1215 	subb	a,@r1
+   05F8 C0 E0              1216 	push	acc
+   05FA 08                 1217 	inc	r0
+   05FB E6                 1218 	mov	a,@r0
+   05FC 09                 1219 	inc	r1
+   05FD 97                 1220 	subb	a,@r1
+   05FE C0 E0              1221 	push	acc
+   0600 E5 81              1222 	mov	a,sp
+   0602 24 E9              1223 	add	a,#0xe9
+   0604 F8                 1224 	mov	r0,a
+   0605 D0 E0              1225 	pop	acc
+   0607 F6                 1226 	mov	@r0,a
+   0608 18                 1227 	dec	r0
+   0609 D0 E0              1228 	pop	acc
+   060B F6                 1229 	mov	@r0,a
+   060C 18                 1230 	dec	r0
+   060D D0 E0              1231 	pop	acc
+   060F F6                 1232 	mov	@r0,a
+   0610 18                 1233 	dec	r0
+   0611 D0 E0              1234 	pop	acc
+   0613 F6                 1235 	mov	@r0,a
+   0614 E5 81              1236 	mov	a,sp
+   0616 24 EA              1237 	add	a,#0xea
+   0618 F8                 1238 	mov	r0,a
+   0619 86 05              1239 	mov	ar5,@r0
+   061B 08                 1240 	inc	r0
+   061C 86 06              1241 	mov	ar6,@r0
+   061E E5 81              1242 	mov	a,sp
+   0620 24 E7              1243 	add	a,#0xe7
+   0622 F8                 1244 	mov	r0,a
+   0623 86 82              1245 	mov	dpl,@r0
+   0625 08                 1246 	inc	r0
+   0626 86 83              1247 	mov	dph,@r0
+   0628 08                 1248 	inc	r0
+   0629 86 F0              1249 	mov	b,@r0
+   062B ED                 1250 	mov	a,r5
+   062C 12s00r00           1251 	lcall	__gptrput
+   062F A3                 1252 	inc	dptr
+   0630 EE                 1253 	mov	a,r6
+   0631 12s00r00           1254 	lcall	__gptrput
+                           1255 ;	../../../contiki-sensinode//core/lib/ifft.c:140: xim[k + n2] = xim[k] - ti;
+   0634 E5 81              1256 	mov	a,sp
+   0636 24 C4              1257 	add	a,#0xc4
+   0638 F8                 1258 	mov	r0,a
+   0639 E5 81              1259 	mov	a,sp
+   063B 24 F9              1260 	add	a,#0xf9
+   063D F9                 1261 	mov	r1,a
+   063E E7                 1262 	mov	a,@r1
+   063F 26                 1263 	add	a,@r0
+   0640 C0 E0              1264 	push	acc
+   0642 09                 1265 	inc	r1
+   0643 E7                 1266 	mov	a,@r1
+   0644 08                 1267 	inc	r0
+   0645 36                 1268 	addc	a,@r0
+   0646 C0 E0              1269 	push	acc
+   0648 08                 1270 	inc	r0
+   0649 E6                 1271 	mov	a,@r0
+   064A C0 E0              1272 	push	acc
+   064C E5 81              1273 	mov	a,sp
+   064E 24 F8              1274 	add	a,#0xf8
+   0650 F8                 1275 	mov	r0,a
+   0651 D0 E0              1276 	pop	acc
+   0653 F6                 1277 	mov	@r0,a
+   0654 18                 1278 	dec	r0
+   0655 D0 E0              1279 	pop	acc
+   0657 F6                 1280 	mov	@r0,a
+   0658 18                 1281 	dec	r0
+   0659 D0 E0              1282 	pop	acc
+   065B F6                 1283 	mov	@r0,a
+   065C E5 81              1284 	mov	a,sp
+   065E 24 F9              1285 	add	a,#0xf9
+   0660 F8                 1286 	mov	r0,a
+   0661 86 82              1287 	mov	dpl,@r0
+   0663 08                 1288 	inc	r0
+   0664 86 83              1289 	mov	dph,@r0
+   0666 08                 1290 	inc	r0
+   0667 86 F0              1291 	mov	b,@r0
+   0669 12s00r00           1292 	lcall	__gptrget
+   066C FD                 1293 	mov	r5,a
+   066D A3                 1294 	inc	dptr
+   066E 12s00r00           1295 	lcall	__gptrget
+   0671 FE                 1296 	mov	r6,a
+   0672 E5 81              1297 	mov	a,sp
+   0674 24 EA              1298 	add	a,#0xea
+   0676 F8                 1299 	mov	r0,a
+   0677 A6 05              1300 	mov	@r0,ar5
+   0679 08                 1301 	inc	r0
+   067A A6 06              1302 	mov	@r0,ar6
+   067C EE                 1303 	mov	a,r6
+   067D 33                 1304 	rlc	a
+   067E 95 E0              1305 	subb	a,acc
+   0680 08                 1306 	inc	r0
+   0681 F6                 1307 	mov	@r0,a
+   0682 08                 1308 	inc	r0
+   0683 F6                 1309 	mov	@r0,a
+   0684 E5 81              1310 	mov	a,sp
+   0686 24 EA              1311 	add	a,#0xea
+   0688 F8                 1312 	mov	r0,a
+   0689 E5 81              1313 	mov	a,sp
+   068B 24 FD              1314 	add	a,#0xfd
+   068D F9                 1315 	mov	r1,a
+   068E E6                 1316 	mov	a,@r0
+   068F C3                 1317 	clr	c
+   0690 9F                 1318 	subb	a,r7
+   0691 F7                 1319 	mov	@r1,a
+   0692 08                 1320 	inc	r0
+   0693 E6                 1321 	mov	a,@r0
+   0694 9C                 1322 	subb	a,r4
+   0695 09                 1323 	inc	r1
+   0696 F7                 1324 	mov	@r1,a
+   0697 08                 1325 	inc	r0
+   0698 E6                 1326 	mov	a,@r0
+   0699 9B                 1327 	subb	a,r3
+   069A 09                 1328 	inc	r1
+   069B F7                 1329 	mov	@r1,a
+   069C 08                 1330 	inc	r0
+   069D E6                 1331 	mov	a,@r0
+   069E 9A                 1332 	subb	a,r2
+   069F 09                 1333 	inc	r1
+   06A0 F7                 1334 	mov	@r1,a
+   06A1 E5 81              1335 	mov	a,sp
+   06A3 24 FD              1336 	add	a,#0xfd
+   06A5 F8                 1337 	mov	r0,a
+   06A6 86 05              1338 	mov	ar5,@r0
+   06A8 08                 1339 	inc	r0
+   06A9 86 06              1340 	mov	ar6,@r0
+   06AB E5 81              1341 	mov	a,sp
+   06AD 24 F2              1342 	add	a,#0xf2
+   06AF F8                 1343 	mov	r0,a
+   06B0 86 82              1344 	mov	dpl,@r0
+   06B2 08                 1345 	inc	r0
+   06B3 86 83              1346 	mov	dph,@r0
+   06B5 08                 1347 	inc	r0
+   06B6 86 F0              1348 	mov	b,@r0
+   06B8 ED                 1349 	mov	a,r5
+   06B9 12s00r00           1350 	lcall	__gptrput
+   06BC A3                 1351 	inc	dptr
+   06BD EE                 1352 	mov	a,r6
+   06BE 12s00r00           1353 	lcall	__gptrput
+                           1354 ;	../../../contiki-sensinode//core/lib/ifft.c:141: xre[k] += tr;
+   06C1 E5 81              1355 	mov	a,sp
+   06C3 24 EE              1356 	add	a,#0xee
+   06C5 F8                 1357 	mov	r0,a
+   06C6 E5 81              1358 	mov	a,sp
+   06C8 24 DB              1359 	add	a,#0xdb
+   06CA F9                 1360 	mov	r1,a
+   06CB E7                 1361 	mov	a,@r1
+   06CC 26                 1362 	add	a,@r0
+   06CD C0 E0              1363 	push	acc
+   06CF 09                 1364 	inc	r1
+   06D0 E7                 1365 	mov	a,@r1
+   06D1 08                 1366 	inc	r0
+   06D2 36                 1367 	addc	a,@r0
+   06D3 C0 E0              1368 	push	acc
+   06D5 09                 1369 	inc	r1
+   06D6 E7                 1370 	mov	a,@r1
+   06D7 08                 1371 	inc	r0
+   06D8 36                 1372 	addc	a,@r0
+   06D9 C0 E0              1373 	push	acc
+   06DB 09                 1374 	inc	r1
+   06DC E7                 1375 	mov	a,@r1
+   06DD 08                 1376 	inc	r0
+   06DE 36                 1377 	addc	a,@r0
+   06DF C0 E0              1378 	push	acc
+   06E1 E5 81              1379 	mov	a,sp
+   06E3 24 FC              1380 	add	a,#0xfc
+   06E5 F8                 1381 	mov	r0,a
+   06E6 D0 E0              1382 	pop	acc
+   06E8 F6                 1383 	mov	@r0,a
+   06E9 18                 1384 	dec	r0
+   06EA D0 E0              1385 	pop	acc
+   06EC F6                 1386 	mov	@r0,a
+   06ED 18                 1387 	dec	r0
+   06EE D0 E0              1388 	pop	acc
+   06F0 F6                 1389 	mov	@r0,a
+   06F1 18                 1390 	dec	r0
+   06F2 D0 E0              1391 	pop	acc
+   06F4 F6                 1392 	mov	@r0,a
+   06F5 E5 81              1393 	mov	a,sp
+   06F7 24 FD              1394 	add	a,#0xfd
+   06F9 F8                 1395 	mov	r0,a
+   06FA 86 05              1396 	mov	ar5,@r0
+   06FC 08                 1397 	inc	r0
+   06FD 86 06              1398 	mov	ar6,@r0
+   06FF E5 81              1399 	mov	a,sp
+   0701 24 F5              1400 	add	a,#0xf5
+   0703 F8                 1401 	mov	r0,a
+   0704 86 82              1402 	mov	dpl,@r0
+   0706 08                 1403 	inc	r0
+   0707 86 83              1404 	mov	dph,@r0
+   0709 08                 1405 	inc	r0
+   070A 86 F0              1406 	mov	b,@r0
+   070C ED                 1407 	mov	a,r5
+   070D 12s00r00           1408 	lcall	__gptrput
+   0710 A3                 1409 	inc	dptr
+   0711 EE                 1410 	mov	a,r6
+   0712 12s00r00           1411 	lcall	__gptrput
+                           1412 ;	../../../contiki-sensinode//core/lib/ifft.c:142: xim[k] += ti;
+   0715 E5 81              1413 	mov	a,sp
+   0717 24 EA              1414 	add	a,#0xea
+   0719 F8                 1415 	mov	r0,a
+   071A EF                 1416 	mov	a,r7
+   071B 26                 1417 	add	a,@r0
+   071C FF                 1418 	mov	r7,a
+   071D EC                 1419 	mov	a,r4
+   071E 08                 1420 	inc	r0
+   071F 36                 1421 	addc	a,@r0
+   0720 FC                 1422 	mov	r4,a
+   0721 EB                 1423 	mov	a,r3
+   0722 08                 1424 	inc	r0
+   0723 36                 1425 	addc	a,@r0
+   0724 EA                 1426 	mov	a,r2
+   0725 08                 1427 	inc	r0
+   0726 36                 1428 	addc	a,@r0
+   0727 8F 05              1429 	mov	ar5,r7
+   0729 8C 06              1430 	mov	ar6,r4
+   072B E5 81              1431 	mov	a,sp
+   072D 24 F9              1432 	add	a,#0xf9
+   072F F8                 1433 	mov	r0,a
+   0730 86 82              1434 	mov	dpl,@r0
+   0732 08                 1435 	inc	r0
+   0733 86 83              1436 	mov	dph,@r0
+   0735 08                 1437 	inc	r0
+   0736 86 F0              1438 	mov	b,@r0
+   0738 ED                 1439 	mov	a,r5
+   0739 12s00r00           1440 	lcall	__gptrput
+   073C A3                 1441 	inc	dptr
+   073D EE                 1442 	mov	a,r6
+   073E 12s00r00           1443 	lcall	__gptrput
+                           1444 ;	../../../contiki-sensinode//core/lib/ifft.c:143: k++;
+   0741 E5 81              1445 	mov	a,sp
+   0743 24 DF              1446 	add	a,#0xdf
+   0745 F8                 1447 	mov	r0,a
+   0746 06                 1448 	inc	@r0
+   0747 B6 00 02           1449 	cjne	@r0,#0x00,00177$
+   074A 08                 1450 	inc	r0
+   074B 06                 1451 	inc	@r0
+   074C                    1452 00177$:
+                           1453 ;	../../../contiki-sensinode//core/lib/ifft.c:131: for (i = 1; i <= n2; i++) {
+   074C E5 81              1454 	mov	a,sp
+   074E 24 D5              1455 	add	a,#0xd5
+   0750 F8                 1456 	mov	r0,a
+   0751 06                 1457 	inc	@r0
+   0752 B6 00 02           1458 	cjne	@r0,#0x00,00178$
+   0755 08                 1459 	inc	r0
+   0756 06                 1460 	inc	@r0
+   0757                    1461 00178$:
+   0757 02s02r1F           1462 	ljmp	00107$
+   075A                    1463 00113$:
+                           1464 ;	../../../contiki-sensinode//core/lib/ifft.c:130: for (k = 0; k < n; k += n2) {
+   075A E5 81              1465 	mov	a,sp
+   075C 24 DF              1466 	add	a,#0xdf
+   075E F8                 1467 	mov	r0,a
+   075F 86 05              1468 	mov	ar5,@r0
+   0761 08                 1469 	inc	r0
+   0762 86 06              1470 	mov	ar6,@r0
+   0764 E5 81              1471 	mov	a,sp
+   0766 24 CF              1472 	add	a,#0xcf
+   0768 F8                 1473 	mov	r0,a
+   0769 E6                 1474 	mov	a,@r0
+   076A 2D                 1475 	add	a,r5
+   076B FD                 1476 	mov	r5,a
+   076C 08                 1477 	inc	r0
+   076D E6                 1478 	mov	a,@r0
+   076E 3E                 1479 	addc	a,r6
+   076F FE                 1480 	mov	r6,a
+   0770 8D 03              1481 	mov	ar3,r5
+   0772 8E 07              1482 	mov	ar7,r6
+   0774 02s01rF7           1483 	ljmp	00111$
+   0777                    1484 00114$:
+                           1485 ;	../../../contiki-sensinode//core/lib/ifft.c:146: nu1--;
+   0777 E5 81              1486 	mov	a,sp
+   0779 24 E3              1487 	add	a,#0xe3
+   077B F8                 1488 	mov	r0,a
+   077C 16                 1489 	dec	@r0
+   077D B6 FF 02           1490 	cjne	@r0,#0xFF,00179$
+   0780 08                 1491 	inc	r0
+   0781 16                 1492 	dec	@r0
+   0782                    1493 00179$:
+                           1494 ;	../../../contiki-sensinode//core/lib/ifft.c:147: n2 = n2 / 2;
+   0782 E5 81              1495 	mov	a,sp
+   0784 24 CF              1496 	add	a,#0xcf
+   0786 F8                 1497 	mov	r0,a
+   0787 08                 1498 	inc	r0
+   0788 E6                 1499 	mov	a,@r0
+   0789 18                 1500 	dec	r0
+   078A C3                 1501 	clr	c
+   078B 13                 1502 	rrc	a
+   078C C6                 1503 	xch	a,@r0
+   078D 13                 1504 	rrc	a
+   078E C6                 1505 	xch	a,@r0
+   078F 08                 1506 	inc	r0
+   0790 F6                 1507 	mov	@r0,a
+                           1508 ;	../../../contiki-sensinode//core/lib/ifft.c:129: for (l = 1; l <= nu; l++) {
+   0791 E5 81              1509 	mov	a,sp
+   0793 24 D3              1510 	add	a,#0xd3
+   0795 F8                 1511 	mov	r0,a
+   0796 06                 1512 	inc	@r0
+   0797 B6 00 02           1513 	cjne	@r0,#0x00,00180$
+   079A 08                 1514 	inc	r0
+   079B 06                 1515 	inc	@r0
+   079C                    1516 00180$:
+   079C 02s01rD9           1517 	ljmp	00115$
+   079F                    1518 00118$:
+                           1519 ;	../../../contiki-sensinode//core/lib/ifft.c:150: for (k = 0; k < n; k++) {
+   079F 7E 00              1520 	mov	r6,#0x00
+   07A1 7F 00              1521 	mov	r7,#0x00
+   07A3                    1522 00119$:
+   07A3 8E 03              1523 	mov	ar3,r6
+   07A5 8F 05              1524 	mov	ar5,r7
+   07A7 E5 81              1525 	mov	a,sp
+   07A9 24 C2              1526 	add	a,#0xc2
+   07AB F8                 1527 	mov	r0,a
+   07AC C3                 1528 	clr	c
+   07AD EB                 1529 	mov	a,r3
+   07AE 96                 1530 	subb	a,@r0
+   07AF ED                 1531 	mov	a,r5
+   07B0 08                 1532 	inc	r0
+   07B1 96                 1533 	subb	a,@r0
+   07B2 40 03              1534 	jc	00181$
+   07B4 02s09r6C           1535 	ljmp	00122$
+   07B7                    1536 00181$:
+                           1537 ;	../../../contiki-sensinode//core/lib/ifft.c:151: p = bitrev(k, nu);
+   07B7 C0 07              1538 	push	ar7
+   07B9 C0 06              1539 	push	ar6
+   07BB E5 81              1540 	mov	a,sp
+   07BD 24 CB              1541 	add	a,#0xcb
+   07BF F8                 1542 	mov	r0,a
+   07C0 E6                 1543 	mov	a,@r0
+   07C1 C0 E0              1544 	push	acc
+   07C3 08                 1545 	inc	r0
+   07C4 E6                 1546 	mov	a,@r0
+   07C5 C0 E0              1547 	push	acc
+   07C7 8B 82              1548 	mov	dpl,r3
+   07C9 8D 83              1549 	mov	dph,r5
+   07CB 78r00              1550 	mov	r0,#_bitrev
+   07CD 79s00              1551 	mov	r1,#(_bitrev >> 8)
+   07CF 7As00              1552 	mov	r2,#(_bitrev >> 16)
+   07D1 12s00r00           1553 	lcall	__sdcc_banked_call
+   07D4 AB 82              1554 	mov	r3,dpl
+   07D6 AD 83              1555 	mov	r5,dph
+   07D8 15 81              1556 	dec	sp
+   07DA 15 81              1557 	dec	sp
+   07DC D0 06              1558 	pop	ar6
+   07DE D0 07              1559 	pop	ar7
+   07E0 E5 81              1560 	mov	a,sp
+   07E2 24 D1              1561 	add	a,#0xd1
+   07E4 F8                 1562 	mov	r0,a
+   07E5 A6 03              1563 	mov	@r0,ar3
+   07E7 08                 1564 	inc	r0
+   07E8 A6 05              1565 	mov	@r0,ar5
+                           1566 ;	../../../contiki-sensinode//core/lib/ifft.c:152: if (p > k) {
+   07EA E5 81              1567 	mov	a,sp
+   07EC 24 D1              1568 	add	a,#0xd1
+   07EE F8                 1569 	mov	r0,a
+   07EF C3                 1570 	clr	c
+   07F0 EE                 1571 	mov	a,r6
+   07F1 96                 1572 	subb	a,@r0
+   07F2 EF                 1573 	mov	a,r7
+   07F3 64 80              1574 	xrl	a,#0x80
+   07F5 08                 1575 	inc	r0
+   07F6 86 F0              1576 	mov	b,@r0
+   07F8 63 F0 80           1577 	xrl	b,#0x80
+   07FB 95 F0              1578 	subb	a,b
+   07FD 40 03              1579 	jc	00182$
+   07FF 02s09r64           1580 	ljmp	00121$
+   0802                    1581 00182$:
+                           1582 ;	../../../contiki-sensinode//core/lib/ifft.c:153: n2 = xre[k];
+   0802 E5 81              1583 	mov	a,sp
+   0804 24 FD              1584 	add	a,#0xfd
+   0806 F8                 1585 	mov	r0,a
+   0807 A6 06              1586 	mov	@r0,ar6
+   0809 EF                 1587 	mov	a,r7
+   080A C6                 1588 	xch	a,@r0
+   080B 25 E0              1589 	add	a,acc
+   080D C6                 1590 	xch	a,@r0
+   080E 33                 1591 	rlc	a
+   080F 08                 1592 	inc	r0
+   0810 F6                 1593 	mov	@r0,a
+   0811 C0 06              1594 	push	ar6
+   0813 C0 07              1595 	push	ar7
+   0815 E5 81              1596 	mov	a,sp
+   0817 24 C8              1597 	add	a,#0xc8
+   0819 F8                 1598 	mov	r0,a
+   081A E5 81              1599 	mov	a,sp
+   081C 24 FB              1600 	add	a,#0xfb
+   081E F9                 1601 	mov	r1,a
+   081F E7                 1602 	mov	a,@r1
+   0820 26                 1603 	add	a,@r0
+   0821 FC                 1604 	mov	r4,a
+   0822 09                 1605 	inc	r1
+   0823 E7                 1606 	mov	a,@r1
+   0824 08                 1607 	inc	r0
+   0825 36                 1608 	addc	a,@r0
+   0826 FE                 1609 	mov	r6,a
+   0827 08                 1610 	inc	r0
+   0828 86 07              1611 	mov	ar7,@r0
+   082A 8C 82              1612 	mov	dpl,r4
+   082C 8E 83              1613 	mov	dph,r6
+   082E 8F F0              1614 	mov	b,r7
+   0830 12s00r00           1615 	lcall	__gptrget
+   0833 FA                 1616 	mov	r2,a
+   0834 A3                 1617 	inc	dptr
+   0835 12s00r00           1618 	lcall	__gptrget
+   0838 FD                 1619 	mov	r5,a
+   0839 E5 81              1620 	mov	a,sp
+   083B 24 CD              1621 	add	a,#0xcd
+   083D F8                 1622 	mov	r0,a
+   083E A6 02              1623 	mov	@r0,ar2
+   0840 08                 1624 	inc	r0
+   0841 A6 05              1625 	mov	@r0,ar5
+                           1626 ;	../../../contiki-sensinode//core/lib/ifft.c:154: xre[k] = xre[p];
+   0843 E5 81              1627 	mov	a,sp
+   0845 24 CF              1628 	add	a,#0xcf
+   0847 F8                 1629 	mov	r0,a
+   0848 E5 81              1630 	mov	a,sp
+   084A 24 F7              1631 	add	a,#0xf7
+   084C F9                 1632 	mov	r1,a
+   084D E6                 1633 	mov	a,@r0
+   084E F7                 1634 	mov	@r1,a
+   084F 08                 1635 	inc	r0
+   0850 E6                 1636 	mov	a,@r0
+   0851 C7                 1637 	xch	a,@r1
+   0852 25 E0              1638 	add	a,acc
+   0854 C7                 1639 	xch	a,@r1
+   0855 33                 1640 	rlc	a
+   0856 09                 1641 	inc	r1
+   0857 F7                 1642 	mov	@r1,a
+   0858 E5 81              1643 	mov	a,sp
+   085A 24 C8              1644 	add	a,#0xc8
+   085C F8                 1645 	mov	r0,a
+   085D E5 81              1646 	mov	a,sp
+   085F 24 F7              1647 	add	a,#0xf7
+   0861 F9                 1648 	mov	r1,a
+   0862 E7                 1649 	mov	a,@r1
+   0863 26                 1650 	add	a,@r0
+   0864 C0 E0              1651 	push	acc
+   0866 09                 1652 	inc	r1
+   0867 E7                 1653 	mov	a,@r1
+   0868 08                 1654 	inc	r0
+   0869 36                 1655 	addc	a,@r0
+   086A C0 E0              1656 	push	acc
+   086C 08                 1657 	inc	r0
+   086D E6                 1658 	mov	a,@r0
+   086E C0 E0              1659 	push	acc
+   0870 E5 81              1660 	mov	a,sp
+   0872 24 F2              1661 	add	a,#0xf2
+   0874 F8                 1662 	mov	r0,a
+   0875 D0 E0              1663 	pop	acc
+   0877 F6                 1664 	mov	@r0,a
+   0878 18                 1665 	dec	r0
+   0879 D0 E0              1666 	pop	acc
+   087B F6                 1667 	mov	@r0,a
+   087C 18                 1668 	dec	r0
+   087D D0 E0              1669 	pop	acc
+   087F F6                 1670 	mov	@r0,a
+   0880 E5 81              1671 	mov	a,sp
+   0882 24 F3              1672 	add	a,#0xf3
+   0884 F8                 1673 	mov	r0,a
+   0885 86 82              1674 	mov	dpl,@r0
+   0887 08                 1675 	inc	r0
+   0888 86 83              1676 	mov	dph,@r0
+   088A 08                 1677 	inc	r0
+   088B 86 F0              1678 	mov	b,@r0
+   088D 12s00r00           1679 	lcall	__gptrget
+   0890 FB                 1680 	mov	r3,a
+   0891 A3                 1681 	inc	dptr
+   0892 12s00r00           1682 	lcall	__gptrget
+   0895 FD                 1683 	mov	r5,a
+   0896 8C 82              1684 	mov	dpl,r4
+   0898 8E 83              1685 	mov	dph,r6
+   089A 8F F0              1686 	mov	b,r7
+   089C EB                 1687 	mov	a,r3
+   089D 12s00r00           1688 	lcall	__gptrput
+   08A0 A3                 1689 	inc	dptr
+   08A1 ED                 1690 	mov	a,r5
+   08A2 12s00r00           1691 	lcall	__gptrput
+                           1692 ;	../../../contiki-sensinode//core/lib/ifft.c:155: xre[p] = n2;
+   08A5 E5 81              1693 	mov	a,sp
+   08A7 24 CD              1694 	add	a,#0xcd
+   08A9 F8                 1695 	mov	r0,a
+   08AA 86 03              1696 	mov	ar3,@r0
+   08AC 08                 1697 	inc	r0
+   08AD 86 07              1698 	mov	ar7,@r0
+   08AF E5 81              1699 	mov	a,sp
+   08B1 24 F3              1700 	add	a,#0xf3
+   08B3 F8                 1701 	mov	r0,a
+   08B4 86 82              1702 	mov	dpl,@r0
+   08B6 08                 1703 	inc	r0
+   08B7 86 83              1704 	mov	dph,@r0
+   08B9 08                 1705 	inc	r0
+   08BA 86 F0              1706 	mov	b,@r0
+   08BC EB                 1707 	mov	a,r3
+   08BD 12s00r00           1708 	lcall	__gptrput
+   08C0 A3                 1709 	inc	dptr
+   08C1 EF                 1710 	mov	a,r7
+   08C2 12s00r00           1711 	lcall	__gptrput
+                           1712 ;	../../../contiki-sensinode//core/lib/ifft.c:157: n2 = xim[k];
+   08C5 E5 81              1713 	mov	a,sp
+   08C7 24 C2              1714 	add	a,#0xc2
+   08C9 F8                 1715 	mov	r0,a
+   08CA E5 81              1716 	mov	a,sp
+   08CC 24 FB              1717 	add	a,#0xfb
+   08CE F9                 1718 	mov	r1,a
+   08CF E7                 1719 	mov	a,@r1
+   08D0 26                 1720 	add	a,@r0
+   08D1 FD                 1721 	mov	r5,a
+   08D2 09                 1722 	inc	r1
+   08D3 E7                 1723 	mov	a,@r1
+   08D4 08                 1724 	inc	r0
+   08D5 36                 1725 	addc	a,@r0
+   08D6 FE                 1726 	mov	r6,a
+   08D7 08                 1727 	inc	r0
+   08D8 86 07              1728 	mov	ar7,@r0
+   08DA 8D 82              1729 	mov	dpl,r5
+   08DC 8E 83              1730 	mov	dph,r6
+   08DE 8F F0              1731 	mov	b,r7
+   08E0 12s00r00           1732 	lcall	__gptrget
+   08E3 FB                 1733 	mov	r3,a
+   08E4 A3                 1734 	inc	dptr
+   08E5 12s00r00           1735 	lcall	__gptrget
+   08E8 FC                 1736 	mov	r4,a
+   08E9 E5 81              1737 	mov	a,sp
+   08EB 24 CD              1738 	add	a,#0xcd
+   08ED F8                 1739 	mov	r0,a
+   08EE A6 03              1740 	mov	@r0,ar3
+   08F0 08                 1741 	inc	r0
+   08F1 A6 04              1742 	mov	@r0,ar4
+                           1743 ;	../../../contiki-sensinode//core/lib/ifft.c:158: xim[k] = xim[p];
+   08F3 E5 81              1744 	mov	a,sp
+   08F5 24 C2              1745 	add	a,#0xc2
+   08F7 F8                 1746 	mov	r0,a
+   08F8 E5 81              1747 	mov	a,sp
+   08FA 24 F7              1748 	add	a,#0xf7
+   08FC F9                 1749 	mov	r1,a
+   08FD E7                 1750 	mov	a,@r1
+   08FE 26                 1751 	add	a,@r0
+   08FF C0 E0              1752 	push	acc
+   0901 09                 1753 	inc	r1
+   0902 E7                 1754 	mov	a,@r1
+   0903 08                 1755 	inc	r0
+   0904 36                 1756 	addc	a,@r0
+   0905 C0 E0              1757 	push	acc
+   0907 08                 1758 	inc	r0
+   0908 E6                 1759 	mov	a,@r0
+   0909 C0 E0              1760 	push	acc
+   090B E5 81              1761 	mov	a,sp
+   090D 24 FA              1762 	add	a,#0xfa
+   090F F8                 1763 	mov	r0,a
+   0910 D0 E0              1764 	pop	acc
+   0912 F6                 1765 	mov	@r0,a
+   0913 18                 1766 	dec	r0
+   0914 D0 E0              1767 	pop	acc
+   0916 F6                 1768 	mov	@r0,a
+   0917 18                 1769 	dec	r0
+   0918 D0 E0              1770 	pop	acc
+   091A F6                 1771 	mov	@r0,a
+   091B E5 81              1772 	mov	a,sp
+   091D 24 FB              1773 	add	a,#0xfb
+   091F F8                 1774 	mov	r0,a
+   0920 86 82              1775 	mov	dpl,@r0
+   0922 08                 1776 	inc	r0
+   0923 86 83              1777 	mov	dph,@r0
+   0925 08                 1778 	inc	r0
+   0926 86 F0              1779 	mov	b,@r0
+   0928 12s00r00           1780 	lcall	__gptrget
+   092B FB                 1781 	mov	r3,a
+   092C A3                 1782 	inc	dptr
+   092D 12s00r00           1783 	lcall	__gptrget
+   0930 FC                 1784 	mov	r4,a
+   0931 8D 82              1785 	mov	dpl,r5
+   0933 8E 83              1786 	mov	dph,r6
+   0935 8F F0              1787 	mov	b,r7
+   0937 EB                 1788 	mov	a,r3
+   0938 12s00r00           1789 	lcall	__gptrput
+   093B A3                 1790 	inc	dptr
+   093C EC                 1791 	mov	a,r4
+   093D 12s00r00           1792 	lcall	__gptrput
+                           1793 ;	../../../contiki-sensinode//core/lib/ifft.c:159: xim[p] = n2;
+   0940 E5 81              1794 	mov	a,sp
+   0942 24 CD              1795 	add	a,#0xcd
+   0944 F8                 1796 	mov	r0,a
+   0945 86 03              1797 	mov	ar3,@r0
+   0947 08                 1798 	inc	r0
+   0948 86 07              1799 	mov	ar7,@r0
+   094A E5 81              1800 	mov	a,sp
+   094C 24 FB              1801 	add	a,#0xfb
+   094E F8                 1802 	mov	r0,a
+   094F 86 82              1803 	mov	dpl,@r0
+   0951 08                 1804 	inc	r0
+   0952 86 83              1805 	mov	dph,@r0
+   0954 08                 1806 	inc	r0
+   0955 86 F0              1807 	mov	b,@r0
+   0957 EB                 1808 	mov	a,r3
+   0958 12s00r00           1809 	lcall	__gptrput
+   095B A3                 1810 	inc	dptr
+   095C EF                 1811 	mov	a,r7
+   095D 12s00r00           1812 	lcall	__gptrput
+                           1813 ;	../../../contiki-sensinode//core/lib/ifft.c:165: for (i = 0, n2 = n / 2; i < n2; i++) {
+   0960 D0 07              1814 	pop	ar7
+   0962 D0 06              1815 	pop	ar6
+                           1816 ;	../../../contiki-sensinode//core/lib/ifft.c:159: xim[p] = n2;
+   0964                    1817 00121$:
+                           1818 ;	../../../contiki-sensinode//core/lib/ifft.c:150: for (k = 0; k < n; k++) {
+   0964 0E                 1819 	inc	r6
+   0965 BE 00 01           1820 	cjne	r6,#0x00,00183$
+   0968 0F                 1821 	inc	r7
+   0969                    1822 00183$:
+   0969 02s07rA3           1823 	ljmp	00119$
+   096C                    1824 00122$:
+                           1825 ;	../../../contiki-sensinode//core/lib/ifft.c:165: for (i = 0, n2 = n / 2; i < n2; i++) {
+   096C E5 81              1826 	mov	a,sp
+   096E 24 E1              1827 	add	a,#0xe1
+   0970 F8                 1828 	mov	r0,a
+   0971 86 06              1829 	mov	ar6,@r0
+   0973 08                 1830 	inc	r0
+   0974 86 07              1831 	mov	ar7,@r0
+   0976 E5 81              1832 	mov	a,sp
+   0978 24 CF              1833 	add	a,#0xcf
+   097A F8                 1834 	mov	r0,a
+   097B A6 06              1835 	mov	@r0,ar6
+   097D 08                 1836 	inc	r0
+   097E A6 07              1837 	mov	@r0,ar7
+   0980 E5 81              1838 	mov	a,sp
+   0982 24 D5              1839 	add	a,#0xd5
+   0984 F8                 1840 	mov	r0,a
+   0985 E4                 1841 	clr	a
+   0986 F6                 1842 	mov	@r0,a
+   0987 08                 1843 	inc	r0
+   0988 F6                 1844 	mov	@r0,a
+   0989                    1845 00123$:
+   0989 E5 81              1846 	mov	a,sp
+   098B 24 D5              1847 	add	a,#0xd5
+   098D F8                 1848 	mov	r0,a
+   098E 86 04              1849 	mov	ar4,@r0
+   0990 08                 1850 	inc	r0
+   0991 86 05              1851 	mov	ar5,@r0
+   0993 E5 81              1852 	mov	a,sp
+   0995 24 CF              1853 	add	a,#0xcf
+   0997 F8                 1854 	mov	r0,a
+   0998 C3                 1855 	clr	c
+   0999 EC                 1856 	mov	a,r4
+   099A 96                 1857 	subb	a,@r0
+   099B ED                 1858 	mov	a,r5
+   099C 08                 1859 	inc	r0
+   099D 96                 1860 	subb	a,@r0
+   099E 40 03              1861 	jc	00184$
+   09A0 02s0Ar91           1862 	ljmp	00127$
+   09A3                    1863 00184$:
+                           1864 ;	../../../contiki-sensinode//core/lib/ifft.c:166: xre[i] = (ABS(xre[i]) + ABS(xim[i]));
+   09A3 E5 81              1865 	mov	a,sp
+   09A5 24 D5              1866 	add	a,#0xd5
+   09A7 F8                 1867 	mov	r0,a
+   09A8 86 04              1868 	mov	ar4,@r0
+   09AA 08                 1869 	inc	r0
+   09AB E6                 1870 	mov	a,@r0
+   09AC CC                 1871 	xch	a,r4
+   09AD 25 E0              1872 	add	a,acc
+   09AF CC                 1873 	xch	a,r4
+   09B0 33                 1874 	rlc	a
+   09B1 FD                 1875 	mov	r5,a
+   09B2 E5 81              1876 	mov	a,sp
+   09B4 24 CA              1877 	add	a,#0xca
+   09B6 F8                 1878 	mov	r0,a
+   09B7 EC                 1879 	mov	a,r4
+   09B8 26                 1880 	add	a,@r0
+   09B9 FC                 1881 	mov	r4,a
+   09BA ED                 1882 	mov	a,r5
+   09BB 08                 1883 	inc	r0
+   09BC 36                 1884 	addc	a,@r0
+   09BD FB                 1885 	mov	r3,a
+   09BE 08                 1886 	inc	r0
+   09BF 86 05              1887 	mov	ar5,@r0
+   09C1 8C 82              1888 	mov	dpl,r4
+   09C3 8B 83              1889 	mov	dph,r3
+   09C5 8D F0              1890 	mov	b,r5
+   09C7 12s00r00           1891 	lcall	__gptrget
+   09CA FA                 1892 	mov	r2,a
+   09CB A3                 1893 	inc	dptr
+   09CC 12s00r00           1894 	lcall	__gptrget
+   09CF FF                 1895 	mov	r7,a
+   09D0 30 E7 18           1896 	jnb	acc.7,00129$
+   09D3 8C 82              1897 	mov	dpl,r4
+   09D5 8B 83              1898 	mov	dph,r3
+   09D7 8D F0              1899 	mov	b,r5
+   09D9 12s00r00           1900 	lcall	__gptrget
+   09DC FA                 1901 	mov	r2,a
+   09DD A3                 1902 	inc	dptr
+   09DE 12s00r00           1903 	lcall	__gptrget
+   09E1 FF                 1904 	mov	r7,a
+   09E2 C3                 1905 	clr	c
+   09E3 E4                 1906 	clr	a
+   09E4 9A                 1907 	subb	a,r2
+   09E5 FE                 1908 	mov	r6,a
+   09E6 E4                 1909 	clr	a
+   09E7 9F                 1910 	subb	a,r7
+   09E8 FF                 1911 	mov	r7,a
+   09E9 80 0F              1912 	sjmp	00130$
+   09EB                    1913 00129$:
+   09EB 8C 82              1914 	mov	dpl,r4
+   09ED 8B 83              1915 	mov	dph,r3
+   09EF 8D F0              1916 	mov	b,r5
+   09F1 12s00r00           1917 	lcall	__gptrget
+   09F4 FE                 1918 	mov	r6,a
+   09F5 A3                 1919 	inc	dptr
+   09F6 12s00r00           1920 	lcall	__gptrget
+   09F9 FF                 1921 	mov	r7,a
+   09FA                    1922 00130$:
+   09FA C0 04              1923 	push	ar4
+   09FC C0 03              1924 	push	ar3
+   09FE C0 05              1925 	push	ar5
+   0A00 E5 81              1926 	mov	a,sp
+   0A02 24 D2              1927 	add	a,#0xd2
+   0A04 F8                 1928 	mov	r0,a
+   0A05 86 02              1929 	mov	ar2,@r0
+   0A07 08                 1930 	inc	r0
+   0A08 E6                 1931 	mov	a,@r0
+   0A09 CA                 1932 	xch	a,r2
+   0A0A 25 E0              1933 	add	a,acc
+   0A0C CA                 1934 	xch	a,r2
+   0A0D 33                 1935 	rlc	a
+   0A0E FD                 1936 	mov	r5,a
+   0A0F E5 81              1937 	mov	a,sp
+   0A11 24 C1              1938 	add	a,#0xc1
+   0A13 F8                 1939 	mov	r0,a
+   0A14 EA                 1940 	mov	a,r2
+   0A15 26                 1941 	add	a,@r0
+   0A16 FA                 1942 	mov	r2,a
+   0A17 ED                 1943 	mov	a,r5
+   0A18 08                 1944 	inc	r0
+   0A19 36                 1945 	addc	a,@r0
+   0A1A FD                 1946 	mov	r5,a
+   0A1B 08                 1947 	inc	r0
+   0A1C 86 04              1948 	mov	ar4,@r0
+   0A1E 8A 82              1949 	mov	dpl,r2
+   0A20 8D 83              1950 	mov	dph,r5
+   0A22 8C F0              1951 	mov	b,r4
+   0A24 E5 81              1952 	mov	a,sp
+   0A26 24 F6              1953 	add	a,#0xf6
+   0A28 F8                 1954 	mov	r0,a
+   0A29 12s00r00           1955 	lcall	__gptrget
+   0A2C F6                 1956 	mov	@r0,a
+   0A2D A3                 1957 	inc	dptr
+   0A2E 12s00r00           1958 	lcall	__gptrget
+   0A31 08                 1959 	inc	r0
+   0A32 F6                 1960 	mov	@r0,a
+   0A33 E5 81              1961 	mov	a,sp
+   0A35 24 F6              1962 	add	a,#0xf6
+   0A37 F8                 1963 	mov	r0,a
+   0A38 08                 1964 	inc	r0
+   0A39 E6                 1965 	mov	a,@r0
+   0A3A D0 05              1966 	pop	ar5
+   0A3C D0 03              1967 	pop	ar3
+   0A3E D0 04              1968 	pop	ar4
+   0A40 30 E7 15           1969 	jnb	acc.7,00131$
+   0A43 E5 81              1970 	mov	a,sp
+   0A45 24 F9              1971 	add	a,#0xf9
+   0A47 F8                 1972 	mov	r0,a
+   0A48 E5 81              1973 	mov	a,sp
+   0A4A 24 F5              1974 	add	a,#0xf5
+   0A4C F9                 1975 	mov	r1,a
+   0A4D C3                 1976 	clr	c
+   0A4E E4                 1977 	clr	a
+   0A4F 96                 1978 	subb	a,@r0
+   0A50 F7                 1979 	mov	@r1,a
+   0A51 08                 1980 	inc	r0
+   0A52 E4                 1981 	clr	a
+   0A53 96                 1982 	subb	a,@r0
+   0A54 09                 1983 	inc	r1
+   0A55 F7                 1984 	mov	@r1,a
+   0A56 80 10              1985 	sjmp	00132$
+   0A58                    1986 00131$:
+   0A58 E5 81              1987 	mov	a,sp
+   0A5A 24 F9              1988 	add	a,#0xf9
+   0A5C F8                 1989 	mov	r0,a
+   0A5D E5 81              1990 	mov	a,sp
+   0A5F 24 F5              1991 	add	a,#0xf5
+   0A61 F9                 1992 	mov	r1,a
+   0A62 E6                 1993 	mov	a,@r0
+   0A63 F7                 1994 	mov	@r1,a
+   0A64 08                 1995 	inc	r0
+   0A65 09                 1996 	inc	r1
+   0A66 E6                 1997 	mov	a,@r0
+   0A67 F7                 1998 	mov	@r1,a
+   0A68                    1999 00132$:
+   0A68 E5 81              2000 	mov	a,sp
+   0A6A 24 F5              2001 	add	a,#0xf5
+   0A6C F8                 2002 	mov	r0,a
+   0A6D E6                 2003 	mov	a,@r0
+   0A6E 2E                 2004 	add	a,r6
+   0A6F FA                 2005 	mov	r2,a
+   0A70 08                 2006 	inc	r0
+   0A71 E6                 2007 	mov	a,@r0
+   0A72 3F                 2008 	addc	a,r7
+   0A73 FF                 2009 	mov	r7,a
+   0A74 8C 82              2010 	mov	dpl,r4
+   0A76 8B 83              2011 	mov	dph,r3
+   0A78 8D F0              2012 	mov	b,r5
+   0A7A EA                 2013 	mov	a,r2
+   0A7B 12s00r00           2014 	lcall	__gptrput
+   0A7E A3                 2015 	inc	dptr
+   0A7F EF                 2016 	mov	a,r7
+   0A80 12s00r00           2017 	lcall	__gptrput
+                           2018 ;	../../../contiki-sensinode//core/lib/ifft.c:165: for (i = 0, n2 = n / 2; i < n2; i++) {
+   0A83 E5 81              2019 	mov	a,sp
+   0A85 24 D5              2020 	add	a,#0xd5
+   0A87 F8                 2021 	mov	r0,a
+   0A88 06                 2022 	inc	@r0
+   0A89 B6 00 02           2023 	cjne	@r0,#0x00,00187$
+   0A8C 08                 2024 	inc	r0
+   0A8D 06                 2025 	inc	@r0
+   0A8E                    2026 00187$:
+   0A8E 02s09r89           2027 	ljmp	00123$
+   0A91                    2028 00127$:
+   0A91 E5 81              2029 	mov	a,sp
+   0A93 24 C9              2030 	add	a,#0xC9
+   0A95 F5 81              2031 	mov	sp,a
+   0A97 02s00r00           2032 	ljmp	__sdcc_banked_ret
+                           2033 	.area CSEG    (CODE)
+                           2034 	.area CONST   (CODE)
+   0000                    2035 _SIN_TAB:
+   0000 00                 2036 	.db #0x00	;  0
+   0001 06                 2037 	.db #0x06	;  6
+   0002 0D                 2038 	.db #0x0D	;  13
+   0003 14                 2039 	.db #0x14	;  20
+   0004 1A                 2040 	.db #0x1A	;  26
+   0005 21                 2041 	.db #0x21	;  33
+   0006 27                 2042 	.db #0x27	;  39
+   0007 2D                 2043 	.db #0x2D	;  45
+   0008 34                 2044 	.db #0x34	;  52	'4'
+   0009 3A                 2045 	.db #0x3A	;  58
+   000A 3F                 2046 	.db #0x3F	;  63
+   000B 45                 2047 	.db #0x45	;  69	'E'
+   000C 4B                 2048 	.db #0x4B	;  75	'K'
+   000D 50                 2049 	.db #0x50	;  80	'P'
+   000E 55                 2050 	.db #0x55	;  85	'U'
+   000F 5A                 2051 	.db #0x5A	;  90	'Z'
+   0010 5F                 2052 	.db #0x5F	;  95
+   0011 63                 2053 	.db #0x63	;  99	'c'
+   0012 67                 2054 	.db #0x67	;  103	'g'
+   0013 6B                 2055 	.db #0x6B	;  107	'k'
+   0014 6E                 2056 	.db #0x6E	;  110	'n'
+   0015 72                 2057 	.db #0x72	;  114	'r'
+   0016 74                 2058 	.db #0x74	;  116	't'
+   0017 77                 2059 	.db #0x77	;  119	'w'
+   0018 79                 2060 	.db #0x79	;  121	'y'
+   0019 7B                 2061 	.db #0x7B	;  123
+   001A 7D                 2062 	.db #0x7D	;  125
+   001B 7E                 2063 	.db #0x7E	;  126
+   001C 7F                 2064 	.db #0x7F	;  127
+   001D 7F                 2065 	.db #0x7F	;  127
+   001E 7F                 2066 	.db #0x7F	;  127
+   001F 7F                 2067 	.db #0x7F	;  127
+   0020 7F                 2068 	.db #0x7F	;  127
+   0021 7E                 2069 	.db #0x7E	;  126
+   0022 7D                 2070 	.db #0x7D	;  125
+   0023 7B                 2071 	.db #0x7B	;  123
+   0024 79                 2072 	.db #0x79	;  121	'y'
+   0025 77                 2073 	.db #0x77	;  119	'w'
+   0026 74                 2074 	.db #0x74	;  116	't'
+   0027 72                 2075 	.db #0x72	;  114	'r'
+   0028 6E                 2076 	.db #0x6E	;  110	'n'
+   0029 6B                 2077 	.db #0x6B	;  107	'k'
+   002A 67                 2078 	.db #0x67	;  103	'g'
+   002B 63                 2079 	.db #0x63	;  99	'c'
+   002C 5F                 2080 	.db #0x5F	;  95
+   002D 5A                 2081 	.db #0x5A	;  90	'Z'
+   002E 55                 2082 	.db #0x55	;  85	'U'
+   002F 50                 2083 	.db #0x50	;  80	'P'
+   0030 4B                 2084 	.db #0x4B	;  75	'K'
+   0031 45                 2085 	.db #0x45	;  69	'E'
+   0032 3F                 2086 	.db #0x3F	;  63
+   0033 3A                 2087 	.db #0x3A	;  58
+   0034 34                 2088 	.db #0x34	;  52	'4'
+   0035 2D                 2089 	.db #0x2D	;  45
+   0036 27                 2090 	.db #0x27	;  39
+   0037 21                 2091 	.db #0x21	;  33
+   0038 1A                 2092 	.db #0x1A	;  26
+   0039 14                 2093 	.db #0x14	;  20
+   003A 0D                 2094 	.db #0x0D	;  13
+   003B 06                 2095 	.db #0x06	;  6
+   003C 00                 2096 	.db #0x00	;  0
+   003D FA                 2097 	.db #0xFA	; -6
+   003E F3                 2098 	.db #0xF3	; -13
+   003F EC                 2099 	.db #0xEC	; -20
+   0040 E6                 2100 	.db #0xE6	; -26
+   0041 DF                 2101 	.db #0xDF	; -33
+   0042 D9                 2102 	.db #0xD9	; -39
+   0043 D3                 2103 	.db #0xD3	; -45
+   0044 CC                 2104 	.db #0xCC	; -52
+   0045 C6                 2105 	.db #0xC6	; -58
+   0046 C1                 2106 	.db #0xC1	; -63
+   0047 BB                 2107 	.db #0xBB	; -69
+   0048 B5                 2108 	.db #0xB5	; -75
+   0049 B0                 2109 	.db #0xB0	; -80
+   004A AB                 2110 	.db #0xAB	; -85
+   004B A6                 2111 	.db #0xA6	; -90
+   004C A1                 2112 	.db #0xA1	; -95
+   004D 9D                 2113 	.db #0x9D	; -99
+   004E 99                 2114 	.db #0x99	; -103
+   004F 95                 2115 	.db #0x95	; -107
+   0050 92                 2116 	.db #0x92	; -110
+   0051 8E                 2117 	.db #0x8E	; -114
+   0052 8C                 2118 	.db #0x8C	; -116
+   0053 89                 2119 	.db #0x89	; -119
+   0054 87                 2120 	.db #0x87	; -121
+   0055 85                 2121 	.db #0x85	; -123
+   0056 83                 2122 	.db #0x83	; -125
+   0057 82                 2123 	.db #0x82	; -126
+   0058 81                 2124 	.db #0x81	; -127
+   0059 81                 2125 	.db #0x81	; -127
+   005A 81                 2126 	.db #0x81	; -127
+   005B 81                 2127 	.db #0x81	; -127
+   005C 81                 2128 	.db #0x81	; -127
+   005D 82                 2129 	.db #0x82	; -126
+   005E 83                 2130 	.db #0x83	; -125
+   005F 85                 2131 	.db #0x85	; -123
+   0060 87                 2132 	.db #0x87	; -121
+   0061 89                 2133 	.db #0x89	; -119
+   0062 8C                 2134 	.db #0x8C	; -116
+   0063 8E                 2135 	.db #0x8E	; -114
+   0064 92                 2136 	.db #0x92	; -110
+   0065 95                 2137 	.db #0x95	; -107
+   0066 99                 2138 	.db #0x99	; -103
+   0067 9D                 2139 	.db #0x9D	; -99
+   0068 A1                 2140 	.db #0xA1	; -95
+   0069 A6                 2141 	.db #0xA6	; -90
+   006A AB                 2142 	.db #0xAB	; -85
+   006B B0                 2143 	.db #0xB0	; -80
+   006C B5                 2144 	.db #0xB5	; -75
+   006D BB                 2145 	.db #0xBB	; -69
+   006E C1                 2146 	.db #0xC1	; -63
+   006F C6                 2147 	.db #0xC6	; -58
+   0070 CC                 2148 	.db #0xCC	; -52
+   0071 D3                 2149 	.db #0xD3	; -45
+   0072 D9                 2150 	.db #0xD9	; -39
+   0073 DF                 2151 	.db #0xDF	; -33
+   0074 E6                 2152 	.db #0xE6	; -26
+   0075 EC                 2153 	.db #0xEC	; -20
+   0076 F3                 2154 	.db #0xF3	; -13
+   0077 FA                 2155 	.db #0xFA	; -6
+                           2156 	.area XINIT   (CODE)
+                           2157 	.area CABS    (ABS,CODE)

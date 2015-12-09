@@ -1,0 +1,2756 @@
+                              1 ;--------------------------------------------------------
+                              2 ; File Created by SDCC : free open source ANSI-C Compiler
+                              3 ; Version 3.1.1 #7100 (Oct 29 2014) (Linux)
+                              4 ; This file was generated Thu Dec  3 12:33:01 2015
+                              5 ;--------------------------------------------------------
+                              6 	.module crypto
+                              7 	.optsdcc -mmcs51 --model-huge
+                              8 	
+                              9 ;--------------------------------------------------------
+                             10 ; Public variables in this module
+                             11 ;--------------------------------------------------------
+                             12 	.globl _cc2530_aes_decrypt
+                             13 	.globl _cc2530_aes_encrypt
+                             14 	.globl _cc2530_aes_set_key
+                             15 	.globl _device_fs_open
+                             16 	.globl _random_rand
+                             17 	.globl _printf
+                             18 	.globl _memset
+                             19 	.globl _memcpy
+                             20 	.globl _ACTIVE
+                             21 	.globl _TX_BYTE
+                             22 	.globl _RX_BYTE
+                             23 	.globl _ERR
+                             24 	.globl _FE
+                             25 	.globl _SLAVE
+                             26 	.globl _RE
+                             27 	.globl _MODE
+                             28 	.globl _T3OVFIF
+                             29 	.globl _T3CH0IF
+                             30 	.globl _T3CH1IF
+                             31 	.globl _T4OVFIF
+                             32 	.globl _T4CH0IF
+                             33 	.globl _T4CH1IF
+                             34 	.globl _OVFIM
+                             35 	.globl _B_0
+                             36 	.globl _B_1
+                             37 	.globl _B_2
+                             38 	.globl _B_3
+                             39 	.globl _B_4
+                             40 	.globl _B_5
+                             41 	.globl _B_6
+                             42 	.globl _B_7
+                             43 	.globl _P2IF
+                             44 	.globl _UTX0IF
+                             45 	.globl _UTX1IF
+                             46 	.globl _P1IF
+                             47 	.globl _WDTIF
+                             48 	.globl _ACC_0
+                             49 	.globl _ACC_1
+                             50 	.globl _ACC_2
+                             51 	.globl _ACC_3
+                             52 	.globl _ACC_4
+                             53 	.globl _ACC_5
+                             54 	.globl _ACC_6
+                             55 	.globl _ACC_7
+                             56 	.globl _P
+                             57 	.globl _F1
+                             58 	.globl _OV
+                             59 	.globl _RS0
+                             60 	.globl _RS1
+                             61 	.globl _F0
+                             62 	.globl _AC
+                             63 	.globl _CY
+                             64 	.globl _DMAIF
+                             65 	.globl _T1IF
+                             66 	.globl _T2IF
+                             67 	.globl _T3IF
+                             68 	.globl _T4IF
+                             69 	.globl _P0IF
+                             70 	.globl _STIF
+                             71 	.globl _DMAIE
+                             72 	.globl _T1IE
+                             73 	.globl _T2IE
+                             74 	.globl _T3IE
+                             75 	.globl _T4IE
+                             76 	.globl _P0IE
+                             77 	.globl _RFERRIE
+                             78 	.globl _ADCIE
+                             79 	.globl _URX0IE
+                             80 	.globl _URX1IE
+                             81 	.globl _ENCIE
+                             82 	.globl _STIE
+                             83 	.globl _EA
+                             84 	.globl _P2_0
+                             85 	.globl _P2_1
+                             86 	.globl _P2_2
+                             87 	.globl _P2_3
+                             88 	.globl _P2_4
+                             89 	.globl _P2_5
+                             90 	.globl _P2_6
+                             91 	.globl _P2_7
+                             92 	.globl _ENCIF_0
+                             93 	.globl _ENCIF_1
+                             94 	.globl _P1_0
+                             95 	.globl _P1_1
+                             96 	.globl _P1_2
+                             97 	.globl _P1_3
+                             98 	.globl _P1_4
+                             99 	.globl _P1_5
+                            100 	.globl _P1_6
+                            101 	.globl _P1_7
+                            102 	.globl _IT0
+                            103 	.globl _RFERRIF
+                            104 	.globl _IT1
+                            105 	.globl _URX0IF
+                            106 	.globl _ADCIF
+                            107 	.globl _URX1IF
+                            108 	.globl _P0_0
+                            109 	.globl _P0_1
+                            110 	.globl _P0_2
+                            111 	.globl _P0_3
+                            112 	.globl _P0_4
+                            113 	.globl _P0_5
+                            114 	.globl _P0_6
+                            115 	.globl _P0_7
+                            116 	.globl _WDCTL
+                            117 	.globl _U1GCR
+                            118 	.globl _U1UCR
+                            119 	.globl _U1BAUD
+                            120 	.globl _U1DBUF
+                            121 	.globl _U1CSR
+                            122 	.globl _U0GCR
+                            123 	.globl _U0UCR
+                            124 	.globl _U0BAUD
+                            125 	.globl _U0DBUF
+                            126 	.globl _U0CSR
+                            127 	.globl _TIMIF
+                            128 	.globl _T4CC1
+                            129 	.globl _T4CCTL1
+                            130 	.globl _T4CC0
+                            131 	.globl _T4CCTL0
+                            132 	.globl _T4CTL
+                            133 	.globl _T4CNT
+                            134 	.globl _T3CC1
+                            135 	.globl _T3CCTL1
+                            136 	.globl _T3CC0
+                            137 	.globl _T3CCTL0
+                            138 	.globl _T3CTL
+                            139 	.globl _T3CNT
+                            140 	.globl _T2MSEL
+                            141 	.globl _T2IRQM
+                            142 	.globl _T2MOVF2
+                            143 	.globl _T2MOVF1
+                            144 	.globl _T2MOVF0
+                            145 	.globl _T2M1
+                            146 	.globl _T2M0
+                            147 	.globl _T2IRQF
+                            148 	.globl _T2EVTCFG
+                            149 	.globl _T2CTRL
+                            150 	.globl _T1STAT
+                            151 	.globl _T1CCTL2
+                            152 	.globl _T1CCTL1
+                            153 	.globl _T1CCTL0
+                            154 	.globl _T1CTL
+                            155 	.globl _T1CNTH
+                            156 	.globl _T1CNTL
+                            157 	.globl _T1CC2H
+                            158 	.globl _T1CC2L
+                            159 	.globl _T1CC1H
+                            160 	.globl _T1CC1L
+                            161 	.globl _T1CC0H
+                            162 	.globl _T1CC0L
+                            163 	.globl _CLKCONSTA
+                            164 	.globl _CLKCONCMD
+                            165 	.globl _SLEEPSTA
+                            166 	.globl _SLEEPCMD
+                            167 	.globl _STLOAD
+                            168 	.globl _ST2
+                            169 	.globl _ST1
+                            170 	.globl _ST0
+                            171 	.globl _RFERRF
+                            172 	.globl _RFIRQF0
+                            173 	.globl _RFST
+                            174 	.globl _RFD
+                            175 	.globl _RFIRQF1
+                            176 	.globl _PSBANK
+                            177 	.globl _FMAP
+                            178 	.globl _MEMCTR
+                            179 	.globl __XPAGE
+                            180 	.globl _MPAGE
+                            181 	.globl _PMUX
+                            182 	.globl _P2DIR
+                            183 	.globl _P1DIR
+                            184 	.globl _P0DIR
+                            185 	.globl _P2INP
+                            186 	.globl _P1INP
+                            187 	.globl _P2SEL
+                            188 	.globl _P1SEL
+                            189 	.globl _P0SEL
+                            190 	.globl _APCFG
+                            191 	.globl _PERCFG
+                            192 	.globl _P0INP
+                            193 	.globl _P2IEN
+                            194 	.globl _P1IEN
+                            195 	.globl _P0IEN
+                            196 	.globl _PICTL
+                            197 	.globl _P2IFG
+                            198 	.globl _P1IFG
+                            199 	.globl _P0IFG
+                            200 	.globl _DMAREQ
+                            201 	.globl _DMAARM
+                            202 	.globl _DMA0CFGH
+                            203 	.globl _DMA0CFGL
+                            204 	.globl _DMA1CFGH
+                            205 	.globl _DMA1CFGL
+                            206 	.globl _DMAIRQ
+                            207 	.globl _ENCCS
+                            208 	.globl _ENCDO
+                            209 	.globl _ENCDI
+                            210 	.globl _RNDH
+                            211 	.globl _RNDL
+                            212 	.globl _ADCH
+                            213 	.globl _ADCL
+                            214 	.globl _ADCCON3
+                            215 	.globl _ADCCON2
+                            216 	.globl _ADCCON1
+                            217 	.globl _B
+                            218 	.globl _IRCON2
+                            219 	.globl _ACC
+                            220 	.globl _PSW
+                            221 	.globl _IRCON
+                            222 	.globl _IP1
+                            223 	.globl _IEN1
+                            224 	.globl _IP0
+                            225 	.globl _IEN0
+                            226 	.globl _P2
+                            227 	.globl _S1CON
+                            228 	.globl _IEN2
+                            229 	.globl _S0CON
+                            230 	.globl _DPS
+                            231 	.globl _P1
+                            232 	.globl _TCON
+                            233 	.globl _PCON
+                            234 	.globl _DPH1
+                            235 	.globl _DPL1
+                            236 	.globl _DPH0
+                            237 	.globl _DPL0
+                            238 	.globl _SP
+                            239 	.globl _P0
+                            240 	.globl _g_seq_num
+                            241 	.globl _X_IEEE_ADDR
+                            242 	.globl _X_INFOPAGE
+                            243 	.globl _X_P2DIR
+                            244 	.globl _X_P1DIR
+                            245 	.globl _X_P0DIR
+                            246 	.globl _X_U1GCR
+                            247 	.globl _X_U1UCR
+                            248 	.globl _X_U1BAUD
+                            249 	.globl _X_U1DBUF
+                            250 	.globl _X_U1CSR
+                            251 	.globl _X_P2INP
+                            252 	.globl _X_P1INP
+                            253 	.globl _X_P2SEL
+                            254 	.globl _X_P1SEL
+                            255 	.globl _X_P0SEL
+                            256 	.globl _X_APCFG
+                            257 	.globl _X_PERCFG
+                            258 	.globl _X_T4CC1
+                            259 	.globl _X_T4CCTL1
+                            260 	.globl _X_T4CC0
+                            261 	.globl _X_T4CCTL0
+                            262 	.globl _X_T4CTL
+                            263 	.globl _X_T4CNT
+                            264 	.globl _X_RFIRQF0
+                            265 	.globl _X_T1CCTL2
+                            266 	.globl _X_T1CCTL1
+                            267 	.globl _X_T1CCTL0
+                            268 	.globl _X_T1CTL
+                            269 	.globl _X_T1CNTH
+                            270 	.globl _X_T1CNTL
+                            271 	.globl _X_RFST
+                            272 	.globl _X_T1CC2H
+                            273 	.globl _X_T1CC2L
+                            274 	.globl _X_T1CC1H
+                            275 	.globl _X_T1CC1L
+                            276 	.globl _X_T1CC0H
+                            277 	.globl _X_T1CC0L
+                            278 	.globl _X_RFD
+                            279 	.globl _X_TIMIF
+                            280 	.globl _X_DMAREQ
+                            281 	.globl _X_DMAARM
+                            282 	.globl _X_DMA0CFGH
+                            283 	.globl _X_DMA0CFGL
+                            284 	.globl _X_DMA1CFGH
+                            285 	.globl _X_DMA1CFGL
+                            286 	.globl _X_DMAIRQ
+                            287 	.globl _X_T3CC1
+                            288 	.globl _X_T3CCTL1
+                            289 	.globl _X_T3CC0
+                            290 	.globl _X_T3CCTL0
+                            291 	.globl _X_T3CTL
+                            292 	.globl _X_T3CNT
+                            293 	.globl _X_WDCTL
+                            294 	.globl _X_MEMCTR
+                            295 	.globl _X_CLKCONCMD
+                            296 	.globl _X_U0GCR
+                            297 	.globl _X_U0UCR
+                            298 	.globl _X_T2MSEL
+                            299 	.globl _X_U0BAUD
+                            300 	.globl _X_U0DBUF
+                            301 	.globl _X_RFERRF
+                            302 	.globl _X_SLEEPCMD
+                            303 	.globl _X_RNDH
+                            304 	.globl _X_RNDL
+                            305 	.globl _X_ADCH
+                            306 	.globl _X_ADCL
+                            307 	.globl _X_ADCCON3
+                            308 	.globl _X_ADCCON2
+                            309 	.globl _X_ADCCON1
+                            310 	.globl _X_ENCCS
+                            311 	.globl _X_ENCDO
+                            312 	.globl _X_ENCDI
+                            313 	.globl _X_T1STAT
+                            314 	.globl _X_PMUX
+                            315 	.globl _X_STLOAD
+                            316 	.globl _X_P2IEN
+                            317 	.globl _X_P0IEN
+                            318 	.globl _X_T2IRQM
+                            319 	.globl _X_T2MOVF2
+                            320 	.globl _X_T2MOVF1
+                            321 	.globl _X_T2MOVF0
+                            322 	.globl _X_T2M1
+                            323 	.globl _X_T2M0
+                            324 	.globl _X_T2IRQF
+                            325 	.globl _X_P2
+                            326 	.globl _X_PSBANK
+                            327 	.globl _X_FMAP
+                            328 	.globl _X_CLKCONSTA
+                            329 	.globl _X_SLEEPSTA
+                            330 	.globl _X_T2EVTCFG
+                            331 	.globl _X_ST2
+                            332 	.globl _X_ST1
+                            333 	.globl _X_ST0
+                            334 	.globl _X_T2CTRL
+                            335 	.globl _X__XPAGE
+                            336 	.globl _X_MPAGE
+                            337 	.globl _X_RFIRQF1
+                            338 	.globl _X_P1
+                            339 	.globl _X_P0INP
+                            340 	.globl _X_P1IEN
+                            341 	.globl _X_PICTL
+                            342 	.globl _X_P2IFG
+                            343 	.globl _X_P1IFG
+                            344 	.globl _X_P0IFG
+                            345 	.globl _X_U0CSR
+                            346 	.globl _X_P0
+                            347 	.globl _USBF5
+                            348 	.globl _USBF4
+                            349 	.globl _USBF3
+                            350 	.globl _USBF2
+                            351 	.globl _USBF1
+                            352 	.globl _USBF0
+                            353 	.globl _USBCNTH
+                            354 	.globl _USBCNTL
+                            355 	.globl _USBCNT0
+                            356 	.globl _USBCSOH
+                            357 	.globl _USBCSOL
+                            358 	.globl _USBMAXO
+                            359 	.globl _USBCSIH
+                            360 	.globl _USBCSIL
+                            361 	.globl _USBCS0
+                            362 	.globl _USBMAXI
+                            363 	.globl _USBCTRL
+                            364 	.globl _USBINDEX
+                            365 	.globl _USBFRMH
+                            366 	.globl _USBFRML
+                            367 	.globl _USBCIE
+                            368 	.globl _USBOIE
+                            369 	.globl _USBIIE
+                            370 	.globl _USBCIF
+                            371 	.globl _USBOIF
+                            372 	.globl _USBIIF
+                            373 	.globl _USBPOW
+                            374 	.globl _USBADDR
+                            375 	.globl _CSPT
+                            376 	.globl _CSPZ
+                            377 	.globl _CSPY
+                            378 	.globl _CSPX
+                            379 	.globl _CSPSTAT
+                            380 	.globl _CSPCTRL
+                            381 	.globl _CSPPROG23
+                            382 	.globl _CSPPROG22
+                            383 	.globl _CSPPROG21
+                            384 	.globl _CSPPROG20
+                            385 	.globl _CSPPROG19
+                            386 	.globl _CSPPROG18
+                            387 	.globl _CSPPROG17
+                            388 	.globl _CSPPROG16
+                            389 	.globl _CSPPROG15
+                            390 	.globl _CSPPROG14
+                            391 	.globl _CSPPROG13
+                            392 	.globl _CSPPROG12
+                            393 	.globl _CSPPROG11
+                            394 	.globl _CSPPROG10
+                            395 	.globl _CSPPROG9
+                            396 	.globl _CSPPROG8
+                            397 	.globl _CSPPROG7
+                            398 	.globl _CSPPROG6
+                            399 	.globl _CSPPROG5
+                            400 	.globl _CSPPROG4
+                            401 	.globl _CSPPROG3
+                            402 	.globl _CSPPROG2
+                            403 	.globl _CSPPROG1
+                            404 	.globl _CSPPROG0
+                            405 	.globl _RFC_OBS_CTRL2
+                            406 	.globl _RFC_OBS_CTRL1
+                            407 	.globl _RFC_OBS_CTRL0
+                            408 	.globl _TXFILTCFG
+                            409 	.globl _PTEST1
+                            410 	.globl _PTEST0
+                            411 	.globl _ATEST
+                            412 	.globl _DACTEST2
+                            413 	.globl _DACTEST1
+                            414 	.globl _DACTEST0
+                            415 	.globl _MDMTEST1
+                            416 	.globl _MDMTEST0
+                            417 	.globl _ADCTEST2
+                            418 	.globl _ADCTEST1
+                            419 	.globl _ADCTEST0
+                            420 	.globl _AGCCTRL3
+                            421 	.globl _AGCCTRL2
+                            422 	.globl _AGCCTRL1
+                            423 	.globl _AGCCTRL0
+                            424 	.globl _FSCAL3
+                            425 	.globl _FSCAL2
+                            426 	.globl _FSCAL1
+                            427 	.globl _FSCAL0
+                            428 	.globl _FSCTRL
+                            429 	.globl _RXCTRL
+                            430 	.globl _FREQEST
+                            431 	.globl _MDMCTRL1
+                            432 	.globl _MDMCTRL0
+                            433 	.globl _RFRND
+                            434 	.globl _RFERRM
+                            435 	.globl _RFIRQM1
+                            436 	.globl _RFIRQM0
+                            437 	.globl _TXLAST_PTR
+                            438 	.globl _TXFIRST_PTR
+                            439 	.globl _RXP1_PTR
+                            440 	.globl _RXLAST_PTR
+                            441 	.globl _RXFIRST_PTR
+                            442 	.globl _TXFIFOCNT
+                            443 	.globl _RXFIFOCNT
+                            444 	.globl _RXFIRST
+                            445 	.globl _RSSISTAT
+                            446 	.globl _RSSI
+                            447 	.globl _CCACTRL1
+                            448 	.globl _CCACTRL0
+                            449 	.globl _FSMCTRL
+                            450 	.globl _FIFOPCTRL
+                            451 	.globl _FSMSTAT1
+                            452 	.globl _FSMSTAT0
+                            453 	.globl _TXCTRL
+                            454 	.globl _TXPOWER
+                            455 	.globl _FREQCTRL
+                            456 	.globl _FREQTUNE
+                            457 	.globl _RXMASKCLR
+                            458 	.globl _RXMASKSET
+                            459 	.globl _RXENABLE
+                            460 	.globl _FRMCTRL1
+                            461 	.globl _FRMCTRL0
+                            462 	.globl _SRCEXTEN2
+                            463 	.globl _SRCEXTEN1
+                            464 	.globl _SRCEXTEN0
+                            465 	.globl _SRCSHORTEN2
+                            466 	.globl _SRCSHORTEN1
+                            467 	.globl _SRCSHORTEN0
+                            468 	.globl _SRCMATCH
+                            469 	.globl _FRMFILT1
+                            470 	.globl _FRMFILT0
+                            471 	.globl _SHORT_ADDR1
+                            472 	.globl _SHORT_ADDR0
+                            473 	.globl _PAN_ID1
+                            474 	.globl _PAN_ID0
+                            475 	.globl _EXT_ADDR7
+                            476 	.globl _EXT_ADDR6
+                            477 	.globl _EXT_ADDR5
+                            478 	.globl _EXT_ADDR4
+                            479 	.globl _EXT_ADDR3
+                            480 	.globl _EXT_ADDR2
+                            481 	.globl _EXT_ADDR1
+                            482 	.globl _EXT_ADDR0
+                            483 	.globl _SRCSHORTPENDEN2
+                            484 	.globl _SRCSHORTPENDEN1
+                            485 	.globl _SRCSHORTPENDEN0
+                            486 	.globl _SRCEXTPENDEN2
+                            487 	.globl _SRCEXTPENDEN1
+                            488 	.globl _SRCEXTPENDEN0
+                            489 	.globl _SRCRESINDEX
+                            490 	.globl _SRCRESMASK2
+                            491 	.globl _SRCRESMASK1
+                            492 	.globl _SRCRESMASK0
+                            493 	.globl _SRC_ADDR_TABLE
+                            494 	.globl _TXFIFO
+                            495 	.globl _RXFIFO
+                            496 	.globl _RFCORE_RAM
+                            497 	.globl _CMPCTL
+                            498 	.globl _OPAMPS
+                            499 	.globl _OPAMPC
+                            500 	.globl _STCV2
+                            501 	.globl _STCV1
+                            502 	.globl _STCV0
+                            503 	.globl _STCS
+                            504 	.globl _STCC
+                            505 	.globl _T1CC4H
+                            506 	.globl _T1CC4L
+                            507 	.globl _T1CC3H
+                            508 	.globl _T1CC3L
+                            509 	.globl _XX_T1CC2H
+                            510 	.globl _XX_T1CC2L
+                            511 	.globl _XX_T1CC1H
+                            512 	.globl _XX_T1CC1L
+                            513 	.globl _XX_T1CC0H
+                            514 	.globl _XX_T1CC0L
+                            515 	.globl _T1CCTL4
+                            516 	.globl _T1CCTL3
+                            517 	.globl _XX_T1CCTL2
+                            518 	.globl _XX_T1CCTL1
+                            519 	.globl _XX_T1CCTL0
+                            520 	.globl _CLD
+                            521 	.globl _IRCTL
+                            522 	.globl _CHIPINFO1
+                            523 	.globl _CHIPINFO0
+                            524 	.globl _FWDATA
+                            525 	.globl _FADDRH
+                            526 	.globl _FADDRL
+                            527 	.globl _FCTL
+                            528 	.globl _IVCTRL
+                            529 	.globl _BATTMON
+                            530 	.globl _SRCRC
+                            531 	.globl _DBGDATA
+                            532 	.globl _TESTREG0
+                            533 	.globl _CHIPID
+                            534 	.globl _CHVER
+                            535 	.globl _OBSSEL5
+                            536 	.globl _OBSSEL4
+                            537 	.globl _OBSSEL3
+                            538 	.globl _OBSSEL2
+                            539 	.globl _OBSSEL1
+                            540 	.globl _OBSSEL0
+                            541 	.globl _I2CIO
+                            542 	.globl _I2CWC
+                            543 	.globl _I2CADDR
+                            544 	.globl _I2CDATA
+                            545 	.globl _I2CSTAT
+                            546 	.globl _I2CCFG
+                            547 	.globl _OPAMPMC
+                            548 	.globl _MONMUX
+                            549 	.globl _get_password
+                            550 	.globl _get_password_encrypted_by_public_key
+                            551 	.globl _get_network_shared_key
+                            552 	.globl _set_network_shared_key
+                            553 	.globl _encrypt_data_by_network_shared_key
+                            554 	.globl _decrypt_data_by_network_shared_key
+                            555 	.globl _get_master_key
+                            556 	.globl _decrypt_data_by_master_key
+                            557 	.globl _create_security_client_hello_msg
+                            558 	.globl _create_security_data_msg
+                            559 	.globl _crypto_init
+                            560 ;--------------------------------------------------------
+                            561 ; special function registers
+                            562 ;--------------------------------------------------------
+                            563 	.area RSEG    (ABS,DATA)
+   0000                     564 	.org 0x0000
+                    0080    565 _P0	=	0x0080
+                    0081    566 _SP	=	0x0081
+                    0082    567 _DPL0	=	0x0082
+                    0083    568 _DPH0	=	0x0083
+                    0084    569 _DPL1	=	0x0084
+                    0085    570 _DPH1	=	0x0085
+                    0087    571 _PCON	=	0x0087
+                    0088    572 _TCON	=	0x0088
+                    0090    573 _P1	=	0x0090
+                    0092    574 _DPS	=	0x0092
+                    0098    575 _S0CON	=	0x0098
+                    009A    576 _IEN2	=	0x009a
+                    009B    577 _S1CON	=	0x009b
+                    00A0    578 _P2	=	0x00a0
+                    00A8    579 _IEN0	=	0x00a8
+                    00A9    580 _IP0	=	0x00a9
+                    00B8    581 _IEN1	=	0x00b8
+                    00B9    582 _IP1	=	0x00b9
+                    00C0    583 _IRCON	=	0x00c0
+                    00D0    584 _PSW	=	0x00d0
+                    00E0    585 _ACC	=	0x00e0
+                    00E8    586 _IRCON2	=	0x00e8
+                    00F0    587 _B	=	0x00f0
+                    00B4    588 _ADCCON1	=	0x00b4
+                    00B5    589 _ADCCON2	=	0x00b5
+                    00B6    590 _ADCCON3	=	0x00b6
+                    00BA    591 _ADCL	=	0x00ba
+                    00BB    592 _ADCH	=	0x00bb
+                    00BC    593 _RNDL	=	0x00bc
+                    00BD    594 _RNDH	=	0x00bd
+                    00B1    595 _ENCDI	=	0x00b1
+                    00B2    596 _ENCDO	=	0x00b2
+                    00B3    597 _ENCCS	=	0x00b3
+                    00D1    598 _DMAIRQ	=	0x00d1
+                    00D2    599 _DMA1CFGL	=	0x00d2
+                    00D3    600 _DMA1CFGH	=	0x00d3
+                    00D4    601 _DMA0CFGL	=	0x00d4
+                    00D5    602 _DMA0CFGH	=	0x00d5
+                    00D6    603 _DMAARM	=	0x00d6
+                    00D7    604 _DMAREQ	=	0x00d7
+                    0089    605 _P0IFG	=	0x0089
+                    008A    606 _P1IFG	=	0x008a
+                    008B    607 _P2IFG	=	0x008b
+                    008C    608 _PICTL	=	0x008c
+                    00AB    609 _P0IEN	=	0x00ab
+                    008D    610 _P1IEN	=	0x008d
+                    00AC    611 _P2IEN	=	0x00ac
+                    008F    612 _P0INP	=	0x008f
+                    00F1    613 _PERCFG	=	0x00f1
+                    00F2    614 _APCFG	=	0x00f2
+                    00F3    615 _P0SEL	=	0x00f3
+                    00F4    616 _P1SEL	=	0x00f4
+                    00F5    617 _P2SEL	=	0x00f5
+                    00F6    618 _P1INP	=	0x00f6
+                    00F7    619 _P2INP	=	0x00f7
+                    00FD    620 _P0DIR	=	0x00fd
+                    00FE    621 _P1DIR	=	0x00fe
+                    00FF    622 _P2DIR	=	0x00ff
+                    00AE    623 _PMUX	=	0x00ae
+                    0093    624 _MPAGE	=	0x0093
+                    0093    625 __XPAGE	=	0x0093
+                    00C7    626 _MEMCTR	=	0x00c7
+                    009F    627 _FMAP	=	0x009f
+                    009F    628 _PSBANK	=	0x009f
+                    0091    629 _RFIRQF1	=	0x0091
+                    00D9    630 _RFD	=	0x00d9
+                    00E1    631 _RFST	=	0x00e1
+                    00E9    632 _RFIRQF0	=	0x00e9
+                    00BF    633 _RFERRF	=	0x00bf
+                    0095    634 _ST0	=	0x0095
+                    0096    635 _ST1	=	0x0096
+                    0097    636 _ST2	=	0x0097
+                    00AD    637 _STLOAD	=	0x00ad
+                    00BE    638 _SLEEPCMD	=	0x00be
+                    009D    639 _SLEEPSTA	=	0x009d
+                    00C6    640 _CLKCONCMD	=	0x00c6
+                    009E    641 _CLKCONSTA	=	0x009e
+                    00DA    642 _T1CC0L	=	0x00da
+                    00DB    643 _T1CC0H	=	0x00db
+                    00DC    644 _T1CC1L	=	0x00dc
+                    00DD    645 _T1CC1H	=	0x00dd
+                    00DE    646 _T1CC2L	=	0x00de
+                    00DF    647 _T1CC2H	=	0x00df
+                    00E2    648 _T1CNTL	=	0x00e2
+                    00E3    649 _T1CNTH	=	0x00e3
+                    00E4    650 _T1CTL	=	0x00e4
+                    00E5    651 _T1CCTL0	=	0x00e5
+                    00E6    652 _T1CCTL1	=	0x00e6
+                    00E7    653 _T1CCTL2	=	0x00e7
+                    00AF    654 _T1STAT	=	0x00af
+                    0094    655 _T2CTRL	=	0x0094
+                    009C    656 _T2EVTCFG	=	0x009c
+                    00A1    657 _T2IRQF	=	0x00a1
+                    00A2    658 _T2M0	=	0x00a2
+                    00A3    659 _T2M1	=	0x00a3
+                    00A4    660 _T2MOVF0	=	0x00a4
+                    00A5    661 _T2MOVF1	=	0x00a5
+                    00A6    662 _T2MOVF2	=	0x00a6
+                    00A7    663 _T2IRQM	=	0x00a7
+                    00C3    664 _T2MSEL	=	0x00c3
+                    00CA    665 _T3CNT	=	0x00ca
+                    00CB    666 _T3CTL	=	0x00cb
+                    00CC    667 _T3CCTL0	=	0x00cc
+                    00CD    668 _T3CC0	=	0x00cd
+                    00CE    669 _T3CCTL1	=	0x00ce
+                    00CF    670 _T3CC1	=	0x00cf
+                    00EA    671 _T4CNT	=	0x00ea
+                    00EB    672 _T4CTL	=	0x00eb
+                    00EC    673 _T4CCTL0	=	0x00ec
+                    00ED    674 _T4CC0	=	0x00ed
+                    00EE    675 _T4CCTL1	=	0x00ee
+                    00EF    676 _T4CC1	=	0x00ef
+                    00D8    677 _TIMIF	=	0x00d8
+                    0086    678 _U0CSR	=	0x0086
+                    00C1    679 _U0DBUF	=	0x00c1
+                    00C2    680 _U0BAUD	=	0x00c2
+                    00C4    681 _U0UCR	=	0x00c4
+                    00C5    682 _U0GCR	=	0x00c5
+                    00F8    683 _U1CSR	=	0x00f8
+                    00F9    684 _U1DBUF	=	0x00f9
+                    00FA    685 _U1BAUD	=	0x00fa
+                    00FB    686 _U1UCR	=	0x00fb
+                    00FC    687 _U1GCR	=	0x00fc
+                    00C9    688 _WDCTL	=	0x00c9
+                            689 ;--------------------------------------------------------
+                            690 ; special function bits
+                            691 ;--------------------------------------------------------
+                            692 	.area RSEG    (ABS,DATA)
+   0000                     693 	.org 0x0000
+                    0087    694 _P0_7	=	0x0087
+                    0086    695 _P0_6	=	0x0086
+                    0085    696 _P0_5	=	0x0085
+                    0084    697 _P0_4	=	0x0084
+                    0083    698 _P0_3	=	0x0083
+                    0082    699 _P0_2	=	0x0082
+                    0081    700 _P0_1	=	0x0081
+                    0080    701 _P0_0	=	0x0080
+                    008F    702 _URX1IF	=	0x008f
+                    008D    703 _ADCIF	=	0x008d
+                    008B    704 _URX0IF	=	0x008b
+                    008A    705 _IT1	=	0x008a
+                    0089    706 _RFERRIF	=	0x0089
+                    0088    707 _IT0	=	0x0088
+                    0097    708 _P1_7	=	0x0097
+                    0096    709 _P1_6	=	0x0096
+                    0095    710 _P1_5	=	0x0095
+                    0094    711 _P1_4	=	0x0094
+                    0093    712 _P1_3	=	0x0093
+                    0092    713 _P1_2	=	0x0092
+                    0091    714 _P1_1	=	0x0091
+                    0090    715 _P1_0	=	0x0090
+                    0099    716 _ENCIF_1	=	0x0099
+                    0098    717 _ENCIF_0	=	0x0098
+                    00A7    718 _P2_7	=	0x00a7
+                    00A6    719 _P2_6	=	0x00a6
+                    00A5    720 _P2_5	=	0x00a5
+                    00A4    721 _P2_4	=	0x00a4
+                    00A3    722 _P2_3	=	0x00a3
+                    00A2    723 _P2_2	=	0x00a2
+                    00A1    724 _P2_1	=	0x00a1
+                    00A0    725 _P2_0	=	0x00a0
+                    00AF    726 _EA	=	0x00af
+                    00AD    727 _STIE	=	0x00ad
+                    00AC    728 _ENCIE	=	0x00ac
+                    00AB    729 _URX1IE	=	0x00ab
+                    00AA    730 _URX0IE	=	0x00aa
+                    00A9    731 _ADCIE	=	0x00a9
+                    00A8    732 _RFERRIE	=	0x00a8
+                    00BD    733 _P0IE	=	0x00bd
+                    00BC    734 _T4IE	=	0x00bc
+                    00BB    735 _T3IE	=	0x00bb
+                    00BA    736 _T2IE	=	0x00ba
+                    00B9    737 _T1IE	=	0x00b9
+                    00B8    738 _DMAIE	=	0x00b8
+                    00C7    739 _STIF	=	0x00c7
+                    00C5    740 _P0IF	=	0x00c5
+                    00C4    741 _T4IF	=	0x00c4
+                    00C3    742 _T3IF	=	0x00c3
+                    00C2    743 _T2IF	=	0x00c2
+                    00C1    744 _T1IF	=	0x00c1
+                    00C0    745 _DMAIF	=	0x00c0
+                    00D7    746 _CY	=	0x00d7
+                    00D6    747 _AC	=	0x00d6
+                    00D5    748 _F0	=	0x00d5
+                    00D4    749 _RS1	=	0x00d4
+                    00D3    750 _RS0	=	0x00d3
+                    00D2    751 _OV	=	0x00d2
+                    00D1    752 _F1	=	0x00d1
+                    00D0    753 _P	=	0x00d0
+                    00E7    754 _ACC_7	=	0x00e7
+                    00E6    755 _ACC_6	=	0x00e6
+                    00E5    756 _ACC_5	=	0x00e5
+                    00E4    757 _ACC_4	=	0x00e4
+                    00E3    758 _ACC_3	=	0x00e3
+                    00E2    759 _ACC_2	=	0x00e2
+                    00E1    760 _ACC_1	=	0x00e1
+                    00E0    761 _ACC_0	=	0x00e0
+                    00EC    762 _WDTIF	=	0x00ec
+                    00EB    763 _P1IF	=	0x00eb
+                    00EA    764 _UTX1IF	=	0x00ea
+                    00E9    765 _UTX0IF	=	0x00e9
+                    00E8    766 _P2IF	=	0x00e8
+                    00F7    767 _B_7	=	0x00f7
+                    00F6    768 _B_6	=	0x00f6
+                    00F5    769 _B_5	=	0x00f5
+                    00F4    770 _B_4	=	0x00f4
+                    00F3    771 _B_3	=	0x00f3
+                    00F2    772 _B_2	=	0x00f2
+                    00F1    773 _B_1	=	0x00f1
+                    00F0    774 _B_0	=	0x00f0
+                    00DE    775 _OVFIM	=	0x00de
+                    00DD    776 _T4CH1IF	=	0x00dd
+                    00DC    777 _T4CH0IF	=	0x00dc
+                    00DB    778 _T4OVFIF	=	0x00db
+                    00DA    779 _T3CH1IF	=	0x00da
+                    00D9    780 _T3CH0IF	=	0x00d9
+                    00D8    781 _T3OVFIF	=	0x00d8
+                    00FF    782 _MODE	=	0x00ff
+                    00FE    783 _RE	=	0x00fe
+                    00FD    784 _SLAVE	=	0x00fd
+                    00FC    785 _FE	=	0x00fc
+                    00FB    786 _ERR	=	0x00fb
+                    00FA    787 _RX_BYTE	=	0x00fa
+                    00F9    788 _TX_BYTE	=	0x00f9
+                    00F8    789 _ACTIVE	=	0x00f8
+                            790 ;--------------------------------------------------------
+                            791 ; overlayable register banks
+                            792 ;--------------------------------------------------------
+                            793 	.area REG_BANK_0	(REL,OVR,DATA)
+   0000                     794 	.ds 8
+                            795 ;--------------------------------------------------------
+                            796 ; internal ram data
+                            797 ;--------------------------------------------------------
+                            798 	.area DSEG    (DATA)
+                            799 ;--------------------------------------------------------
+                            800 ; overlayable items in internal ram 
+                            801 ;--------------------------------------------------------
+                            802 	.area OSEG    (OVR,DATA)
+                            803 ;--------------------------------------------------------
+                            804 ; indirectly addressable internal ram data
+                            805 ;--------------------------------------------------------
+                            806 	.area ISEG    (DATA)
+                            807 ;--------------------------------------------------------
+                            808 ; absolute internal ram data
+                            809 ;--------------------------------------------------------
+                            810 	.area IABS    (ABS,DATA)
+                            811 	.area IABS    (ABS,DATA)
+                            812 ;--------------------------------------------------------
+                            813 ; bit data
+                            814 ;--------------------------------------------------------
+                            815 	.area BSEG    (BIT)
+                            816 ;--------------------------------------------------------
+                            817 ; paged external ram data
+                            818 ;--------------------------------------------------------
+                            819 	.area PSEG    (PAG,XDATA)
+                            820 ;--------------------------------------------------------
+                            821 ; external ram data
+                            822 ;--------------------------------------------------------
+                            823 	.area XSEG    (XDATA)
+                    61A6    824 _MONMUX	=	0x61a6
+                    61A6    825 _OPAMPMC	=	0x61a6
+                    6230    826 _I2CCFG	=	0x6230
+                    6231    827 _I2CSTAT	=	0x6231
+                    6232    828 _I2CDATA	=	0x6232
+                    6233    829 _I2CADDR	=	0x6233
+                    6234    830 _I2CWC	=	0x6234
+                    6235    831 _I2CIO	=	0x6235
+                    6243    832 _OBSSEL0	=	0x6243
+                    6244    833 _OBSSEL1	=	0x6244
+                    6245    834 _OBSSEL2	=	0x6245
+                    6246    835 _OBSSEL3	=	0x6246
+                    6247    836 _OBSSEL4	=	0x6247
+                    6248    837 _OBSSEL5	=	0x6248
+                    6249    838 _CHVER	=	0x6249
+                    624A    839 _CHIPID	=	0x624a
+                    624B    840 _TESTREG0	=	0x624b
+                    6260    841 _DBGDATA	=	0x6260
+                    6262    842 _SRCRC	=	0x6262
+                    6264    843 _BATTMON	=	0x6264
+                    6265    844 _IVCTRL	=	0x6265
+                    6270    845 _FCTL	=	0x6270
+                    6271    846 _FADDRL	=	0x6271
+                    6272    847 _FADDRH	=	0x6272
+                    6273    848 _FWDATA	=	0x6273
+                    6276    849 _CHIPINFO0	=	0x6276
+                    6277    850 _CHIPINFO1	=	0x6277
+                    6281    851 _IRCTL	=	0x6281
+                    6290    852 _CLD	=	0x6290
+                    62A0    853 _XX_T1CCTL0	=	0x62a0
+                    62A1    854 _XX_T1CCTL1	=	0x62a1
+                    62A2    855 _XX_T1CCTL2	=	0x62a2
+                    62A3    856 _T1CCTL3	=	0x62a3
+                    62A4    857 _T1CCTL4	=	0x62a4
+                    62A6    858 _XX_T1CC0L	=	0x62a6
+                    62A7    859 _XX_T1CC0H	=	0x62a7
+                    62A8    860 _XX_T1CC1L	=	0x62a8
+                    62A9    861 _XX_T1CC1H	=	0x62a9
+                    62AA    862 _XX_T1CC2L	=	0x62aa
+                    62AB    863 _XX_T1CC2H	=	0x62ab
+                    62AC    864 _T1CC3L	=	0x62ac
+                    62AD    865 _T1CC3H	=	0x62ad
+                    62AE    866 _T1CC4L	=	0x62ae
+                    62AF    867 _T1CC4H	=	0x62af
+                    62B0    868 _STCC	=	0x62b0
+                    62B1    869 _STCS	=	0x62b1
+                    62B2    870 _STCV0	=	0x62b2
+                    62B3    871 _STCV1	=	0x62b3
+                    62B4    872 _STCV2	=	0x62b4
+                    62C0    873 _OPAMPC	=	0x62c0
+                    62C1    874 _OPAMPS	=	0x62c1
+                    62D0    875 _CMPCTL	=	0x62d0
+                    6000    876 _RFCORE_RAM	=	0x6000
+                    6000    877 _RXFIFO	=	0x6000
+                    6080    878 _TXFIFO	=	0x6080
+                    6100    879 _SRC_ADDR_TABLE	=	0x6100
+                    6160    880 _SRCRESMASK0	=	0x6160
+                    6161    881 _SRCRESMASK1	=	0x6161
+                    6162    882 _SRCRESMASK2	=	0x6162
+                    6163    883 _SRCRESINDEX	=	0x6163
+                    6164    884 _SRCEXTPENDEN0	=	0x6164
+                    6165    885 _SRCEXTPENDEN1	=	0x6165
+                    6166    886 _SRCEXTPENDEN2	=	0x6166
+                    6167    887 _SRCSHORTPENDEN0	=	0x6167
+                    6168    888 _SRCSHORTPENDEN1	=	0x6168
+                    6169    889 _SRCSHORTPENDEN2	=	0x6169
+                    616A    890 _EXT_ADDR0	=	0x616a
+                    616B    891 _EXT_ADDR1	=	0x616b
+                    616C    892 _EXT_ADDR2	=	0x616c
+                    616D    893 _EXT_ADDR3	=	0x616d
+                    616E    894 _EXT_ADDR4	=	0x616e
+                    616F    895 _EXT_ADDR5	=	0x616f
+                    6170    896 _EXT_ADDR6	=	0x6170
+                    6171    897 _EXT_ADDR7	=	0x6171
+                    6172    898 _PAN_ID0	=	0x6172
+                    6173    899 _PAN_ID1	=	0x6173
+                    6174    900 _SHORT_ADDR0	=	0x6174
+                    6175    901 _SHORT_ADDR1	=	0x6175
+                    6180    902 _FRMFILT0	=	0x6180
+                    6181    903 _FRMFILT1	=	0x6181
+                    6182    904 _SRCMATCH	=	0x6182
+                    6183    905 _SRCSHORTEN0	=	0x6183
+                    6184    906 _SRCSHORTEN1	=	0x6184
+                    6185    907 _SRCSHORTEN2	=	0x6185
+                    6186    908 _SRCEXTEN0	=	0x6186
+                    6187    909 _SRCEXTEN1	=	0x6187
+                    6188    910 _SRCEXTEN2	=	0x6188
+                    6189    911 _FRMCTRL0	=	0x6189
+                    618A    912 _FRMCTRL1	=	0x618a
+                    618B    913 _RXENABLE	=	0x618b
+                    618C    914 _RXMASKSET	=	0x618c
+                    618D    915 _RXMASKCLR	=	0x618d
+                    618E    916 _FREQTUNE	=	0x618e
+                    618F    917 _FREQCTRL	=	0x618f
+                    6190    918 _TXPOWER	=	0x6190
+                    6191    919 _TXCTRL	=	0x6191
+                    6192    920 _FSMSTAT0	=	0x6192
+                    6193    921 _FSMSTAT1	=	0x6193
+                    6194    922 _FIFOPCTRL	=	0x6194
+                    6195    923 _FSMCTRL	=	0x6195
+                    6196    924 _CCACTRL0	=	0x6196
+                    6197    925 _CCACTRL1	=	0x6197
+                    6198    926 _RSSI	=	0x6198
+                    6199    927 _RSSISTAT	=	0x6199
+                    619A    928 _RXFIRST	=	0x619a
+                    619B    929 _RXFIFOCNT	=	0x619b
+                    619C    930 _TXFIFOCNT	=	0x619c
+                    619D    931 _RXFIRST_PTR	=	0x619d
+                    619E    932 _RXLAST_PTR	=	0x619e
+                    619F    933 _RXP1_PTR	=	0x619f
+                    61A1    934 _TXFIRST_PTR	=	0x61a1
+                    61A2    935 _TXLAST_PTR	=	0x61a2
+                    61A3    936 _RFIRQM0	=	0x61a3
+                    61A4    937 _RFIRQM1	=	0x61a4
+                    61A5    938 _RFERRM	=	0x61a5
+                    61A7    939 _RFRND	=	0x61a7
+                    61A8    940 _MDMCTRL0	=	0x61a8
+                    61A9    941 _MDMCTRL1	=	0x61a9
+                    61AA    942 _FREQEST	=	0x61aa
+                    61AB    943 _RXCTRL	=	0x61ab
+                    61AC    944 _FSCTRL	=	0x61ac
+                    61AD    945 _FSCAL0	=	0x61ad
+                    61AE    946 _FSCAL1	=	0x61ae
+                    61AF    947 _FSCAL2	=	0x61af
+                    61B0    948 _FSCAL3	=	0x61b0
+                    61B1    949 _AGCCTRL0	=	0x61b1
+                    61B2    950 _AGCCTRL1	=	0x61b2
+                    61B3    951 _AGCCTRL2	=	0x61b3
+                    61B4    952 _AGCCTRL3	=	0x61b4
+                    61B5    953 _ADCTEST0	=	0x61b5
+                    61B6    954 _ADCTEST1	=	0x61b6
+                    61B7    955 _ADCTEST2	=	0x61b7
+                    61B8    956 _MDMTEST0	=	0x61b8
+                    61B9    957 _MDMTEST1	=	0x61b9
+                    61BA    958 _DACTEST0	=	0x61ba
+                    61BB    959 _DACTEST1	=	0x61bb
+                    61BC    960 _DACTEST2	=	0x61bc
+                    61BD    961 _ATEST	=	0x61bd
+                    61BE    962 _PTEST0	=	0x61be
+                    61BF    963 _PTEST1	=	0x61bf
+                    61FA    964 _TXFILTCFG	=	0x61fa
+                    61EB    965 _RFC_OBS_CTRL0	=	0x61eb
+                    61EC    966 _RFC_OBS_CTRL1	=	0x61ec
+                    61ED    967 _RFC_OBS_CTRL2	=	0x61ed
+                    61C0    968 _CSPPROG0	=	0x61c0
+                    61C1    969 _CSPPROG1	=	0x61c1
+                    61C2    970 _CSPPROG2	=	0x61c2
+                    61C3    971 _CSPPROG3	=	0x61c3
+                    61C4    972 _CSPPROG4	=	0x61c4
+                    61C5    973 _CSPPROG5	=	0x61c5
+                    61C6    974 _CSPPROG6	=	0x61c6
+                    61C7    975 _CSPPROG7	=	0x61c7
+                    61C8    976 _CSPPROG8	=	0x61c8
+                    61C9    977 _CSPPROG9	=	0x61c9
+                    61CA    978 _CSPPROG10	=	0x61ca
+                    61CB    979 _CSPPROG11	=	0x61cb
+                    61CC    980 _CSPPROG12	=	0x61cc
+                    61CD    981 _CSPPROG13	=	0x61cd
+                    61CE    982 _CSPPROG14	=	0x61ce
+                    61CF    983 _CSPPROG15	=	0x61cf
+                    61D0    984 _CSPPROG16	=	0x61d0
+                    61D1    985 _CSPPROG17	=	0x61d1
+                    61D2    986 _CSPPROG18	=	0x61d2
+                    61D3    987 _CSPPROG19	=	0x61d3
+                    61D4    988 _CSPPROG20	=	0x61d4
+                    61D5    989 _CSPPROG21	=	0x61d5
+                    61D6    990 _CSPPROG22	=	0x61d6
+                    61D7    991 _CSPPROG23	=	0x61d7
+                    61E0    992 _CSPCTRL	=	0x61e0
+                    61E1    993 _CSPSTAT	=	0x61e1
+                    61E2    994 _CSPX	=	0x61e2
+                    61E3    995 _CSPY	=	0x61e3
+                    61E4    996 _CSPZ	=	0x61e4
+                    61E5    997 _CSPT	=	0x61e5
+                    6200    998 _USBADDR	=	0x6200
+                    6201    999 _USBPOW	=	0x6201
+                    6202   1000 _USBIIF	=	0x6202
+                    6204   1001 _USBOIF	=	0x6204
+                    6206   1002 _USBCIF	=	0x6206
+                    6207   1003 _USBIIE	=	0x6207
+                    6209   1004 _USBOIE	=	0x6209
+                    620B   1005 _USBCIE	=	0x620b
+                    620C   1006 _USBFRML	=	0x620c
+                    620D   1007 _USBFRMH	=	0x620d
+                    620E   1008 _USBINDEX	=	0x620e
+                    620F   1009 _USBCTRL	=	0x620f
+                    6210   1010 _USBMAXI	=	0x6210
+                    6211   1011 _USBCS0	=	0x6211
+                    6211   1012 _USBCSIL	=	0x6211
+                    6212   1013 _USBCSIH	=	0x6212
+                    6213   1014 _USBMAXO	=	0x6213
+                    6214   1015 _USBCSOL	=	0x6214
+                    6215   1016 _USBCSOH	=	0x6215
+                    6216   1017 _USBCNT0	=	0x6216
+                    6216   1018 _USBCNTL	=	0x6216
+                    6217   1019 _USBCNTH	=	0x6217
+                    6220   1020 _USBF0	=	0x6220
+                    6222   1021 _USBF1	=	0x6222
+                    6224   1022 _USBF2	=	0x6224
+                    6226   1023 _USBF3	=	0x6226
+                    6228   1024 _USBF4	=	0x6228
+                    622A   1025 _USBF5	=	0x622a
+                    7080   1026 _X_P0	=	0x7080
+                    7086   1027 _X_U0CSR	=	0x7086
+                    7089   1028 _X_P0IFG	=	0x7089
+                    708A   1029 _X_P1IFG	=	0x708a
+                    708B   1030 _X_P2IFG	=	0x708b
+                    708C   1031 _X_PICTL	=	0x708c
+                    708D   1032 _X_P1IEN	=	0x708d
+                    708F   1033 _X_P0INP	=	0x708f
+                    7090   1034 _X_P1	=	0x7090
+                    7091   1035 _X_RFIRQF1	=	0x7091
+                    7093   1036 _X_MPAGE	=	0x7093
+                    7093   1037 _X__XPAGE	=	0x7093
+                    7094   1038 _X_T2CTRL	=	0x7094
+                    7095   1039 _X_ST0	=	0x7095
+                    7096   1040 _X_ST1	=	0x7096
+                    7097   1041 _X_ST2	=	0x7097
+                    709C   1042 _X_T2EVTCFG	=	0x709c
+                    709D   1043 _X_SLEEPSTA	=	0x709d
+                    709E   1044 _X_CLKCONSTA	=	0x709e
+                    709F   1045 _X_FMAP	=	0x709f
+                    709F   1046 _X_PSBANK	=	0x709f
+                    70A0   1047 _X_P2	=	0x70a0
+                    70A1   1048 _X_T2IRQF	=	0x70a1
+                    70A2   1049 _X_T2M0	=	0x70a2
+                    70A3   1050 _X_T2M1	=	0x70a3
+                    70A4   1051 _X_T2MOVF0	=	0x70a4
+                    70A5   1052 _X_T2MOVF1	=	0x70a5
+                    70A6   1053 _X_T2MOVF2	=	0x70a6
+                    70A7   1054 _X_T2IRQM	=	0x70a7
+                    70AB   1055 _X_P0IEN	=	0x70ab
+                    70AC   1056 _X_P2IEN	=	0x70ac
+                    70AD   1057 _X_STLOAD	=	0x70ad
+                    70AE   1058 _X_PMUX	=	0x70ae
+                    70AF   1059 _X_T1STAT	=	0x70af
+                    70B1   1060 _X_ENCDI	=	0x70b1
+                    70B2   1061 _X_ENCDO	=	0x70b2
+                    70B3   1062 _X_ENCCS	=	0x70b3
+                    70B4   1063 _X_ADCCON1	=	0x70b4
+                    70B5   1064 _X_ADCCON2	=	0x70b5
+                    70B6   1065 _X_ADCCON3	=	0x70b6
+                    70BA   1066 _X_ADCL	=	0x70ba
+                    70BB   1067 _X_ADCH	=	0x70bb
+                    70BC   1068 _X_RNDL	=	0x70bc
+                    70BD   1069 _X_RNDH	=	0x70bd
+                    70BE   1070 _X_SLEEPCMD	=	0x70be
+                    70BF   1071 _X_RFERRF	=	0x70bf
+                    70C1   1072 _X_U0DBUF	=	0x70c1
+                    70C2   1073 _X_U0BAUD	=	0x70c2
+                    70C3   1074 _X_T2MSEL	=	0x70c3
+                    70C4   1075 _X_U0UCR	=	0x70c4
+                    70C5   1076 _X_U0GCR	=	0x70c5
+                    70C6   1077 _X_CLKCONCMD	=	0x70c6
+                    70C7   1078 _X_MEMCTR	=	0x70c7
+                    70C9   1079 _X_WDCTL	=	0x70c9
+                    70CA   1080 _X_T3CNT	=	0x70ca
+                    70CB   1081 _X_T3CTL	=	0x70cb
+                    70CC   1082 _X_T3CCTL0	=	0x70cc
+                    70CD   1083 _X_T3CC0	=	0x70cd
+                    70CE   1084 _X_T3CCTL1	=	0x70ce
+                    70CF   1085 _X_T3CC1	=	0x70cf
+                    70D1   1086 _X_DMAIRQ	=	0x70d1
+                    70D2   1087 _X_DMA1CFGL	=	0x70d2
+                    70D3   1088 _X_DMA1CFGH	=	0x70d3
+                    70D4   1089 _X_DMA0CFGL	=	0x70d4
+                    70D5   1090 _X_DMA0CFGH	=	0x70d5
+                    70D6   1091 _X_DMAARM	=	0x70d6
+                    70D7   1092 _X_DMAREQ	=	0x70d7
+                    70D8   1093 _X_TIMIF	=	0x70d8
+                    70D9   1094 _X_RFD	=	0x70d9
+                    70DA   1095 _X_T1CC0L	=	0x70da
+                    70DB   1096 _X_T1CC0H	=	0x70db
+                    70DC   1097 _X_T1CC1L	=	0x70dc
+                    70DD   1098 _X_T1CC1H	=	0x70dd
+                    70DE   1099 _X_T1CC2L	=	0x70de
+                    70DF   1100 _X_T1CC2H	=	0x70df
+                    70E1   1101 _X_RFST	=	0x70e1
+                    70E2   1102 _X_T1CNTL	=	0x70e2
+                    70E3   1103 _X_T1CNTH	=	0x70e3
+                    70E4   1104 _X_T1CTL	=	0x70e4
+                    70E5   1105 _X_T1CCTL0	=	0x70e5
+                    70E6   1106 _X_T1CCTL1	=	0x70e6
+                    70E7   1107 _X_T1CCTL2	=	0x70e7
+                    70E9   1108 _X_RFIRQF0	=	0x70e9
+                    70EA   1109 _X_T4CNT	=	0x70ea
+                    70EB   1110 _X_T4CTL	=	0x70eb
+                    70EC   1111 _X_T4CCTL0	=	0x70ec
+                    70ED   1112 _X_T4CC0	=	0x70ed
+                    70EE   1113 _X_T4CCTL1	=	0x70ee
+                    70EF   1114 _X_T4CC1	=	0x70ef
+                    70F1   1115 _X_PERCFG	=	0x70f1
+                    70F2   1116 _X_APCFG	=	0x70f2
+                    70F3   1117 _X_P0SEL	=	0x70f3
+                    70F4   1118 _X_P1SEL	=	0x70f4
+                    70F5   1119 _X_P2SEL	=	0x70f5
+                    70F6   1120 _X_P1INP	=	0x70f6
+                    70F7   1121 _X_P2INP	=	0x70f7
+                    70F8   1122 _X_U1CSR	=	0x70f8
+                    70F9   1123 _X_U1DBUF	=	0x70f9
+                    70FA   1124 _X_U1BAUD	=	0x70fa
+                    70FB   1125 _X_U1UCR	=	0x70fb
+                    70FC   1126 _X_U1GCR	=	0x70fc
+                    70FD   1127 _X_P0DIR	=	0x70fd
+                    70FE   1128 _X_P1DIR	=	0x70fe
+                    70FF   1129 _X_P2DIR	=	0x70ff
+                    7800   1130 _X_INFOPAGE	=	0x7800
+                    780C   1131 _X_IEEE_ADDR	=	0x780c
+   0000                    1132 _network_shared_key:
+   0000                    1133 	.ds 19
+   0013                    1134 _master_key:
+   0013                    1135 	.ds 20
+   0027                    1136 _g_seq_num::
+   0027                    1137 	.ds 2
+   0029                    1138 _generate_master_key_version_1_1:
+   0029                    1139 	.ds 1
+                           1140 ;--------------------------------------------------------
+                           1141 ; absolute external ram data
+                           1142 ;--------------------------------------------------------
+                           1143 	.area XABS    (ABS,XDATA)
+                           1144 ;--------------------------------------------------------
+                           1145 ; external initialized ram data
+                           1146 ;--------------------------------------------------------
+                           1147 	.area XISEG   (XDATA)
+                           1148 	.area HOME    (CODE)
+                           1149 	.area GSINIT0 (CODE)
+                           1150 	.area GSINIT1 (CODE)
+                           1151 	.area GSINIT2 (CODE)
+                           1152 	.area GSINIT3 (CODE)
+                           1153 	.area GSINIT4 (CODE)
+                           1154 	.area GSINIT5 (CODE)
+                           1155 	.area GSINIT  (CODE)
+                           1156 	.area GSFINAL (CODE)
+                           1157 	.area CSEG    (CODE)
+                           1158 ;--------------------------------------------------------
+                           1159 ; global & static initialisations
+                           1160 ;--------------------------------------------------------
+                           1161 	.area HOME    (CODE)
+                           1162 	.area GSINIT  (CODE)
+                           1163 	.area GSFINAL (CODE)
+                           1164 	.area GSINIT  (CODE)
+                           1165 ;------------------------------------------------------------
+                           1166 ;Allocation info for local variables in function 'generate_master_key'
+                           1167 ;------------------------------------------------------------
+                           1168 ;i                         Allocated to stack - sp -8
+                           1169 ;pwd                       Allocated to stack - sp -7
+                           1170 ;sloc0                     Allocated to stack - sp -4
+                           1171 ;sloc1                     Allocated to stack - sp -4
+                           1172 ;sloc2                     Allocated to stack - sp -2
+                           1173 ;version                   Allocated with name '_generate_master_key_version_1_1'
+                           1174 ;------------------------------------------------------------
+                           1175 ;	crypto.c:88: static uint8_t version = 0;
+   0000 90s00r29           1176 	mov	dptr,#_generate_master_key_version_1_1
+   0003 E4                 1177 	clr	a
+   0004 F0                 1178 	movx	@dptr,a
+                           1179 ;--------------------------------------------------------
+                           1180 ; Home
+                           1181 ;--------------------------------------------------------
+                           1182 	.area HOME    (CODE)
+                           1183 	.area HOME    (CODE)
+                           1184 ;--------------------------------------------------------
+                           1185 ; code
+                           1186 ;--------------------------------------------------------
+                           1187 	.area BANK1   (CODE)
+                           1188 ;------------------------------------------------------------
+                           1189 ;Allocation info for local variables in function 'get_password'
+                           1190 ;------------------------------------------------------------
+                           1191 ;pwd                       Allocated to registers r5 r6 r7 
+                           1192 ;file                      Allocated to stack - sp -4
+                           1193 ;------------------------------------------------------------
+                           1194 ;	crypto.c:21: uint16_t get_password(uint8_t **pwd)
+                           1195 ;	-----------------------------------------
+                           1196 ;	 function get_password
+                           1197 ;	-----------------------------------------
+   0000                    1198 _get_password:
+                    0007   1199 	ar7 = 0x07
+                    0006   1200 	ar6 = 0x06
+                    0005   1201 	ar5 = 0x05
+                    0004   1202 	ar4 = 0x04
+                    0003   1203 	ar3 = 0x03
+                    0002   1204 	ar2 = 0x02
+                    0001   1205 	ar1 = 0x01
+                    0000   1206 	ar0 = 0x00
+   0000 E5 81              1207 	mov	a,sp
+   0002 24 05              1208 	add	a,#0x05
+   0004 F5 81              1209 	mov	sp,a
+   0006 AD 82              1210 	mov	r5,dpl
+   0008 AE 83              1211 	mov	r6,dph
+   000A AF F0              1212 	mov	r7,b
+                           1213 ;	crypto.c:24: if(device_fs_open("/PWD", &file)) {
+   000C E5 81              1214 	mov	a,sp
+   000E 24 FC              1215 	add	a,#0xFC
+   0010 FC                 1216 	mov	r4,a
+   0011 7B 00              1217 	mov	r3,#0x00
+   0013 7A 40              1218 	mov	r2,#0x40
+   0015 C0 07              1219 	push	ar7
+   0017 C0 06              1220 	push	ar6
+   0019 C0 05              1221 	push	ar5
+   001B C0 04              1222 	push	ar4
+   001D C0 03              1223 	push	ar3
+   001F C0 02              1224 	push	ar2
+   0021 90s00r00           1225 	mov	dptr,#__str_0
+   0024 75 F0 80           1226 	mov	b,#0x80
+   0027 78r00              1227 	mov	r0,#_device_fs_open
+   0029 79s00              1228 	mov	r1,#(_device_fs_open >> 8)
+   002B 7As00              1229 	mov	r2,#(_device_fs_open >> 16)
+   002D 12s00r00           1230 	lcall	__sdcc_banked_call
+   0030 AB 82              1231 	mov	r3,dpl
+   0032 AC 83              1232 	mov	r4,dph
+   0034 15 81              1233 	dec	sp
+   0036 15 81              1234 	dec	sp
+   0038 15 81              1235 	dec	sp
+   003A D0 05              1236 	pop	ar5
+   003C D0 06              1237 	pop	ar6
+   003E D0 07              1238 	pop	ar7
+   0040 EB                 1239 	mov	a,r3
+   0041 4C                 1240 	orl	a,r4
+   0042 60 33              1241 	jz	00102$
+                           1242 ;	crypto.c:25: *pwd = file.data;
+   0044 E5 81              1243 	mov	a,sp
+   0046 24 FC              1244 	add	a,#0xFC
+   0048 F9                 1245 	mov	r1,a
+   0049 87 02              1246 	mov	ar2,@r1
+   004B 09                 1247 	inc	r1
+   004C 87 03              1248 	mov	ar3,@r1
+   004E 09                 1249 	inc	r1
+   004F 87 04              1250 	mov	ar4,@r1
+   0051 8D 82              1251 	mov	dpl,r5
+   0053 8E 83              1252 	mov	dph,r6
+   0055 8F F0              1253 	mov	b,r7
+   0057 EA                 1254 	mov	a,r2
+   0058 12s00r00           1255 	lcall	__gptrput
+   005B A3                 1256 	inc	dptr
+   005C EB                 1257 	mov	a,r3
+   005D 12s00r00           1258 	lcall	__gptrput
+   0060 A3                 1259 	inc	dptr
+   0061 EC                 1260 	mov	a,r4
+   0062 12s00r00           1261 	lcall	__gptrput
+                           1262 ;	crypto.c:26: return file.len;
+   0065 E5 81              1263 	mov	a,sp
+   0067 24 FC              1264 	add	a,#0xFC
+   0069 24 03              1265 	add	a,#0x03
+   006B F9                 1266 	mov	r1,a
+   006C 87 06              1267 	mov	ar6,@r1
+   006E 09                 1268 	inc	r1
+   006F 87 07              1269 	mov	ar7,@r1
+   0071 8E 82              1270 	mov	dpl,r6
+   0073 8F 83              1271 	mov	dph,r7
+   0075 80 03              1272 	sjmp	00103$
+   0077                    1273 00102$:
+                           1274 ;	crypto.c:29: return 0;
+   0077 90 00 00           1275 	mov	dptr,#0x0000
+   007A                    1276 00103$:
+   007A E5 81              1277 	mov	a,sp
+   007C 24 FB              1278 	add	a,#0xFB
+   007E F5 81              1279 	mov	sp,a
+   0080 02s00r00           1280 	ljmp	__sdcc_banked_ret
+                           1281 ;------------------------------------------------------------
+                           1282 ;Allocation info for local variables in function 'get_password_encrypted_by_public_key'
+                           1283 ;------------------------------------------------------------
+                           1284 ;pwd                       Allocated to registers r5 r6 r7 
+                           1285 ;file                      Allocated to stack - sp -4
+                           1286 ;------------------------------------------------------------
+                           1287 ;	crypto.c:32: uint16_t get_password_encrypted_by_public_key(uint8_t **pwd)
+                           1288 ;	-----------------------------------------
+                           1289 ;	 function get_password_encrypted_by_public_key
+                           1290 ;	-----------------------------------------
+   0083                    1291 _get_password_encrypted_by_public_key:
+   0083 E5 81              1292 	mov	a,sp
+   0085 24 05              1293 	add	a,#0x05
+   0087 F5 81              1294 	mov	sp,a
+   0089 AD 82              1295 	mov	r5,dpl
+   008B AE 83              1296 	mov	r6,dph
+   008D AF F0              1297 	mov	r7,b
+                           1298 ;	crypto.c:35: if(device_fs_open("/EN_PWD", &file)) {
+   008F E5 81              1299 	mov	a,sp
+   0091 24 FC              1300 	add	a,#0xFC
+   0093 FC                 1301 	mov	r4,a
+   0094 7B 00              1302 	mov	r3,#0x00
+   0096 7A 40              1303 	mov	r2,#0x40
+   0098 C0 07              1304 	push	ar7
+   009A C0 06              1305 	push	ar6
+   009C C0 05              1306 	push	ar5
+   009E C0 04              1307 	push	ar4
+   00A0 C0 03              1308 	push	ar3
+   00A2 C0 02              1309 	push	ar2
+   00A4 90s00r05           1310 	mov	dptr,#__str_1
+   00A7 75 F0 80           1311 	mov	b,#0x80
+   00AA 78r00              1312 	mov	r0,#_device_fs_open
+   00AC 79s00              1313 	mov	r1,#(_device_fs_open >> 8)
+   00AE 7As00              1314 	mov	r2,#(_device_fs_open >> 16)
+   00B0 12s00r00           1315 	lcall	__sdcc_banked_call
+   00B3 AB 82              1316 	mov	r3,dpl
+   00B5 AC 83              1317 	mov	r4,dph
+   00B7 15 81              1318 	dec	sp
+   00B9 15 81              1319 	dec	sp
+   00BB 15 81              1320 	dec	sp
+   00BD D0 05              1321 	pop	ar5
+   00BF D0 06              1322 	pop	ar6
+   00C1 D0 07              1323 	pop	ar7
+   00C3 EB                 1324 	mov	a,r3
+   00C4 4C                 1325 	orl	a,r4
+   00C5 60 33              1326 	jz	00102$
+                           1327 ;	crypto.c:36: *pwd = file.data;
+   00C7 E5 81              1328 	mov	a,sp
+   00C9 24 FC              1329 	add	a,#0xFC
+   00CB F9                 1330 	mov	r1,a
+   00CC 87 02              1331 	mov	ar2,@r1
+   00CE 09                 1332 	inc	r1
+   00CF 87 03              1333 	mov	ar3,@r1
+   00D1 09                 1334 	inc	r1
+   00D2 87 04              1335 	mov	ar4,@r1
+   00D4 8D 82              1336 	mov	dpl,r5
+   00D6 8E 83              1337 	mov	dph,r6
+   00D8 8F F0              1338 	mov	b,r7
+   00DA EA                 1339 	mov	a,r2
+   00DB 12s00r00           1340 	lcall	__gptrput
+   00DE A3                 1341 	inc	dptr
+   00DF EB                 1342 	mov	a,r3
+   00E0 12s00r00           1343 	lcall	__gptrput
+   00E3 A3                 1344 	inc	dptr
+   00E4 EC                 1345 	mov	a,r4
+   00E5 12s00r00           1346 	lcall	__gptrput
+                           1347 ;	crypto.c:37: return file.len;
+   00E8 E5 81              1348 	mov	a,sp
+   00EA 24 FC              1349 	add	a,#0xFC
+   00EC 24 03              1350 	add	a,#0x03
+   00EE F9                 1351 	mov	r1,a
+   00EF 87 06              1352 	mov	ar6,@r1
+   00F1 09                 1353 	inc	r1
+   00F2 87 07              1354 	mov	ar7,@r1
+   00F4 8E 82              1355 	mov	dpl,r6
+   00F6 8F 83              1356 	mov	dph,r7
+   00F8 80 03              1357 	sjmp	00103$
+   00FA                    1358 00102$:
+                           1359 ;	crypto.c:40: return 0;
+   00FA 90 00 00           1360 	mov	dptr,#0x0000
+   00FD                    1361 00103$:
+   00FD E5 81              1362 	mov	a,sp
+   00FF 24 FB              1363 	add	a,#0xFB
+   0101 F5 81              1364 	mov	sp,a
+   0103 02s00r00           1365 	ljmp	__sdcc_banked_ret
+                           1366 ;------------------------------------------------------------
+                           1367 ;Allocation info for local variables in function 'get_network_shared_key'
+                           1368 ;------------------------------------------------------------
+                           1369 ;	crypto.c:43: network_shared_key_t *get_network_shared_key()
+                           1370 ;	-----------------------------------------
+                           1371 ;	 function get_network_shared_key
+                           1372 ;	-----------------------------------------
+   0106                    1373 _get_network_shared_key:
+                           1374 ;	crypto.c:45: return &network_shared_key;
+   0106 90s00r00           1375 	mov	dptr,#_network_shared_key
+   0109 75 F0 00           1376 	mov	b,#0x00
+   010C 02s00r00           1377 	ljmp	__sdcc_banked_ret
+                           1378 ;------------------------------------------------------------
+                           1379 ;Allocation info for local variables in function 'set_network_shared_key'
+                           1380 ;------------------------------------------------------------
+                           1381 ;version                   Allocated to stack - sp -4
+                           1382 ;key                       Allocated to registers r5 r6 r7 
+                           1383 ;------------------------------------------------------------
+                           1384 ;	crypto.c:48: uint8_t set_network_shared_key(uint8_t *key, uint16_t version)
+                           1385 ;	-----------------------------------------
+                           1386 ;	 function set_network_shared_key
+                           1387 ;	-----------------------------------------
+   010F                    1388 _set_network_shared_key:
+   010F AD 82              1389 	mov	r5,dpl
+   0111 AE 83              1390 	mov	r6,dph
+   0113 AF F0              1391 	mov	r7,b
+                           1392 ;	crypto.c:50: if (!key) {
+   0115 ED                 1393 	mov	a,r5
+   0116 4E                 1394 	orl	a,r6
+                           1395 ;	crypto.c:51: return FAIL;
+   0117 70 04              1396 	jnz	00102$
+   0119 F5 82              1397 	mov	dpl,a
+   011B 80 37              1398 	sjmp	00103$
+   011D                    1399 00102$:
+                           1400 ;	crypto.c:53: memcpy(network_shared_key.key, key, DEVICE_KEY_SIZE);
+   011D 74 10              1401 	mov	a,#0x10
+   011F C0 E0              1402 	push	acc
+   0121 E4                 1403 	clr	a
+   0122 C0 E0              1404 	push	acc
+   0124 C0 05              1405 	push	ar5
+   0126 C0 06              1406 	push	ar6
+   0128 C0 07              1407 	push	ar7
+   012A 90s00r03           1408 	mov	dptr,#(_network_shared_key + 0x0003)
+   012D 75 F0 00           1409 	mov	b,#0x00
+   0130 78r00              1410 	mov	r0,#_memcpy
+   0132 79s00              1411 	mov	r1,#(_memcpy >> 8)
+   0134 7As00              1412 	mov	r2,#(_memcpy >> 16)
+   0136 12s00r00           1413 	lcall	__sdcc_banked_call
+   0139 E5 81              1414 	mov	a,sp
+   013B 24 FB              1415 	add	a,#0xfb
+                           1416 ;	crypto.c:54: network_shared_key.version = version;
+   013D F5 81              1417 	mov	sp,a
+   013F 90s00r01           1418 	mov	dptr,#(_network_shared_key + 0x0001)
+   0142 24 FC              1419 	add	a,#0xfc
+   0144 F8                 1420 	mov	r0,a
+   0145 E6                 1421 	mov	a,@r0
+   0146 F0                 1422 	movx	@dptr,a
+   0147 A3                 1423 	inc	dptr
+   0148 08                 1424 	inc	r0
+   0149 E6                 1425 	mov	a,@r0
+   014A F0                 1426 	movx	@dptr,a
+                           1427 ;	crypto.c:55: network_shared_key.used = 1;
+   014B 90s00r00           1428 	mov	dptr,#_network_shared_key
+   014E 74 01              1429 	mov	a,#0x01
+   0150 F0                 1430 	movx	@dptr,a
+                           1431 ;	crypto.c:57: return SUCCESS;
+   0151 75 82 01           1432 	mov	dpl,#0x01
+   0154                    1433 00103$:
+   0154 02s00r00           1434 	ljmp	__sdcc_banked_ret
+                           1435 ;------------------------------------------------------------
+                           1436 ;Allocation info for local variables in function 'encrypt_data_by_network_shared_key'
+                           1437 ;------------------------------------------------------------
+                           1438 ;len                       Allocated to stack - sp -23
+                           1439 ;enc_buf                   Allocated to stack - sp -26
+                           1440 ;data                      Allocated to stack - sp -18
+                           1441 ;len1                      Allocated to registers r6 r7 
+                           1442 ;iv                        Allocated to stack - sp -15
+                           1443 ;------------------------------------------------------------
+                           1444 ;	crypto.c:60: uint16_t encrypt_data_by_network_shared_key(uint8_t *data, uint16_t len, uint8_t *enc_buf)
+                           1445 ;	-----------------------------------------
+                           1446 ;	 function encrypt_data_by_network_shared_key
+                           1447 ;	-----------------------------------------
+   0157                    1448 _encrypt_data_by_network_shared_key:
+   0157 C0 82              1449 	push	dpl
+   0159 C0 83              1450 	push	dph
+   015B C0 F0              1451 	push	b
+   015D E5 81              1452 	mov	a,sp
+   015F 24 10              1453 	add	a,#0x10
+                           1454 ;	crypto.c:65: memset(iv, 0x0, DEVICE_KEY_SIZE);    
+   0161 F5 81              1455 	mov	sp,a
+   0163 24 F1              1456 	add	a,#0xF1
+   0165 FC                 1457 	mov	r4,a
+   0166 FA                 1458 	mov	r2,a
+   0167 7B 00              1459 	mov	r3,#0x00
+   0169 7F 40              1460 	mov	r7,#0x40
+   016B C0 04              1461 	push	ar4
+   016D 74 10              1462 	mov	a,#0x10
+   016F C0 E0              1463 	push	acc
+   0171 E4                 1464 	clr	a
+   0172 C0 E0              1465 	push	acc
+   0174 E4                 1466 	clr	a
+   0175 C0 E0              1467 	push	acc
+   0177 8A 82              1468 	mov	dpl,r2
+   0179 8B 83              1469 	mov	dph,r3
+   017B 8F F0              1470 	mov	b,r7
+   017D 78r00              1471 	mov	r0,#_memset
+   017F 79s00              1472 	mov	r1,#(_memset >> 8)
+   0181 7As00              1473 	mov	r2,#(_memset >> 16)
+   0183 12s00r00           1474 	lcall	__sdcc_banked_call
+   0186 15 81              1475 	dec	sp
+   0188 15 81              1476 	dec	sp
+   018A 15 81              1477 	dec	sp
+                           1478 ;	crypto.c:66: cc2530_aes_set_key(network_shared_key.key);
+   018C 90s00r03           1479 	mov	dptr,#(_network_shared_key + 0x0003)
+   018F 75 F0 00           1480 	mov	b,#0x00
+   0192 78r00              1481 	mov	r0,#_cc2530_aes_set_key
+   0194 79s00              1482 	mov	r1,#(_cc2530_aes_set_key >> 8)
+   0196 7As00              1483 	mov	r2,#(_cc2530_aes_set_key >> 16)
+   0198 12s00r00           1484 	lcall	__sdcc_banked_call
+                           1485 ;	crypto.c:67: len1 = cc2530_aes_encrypt(AES_MODE_CBC, data, len, enc_buf, iv);
+   019B 7F 00              1486 	mov	r7,#0x00
+   019D 7E 40              1487 	mov	r6,#0x40
+   019F C0 07              1488 	push	ar7
+   01A1 C0 06              1489 	push	ar6
+   01A3 E5 81              1490 	mov	a,sp
+   01A5 24 E3              1491 	add	a,#0xe3
+   01A7 F8                 1492 	mov	r0,a
+   01A8 E6                 1493 	mov	a,@r0
+   01A9 C0 E0              1494 	push	acc
+   01AB 08                 1495 	inc	r0
+   01AC E6                 1496 	mov	a,@r0
+   01AD C0 E0              1497 	push	acc
+   01AF 08                 1498 	inc	r0
+   01B0 E6                 1499 	mov	a,@r0
+   01B1 C0 E0              1500 	push	acc
+   01B3 E5 81              1501 	mov	a,sp
+   01B5 24 E3              1502 	add	a,#0xe3
+   01B7 F8                 1503 	mov	r0,a
+   01B8 E6                 1504 	mov	a,@r0
+   01B9 C0 E0              1505 	push	acc
+   01BB 08                 1506 	inc	r0
+   01BC E6                 1507 	mov	a,@r0
+   01BD C0 E0              1508 	push	acc
+   01BF E5 81              1509 	mov	a,sp
+   01C1 24 E6              1510 	add	a,#0xe6
+   01C3 F8                 1511 	mov	r0,a
+   01C4 E6                 1512 	mov	a,@r0
+   01C5 C0 E0              1513 	push	acc
+   01C7 08                 1514 	inc	r0
+   01C8 E6                 1515 	mov	a,@r0
+   01C9 C0 E0              1516 	push	acc
+   01CB 08                 1517 	inc	r0
+   01CC E6                 1518 	mov	a,@r0
+   01CD C0 E0              1519 	push	acc
+   01CF 75 82 00           1520 	mov	dpl,#0x00
+   01D2 78r00              1521 	mov	r0,#_cc2530_aes_encrypt
+   01D4 79s00              1522 	mov	r1,#(_cc2530_aes_encrypt >> 8)
+   01D6 7As00              1523 	mov	r2,#(_cc2530_aes_encrypt >> 16)
+   01D8 12s00r00           1524 	lcall	__sdcc_banked_call
+   01DB AE 82              1525 	mov	r6,dpl
+   01DD AF 83              1526 	mov	r7,dph
+   01DF E5 81              1527 	mov	a,sp
+   01E1 24 F5              1528 	add	a,#0xf5
+                           1529 ;	crypto.c:69: return len1;
+   01E3 F5 81              1530 	mov	sp,a
+   01E5 8E 82              1531 	mov	dpl,r6
+   01E7 8F 83              1532 	mov	dph,r7
+   01E9 24 ED              1533 	add	a,#0xED
+   01EB F5 81              1534 	mov	sp,a
+   01ED 02s00r00           1535 	ljmp	__sdcc_banked_ret
+                           1536 ;------------------------------------------------------------
+                           1537 ;Allocation info for local variables in function 'decrypt_data_by_network_shared_key'
+                           1538 ;------------------------------------------------------------
+                           1539 ;len                       Allocated to stack - sp -23
+                           1540 ;dec_buf                   Allocated to stack - sp -26
+                           1541 ;data                      Allocated to stack - sp -18
+                           1542 ;len1                      Allocated to registers r6 r7 
+                           1543 ;iv                        Allocated to stack - sp -15
+                           1544 ;------------------------------------------------------------
+                           1545 ;	crypto.c:72: uint16_t decrypt_data_by_network_shared_key(uint8_t *data, uint16_t len, uint8_t *dec_buf)
+                           1546 ;	-----------------------------------------
+                           1547 ;	 function decrypt_data_by_network_shared_key
+                           1548 ;	-----------------------------------------
+   01F0                    1549 _decrypt_data_by_network_shared_key:
+   01F0 C0 82              1550 	push	dpl
+   01F2 C0 83              1551 	push	dph
+   01F4 C0 F0              1552 	push	b
+   01F6 E5 81              1553 	mov	a,sp
+   01F8 24 10              1554 	add	a,#0x10
+                           1555 ;	crypto.c:77: memset(iv, 0x0, DEVICE_KEY_SIZE);    
+   01FA F5 81              1556 	mov	sp,a
+   01FC 24 F1              1557 	add	a,#0xF1
+   01FE FC                 1558 	mov	r4,a
+   01FF FA                 1559 	mov	r2,a
+   0200 7B 00              1560 	mov	r3,#0x00
+   0202 7F 40              1561 	mov	r7,#0x40
+   0204 C0 04              1562 	push	ar4
+   0206 74 10              1563 	mov	a,#0x10
+   0208 C0 E0              1564 	push	acc
+   020A E4                 1565 	clr	a
+   020B C0 E0              1566 	push	acc
+   020D E4                 1567 	clr	a
+   020E C0 E0              1568 	push	acc
+   0210 8A 82              1569 	mov	dpl,r2
+   0212 8B 83              1570 	mov	dph,r3
+   0214 8F F0              1571 	mov	b,r7
+   0216 78r00              1572 	mov	r0,#_memset
+   0218 79s00              1573 	mov	r1,#(_memset >> 8)
+   021A 7As00              1574 	mov	r2,#(_memset >> 16)
+   021C 12s00r00           1575 	lcall	__sdcc_banked_call
+   021F 15 81              1576 	dec	sp
+   0221 15 81              1577 	dec	sp
+   0223 15 81              1578 	dec	sp
+                           1579 ;	crypto.c:78: cc2530_aes_set_key(network_shared_key.key);
+   0225 90s00r03           1580 	mov	dptr,#(_network_shared_key + 0x0003)
+   0228 75 F0 00           1581 	mov	b,#0x00
+   022B 78r00              1582 	mov	r0,#_cc2530_aes_set_key
+   022D 79s00              1583 	mov	r1,#(_cc2530_aes_set_key >> 8)
+   022F 7As00              1584 	mov	r2,#(_cc2530_aes_set_key >> 16)
+   0231 12s00r00           1585 	lcall	__sdcc_banked_call
+                           1586 ;	crypto.c:79: len1 = cc2530_aes_decrypt(AES_MODE_CBC, data, len, dec_buf, iv);
+   0234 7F 00              1587 	mov	r7,#0x00
+   0236 7E 40              1588 	mov	r6,#0x40
+   0238 C0 07              1589 	push	ar7
+   023A C0 06              1590 	push	ar6
+   023C E5 81              1591 	mov	a,sp
+   023E 24 E3              1592 	add	a,#0xe3
+   0240 F8                 1593 	mov	r0,a
+   0241 E6                 1594 	mov	a,@r0
+   0242 C0 E0              1595 	push	acc
+   0244 08                 1596 	inc	r0
+   0245 E6                 1597 	mov	a,@r0
+   0246 C0 E0              1598 	push	acc
+   0248 08                 1599 	inc	r0
+   0249 E6                 1600 	mov	a,@r0
+   024A C0 E0              1601 	push	acc
+   024C E5 81              1602 	mov	a,sp
+   024E 24 E3              1603 	add	a,#0xe3
+   0250 F8                 1604 	mov	r0,a
+   0251 E6                 1605 	mov	a,@r0
+   0252 C0 E0              1606 	push	acc
+   0254 08                 1607 	inc	r0
+   0255 E6                 1608 	mov	a,@r0
+   0256 C0 E0              1609 	push	acc
+   0258 E5 81              1610 	mov	a,sp
+   025A 24 E6              1611 	add	a,#0xe6
+   025C F8                 1612 	mov	r0,a
+   025D E6                 1613 	mov	a,@r0
+   025E C0 E0              1614 	push	acc
+   0260 08                 1615 	inc	r0
+   0261 E6                 1616 	mov	a,@r0
+   0262 C0 E0              1617 	push	acc
+   0264 08                 1618 	inc	r0
+   0265 E6                 1619 	mov	a,@r0
+   0266 C0 E0              1620 	push	acc
+   0268 75 82 00           1621 	mov	dpl,#0x00
+   026B 78r00              1622 	mov	r0,#_cc2530_aes_decrypt
+   026D 79s00              1623 	mov	r1,#(_cc2530_aes_decrypt >> 8)
+   026F 7As00              1624 	mov	r2,#(_cc2530_aes_decrypt >> 16)
+   0271 12s00r00           1625 	lcall	__sdcc_banked_call
+   0274 AE 82              1626 	mov	r6,dpl
+   0276 AF 83              1627 	mov	r7,dph
+   0278 E5 81              1628 	mov	a,sp
+   027A 24 F5              1629 	add	a,#0xf5
+                           1630 ;	crypto.c:81: return len1;
+   027C F5 81              1631 	mov	sp,a
+   027E 8E 82              1632 	mov	dpl,r6
+   0280 8F 83              1633 	mov	dph,r7
+   0282 24 ED              1634 	add	a,#0xED
+   0284 F5 81              1635 	mov	sp,a
+   0286 02s00r00           1636 	ljmp	__sdcc_banked_ret
+                           1637 ;------------------------------------------------------------
+                           1638 ;Allocation info for local variables in function 'generate_master_key'
+                           1639 ;------------------------------------------------------------
+                           1640 ;i                         Allocated to stack - sp -9
+                           1641 ;pwd                       Allocated to stack - sp -8
+                           1642 ;sloc0                     Allocated to stack - sp -5
+                           1643 ;sloc1                     Allocated to stack - sp -5
+                           1644 ;sloc2                     Allocated to stack - sp -3
+                           1645 ;version                   Allocated with name '_generate_master_key_version_1_1'
+                           1646 ;------------------------------------------------------------
+                           1647 ;	crypto.c:84: static uint8_t generate_master_key()
+                           1648 ;	-----------------------------------------
+                           1649 ;	 function generate_master_key
+                           1650 ;	-----------------------------------------
+   0289                    1651 _generate_master_key:
+   0289 E5 81              1652 	mov	a,sp
+   028B 24 0A              1653 	add	a,#0x0A
+                           1654 ;	crypto.c:87: uint8_t *pwd = NULL;
+   028D F5 81              1655 	mov	sp,a
+   028F 24 F8              1656 	add	a,#0xf8
+   0291 F8                 1657 	mov	r0,a
+   0292 E4                 1658 	clr	a
+   0293 F6                 1659 	mov	@r0,a
+   0294 08                 1660 	inc	r0
+   0295 F6                 1661 	mov	@r0,a
+   0296 08                 1662 	inc	r0
+   0297 76 00              1663 	mov	@r0,#0x00
+                           1664 ;	crypto.c:90: get_password(&pwd);
+   0299 E5 81              1665 	mov	a,sp
+   029B 24 F8              1666 	add	a,#0xF8
+   029D FF                 1667 	mov	r7,a
+   029E 7E 00              1668 	mov	r6,#0x00
+   02A0 7D 40              1669 	mov	r5,#0x40
+   02A2 8F 82              1670 	mov	dpl,r7
+   02A4 8E 83              1671 	mov	dph,r6
+   02A6 8D F0              1672 	mov	b,r5
+   02A8 78r00              1673 	mov	r0,#_get_password
+   02AA 79s00              1674 	mov	r1,#(_get_password >> 8)
+   02AC 7As00              1675 	mov	r2,#(_get_password >> 16)
+   02AE 12s00r00           1676 	lcall	__sdcc_banked_call
+                           1677 ;	crypto.c:91: if (!pwd) {
+   02B1 E5 81              1678 	mov	a,sp
+   02B3 24 F8              1679 	add	a,#0xf8
+   02B5 F8                 1680 	mov	r0,a
+   02B6 E6                 1681 	mov	a,@r0
+   02B7 08                 1682 	inc	r0
+   02B8 46                 1683 	orl	a,@r0
+                           1684 ;	crypto.c:92: return FAIL;
+   02B9 70 05              1685 	jnz	00102$
+   02BB F5 82              1686 	mov	dpl,a
+   02BD 02s03rC6           1687 	ljmp	00107$
+   02C0                    1688 00102$:
+                           1689 ;	crypto.c:95: master_key.random_num = random_rand();
+   02C0 78r00              1690 	mov	r0,#_random_rand
+   02C2 79s00              1691 	mov	r1,#(_random_rand >> 8)
+   02C4 7As00              1692 	mov	r2,#(_random_rand >> 16)
+   02C6 12s00r00           1693 	lcall	__sdcc_banked_call
+   02C9 AE 82              1694 	mov	r6,dpl
+   02CB AF 83              1695 	mov	r7,dph
+   02CD 7D 00              1696 	mov	r5,#0x00
+   02CF 7C 00              1697 	mov	r4,#0x00
+   02D1 90s00r13           1698 	mov	dptr,#_master_key
+   02D4 EE                 1699 	mov	a,r6
+   02D5 F0                 1700 	movx	@dptr,a
+   02D6 A3                 1701 	inc	dptr
+   02D7 EF                 1702 	mov	a,r7
+   02D8 F0                 1703 	movx	@dptr,a
+   02D9 A3                 1704 	inc	dptr
+   02DA ED                 1705 	mov	a,r5
+   02DB F0                 1706 	movx	@dptr,a
+   02DC A3                 1707 	inc	dptr
+   02DD EC                 1708 	mov	a,r4
+   02DE F0                 1709 	movx	@dptr,a
+                           1710 ;	crypto.c:100: PRINTF("master key:");
+   02DF 74r0D              1711 	mov	a,#__str_2
+   02E1 C0 E0              1712 	push	acc
+   02E3 74s00              1713 	mov	a,#(__str_2 >> 8)
+   02E5 C0 E0              1714 	push	acc
+   02E7 74 80              1715 	mov	a,#0x80
+   02E9 C0 E0              1716 	push	acc
+   02EB 78r00              1717 	mov	r0,#_printf
+   02ED 79s00              1718 	mov	r1,#(_printf >> 8)
+   02EF 7As00              1719 	mov	r2,#(_printf >> 16)
+   02F1 12s00r00           1720 	lcall	__sdcc_banked_call
+   02F4 15 81              1721 	dec	sp
+   02F6 15 81              1722 	dec	sp
+   02F8 15 81              1723 	dec	sp
+                           1724 ;	crypto.c:101: for (i = 0; i < DEVICE_KEY_SIZE; i++) {
+   02FA E5 81              1725 	mov	a,sp
+   02FC 24 F7              1726 	add	a,#0xf7
+   02FE F8                 1727 	mov	r0,a
+   02FF 76 00              1728 	mov	@r0,#0x00
+   0301                    1729 00103$:
+   0301 E5 81              1730 	mov	a,sp
+   0303 24 F7              1731 	add	a,#0xf7
+   0305 F8                 1732 	mov	r0,a
+   0306 B6 10 00           1733 	cjne	@r0,#0x10,00117$
+   0309                    1734 00117$:
+   0309 40 03              1735 	jc	00118$
+   030B 02s03rA8           1736 	ljmp	00106$
+   030E                    1737 00118$:
+                           1738 ;	crypto.c:102: master_key.key[i] = pwd[i]^(master_key.random_num & 0xFF);
+   030E E5 81              1739 	mov	a,sp
+   0310 24 F7              1740 	add	a,#0xf7
+   0312 F8                 1741 	mov	r0,a
+   0313 E5 81              1742 	mov	a,sp
+   0315 24 FB              1743 	add	a,#0xfb
+   0317 F9                 1744 	mov	r1,a
+   0318 E6                 1745 	mov	a,@r0
+   0319 24r17              1746 	add	a,#(_master_key + 0x0004)
+   031B F7                 1747 	mov	@r1,a
+   031C E4                 1748 	clr	a
+   031D 34s00              1749 	addc	a,#((_master_key + 0x0004) >> 8)
+   031F 09                 1750 	inc	r1
+   0320 F7                 1751 	mov	@r1,a
+   0321 E5 81              1752 	mov	a,sp
+   0323 24 F8              1753 	add	a,#0xf8
+   0325 F8                 1754 	mov	r0,a
+   0326 E5 81              1755 	mov	a,sp
+   0328 24 F7              1756 	add	a,#0xf7
+   032A F9                 1757 	mov	r1,a
+   032B E7                 1758 	mov	a,@r1
+   032C 26                 1759 	add	a,@r0
+   032D FA                 1760 	mov	r2,a
+   032E E4                 1761 	clr	a
+   032F 08                 1762 	inc	r0
+   0330 36                 1763 	addc	a,@r0
+   0331 FB                 1764 	mov	r3,a
+   0332 08                 1765 	inc	r0
+   0333 86 04              1766 	mov	ar4,@r0
+   0335 8A 82              1767 	mov	dpl,r2
+   0337 8B 83              1768 	mov	dph,r3
+   0339 8C F0              1769 	mov	b,r4
+   033B 12s00r00           1770 	lcall	__gptrget
+   033E FE                 1771 	mov	r6,a
+   033F 90s00r13           1772 	mov	dptr,#_master_key
+   0342 E0                 1773 	movx	a,@dptr
+   0343 FA                 1774 	mov	r2,a
+   0344 A3                 1775 	inc	dptr
+   0345 E0                 1776 	movx	a,@dptr
+   0346 A3                 1777 	inc	dptr
+   0347 E0                 1778 	movx	a,@dptr
+   0348 A3                 1779 	inc	dptr
+   0349 E0                 1780 	movx	a,@dptr
+   034A E5 81              1781 	mov	a,sp
+   034C 24 FD              1782 	add	a,#0xfd
+   034E F8                 1783 	mov	r0,a
+   034F A6 02              1784 	mov	@r0,ar2
+   0351 08                 1785 	inc	r0
+   0352 76 00              1786 	mov	@r0,#0x00
+   0354 08                 1787 	inc	r0
+   0355 76 00              1788 	mov	@r0,#0x00
+   0357 08                 1789 	inc	r0
+   0358 76 00              1790 	mov	@r0,#0x00
+   035A 8E 04              1791 	mov	ar4,r6
+   035C E4                 1792 	clr	a
+   035D FD                 1793 	mov	r5,a
+   035E FE                 1794 	mov	r6,a
+   035F FF                 1795 	mov	r7,a
+   0360 E5 81              1796 	mov	a,sp
+   0362 24 FD              1797 	add	a,#0xfd
+   0364 F8                 1798 	mov	r0,a
+   0365 E6                 1799 	mov	a,@r0
+   0366 62 04              1800 	xrl	ar4,a
+   0368 08                 1801 	inc	r0
+   0369 E6                 1802 	mov	a,@r0
+   036A 62 05              1803 	xrl	ar5,a
+   036C 08                 1804 	inc	r0
+   036D E6                 1805 	mov	a,@r0
+   036E 62 06              1806 	xrl	ar6,a
+   0370 08                 1807 	inc	r0
+   0371 E6                 1808 	mov	a,@r0
+   0372 62 07              1809 	xrl	ar7,a
+   0374 E5 81              1810 	mov	a,sp
+   0376 24 FB              1811 	add	a,#0xfb
+   0378 F8                 1812 	mov	r0,a
+   0379 86 82              1813 	mov	dpl,@r0
+   037B 08                 1814 	inc	r0
+   037C 86 83              1815 	mov	dph,@r0
+   037E EC                 1816 	mov	a,r4
+   037F F0                 1817 	movx	@dptr,a
+                           1818 ;	crypto.c:104: PRINTF("%02x ", master_key.key[i]);
+   0380 7F 00              1819 	mov	r7,#0x00
+   0382 C0 04              1820 	push	ar4
+   0384 C0 07              1821 	push	ar7
+   0386 74r19              1822 	mov	a,#__str_3
+   0388 C0 E0              1823 	push	acc
+   038A 74s00              1824 	mov	a,#(__str_3 >> 8)
+   038C C0 E0              1825 	push	acc
+   038E 74 80              1826 	mov	a,#0x80
+   0390 C0 E0              1827 	push	acc
+   0392 78r00              1828 	mov	r0,#_printf
+   0394 79s00              1829 	mov	r1,#(_printf >> 8)
+   0396 7As00              1830 	mov	r2,#(_printf >> 16)
+   0398 12s00r00           1831 	lcall	__sdcc_banked_call
+   039B E5 81              1832 	mov	a,sp
+   039D 24 FB              1833 	add	a,#0xfb
+                           1834 ;	crypto.c:101: for (i = 0; i < DEVICE_KEY_SIZE; i++) {
+   039F F5 81              1835 	mov	sp,a
+   03A1 24 F7              1836 	add	a,#0xf7
+   03A3 F8                 1837 	mov	r0,a
+   03A4 06                 1838 	inc	@r0
+   03A5 02s03r01           1839 	ljmp	00103$
+   03A8                    1840 00106$:
+                           1841 ;	crypto.c:106: PRINTF("\n");
+   03A8 74r1F              1842 	mov	a,#__str_4
+   03AA C0 E0              1843 	push	acc
+   03AC 74s00              1844 	mov	a,#(__str_4 >> 8)
+   03AE C0 E0              1845 	push	acc
+   03B0 74 80              1846 	mov	a,#0x80
+   03B2 C0 E0              1847 	push	acc
+   03B4 78r00              1848 	mov	r0,#_printf
+   03B6 79s00              1849 	mov	r1,#(_printf >> 8)
+   03B8 7As00              1850 	mov	r2,#(_printf >> 16)
+   03BA 12s00r00           1851 	lcall	__sdcc_banked_call
+   03BD 15 81              1852 	dec	sp
+   03BF 15 81              1853 	dec	sp
+   03C1 15 81              1854 	dec	sp
+                           1855 ;	crypto.c:108: return SUCCESS;
+   03C3 75 82 01           1856 	mov	dpl,#0x01
+   03C6                    1857 00107$:
+   03C6 E5 81              1858 	mov	a,sp
+   03C8 24 F6              1859 	add	a,#0xF6
+   03CA F5 81              1860 	mov	sp,a
+   03CC 02s00r00           1861 	ljmp	__sdcc_banked_ret
+                           1862 ;------------------------------------------------------------
+                           1863 ;Allocation info for local variables in function 'get_master_key'
+                           1864 ;------------------------------------------------------------
+                           1865 ;	crypto.c:111: master_key_t *get_master_key()
+                           1866 ;	-----------------------------------------
+                           1867 ;	 function get_master_key
+                           1868 ;	-----------------------------------------
+   03CF                    1869 _get_master_key:
+                           1870 ;	crypto.c:113: return &master_key;
+   03CF 90s00r13           1871 	mov	dptr,#_master_key
+   03D2 75 F0 00           1872 	mov	b,#0x00
+   03D5 02s00r00           1873 	ljmp	__sdcc_banked_ret
+                           1874 ;------------------------------------------------------------
+                           1875 ;Allocation info for local variables in function 'decrypt_data_by_master_key'
+                           1876 ;------------------------------------------------------------
+                           1877 ;len                       Allocated to stack - sp -23
+                           1878 ;dec_buf                   Allocated to stack - sp -26
+                           1879 ;data                      Allocated to stack - sp -18
+                           1880 ;i                         Allocated to registers r4 
+                           1881 ;iv                        Allocated to stack - sp -15
+                           1882 ;------------------------------------------------------------
+                           1883 ;	crypto.c:116: uint16_t decrypt_data_by_master_key(uint8_t *data, uint16_t len, uint8_t *dec_buf)
+                           1884 ;	-----------------------------------------
+                           1885 ;	 function decrypt_data_by_master_key
+                           1886 ;	-----------------------------------------
+   03D8                    1887 _decrypt_data_by_master_key:
+   03D8 C0 82              1888 	push	dpl
+   03DA C0 83              1889 	push	dph
+   03DC C0 F0              1890 	push	b
+   03DE E5 81              1891 	mov	a,sp
+   03E0 24 10              1892 	add	a,#0x10
+   03E2 F5 81              1893 	mov	sp,a
+                           1894 ;	crypto.c:121: PRINTF("set master key:");
+   03E4 74r21              1895 	mov	a,#__str_5
+   03E6 C0 E0              1896 	push	acc
+   03E8 74s00              1897 	mov	a,#(__str_5 >> 8)
+   03EA C0 E0              1898 	push	acc
+   03EC 74 80              1899 	mov	a,#0x80
+   03EE C0 E0              1900 	push	acc
+   03F0 78r00              1901 	mov	r0,#_printf
+   03F2 79s00              1902 	mov	r1,#(_printf >> 8)
+   03F4 7As00              1903 	mov	r2,#(_printf >> 16)
+   03F6 12s00r00           1904 	lcall	__sdcc_banked_call
+   03F9 15 81              1905 	dec	sp
+   03FB 15 81              1906 	dec	sp
+   03FD 15 81              1907 	dec	sp
+                           1908 ;	crypto.c:122: for (i = 0; i < DEVICE_KEY_SIZE; i++) {
+   03FF 7C 00              1909 	mov	r4,#0x00
+   0401                    1910 00101$:
+   0401 BC 10 00           1911 	cjne	r4,#0x10,00112$
+   0404                    1912 00112$:
+   0404 50 34              1913 	jnc	00104$
+                           1914 ;	crypto.c:123: PRINTF("%02x ", master_key.key[i]);
+   0406 EC                 1915 	mov	a,r4
+   0407 24r17              1916 	add	a,#(_master_key + 0x0004)
+   0409 F5 82              1917 	mov	dpl,a
+   040B E4                 1918 	clr	a
+   040C 34s00              1919 	addc	a,#((_master_key + 0x0004) >> 8)
+   040E F5 83              1920 	mov	dph,a
+   0410 E0                 1921 	movx	a,@dptr
+   0411 FB                 1922 	mov	r3,a
+   0412 7A 00              1923 	mov	r2,#0x00
+   0414 C0 04              1924 	push	ar4
+   0416 C0 03              1925 	push	ar3
+   0418 C0 02              1926 	push	ar2
+   041A 74r19              1927 	mov	a,#__str_3
+   041C C0 E0              1928 	push	acc
+   041E 74s00              1929 	mov	a,#(__str_3 >> 8)
+   0420 C0 E0              1930 	push	acc
+   0422 74 80              1931 	mov	a,#0x80
+   0424 C0 E0              1932 	push	acc
+   0426 78r00              1933 	mov	r0,#_printf
+   0428 79s00              1934 	mov	r1,#(_printf >> 8)
+   042A 7As00              1935 	mov	r2,#(_printf >> 16)
+   042C 12s00r00           1936 	lcall	__sdcc_banked_call
+   042F E5 81              1937 	mov	a,sp
+   0431 24 FB              1938 	add	a,#0xfb
+   0433 F5 81              1939 	mov	sp,a
+   0435 D0 04              1940 	pop	ar4
+                           1941 ;	crypto.c:122: for (i = 0; i < DEVICE_KEY_SIZE; i++) {
+   0437 0C                 1942 	inc	r4
+   0438 80 C7              1943 	sjmp	00101$
+   043A                    1944 00104$:
+                           1945 ;	crypto.c:125: PRINTF("\n");
+   043A 74r1F              1946 	mov	a,#__str_4
+   043C C0 E0              1947 	push	acc
+   043E 74s00              1948 	mov	a,#(__str_4 >> 8)
+   0440 C0 E0              1949 	push	acc
+   0442 74 80              1950 	mov	a,#0x80
+   0444 C0 E0              1951 	push	acc
+   0446 78r00              1952 	mov	r0,#_printf
+   0448 79s00              1953 	mov	r1,#(_printf >> 8)
+   044A 7As00              1954 	mov	r2,#(_printf >> 16)
+   044C 12s00r00           1955 	lcall	__sdcc_banked_call
+   044F 15 81              1956 	dec	sp
+   0451 15 81              1957 	dec	sp
+   0453 15 81              1958 	dec	sp
+                           1959 ;	crypto.c:127: memset(iv, 0x0, DEVICE_KEY_SIZE);    
+   0455 E5 81              1960 	mov	a,sp
+   0457 24 F1              1961 	add	a,#0xF1
+   0459 FC                 1962 	mov	r4,a
+   045A FA                 1963 	mov	r2,a
+   045B 7B 00              1964 	mov	r3,#0x00
+   045D 7F 40              1965 	mov	r7,#0x40
+   045F C0 04              1966 	push	ar4
+   0461 74 10              1967 	mov	a,#0x10
+   0463 C0 E0              1968 	push	acc
+   0465 E4                 1969 	clr	a
+   0466 C0 E0              1970 	push	acc
+   0468 E4                 1971 	clr	a
+   0469 C0 E0              1972 	push	acc
+   046B 8A 82              1973 	mov	dpl,r2
+   046D 8B 83              1974 	mov	dph,r3
+   046F 8F F0              1975 	mov	b,r7
+   0471 78r00              1976 	mov	r0,#_memset
+   0473 79s00              1977 	mov	r1,#(_memset >> 8)
+   0475 7As00              1978 	mov	r2,#(_memset >> 16)
+   0477 12s00r00           1979 	lcall	__sdcc_banked_call
+   047A 15 81              1980 	dec	sp
+   047C 15 81              1981 	dec	sp
+   047E 15 81              1982 	dec	sp
+                           1983 ;	crypto.c:128: cc2530_aes_set_key(master_key.key);
+   0480 90s00r17           1984 	mov	dptr,#(_master_key + 0x0004)
+   0483 75 F0 00           1985 	mov	b,#0x00
+   0486 78r00              1986 	mov	r0,#_cc2530_aes_set_key
+   0488 79s00              1987 	mov	r1,#(_cc2530_aes_set_key >> 8)
+   048A 7As00              1988 	mov	r2,#(_cc2530_aes_set_key >> 16)
+   048C 12s00r00           1989 	lcall	__sdcc_banked_call
+                           1990 ;	crypto.c:129: return cc2530_aes_decrypt(AES_MODE_CBC, data, len, dec_buf, iv);
+   048F 7F 00              1991 	mov	r7,#0x00
+   0491 7E 40              1992 	mov	r6,#0x40
+   0493 C0 07              1993 	push	ar7
+   0495 C0 06              1994 	push	ar6
+   0497 E5 81              1995 	mov	a,sp
+   0499 24 E3              1996 	add	a,#0xe3
+   049B F8                 1997 	mov	r0,a
+   049C E6                 1998 	mov	a,@r0
+   049D C0 E0              1999 	push	acc
+   049F 08                 2000 	inc	r0
+   04A0 E6                 2001 	mov	a,@r0
+   04A1 C0 E0              2002 	push	acc
+   04A3 08                 2003 	inc	r0
+   04A4 E6                 2004 	mov	a,@r0
+   04A5 C0 E0              2005 	push	acc
+   04A7 E5 81              2006 	mov	a,sp
+   04A9 24 E3              2007 	add	a,#0xe3
+   04AB F8                 2008 	mov	r0,a
+   04AC E6                 2009 	mov	a,@r0
+   04AD C0 E0              2010 	push	acc
+   04AF 08                 2011 	inc	r0
+   04B0 E6                 2012 	mov	a,@r0
+   04B1 C0 E0              2013 	push	acc
+   04B3 E5 81              2014 	mov	a,sp
+   04B5 24 E6              2015 	add	a,#0xe6
+   04B7 F8                 2016 	mov	r0,a
+   04B8 E6                 2017 	mov	a,@r0
+   04B9 C0 E0              2018 	push	acc
+   04BB 08                 2019 	inc	r0
+   04BC E6                 2020 	mov	a,@r0
+   04BD C0 E0              2021 	push	acc
+   04BF 08                 2022 	inc	r0
+   04C0 E6                 2023 	mov	a,@r0
+   04C1 C0 E0              2024 	push	acc
+   04C3 75 82 00           2025 	mov	dpl,#0x00
+   04C6 78r00              2026 	mov	r0,#_cc2530_aes_decrypt
+   04C8 79s00              2027 	mov	r1,#(_cc2530_aes_decrypt >> 8)
+   04CA 7As00              2028 	mov	r2,#(_cc2530_aes_decrypt >> 16)
+   04CC 12s00r00           2029 	lcall	__sdcc_banked_call
+   04CF AE 82              2030 	mov	r6,dpl
+   04D1 AF 83              2031 	mov	r7,dph
+   04D3 E5 81              2032 	mov	a,sp
+   04D5 24 F5              2033 	add	a,#0xf5
+   04D7 F5 81              2034 	mov	sp,a
+   04D9 8E 82              2035 	mov	dpl,r6
+   04DB 8F 83              2036 	mov	dph,r7
+   04DD 24 ED              2037 	add	a,#0xED
+   04DF F5 81              2038 	mov	sp,a
+   04E1 02s00r00           2039 	ljmp	__sdcc_banked_ret
+                           2040 ;------------------------------------------------------------
+                           2041 ;Allocation info for local variables in function 'create_security_client_hello_msg'
+                           2042 ;------------------------------------------------------------
+                           2043 ;buf                       Allocated to stack - sp -13
+                           2044 ;msg                       Allocated to stack - sp -10
+                           2045 ;pwd                       Allocated to stack - sp -7
+                           2046 ;len                       Allocated to stack - sp -4
+                           2047 ;sloc0                     Allocated to stack - sp -2
+                           2048 ;------------------------------------------------------------
+                           2049 ;	crypto.c:133: uint16_t create_security_client_hello_msg(uint8_t *buf)
+                           2050 ;	-----------------------------------------
+                           2051 ;	 function create_security_client_hello_msg
+                           2052 ;	-----------------------------------------
+   04E4                    2053 _create_security_client_hello_msg:
+   04E4 C0 82              2054 	push	dpl
+   04E6 C0 83              2055 	push	dph
+   04E8 C0 F0              2056 	push	b
+   04EA E5 81              2057 	mov	a,sp
+   04EC 24 0B              2058 	add	a,#0x0B
+                           2059 ;	crypto.c:135: security_client_hello_msg_t *msg = (security_client_hello_msg_t *)buf;
+   04EE F5 81              2060 	mov	sp,a
+   04F0 24 F3              2061 	add	a,#0xf3
+   04F2 F8                 2062 	mov	r0,a
+   04F3 E5 81              2063 	mov	a,sp
+   04F5 24 F6              2064 	add	a,#0xf6
+   04F7 F9                 2065 	mov	r1,a
+   04F8 E6                 2066 	mov	a,@r0
+   04F9 F7                 2067 	mov	@r1,a
+   04FA 08                 2068 	inc	r0
+   04FB 09                 2069 	inc	r1
+   04FC E6                 2070 	mov	a,@r0
+   04FD F7                 2071 	mov	@r1,a
+   04FE 08                 2072 	inc	r0
+   04FF 09                 2073 	inc	r1
+   0500 E6                 2074 	mov	a,@r0
+   0501 F7                 2075 	mov	@r1,a
+                           2076 ;	crypto.c:136: uint8_t *pwd = NULL;
+   0502 E5 81              2077 	mov	a,sp
+   0504 24 F9              2078 	add	a,#0xf9
+   0506 F8                 2079 	mov	r0,a
+   0507 E4                 2080 	clr	a
+   0508 F6                 2081 	mov	@r0,a
+   0509 08                 2082 	inc	r0
+   050A F6                 2083 	mov	@r0,a
+   050B 08                 2084 	inc	r0
+   050C 76 00              2085 	mov	@r0,#0x00
+                           2086 ;	crypto.c:139: msg->security_header.content_type = SECURITY_CLIENT_HELLO;
+   050E E5 81              2087 	mov	a,sp
+   0510 24 F6              2088 	add	a,#0xf6
+   0512 F8                 2089 	mov	r0,a
+   0513 86 05              2090 	mov	ar5,@r0
+   0515 08                 2091 	inc	r0
+   0516 86 06              2092 	mov	ar6,@r0
+   0518 08                 2093 	inc	r0
+   0519 86 07              2094 	mov	ar7,@r0
+   051B 8D 82              2095 	mov	dpl,r5
+   051D 8E 83              2096 	mov	dph,r6
+   051F 8F F0              2097 	mov	b,r7
+   0521 12s00r00           2098 	lcall	__gptrget
+   0524 54 E3              2099 	anl	a,#0xE3
+   0526 12s00r00           2100 	lcall	__gptrput
+                           2101 ;	crypto.c:140: msg->security_header.version = SECURITY_VERSION;
+   0529 E5 81              2102 	mov	a,sp
+   052B 24 F6              2103 	add	a,#0xf6
+   052D F8                 2104 	mov	r0,a
+   052E 86 05              2105 	mov	ar5,@r0
+   0530 08                 2106 	inc	r0
+   0531 86 06              2107 	mov	ar6,@r0
+   0533 08                 2108 	inc	r0
+   0534 86 07              2109 	mov	ar7,@r0
+   0536 8D 82              2110 	mov	dpl,r5
+   0538 8E 83              2111 	mov	dph,r6
+   053A 8F F0              2112 	mov	b,r7
+   053C 12s00r00           2113 	lcall	__gptrget
+   053F 54 FC              2114 	anl	a,#0xFC
+   0541 44 01              2115 	orl	a,#0x01
+   0543 12s00r00           2116 	lcall	__gptrput
+                           2117 ;	crypto.c:141: memcpy(msg->device_id, g_device.device_id, DEV_ID_SIZE);
+   0546 E5 81              2118 	mov	a,sp
+   0548 24 F6              2119 	add	a,#0xf6
+   054A F8                 2120 	mov	r0,a
+   054B 74 03              2121 	mov	a,#0x03
+   054D 26                 2122 	add	a,@r0
+   054E FD                 2123 	mov	r5,a
+   054F E4                 2124 	clr	a
+   0550 08                 2125 	inc	r0
+   0551 36                 2126 	addc	a,@r0
+   0552 FE                 2127 	mov	r6,a
+   0553 08                 2128 	inc	r0
+   0554 86 07              2129 	mov	ar7,@r0
+   0556 74 08              2130 	mov	a,#0x08
+   0558 C0 E0              2131 	push	acc
+   055A E4                 2132 	clr	a
+   055B C0 E0              2133 	push	acc
+   055D 74r00              2134 	mov	a,#_g_device
+   055F C0 E0              2135 	push	acc
+   0561 74s00              2136 	mov	a,#(_g_device >> 8)
+   0563 C0 E0              2137 	push	acc
+   0565 E4                 2138 	clr	a
+   0566 C0 E0              2139 	push	acc
+   0568 8D 82              2140 	mov	dpl,r5
+   056A 8E 83              2141 	mov	dph,r6
+   056C 8F F0              2142 	mov	b,r7
+   056E 78r00              2143 	mov	r0,#_memcpy
+   0570 79s00              2144 	mov	r1,#(_memcpy >> 8)
+   0572 7As00              2145 	mov	r2,#(_memcpy >> 16)
+   0574 12s00r00           2146 	lcall	__sdcc_banked_call
+   0577 E5 81              2147 	mov	a,sp
+   0579 24 FB              2148 	add	a,#0xfb
+                           2149 ;	crypto.c:143: msg->random_num = master_key.random_num;
+   057B F5 81              2150 	mov	sp,a
+   057D 24 F6              2151 	add	a,#0xf6
+   057F F8                 2152 	mov	r0,a
+   0580 A9 81              2153 	mov	r1,sp
+   0582 19                 2154 	dec	r1
+   0583 19                 2155 	dec	r1
+   0584 74 0B              2156 	mov	a,#0x0B
+   0586 26                 2157 	add	a,@r0
+   0587 F7                 2158 	mov	@r1,a
+   0588 E4                 2159 	clr	a
+   0589 08                 2160 	inc	r0
+   058A 36                 2161 	addc	a,@r0
+   058B 09                 2162 	inc	r1
+   058C F7                 2163 	mov	@r1,a
+   058D 08                 2164 	inc	r0
+   058E 09                 2165 	inc	r1
+   058F E6                 2166 	mov	a,@r0
+   0590 F7                 2167 	mov	@r1,a
+   0591 90s00r13           2168 	mov	dptr,#_master_key
+   0594 E0                 2169 	movx	a,@dptr
+   0595 FA                 2170 	mov	r2,a
+   0596 A3                 2171 	inc	dptr
+   0597 E0                 2172 	movx	a,@dptr
+   0598 FB                 2173 	mov	r3,a
+   0599 A3                 2174 	inc	dptr
+   059A E0                 2175 	movx	a,@dptr
+   059B FC                 2176 	mov	r4,a
+   059C A3                 2177 	inc	dptr
+   059D E0                 2178 	movx	a,@dptr
+   059E FF                 2179 	mov	r7,a
+   059F A8 81              2180 	mov	r0,sp
+   05A1 18                 2181 	dec	r0
+   05A2 18                 2182 	dec	r0
+   05A3 86 82              2183 	mov	dpl,@r0
+   05A5 08                 2184 	inc	r0
+   05A6 86 83              2185 	mov	dph,@r0
+   05A8 08                 2186 	inc	r0
+   05A9 86 F0              2187 	mov	b,@r0
+   05AB EA                 2188 	mov	a,r2
+   05AC 12s00r00           2189 	lcall	__gptrput
+   05AF A3                 2190 	inc	dptr
+   05B0 EB                 2191 	mov	a,r3
+   05B1 12s00r00           2192 	lcall	__gptrput
+   05B4 A3                 2193 	inc	dptr
+   05B5 EC                 2194 	mov	a,r4
+   05B6 12s00r00           2195 	lcall	__gptrput
+   05B9 A3                 2196 	inc	dptr
+   05BA EF                 2197 	mov	a,r7
+   05BB 12s00r00           2198 	lcall	__gptrput
+                           2199 ;	crypto.c:145: if (network_shared_key.used) {
+   05BE 90s00r00           2200 	mov	dptr,#_network_shared_key
+   05C1 E0                 2201 	movx	a,@dptr
+   05C2 70 03              2202 	jnz	00120$
+   05C4 02s06rC1           2203 	ljmp	00108$
+   05C7                    2204 00120$:
+                           2205 ;	crypto.c:146: len = get_password(&pwd);
+   05C7 E5 81              2206 	mov	a,sp
+   05C9 24 F9              2207 	add	a,#0xF9
+   05CB FF                 2208 	mov	r7,a
+   05CC 7E 00              2209 	mov	r6,#0x00
+   05CE 7D 40              2210 	mov	r5,#0x40
+   05D0 8F 82              2211 	mov	dpl,r7
+   05D2 8E 83              2212 	mov	dph,r6
+   05D4 8D F0              2213 	mov	b,r5
+   05D6 78r00              2214 	mov	r0,#_get_password
+   05D8 79s00              2215 	mov	r1,#(_get_password >> 8)
+   05DA 7As00              2216 	mov	r2,#(_get_password >> 16)
+   05DC 12s00r00           2217 	lcall	__sdcc_banked_call
+   05DF AE 82              2218 	mov	r6,dpl
+   05E1 AF 83              2219 	mov	r7,dph
+   05E3 E5 81              2220 	mov	a,sp
+   05E5 24 FC              2221 	add	a,#0xfc
+   05E7 F8                 2222 	mov	r0,a
+   05E8 A6 06              2223 	mov	@r0,ar6
+   05EA 08                 2224 	inc	r0
+   05EB A6 07              2225 	mov	@r0,ar7
+                           2226 ;	crypto.c:147: if (!len) {
+   05ED E5 81              2227 	mov	a,sp
+   05EF 24 FC              2228 	add	a,#0xfc
+   05F1 F8                 2229 	mov	r0,a
+   05F2 E6                 2230 	mov	a,@r0
+   05F3 08                 2231 	inc	r0
+   05F4 46                 2232 	orl	a,@r0
+   05F5 70 21              2233 	jnz	00102$
+                           2234 ;	crypto.c:148: PRINTF("Get pwd fail\n");
+   05F7 74r31              2235 	mov	a,#__str_6
+   05F9 C0 E0              2236 	push	acc
+   05FB 74s00              2237 	mov	a,#(__str_6 >> 8)
+   05FD C0 E0              2238 	push	acc
+   05FF 74 80              2239 	mov	a,#0x80
+   0601 C0 E0              2240 	push	acc
+   0603 78r00              2241 	mov	r0,#_printf
+   0605 79s00              2242 	mov	r1,#(_printf >> 8)
+   0607 7As00              2243 	mov	r2,#(_printf >> 16)
+   0609 12s00r00           2244 	lcall	__sdcc_banked_call
+   060C 15 81              2245 	dec	sp
+   060E 15 81              2246 	dec	sp
+   0610 15 81              2247 	dec	sp
+                           2248 ;	crypto.c:149: return 0;
+   0612 90 00 00           2249 	mov	dptr,#0x0000
+   0615 02s07rAC           2250 	ljmp	00110$
+   0618                    2251 00102$:
+                           2252 ;	crypto.c:151: msg->security_header.key_version = network_shared_key.version;
+   0618 E5 81              2253 	mov	a,sp
+   061A 24 F6              2254 	add	a,#0xf6
+   061C F8                 2255 	mov	r0,a
+   061D 86 03              2256 	mov	ar3,@r0
+   061F 08                 2257 	inc	r0
+   0620 86 04              2258 	mov	ar4,@r0
+   0622 08                 2259 	inc	r0
+   0623 86 05              2260 	mov	ar5,@r0
+   0625 90s00r01           2261 	mov	dptr,#(_network_shared_key + 0x0001)
+   0628 E0                 2262 	movx	a,@dptr
+   0629 FA                 2263 	mov	r2,a
+   062A A3                 2264 	inc	dptr
+   062B E0                 2265 	movx	a,@dptr
+   062C 8B 82              2266 	mov	dpl,r3
+   062E 8C 83              2267 	mov	dph,r4
+   0630 8D F0              2268 	mov	b,r5
+   0632 EA                 2269 	mov	a,r2
+   0633 C4                 2270 	swap	a
+   0634 23                 2271 	rl	a
+   0635 54 E0              2272 	anl	a,#(0xE0&0xE0)
+   0637 C0 F0              2273 	push	b
+   0639 C0 E0              2274 	push	acc
+   063B 12s00r00           2275 	lcall	__gptrget
+   063E D0 F0              2276 	pop	b
+   0640 54 1F              2277 	anl	a,#0x1F
+   0642 45 F0              2278 	orl	a,b
+   0644 D0 F0              2279 	pop	b
+   0646 12s00r00           2280 	lcall	__gptrput
+                           2281 ;	crypto.c:152: len = encrypt_data_by_network_shared_key(pwd, len, buf + sizeof(security_client_hello_msg_t));
+   0649 E5 81              2282 	mov	a,sp
+   064B 24 F3              2283 	add	a,#0xf3
+   064D F8                 2284 	mov	r0,a
+   064E 74 0F              2285 	mov	a,#0x0F
+   0650 26                 2286 	add	a,@r0
+   0651 FD                 2287 	mov	r5,a
+   0652 E4                 2288 	clr	a
+   0653 08                 2289 	inc	r0
+   0654 36                 2290 	addc	a,@r0
+   0655 FE                 2291 	mov	r6,a
+   0656 08                 2292 	inc	r0
+   0657 86 07              2293 	mov	ar7,@r0
+   0659 C0 05              2294 	push	ar5
+   065B C0 06              2295 	push	ar6
+   065D C0 07              2296 	push	ar7
+   065F E5 81              2297 	mov	a,sp
+   0661 24 F9              2298 	add	a,#0xf9
+   0663 F8                 2299 	mov	r0,a
+   0664 E6                 2300 	mov	a,@r0
+   0665 C0 E0              2301 	push	acc
+   0667 08                 2302 	inc	r0
+   0668 E6                 2303 	mov	a,@r0
+   0669 C0 E0              2304 	push	acc
+   066B E5 81              2305 	mov	a,sp
+   066D 24 F4              2306 	add	a,#0xf4
+   066F F8                 2307 	mov	r0,a
+   0670 86 82              2308 	mov	dpl,@r0
+   0672 08                 2309 	inc	r0
+   0673 86 83              2310 	mov	dph,@r0
+   0675 08                 2311 	inc	r0
+   0676 86 F0              2312 	mov	b,@r0
+   0678 78r57              2313 	mov	r0,#_encrypt_data_by_network_shared_key
+   067A 79s01              2314 	mov	r1,#(_encrypt_data_by_network_shared_key >> 8)
+   067C 7As00              2315 	mov	r2,#(_encrypt_data_by_network_shared_key >> 16)
+   067E 12s00r00           2316 	lcall	__sdcc_banked_call
+   0681 AE 82              2317 	mov	r6,dpl
+   0683 AF 83              2318 	mov	r7,dph
+   0685 E5 81              2319 	mov	a,sp
+   0687 24 FB              2320 	add	a,#0xfb
+   0689 F5 81              2321 	mov	sp,a
+   068B 24 FC              2322 	add	a,#0xfc
+   068D F8                 2323 	mov	r0,a
+   068E A6 06              2324 	mov	@r0,ar6
+   0690 08                 2325 	inc	r0
+   0691 A6 07              2326 	mov	@r0,ar7
+                           2327 ;	crypto.c:153: if (!len) {
+   0693 E5 81              2328 	mov	a,sp
+   0695 24 FC              2329 	add	a,#0xfc
+   0697 F8                 2330 	mov	r0,a
+   0698 E6                 2331 	mov	a,@r0
+   0699 08                 2332 	inc	r0
+   069A 46                 2333 	orl	a,@r0
+   069B 60 03              2334 	jz	00122$
+   069D 02s07r6F           2335 	ljmp	00109$
+   06A0                    2336 00122$:
+                           2337 ;	crypto.c:154: PRINTF("Encrypt data fail\n");
+   06A0 74r3F              2338 	mov	a,#__str_7
+   06A2 C0 E0              2339 	push	acc
+   06A4 74s00              2340 	mov	a,#(__str_7 >> 8)
+   06A6 C0 E0              2341 	push	acc
+   06A8 74 80              2342 	mov	a,#0x80
+   06AA C0 E0              2343 	push	acc
+   06AC 78r00              2344 	mov	r0,#_printf
+   06AE 79s00              2345 	mov	r1,#(_printf >> 8)
+   06B0 7As00              2346 	mov	r2,#(_printf >> 16)
+   06B2 12s00r00           2347 	lcall	__sdcc_banked_call
+   06B5 15 81              2348 	dec	sp
+   06B7 15 81              2349 	dec	sp
+   06B9 15 81              2350 	dec	sp
+                           2351 ;	crypto.c:155: return 0;
+   06BB 90 00 00           2352 	mov	dptr,#0x0000
+   06BE 02s07rAC           2353 	ljmp	00110$
+   06C1                    2354 00108$:
+                           2355 ;	crypto.c:158: len = get_password_encrypted_by_public_key(&pwd);
+   06C1 E5 81              2356 	mov	a,sp
+   06C3 24 F9              2357 	add	a,#0xF9
+   06C5 FF                 2358 	mov	r7,a
+   06C6 7E 00              2359 	mov	r6,#0x00
+   06C8 7D 40              2360 	mov	r5,#0x40
+   06CA 8F 82              2361 	mov	dpl,r7
+   06CC 8E 83              2362 	mov	dph,r6
+   06CE 8D F0              2363 	mov	b,r5
+   06D0 78r83              2364 	mov	r0,#_get_password_encrypted_by_public_key
+   06D2 79s00              2365 	mov	r1,#(_get_password_encrypted_by_public_key >> 8)
+   06D4 7As00              2366 	mov	r2,#(_get_password_encrypted_by_public_key >> 16)
+   06D6 12s00r00           2367 	lcall	__sdcc_banked_call
+   06D9 AE 82              2368 	mov	r6,dpl
+   06DB AF 83              2369 	mov	r7,dph
+   06DD E5 81              2370 	mov	a,sp
+   06DF 24 FC              2371 	add	a,#0xfc
+   06E1 F8                 2372 	mov	r0,a
+   06E2 A6 06              2373 	mov	@r0,ar6
+   06E4 08                 2374 	inc	r0
+   06E5 A6 07              2375 	mov	@r0,ar7
+                           2376 ;	crypto.c:159: if (!len) {
+   06E7 E5 81              2377 	mov	a,sp
+   06E9 24 FC              2378 	add	a,#0xfc
+   06EB F8                 2379 	mov	r0,a
+   06EC E6                 2380 	mov	a,@r0
+   06ED 08                 2381 	inc	r0
+   06EE 46                 2382 	orl	a,@r0
+   06EF 70 21              2383 	jnz	00106$
+                           2384 ;	crypto.c:160: PRINTF("Get encypted pwd fail\n");
+   06F1 74r52              2385 	mov	a,#__str_8
+   06F3 C0 E0              2386 	push	acc
+   06F5 74s00              2387 	mov	a,#(__str_8 >> 8)
+   06F7 C0 E0              2388 	push	acc
+   06F9 74 80              2389 	mov	a,#0x80
+   06FB C0 E0              2390 	push	acc
+   06FD 78r00              2391 	mov	r0,#_printf
+   06FF 79s00              2392 	mov	r1,#(_printf >> 8)
+   0701 7As00              2393 	mov	r2,#(_printf >> 16)
+   0703 12s00r00           2394 	lcall	__sdcc_banked_call
+   0706 15 81              2395 	dec	sp
+   0708 15 81              2396 	dec	sp
+   070A 15 81              2397 	dec	sp
+                           2398 ;	crypto.c:161: return 0;
+   070C 90 00 00           2399 	mov	dptr,#0x0000
+   070F 02s07rAC           2400 	ljmp	00110$
+   0712                    2401 00106$:
+                           2402 ;	crypto.c:163: memcpy(buf + sizeof(security_client_hello_msg_t), pwd, len);
+   0712 E5 81              2403 	mov	a,sp
+   0714 24 F9              2404 	add	a,#0xf9
+   0716 F8                 2405 	mov	r0,a
+   0717 86 05              2406 	mov	ar5,@r0
+   0719 08                 2407 	inc	r0
+   071A 86 06              2408 	mov	ar6,@r0
+   071C 08                 2409 	inc	r0
+   071D 86 07              2410 	mov	ar7,@r0
+   071F E5 81              2411 	mov	a,sp
+   0721 24 F3              2412 	add	a,#0xf3
+   0723 F8                 2413 	mov	r0,a
+   0724 74 0F              2414 	mov	a,#0x0F
+   0726 26                 2415 	add	a,@r0
+   0727 FA                 2416 	mov	r2,a
+   0728 E4                 2417 	clr	a
+   0729 08                 2418 	inc	r0
+   072A 36                 2419 	addc	a,@r0
+   072B FB                 2420 	mov	r3,a
+   072C 08                 2421 	inc	r0
+   072D 86 04              2422 	mov	ar4,@r0
+   072F E5 81              2423 	mov	a,sp
+   0731 24 FC              2424 	add	a,#0xfc
+   0733 F8                 2425 	mov	r0,a
+   0734 E6                 2426 	mov	a,@r0
+   0735 C0 E0              2427 	push	acc
+   0737 08                 2428 	inc	r0
+   0738 E6                 2429 	mov	a,@r0
+   0739 C0 E0              2430 	push	acc
+   073B C0 05              2431 	push	ar5
+   073D C0 06              2432 	push	ar6
+   073F C0 07              2433 	push	ar7
+   0741 8A 82              2434 	mov	dpl,r2
+   0743 8B 83              2435 	mov	dph,r3
+   0745 8C F0              2436 	mov	b,r4
+   0747 78r00              2437 	mov	r0,#_memcpy
+   0749 79s00              2438 	mov	r1,#(_memcpy >> 8)
+   074B 7As00              2439 	mov	r2,#(_memcpy >> 16)
+   074D 12s00r00           2440 	lcall	__sdcc_banked_call
+   0750 E5 81              2441 	mov	a,sp
+   0752 24 FB              2442 	add	a,#0xfb
+                           2443 ;	crypto.c:164: msg->security_header.key_version = 0;
+   0754 F5 81              2444 	mov	sp,a
+   0756 24 F6              2445 	add	a,#0xf6
+   0758 F8                 2446 	mov	r0,a
+   0759 86 05              2447 	mov	ar5,@r0
+   075B 08                 2448 	inc	r0
+   075C 86 06              2449 	mov	ar6,@r0
+   075E 08                 2450 	inc	r0
+   075F 86 07              2451 	mov	ar7,@r0
+   0761 8D 82              2452 	mov	dpl,r5
+   0763 8E 83              2453 	mov	dph,r6
+   0765 8F F0              2454 	mov	b,r7
+   0767 12s00r00           2455 	lcall	__gptrget
+   076A 54 1F              2456 	anl	a,#0x1F
+   076C 12s00r00           2457 	lcall	__gptrput
+   076F                    2458 00109$:
+                           2459 ;	crypto.c:166: msg->security_header.len = len + sizeof(msg->random_num) + DEV_ID_SIZE;
+   076F E5 81              2460 	mov	a,sp
+   0771 24 F6              2461 	add	a,#0xf6
+   0773 F8                 2462 	mov	r0,a
+   0774 74 01              2463 	mov	a,#0x01
+   0776 26                 2464 	add	a,@r0
+   0777 FD                 2465 	mov	r5,a
+   0778 E4                 2466 	clr	a
+   0779 08                 2467 	inc	r0
+   077A 36                 2468 	addc	a,@r0
+   077B FE                 2469 	mov	r6,a
+   077C 08                 2470 	inc	r0
+   077D 86 07              2471 	mov	ar7,@r0
+   077F E5 81              2472 	mov	a,sp
+   0781 24 FC              2473 	add	a,#0xfc
+   0783 F8                 2474 	mov	r0,a
+   0784 74 0C              2475 	mov	a,#0x0C
+   0786 26                 2476 	add	a,@r0
+   0787 FB                 2477 	mov	r3,a
+   0788 E4                 2478 	clr	a
+   0789 08                 2479 	inc	r0
+   078A 36                 2480 	addc	a,@r0
+   078B FC                 2481 	mov	r4,a
+   078C 8D 82              2482 	mov	dpl,r5
+   078E 8E 83              2483 	mov	dph,r6
+   0790 8F F0              2484 	mov	b,r7
+   0792 EB                 2485 	mov	a,r3
+   0793 12s00r00           2486 	lcall	__gptrput
+   0796 A3                 2487 	inc	dptr
+   0797 EC                 2488 	mov	a,r4
+   0798 12s00r00           2489 	lcall	__gptrput
+                           2490 ;	crypto.c:169: return sizeof(security_client_hello_msg_t) + len;
+   079B E5 81              2491 	mov	a,sp
+   079D 24 FC              2492 	add	a,#0xfc
+   079F F8                 2493 	mov	r0,a
+   07A0 74 0F              2494 	mov	a,#0x0F
+   07A2 26                 2495 	add	a,@r0
+   07A3 FE                 2496 	mov	r6,a
+   07A4 E4                 2497 	clr	a
+   07A5 08                 2498 	inc	r0
+   07A6 36                 2499 	addc	a,@r0
+   07A7 FF                 2500 	mov	r7,a
+   07A8 8E 82              2501 	mov	dpl,r6
+   07AA 8F 83              2502 	mov	dph,r7
+   07AC                    2503 00110$:
+   07AC E5 81              2504 	mov	a,sp
+   07AE 24 F2              2505 	add	a,#0xF2
+   07B0 F5 81              2506 	mov	sp,a
+   07B2 02s00r00           2507 	ljmp	__sdcc_banked_ret
+                           2508 ;------------------------------------------------------------
+                           2509 ;Allocation info for local variables in function 'create_security_data_msg'
+                           2510 ;------------------------------------------------------------
+                           2511 ;data                      Allocated to stack - sp -11
+                           2512 ;len                       Allocated to stack - sp -13
+                           2513 ;buf                       Allocated to stack - sp -5
+                           2514 ;header                    Allocated to stack - sp -2
+                           2515 ;msg_len                   Allocated to registers r6 r7 
+                           2516 ;------------------------------------------------------------
+                           2517 ;	crypto.c:172: uint16_t create_security_data_msg(uint8_t *buf, uint8_t *data, uint16_t len)
+                           2518 ;	-----------------------------------------
+                           2519 ;	 function create_security_data_msg
+                           2520 ;	-----------------------------------------
+   07B5                    2521 _create_security_data_msg:
+   07B5 C0 82              2522 	push	dpl
+   07B7 C0 83              2523 	push	dph
+   07B9 C0 F0              2524 	push	b
+   07BB 05 81              2525 	inc	sp
+   07BD 05 81              2526 	inc	sp
+   07BF 05 81              2527 	inc	sp
+                           2528 ;	crypto.c:174: security_header_t *header = (security_header_t *)buf;
+   07C1 E5 81              2529 	mov	a,sp
+   07C3 24 FB              2530 	add	a,#0xfb
+   07C5 F8                 2531 	mov	r0,a
+   07C6 A9 81              2532 	mov	r1,sp
+   07C8 19                 2533 	dec	r1
+   07C9 19                 2534 	dec	r1
+   07CA E6                 2535 	mov	a,@r0
+   07CB F7                 2536 	mov	@r1,a
+   07CC 08                 2537 	inc	r0
+   07CD 09                 2538 	inc	r1
+   07CE E6                 2539 	mov	a,@r0
+   07CF F7                 2540 	mov	@r1,a
+   07D0 08                 2541 	inc	r0
+   07D1 09                 2542 	inc	r1
+   07D2 E6                 2543 	mov	a,@r0
+   07D3 F7                 2544 	mov	@r1,a
+                           2545 ;	crypto.c:177: header->content_type = SECURITY_DATA;
+   07D4 A8 81              2546 	mov	r0,sp
+   07D6 18                 2547 	dec	r0
+   07D7 18                 2548 	dec	r0
+   07D8 86 05              2549 	mov	ar5,@r0
+   07DA 08                 2550 	inc	r0
+   07DB 86 06              2551 	mov	ar6,@r0
+   07DD 08                 2552 	inc	r0
+   07DE 86 07              2553 	mov	ar7,@r0
+   07E0 8D 82              2554 	mov	dpl,r5
+   07E2 8E 83              2555 	mov	dph,r6
+   07E4 8F F0              2556 	mov	b,r7
+   07E6 12s00r00           2557 	lcall	__gptrget
+   07E9 54 E3              2558 	anl	a,#0xE3
+   07EB 44 08              2559 	orl	a,#0x08
+   07ED 12s00r00           2560 	lcall	__gptrput
+                           2561 ;	crypto.c:178: header->version = SECURITY_VERSION;
+   07F0 A8 81              2562 	mov	r0,sp
+   07F2 18                 2563 	dec	r0
+   07F3 18                 2564 	dec	r0
+   07F4 86 05              2565 	mov	ar5,@r0
+   07F6 08                 2566 	inc	r0
+   07F7 86 06              2567 	mov	ar6,@r0
+   07F9 08                 2568 	inc	r0
+   07FA 86 07              2569 	mov	ar7,@r0
+   07FC 8D 82              2570 	mov	dpl,r5
+   07FE 8E 83              2571 	mov	dph,r6
+   0800 8F F0              2572 	mov	b,r7
+   0802 12s00r00           2573 	lcall	__gptrget
+   0805 54 FC              2574 	anl	a,#0xFC
+   0807 44 01              2575 	orl	a,#0x01
+   0809 12s00r00           2576 	lcall	__gptrput
+                           2577 ;	crypto.c:179: header->key_version = network_shared_key.version; 
+   080C A8 81              2578 	mov	r0,sp
+   080E 18                 2579 	dec	r0
+   080F 18                 2580 	dec	r0
+   0810 86 05              2581 	mov	ar5,@r0
+   0812 08                 2582 	inc	r0
+   0813 86 06              2583 	mov	ar6,@r0
+   0815 08                 2584 	inc	r0
+   0816 86 07              2585 	mov	ar7,@r0
+   0818 90s00r01           2586 	mov	dptr,#(_network_shared_key + 0x0001)
+   081B E0                 2587 	movx	a,@dptr
+   081C FB                 2588 	mov	r3,a
+   081D A3                 2589 	inc	dptr
+   081E E0                 2590 	movx	a,@dptr
+   081F 8D 82              2591 	mov	dpl,r5
+   0821 8E 83              2592 	mov	dph,r6
+   0823 8F F0              2593 	mov	b,r7
+   0825 EB                 2594 	mov	a,r3
+   0826 C4                 2595 	swap	a
+   0827 23                 2596 	rl	a
+   0828 54 E0              2597 	anl	a,#(0xE0&0xE0)
+   082A C0 F0              2598 	push	b
+   082C C0 E0              2599 	push	acc
+   082E 12s00r00           2600 	lcall	__gptrget
+   0831 D0 F0              2601 	pop	b
+   0833 54 1F              2602 	anl	a,#0x1F
+   0835 45 F0              2603 	orl	a,b
+   0837 D0 F0              2604 	pop	b
+   0839 12s00r00           2605 	lcall	__gptrput
+                           2606 ;	crypto.c:181: msg_len = encrypt_data_by_network_shared_key(data, len, buf + sizeof(security_header_t));
+   083C E5 81              2607 	mov	a,sp
+   083E 24 FB              2608 	add	a,#0xfb
+   0840 F8                 2609 	mov	r0,a
+   0841 74 03              2610 	mov	a,#0x03
+   0843 26                 2611 	add	a,@r0
+   0844 FD                 2612 	mov	r5,a
+   0845 E4                 2613 	clr	a
+   0846 08                 2614 	inc	r0
+   0847 36                 2615 	addc	a,@r0
+   0848 FE                 2616 	mov	r6,a
+   0849 08                 2617 	inc	r0
+   084A 86 07              2618 	mov	ar7,@r0
+   084C C0 05              2619 	push	ar5
+   084E C0 06              2620 	push	ar6
+   0850 C0 07              2621 	push	ar7
+   0852 E5 81              2622 	mov	a,sp
+   0854 24 F0              2623 	add	a,#0xf0
+   0856 F8                 2624 	mov	r0,a
+   0857 E6                 2625 	mov	a,@r0
+   0858 C0 E0              2626 	push	acc
+   085A 08                 2627 	inc	r0
+   085B E6                 2628 	mov	a,@r0
+   085C C0 E0              2629 	push	acc
+   085E E5 81              2630 	mov	a,sp
+   0860 24 F0              2631 	add	a,#0xf0
+   0862 F8                 2632 	mov	r0,a
+   0863 86 82              2633 	mov	dpl,@r0
+   0865 08                 2634 	inc	r0
+   0866 86 83              2635 	mov	dph,@r0
+   0868 08                 2636 	inc	r0
+   0869 86 F0              2637 	mov	b,@r0
+   086B 78r57              2638 	mov	r0,#_encrypt_data_by_network_shared_key
+   086D 79s01              2639 	mov	r1,#(_encrypt_data_by_network_shared_key >> 8)
+   086F 7As00              2640 	mov	r2,#(_encrypt_data_by_network_shared_key >> 16)
+   0871 12s00r00           2641 	lcall	__sdcc_banked_call
+   0874 AE 82              2642 	mov	r6,dpl
+   0876 AF 83              2643 	mov	r7,dph
+   0878 E5 81              2644 	mov	a,sp
+   087A 24 FB              2645 	add	a,#0xfb
+   087C F5 81              2646 	mov	sp,a
+                           2647 ;	crypto.c:182: if (msg_len) {
+   087E EE                 2648 	mov	a,r6
+   087F 4F                 2649 	orl	a,r7
+   0880 60 2B              2650 	jz	00102$
+                           2651 ;	crypto.c:183: header->len = msg_len;
+   0882 A8 81              2652 	mov	r0,sp
+   0884 18                 2653 	dec	r0
+   0885 18                 2654 	dec	r0
+   0886 74 01              2655 	mov	a,#0x01
+   0888 26                 2656 	add	a,@r0
+   0889 FB                 2657 	mov	r3,a
+   088A E4                 2658 	clr	a
+   088B 08                 2659 	inc	r0
+   088C 36                 2660 	addc	a,@r0
+   088D FC                 2661 	mov	r4,a
+   088E 08                 2662 	inc	r0
+   088F 86 05              2663 	mov	ar5,@r0
+   0891 8B 82              2664 	mov	dpl,r3
+   0893 8C 83              2665 	mov	dph,r4
+   0895 8D F0              2666 	mov	b,r5
+   0897 EE                 2667 	mov	a,r6
+   0898 12s00r00           2668 	lcall	__gptrput
+   089B A3                 2669 	inc	dptr
+   089C EF                 2670 	mov	a,r7
+   089D 12s00r00           2671 	lcall	__gptrput
+                           2672 ;	crypto.c:184: return msg_len + sizeof(security_header_t);
+   08A0 74 03              2673 	mov	a,#0x03
+   08A2 2E                 2674 	add	a,r6
+   08A3 FE                 2675 	mov	r6,a
+   08A4 E4                 2676 	clr	a
+   08A5 3F                 2677 	addc	a,r7
+   08A6 FF                 2678 	mov	r7,a
+   08A7 8E 82              2679 	mov	dpl,r6
+   08A9 8F 83              2680 	mov	dph,r7
+   08AB 80 03              2681 	sjmp	00103$
+   08AD                    2682 00102$:
+                           2683 ;	crypto.c:187: return 0;
+   08AD 90 00 00           2684 	mov	dptr,#0x0000
+   08B0                    2685 00103$:
+   08B0 E5 81              2686 	mov	a,sp
+   08B2 24 FA              2687 	add	a,#0xFA
+   08B4 F5 81              2688 	mov	sp,a
+   08B6 02s00r00           2689 	ljmp	__sdcc_banked_ret
+                           2690 ;------------------------------------------------------------
+                           2691 ;Allocation info for local variables in function 'crypto_init'
+                           2692 ;------------------------------------------------------------
+                           2693 ;	crypto.c:190: uint8_t crypto_init()
+                           2694 ;	-----------------------------------------
+                           2695 ;	 function crypto_init
+                           2696 ;	-----------------------------------------
+   08B9                    2697 _crypto_init:
+                           2698 ;	crypto.c:192: if (generate_master_key() == FAIL) {
+   08B9 78r89              2699 	mov	r0,#_generate_master_key
+   08BB 79s02              2700 	mov	r1,#(_generate_master_key >> 8)
+   08BD 7As00              2701 	mov	r2,#(_generate_master_key >> 16)
+   08BF 12s00r00           2702 	lcall	__sdcc_banked_call
+   08C2 E5 82              2703 	mov	a,dpl
+                           2704 ;	crypto.c:193: return FAIL;
+   08C4 70 04              2705 	jnz	00102$
+   08C6 F5 82              2706 	mov	dpl,a
+   08C8 80 03              2707 	sjmp	00103$
+   08CA                    2708 00102$:
+                           2709 ;	crypto.c:196: return SUCCESS;
+   08CA 75 82 01           2710 	mov	dpl,#0x01
+   08CD                    2711 00103$:
+   08CD 02s00r00           2712 	ljmp	__sdcc_banked_ret
+                           2713 	.area CSEG    (CODE)
+                           2714 	.area CONST   (CODE)
+   0000                    2715 __str_0:
+   0000 2F 50 57 44        2716 	.ascii "/PWD"
+   0004 00                 2717 	.db 0x00
+   0005                    2718 __str_1:
+   0005 2F 45 4E 5F 50 57  2719 	.ascii "/EN_PWD"
+        44
+   000C 00                 2720 	.db 0x00
+   000D                    2721 __str_2:
+   000D 6D 61 73 74 65 72  2722 	.ascii "master key:"
+        20 6B 65 79 3A
+   0018 00                 2723 	.db 0x00
+   0019                    2724 __str_3:
+   0019 25 30 32 78 20     2725 	.ascii "%02x "
+   001E 00                 2726 	.db 0x00
+   001F                    2727 __str_4:
+   001F 0A                 2728 	.db 0x0A
+   0020 00                 2729 	.db 0x00
+   0021                    2730 __str_5:
+   0021 73 65 74 20 6D 61  2731 	.ascii "set master key:"
+        73 74 65 72 20 6B
+        65 79 3A
+   0030 00                 2732 	.db 0x00
+   0031                    2733 __str_6:
+   0031 47 65 74 20 70 77  2734 	.ascii "Get pwd fail"
+        64 20 66 61 69 6C
+   003D 0A                 2735 	.db 0x0A
+   003E 00                 2736 	.db 0x00
+   003F                    2737 __str_7:
+   003F 45 6E 63 72 79 70  2738 	.ascii "Encrypt data fail"
+        74 20 64 61 74 61
+        20 66 61 69 6C
+   0050 0A                 2739 	.db 0x0A
+   0051 00                 2740 	.db 0x00
+   0052                    2741 __str_8:
+   0052 47 65 74 20 65 6E  2742 	.ascii "Get encypted pwd fail"
+        63 79 70 74 65 64
+        20 70 77 64 20 66
+        61 69 6C
+   0067 0A                 2743 	.db 0x0A
+   0068 00                 2744 	.db 0x00
+                           2745 	.area XINIT   (CODE)
+                           2746 	.area CABS    (ABS,CODE)

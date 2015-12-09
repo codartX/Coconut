@@ -1,0 +1,2291 @@
+                              1 ;--------------------------------------------------------
+                              2 ; File Created by SDCC : free open source ANSI-C Compiler
+                              3 ; Version 3.1.1 #7100 (Oct 29 2014) (Linux)
+                              4 ; This file was generated Thu Dec  3 12:33:02 2015
+                              5 ;--------------------------------------------------------
+                              6 	.module policy
+                              7 	.optsdcc -mmcs51 --model-huge
+                              8 	
+                              9 ;--------------------------------------------------------
+                             10 ; Public variables in this module
+                             11 ;--------------------------------------------------------
+                             12 	.globl _memb_free
+                             13 	.globl _memb_alloc
+                             14 	.globl _memb_init
+                             15 	.globl _strncpy
+                             16 	.globl _memcpy
+                             17 	.globl _ACTIVE
+                             18 	.globl _TX_BYTE
+                             19 	.globl _RX_BYTE
+                             20 	.globl _ERR
+                             21 	.globl _FE
+                             22 	.globl _SLAVE
+                             23 	.globl _RE
+                             24 	.globl _MODE
+                             25 	.globl _T3OVFIF
+                             26 	.globl _T3CH0IF
+                             27 	.globl _T3CH1IF
+                             28 	.globl _T4OVFIF
+                             29 	.globl _T4CH0IF
+                             30 	.globl _T4CH1IF
+                             31 	.globl _OVFIM
+                             32 	.globl _B_0
+                             33 	.globl _B_1
+                             34 	.globl _B_2
+                             35 	.globl _B_3
+                             36 	.globl _B_4
+                             37 	.globl _B_5
+                             38 	.globl _B_6
+                             39 	.globl _B_7
+                             40 	.globl _P2IF
+                             41 	.globl _UTX0IF
+                             42 	.globl _UTX1IF
+                             43 	.globl _P1IF
+                             44 	.globl _WDTIF
+                             45 	.globl _ACC_0
+                             46 	.globl _ACC_1
+                             47 	.globl _ACC_2
+                             48 	.globl _ACC_3
+                             49 	.globl _ACC_4
+                             50 	.globl _ACC_5
+                             51 	.globl _ACC_6
+                             52 	.globl _ACC_7
+                             53 	.globl _P
+                             54 	.globl _F1
+                             55 	.globl _OV
+                             56 	.globl _RS0
+                             57 	.globl _RS1
+                             58 	.globl _F0
+                             59 	.globl _AC
+                             60 	.globl _CY
+                             61 	.globl _DMAIF
+                             62 	.globl _T1IF
+                             63 	.globl _T2IF
+                             64 	.globl _T3IF
+                             65 	.globl _T4IF
+                             66 	.globl _P0IF
+                             67 	.globl _STIF
+                             68 	.globl _DMAIE
+                             69 	.globl _T1IE
+                             70 	.globl _T2IE
+                             71 	.globl _T3IE
+                             72 	.globl _T4IE
+                             73 	.globl _P0IE
+                             74 	.globl _RFERRIE
+                             75 	.globl _ADCIE
+                             76 	.globl _URX0IE
+                             77 	.globl _URX1IE
+                             78 	.globl _ENCIE
+                             79 	.globl _STIE
+                             80 	.globl _EA
+                             81 	.globl _P2_0
+                             82 	.globl _P2_1
+                             83 	.globl _P2_2
+                             84 	.globl _P2_3
+                             85 	.globl _P2_4
+                             86 	.globl _P2_5
+                             87 	.globl _P2_6
+                             88 	.globl _P2_7
+                             89 	.globl _ENCIF_0
+                             90 	.globl _ENCIF_1
+                             91 	.globl _P1_0
+                             92 	.globl _P1_1
+                             93 	.globl _P1_2
+                             94 	.globl _P1_3
+                             95 	.globl _P1_4
+                             96 	.globl _P1_5
+                             97 	.globl _P1_6
+                             98 	.globl _P1_7
+                             99 	.globl _IT0
+                            100 	.globl _RFERRIF
+                            101 	.globl _IT1
+                            102 	.globl _URX0IF
+                            103 	.globl _ADCIF
+                            104 	.globl _URX1IF
+                            105 	.globl _P0_0
+                            106 	.globl _P0_1
+                            107 	.globl _P0_2
+                            108 	.globl _P0_3
+                            109 	.globl _P0_4
+                            110 	.globl _P0_5
+                            111 	.globl _P0_6
+                            112 	.globl _P0_7
+                            113 	.globl _WDCTL
+                            114 	.globl _U1GCR
+                            115 	.globl _U1UCR
+                            116 	.globl _U1BAUD
+                            117 	.globl _U1DBUF
+                            118 	.globl _U1CSR
+                            119 	.globl _U0GCR
+                            120 	.globl _U0UCR
+                            121 	.globl _U0BAUD
+                            122 	.globl _U0DBUF
+                            123 	.globl _U0CSR
+                            124 	.globl _TIMIF
+                            125 	.globl _T4CC1
+                            126 	.globl _T4CCTL1
+                            127 	.globl _T4CC0
+                            128 	.globl _T4CCTL0
+                            129 	.globl _T4CTL
+                            130 	.globl _T4CNT
+                            131 	.globl _T3CC1
+                            132 	.globl _T3CCTL1
+                            133 	.globl _T3CC0
+                            134 	.globl _T3CCTL0
+                            135 	.globl _T3CTL
+                            136 	.globl _T3CNT
+                            137 	.globl _T2MSEL
+                            138 	.globl _T2IRQM
+                            139 	.globl _T2MOVF2
+                            140 	.globl _T2MOVF1
+                            141 	.globl _T2MOVF0
+                            142 	.globl _T2M1
+                            143 	.globl _T2M0
+                            144 	.globl _T2IRQF
+                            145 	.globl _T2EVTCFG
+                            146 	.globl _T2CTRL
+                            147 	.globl _T1STAT
+                            148 	.globl _T1CCTL2
+                            149 	.globl _T1CCTL1
+                            150 	.globl _T1CCTL0
+                            151 	.globl _T1CTL
+                            152 	.globl _T1CNTH
+                            153 	.globl _T1CNTL
+                            154 	.globl _T1CC2H
+                            155 	.globl _T1CC2L
+                            156 	.globl _T1CC1H
+                            157 	.globl _T1CC1L
+                            158 	.globl _T1CC0H
+                            159 	.globl _T1CC0L
+                            160 	.globl _CLKCONSTA
+                            161 	.globl _CLKCONCMD
+                            162 	.globl _SLEEPSTA
+                            163 	.globl _SLEEPCMD
+                            164 	.globl _STLOAD
+                            165 	.globl _ST2
+                            166 	.globl _ST1
+                            167 	.globl _ST0
+                            168 	.globl _RFERRF
+                            169 	.globl _RFIRQF0
+                            170 	.globl _RFST
+                            171 	.globl _RFD
+                            172 	.globl _RFIRQF1
+                            173 	.globl _PSBANK
+                            174 	.globl _FMAP
+                            175 	.globl _MEMCTR
+                            176 	.globl __XPAGE
+                            177 	.globl _MPAGE
+                            178 	.globl _PMUX
+                            179 	.globl _P2DIR
+                            180 	.globl _P1DIR
+                            181 	.globl _P0DIR
+                            182 	.globl _P2INP
+                            183 	.globl _P1INP
+                            184 	.globl _P2SEL
+                            185 	.globl _P1SEL
+                            186 	.globl _P0SEL
+                            187 	.globl _APCFG
+                            188 	.globl _PERCFG
+                            189 	.globl _P0INP
+                            190 	.globl _P2IEN
+                            191 	.globl _P1IEN
+                            192 	.globl _P0IEN
+                            193 	.globl _PICTL
+                            194 	.globl _P2IFG
+                            195 	.globl _P1IFG
+                            196 	.globl _P0IFG
+                            197 	.globl _DMAREQ
+                            198 	.globl _DMAARM
+                            199 	.globl _DMA0CFGH
+                            200 	.globl _DMA0CFGL
+                            201 	.globl _DMA1CFGH
+                            202 	.globl _DMA1CFGL
+                            203 	.globl _DMAIRQ
+                            204 	.globl _ENCCS
+                            205 	.globl _ENCDO
+                            206 	.globl _ENCDI
+                            207 	.globl _RNDH
+                            208 	.globl _RNDL
+                            209 	.globl _ADCH
+                            210 	.globl _ADCL
+                            211 	.globl _ADCCON3
+                            212 	.globl _ADCCON2
+                            213 	.globl _ADCCON1
+                            214 	.globl _B
+                            215 	.globl _IRCON2
+                            216 	.globl _ACC
+                            217 	.globl _PSW
+                            218 	.globl _IRCON
+                            219 	.globl _IP1
+                            220 	.globl _IEN1
+                            221 	.globl _IP0
+                            222 	.globl _IEN0
+                            223 	.globl _P2
+                            224 	.globl _S1CON
+                            225 	.globl _IEN2
+                            226 	.globl _S0CON
+                            227 	.globl _DPS
+                            228 	.globl _P1
+                            229 	.globl _TCON
+                            230 	.globl _PCON
+                            231 	.globl _DPH1
+                            232 	.globl _DPL1
+                            233 	.globl _DPH0
+                            234 	.globl _DPL0
+                            235 	.globl _SP
+                            236 	.globl _P0
+                            237 	.globl _X_IEEE_ADDR
+                            238 	.globl _X_INFOPAGE
+                            239 	.globl _X_P2DIR
+                            240 	.globl _X_P1DIR
+                            241 	.globl _X_P0DIR
+                            242 	.globl _X_U1GCR
+                            243 	.globl _X_U1UCR
+                            244 	.globl _X_U1BAUD
+                            245 	.globl _X_U1DBUF
+                            246 	.globl _X_U1CSR
+                            247 	.globl _X_P2INP
+                            248 	.globl _X_P1INP
+                            249 	.globl _X_P2SEL
+                            250 	.globl _X_P1SEL
+                            251 	.globl _X_P0SEL
+                            252 	.globl _X_APCFG
+                            253 	.globl _X_PERCFG
+                            254 	.globl _X_T4CC1
+                            255 	.globl _X_T4CCTL1
+                            256 	.globl _X_T4CC0
+                            257 	.globl _X_T4CCTL0
+                            258 	.globl _X_T4CTL
+                            259 	.globl _X_T4CNT
+                            260 	.globl _X_RFIRQF0
+                            261 	.globl _X_T1CCTL2
+                            262 	.globl _X_T1CCTL1
+                            263 	.globl _X_T1CCTL0
+                            264 	.globl _X_T1CTL
+                            265 	.globl _X_T1CNTH
+                            266 	.globl _X_T1CNTL
+                            267 	.globl _X_RFST
+                            268 	.globl _X_T1CC2H
+                            269 	.globl _X_T1CC2L
+                            270 	.globl _X_T1CC1H
+                            271 	.globl _X_T1CC1L
+                            272 	.globl _X_T1CC0H
+                            273 	.globl _X_T1CC0L
+                            274 	.globl _X_RFD
+                            275 	.globl _X_TIMIF
+                            276 	.globl _X_DMAREQ
+                            277 	.globl _X_DMAARM
+                            278 	.globl _X_DMA0CFGH
+                            279 	.globl _X_DMA0CFGL
+                            280 	.globl _X_DMA1CFGH
+                            281 	.globl _X_DMA1CFGL
+                            282 	.globl _X_DMAIRQ
+                            283 	.globl _X_T3CC1
+                            284 	.globl _X_T3CCTL1
+                            285 	.globl _X_T3CC0
+                            286 	.globl _X_T3CCTL0
+                            287 	.globl _X_T3CTL
+                            288 	.globl _X_T3CNT
+                            289 	.globl _X_WDCTL
+                            290 	.globl _X_MEMCTR
+                            291 	.globl _X_CLKCONCMD
+                            292 	.globl _X_U0GCR
+                            293 	.globl _X_U0UCR
+                            294 	.globl _X_T2MSEL
+                            295 	.globl _X_U0BAUD
+                            296 	.globl _X_U0DBUF
+                            297 	.globl _X_RFERRF
+                            298 	.globl _X_SLEEPCMD
+                            299 	.globl _X_RNDH
+                            300 	.globl _X_RNDL
+                            301 	.globl _X_ADCH
+                            302 	.globl _X_ADCL
+                            303 	.globl _X_ADCCON3
+                            304 	.globl _X_ADCCON2
+                            305 	.globl _X_ADCCON1
+                            306 	.globl _X_ENCCS
+                            307 	.globl _X_ENCDO
+                            308 	.globl _X_ENCDI
+                            309 	.globl _X_T1STAT
+                            310 	.globl _X_PMUX
+                            311 	.globl _X_STLOAD
+                            312 	.globl _X_P2IEN
+                            313 	.globl _X_P0IEN
+                            314 	.globl _X_T2IRQM
+                            315 	.globl _X_T2MOVF2
+                            316 	.globl _X_T2MOVF1
+                            317 	.globl _X_T2MOVF0
+                            318 	.globl _X_T2M1
+                            319 	.globl _X_T2M0
+                            320 	.globl _X_T2IRQF
+                            321 	.globl _X_P2
+                            322 	.globl _X_PSBANK
+                            323 	.globl _X_FMAP
+                            324 	.globl _X_CLKCONSTA
+                            325 	.globl _X_SLEEPSTA
+                            326 	.globl _X_T2EVTCFG
+                            327 	.globl _X_ST2
+                            328 	.globl _X_ST1
+                            329 	.globl _X_ST0
+                            330 	.globl _X_T2CTRL
+                            331 	.globl _X__XPAGE
+                            332 	.globl _X_MPAGE
+                            333 	.globl _X_RFIRQF1
+                            334 	.globl _X_P1
+                            335 	.globl _X_P0INP
+                            336 	.globl _X_P1IEN
+                            337 	.globl _X_PICTL
+                            338 	.globl _X_P2IFG
+                            339 	.globl _X_P1IFG
+                            340 	.globl _X_P0IFG
+                            341 	.globl _X_U0CSR
+                            342 	.globl _X_P0
+                            343 	.globl _USBF5
+                            344 	.globl _USBF4
+                            345 	.globl _USBF3
+                            346 	.globl _USBF2
+                            347 	.globl _USBF1
+                            348 	.globl _USBF0
+                            349 	.globl _USBCNTH
+                            350 	.globl _USBCNTL
+                            351 	.globl _USBCNT0
+                            352 	.globl _USBCSOH
+                            353 	.globl _USBCSOL
+                            354 	.globl _USBMAXO
+                            355 	.globl _USBCSIH
+                            356 	.globl _USBCSIL
+                            357 	.globl _USBCS0
+                            358 	.globl _USBMAXI
+                            359 	.globl _USBCTRL
+                            360 	.globl _USBINDEX
+                            361 	.globl _USBFRMH
+                            362 	.globl _USBFRML
+                            363 	.globl _USBCIE
+                            364 	.globl _USBOIE
+                            365 	.globl _USBIIE
+                            366 	.globl _USBCIF
+                            367 	.globl _USBOIF
+                            368 	.globl _USBIIF
+                            369 	.globl _USBPOW
+                            370 	.globl _USBADDR
+                            371 	.globl _CSPT
+                            372 	.globl _CSPZ
+                            373 	.globl _CSPY
+                            374 	.globl _CSPX
+                            375 	.globl _CSPSTAT
+                            376 	.globl _CSPCTRL
+                            377 	.globl _CSPPROG23
+                            378 	.globl _CSPPROG22
+                            379 	.globl _CSPPROG21
+                            380 	.globl _CSPPROG20
+                            381 	.globl _CSPPROG19
+                            382 	.globl _CSPPROG18
+                            383 	.globl _CSPPROG17
+                            384 	.globl _CSPPROG16
+                            385 	.globl _CSPPROG15
+                            386 	.globl _CSPPROG14
+                            387 	.globl _CSPPROG13
+                            388 	.globl _CSPPROG12
+                            389 	.globl _CSPPROG11
+                            390 	.globl _CSPPROG10
+                            391 	.globl _CSPPROG9
+                            392 	.globl _CSPPROG8
+                            393 	.globl _CSPPROG7
+                            394 	.globl _CSPPROG6
+                            395 	.globl _CSPPROG5
+                            396 	.globl _CSPPROG4
+                            397 	.globl _CSPPROG3
+                            398 	.globl _CSPPROG2
+                            399 	.globl _CSPPROG1
+                            400 	.globl _CSPPROG0
+                            401 	.globl _RFC_OBS_CTRL2
+                            402 	.globl _RFC_OBS_CTRL1
+                            403 	.globl _RFC_OBS_CTRL0
+                            404 	.globl _TXFILTCFG
+                            405 	.globl _PTEST1
+                            406 	.globl _PTEST0
+                            407 	.globl _ATEST
+                            408 	.globl _DACTEST2
+                            409 	.globl _DACTEST1
+                            410 	.globl _DACTEST0
+                            411 	.globl _MDMTEST1
+                            412 	.globl _MDMTEST0
+                            413 	.globl _ADCTEST2
+                            414 	.globl _ADCTEST1
+                            415 	.globl _ADCTEST0
+                            416 	.globl _AGCCTRL3
+                            417 	.globl _AGCCTRL2
+                            418 	.globl _AGCCTRL1
+                            419 	.globl _AGCCTRL0
+                            420 	.globl _FSCAL3
+                            421 	.globl _FSCAL2
+                            422 	.globl _FSCAL1
+                            423 	.globl _FSCAL0
+                            424 	.globl _FSCTRL
+                            425 	.globl _RXCTRL
+                            426 	.globl _FREQEST
+                            427 	.globl _MDMCTRL1
+                            428 	.globl _MDMCTRL0
+                            429 	.globl _RFRND
+                            430 	.globl _RFERRM
+                            431 	.globl _RFIRQM1
+                            432 	.globl _RFIRQM0
+                            433 	.globl _TXLAST_PTR
+                            434 	.globl _TXFIRST_PTR
+                            435 	.globl _RXP1_PTR
+                            436 	.globl _RXLAST_PTR
+                            437 	.globl _RXFIRST_PTR
+                            438 	.globl _TXFIFOCNT
+                            439 	.globl _RXFIFOCNT
+                            440 	.globl _RXFIRST
+                            441 	.globl _RSSISTAT
+                            442 	.globl _RSSI
+                            443 	.globl _CCACTRL1
+                            444 	.globl _CCACTRL0
+                            445 	.globl _FSMCTRL
+                            446 	.globl _FIFOPCTRL
+                            447 	.globl _FSMSTAT1
+                            448 	.globl _FSMSTAT0
+                            449 	.globl _TXCTRL
+                            450 	.globl _TXPOWER
+                            451 	.globl _FREQCTRL
+                            452 	.globl _FREQTUNE
+                            453 	.globl _RXMASKCLR
+                            454 	.globl _RXMASKSET
+                            455 	.globl _RXENABLE
+                            456 	.globl _FRMCTRL1
+                            457 	.globl _FRMCTRL0
+                            458 	.globl _SRCEXTEN2
+                            459 	.globl _SRCEXTEN1
+                            460 	.globl _SRCEXTEN0
+                            461 	.globl _SRCSHORTEN2
+                            462 	.globl _SRCSHORTEN1
+                            463 	.globl _SRCSHORTEN0
+                            464 	.globl _SRCMATCH
+                            465 	.globl _FRMFILT1
+                            466 	.globl _FRMFILT0
+                            467 	.globl _SHORT_ADDR1
+                            468 	.globl _SHORT_ADDR0
+                            469 	.globl _PAN_ID1
+                            470 	.globl _PAN_ID0
+                            471 	.globl _EXT_ADDR7
+                            472 	.globl _EXT_ADDR6
+                            473 	.globl _EXT_ADDR5
+                            474 	.globl _EXT_ADDR4
+                            475 	.globl _EXT_ADDR3
+                            476 	.globl _EXT_ADDR2
+                            477 	.globl _EXT_ADDR1
+                            478 	.globl _EXT_ADDR0
+                            479 	.globl _SRCSHORTPENDEN2
+                            480 	.globl _SRCSHORTPENDEN1
+                            481 	.globl _SRCSHORTPENDEN0
+                            482 	.globl _SRCEXTPENDEN2
+                            483 	.globl _SRCEXTPENDEN1
+                            484 	.globl _SRCEXTPENDEN0
+                            485 	.globl _SRCRESINDEX
+                            486 	.globl _SRCRESMASK2
+                            487 	.globl _SRCRESMASK1
+                            488 	.globl _SRCRESMASK0
+                            489 	.globl _SRC_ADDR_TABLE
+                            490 	.globl _TXFIFO
+                            491 	.globl _RXFIFO
+                            492 	.globl _RFCORE_RAM
+                            493 	.globl _CMPCTL
+                            494 	.globl _OPAMPS
+                            495 	.globl _OPAMPC
+                            496 	.globl _STCV2
+                            497 	.globl _STCV1
+                            498 	.globl _STCV0
+                            499 	.globl _STCS
+                            500 	.globl _STCC
+                            501 	.globl _T1CC4H
+                            502 	.globl _T1CC4L
+                            503 	.globl _T1CC3H
+                            504 	.globl _T1CC3L
+                            505 	.globl _XX_T1CC2H
+                            506 	.globl _XX_T1CC2L
+                            507 	.globl _XX_T1CC1H
+                            508 	.globl _XX_T1CC1L
+                            509 	.globl _XX_T1CC0H
+                            510 	.globl _XX_T1CC0L
+                            511 	.globl _T1CCTL4
+                            512 	.globl _T1CCTL3
+                            513 	.globl _XX_T1CCTL2
+                            514 	.globl _XX_T1CCTL1
+                            515 	.globl _XX_T1CCTL0
+                            516 	.globl _CLD
+                            517 	.globl _IRCTL
+                            518 	.globl _CHIPINFO1
+                            519 	.globl _CHIPINFO0
+                            520 	.globl _FWDATA
+                            521 	.globl _FADDRH
+                            522 	.globl _FADDRL
+                            523 	.globl _FCTL
+                            524 	.globl _IVCTRL
+                            525 	.globl _BATTMON
+                            526 	.globl _SRCRC
+                            527 	.globl _DBGDATA
+                            528 	.globl _TESTREG0
+                            529 	.globl _CHIPID
+                            530 	.globl _CHVER
+                            531 	.globl _OBSSEL5
+                            532 	.globl _OBSSEL4
+                            533 	.globl _OBSSEL3
+                            534 	.globl _OBSSEL2
+                            535 	.globl _OBSSEL1
+                            536 	.globl _OBSSEL0
+                            537 	.globl _I2CIO
+                            538 	.globl _I2CWC
+                            539 	.globl _I2CADDR
+                            540 	.globl _I2CDATA
+                            541 	.globl _I2CSTAT
+                            542 	.globl _I2CCFG
+                            543 	.globl _OPAMPMC
+                            544 	.globl _MONMUX
+                            545 	.globl _policy_mem_pool_init
+                            546 	.globl _dev_policy_cond_alloc
+                            547 	.globl _dev_policy_cond_free
+                            548 	.globl _dev_policy_cond_init
+                            549 	.globl _dev_policy_action_alloc
+                            550 	.globl _dev_policy_action_free
+                            551 	.globl _dev_policy_action_value_change_init
+                            552 	.globl _dev_policy_action_message_init
+                            553 	.globl _dev_policy_alloc
+                            554 	.globl _dev_policy_free
+                            555 	.globl _dev_policy_init
+                            556 	.globl _dev_policy_add_cond
+                            557 	.globl _dev_policy_add_action
+                            558 ;--------------------------------------------------------
+                            559 ; special function registers
+                            560 ;--------------------------------------------------------
+                            561 	.area RSEG    (ABS,DATA)
+   0000                     562 	.org 0x0000
+                    0080    563 _P0	=	0x0080
+                    0081    564 _SP	=	0x0081
+                    0082    565 _DPL0	=	0x0082
+                    0083    566 _DPH0	=	0x0083
+                    0084    567 _DPL1	=	0x0084
+                    0085    568 _DPH1	=	0x0085
+                    0087    569 _PCON	=	0x0087
+                    0088    570 _TCON	=	0x0088
+                    0090    571 _P1	=	0x0090
+                    0092    572 _DPS	=	0x0092
+                    0098    573 _S0CON	=	0x0098
+                    009A    574 _IEN2	=	0x009a
+                    009B    575 _S1CON	=	0x009b
+                    00A0    576 _P2	=	0x00a0
+                    00A8    577 _IEN0	=	0x00a8
+                    00A9    578 _IP0	=	0x00a9
+                    00B8    579 _IEN1	=	0x00b8
+                    00B9    580 _IP1	=	0x00b9
+                    00C0    581 _IRCON	=	0x00c0
+                    00D0    582 _PSW	=	0x00d0
+                    00E0    583 _ACC	=	0x00e0
+                    00E8    584 _IRCON2	=	0x00e8
+                    00F0    585 _B	=	0x00f0
+                    00B4    586 _ADCCON1	=	0x00b4
+                    00B5    587 _ADCCON2	=	0x00b5
+                    00B6    588 _ADCCON3	=	0x00b6
+                    00BA    589 _ADCL	=	0x00ba
+                    00BB    590 _ADCH	=	0x00bb
+                    00BC    591 _RNDL	=	0x00bc
+                    00BD    592 _RNDH	=	0x00bd
+                    00B1    593 _ENCDI	=	0x00b1
+                    00B2    594 _ENCDO	=	0x00b2
+                    00B3    595 _ENCCS	=	0x00b3
+                    00D1    596 _DMAIRQ	=	0x00d1
+                    00D2    597 _DMA1CFGL	=	0x00d2
+                    00D3    598 _DMA1CFGH	=	0x00d3
+                    00D4    599 _DMA0CFGL	=	0x00d4
+                    00D5    600 _DMA0CFGH	=	0x00d5
+                    00D6    601 _DMAARM	=	0x00d6
+                    00D7    602 _DMAREQ	=	0x00d7
+                    0089    603 _P0IFG	=	0x0089
+                    008A    604 _P1IFG	=	0x008a
+                    008B    605 _P2IFG	=	0x008b
+                    008C    606 _PICTL	=	0x008c
+                    00AB    607 _P0IEN	=	0x00ab
+                    008D    608 _P1IEN	=	0x008d
+                    00AC    609 _P2IEN	=	0x00ac
+                    008F    610 _P0INP	=	0x008f
+                    00F1    611 _PERCFG	=	0x00f1
+                    00F2    612 _APCFG	=	0x00f2
+                    00F3    613 _P0SEL	=	0x00f3
+                    00F4    614 _P1SEL	=	0x00f4
+                    00F5    615 _P2SEL	=	0x00f5
+                    00F6    616 _P1INP	=	0x00f6
+                    00F7    617 _P2INP	=	0x00f7
+                    00FD    618 _P0DIR	=	0x00fd
+                    00FE    619 _P1DIR	=	0x00fe
+                    00FF    620 _P2DIR	=	0x00ff
+                    00AE    621 _PMUX	=	0x00ae
+                    0093    622 _MPAGE	=	0x0093
+                    0093    623 __XPAGE	=	0x0093
+                    00C7    624 _MEMCTR	=	0x00c7
+                    009F    625 _FMAP	=	0x009f
+                    009F    626 _PSBANK	=	0x009f
+                    0091    627 _RFIRQF1	=	0x0091
+                    00D9    628 _RFD	=	0x00d9
+                    00E1    629 _RFST	=	0x00e1
+                    00E9    630 _RFIRQF0	=	0x00e9
+                    00BF    631 _RFERRF	=	0x00bf
+                    0095    632 _ST0	=	0x0095
+                    0096    633 _ST1	=	0x0096
+                    0097    634 _ST2	=	0x0097
+                    00AD    635 _STLOAD	=	0x00ad
+                    00BE    636 _SLEEPCMD	=	0x00be
+                    009D    637 _SLEEPSTA	=	0x009d
+                    00C6    638 _CLKCONCMD	=	0x00c6
+                    009E    639 _CLKCONSTA	=	0x009e
+                    00DA    640 _T1CC0L	=	0x00da
+                    00DB    641 _T1CC0H	=	0x00db
+                    00DC    642 _T1CC1L	=	0x00dc
+                    00DD    643 _T1CC1H	=	0x00dd
+                    00DE    644 _T1CC2L	=	0x00de
+                    00DF    645 _T1CC2H	=	0x00df
+                    00E2    646 _T1CNTL	=	0x00e2
+                    00E3    647 _T1CNTH	=	0x00e3
+                    00E4    648 _T1CTL	=	0x00e4
+                    00E5    649 _T1CCTL0	=	0x00e5
+                    00E6    650 _T1CCTL1	=	0x00e6
+                    00E7    651 _T1CCTL2	=	0x00e7
+                    00AF    652 _T1STAT	=	0x00af
+                    0094    653 _T2CTRL	=	0x0094
+                    009C    654 _T2EVTCFG	=	0x009c
+                    00A1    655 _T2IRQF	=	0x00a1
+                    00A2    656 _T2M0	=	0x00a2
+                    00A3    657 _T2M1	=	0x00a3
+                    00A4    658 _T2MOVF0	=	0x00a4
+                    00A5    659 _T2MOVF1	=	0x00a5
+                    00A6    660 _T2MOVF2	=	0x00a6
+                    00A7    661 _T2IRQM	=	0x00a7
+                    00C3    662 _T2MSEL	=	0x00c3
+                    00CA    663 _T3CNT	=	0x00ca
+                    00CB    664 _T3CTL	=	0x00cb
+                    00CC    665 _T3CCTL0	=	0x00cc
+                    00CD    666 _T3CC0	=	0x00cd
+                    00CE    667 _T3CCTL1	=	0x00ce
+                    00CF    668 _T3CC1	=	0x00cf
+                    00EA    669 _T4CNT	=	0x00ea
+                    00EB    670 _T4CTL	=	0x00eb
+                    00EC    671 _T4CCTL0	=	0x00ec
+                    00ED    672 _T4CC0	=	0x00ed
+                    00EE    673 _T4CCTL1	=	0x00ee
+                    00EF    674 _T4CC1	=	0x00ef
+                    00D8    675 _TIMIF	=	0x00d8
+                    0086    676 _U0CSR	=	0x0086
+                    00C1    677 _U0DBUF	=	0x00c1
+                    00C2    678 _U0BAUD	=	0x00c2
+                    00C4    679 _U0UCR	=	0x00c4
+                    00C5    680 _U0GCR	=	0x00c5
+                    00F8    681 _U1CSR	=	0x00f8
+                    00F9    682 _U1DBUF	=	0x00f9
+                    00FA    683 _U1BAUD	=	0x00fa
+                    00FB    684 _U1UCR	=	0x00fb
+                    00FC    685 _U1GCR	=	0x00fc
+                    00C9    686 _WDCTL	=	0x00c9
+                            687 ;--------------------------------------------------------
+                            688 ; special function bits
+                            689 ;--------------------------------------------------------
+                            690 	.area RSEG    (ABS,DATA)
+   0000                     691 	.org 0x0000
+                    0087    692 _P0_7	=	0x0087
+                    0086    693 _P0_6	=	0x0086
+                    0085    694 _P0_5	=	0x0085
+                    0084    695 _P0_4	=	0x0084
+                    0083    696 _P0_3	=	0x0083
+                    0082    697 _P0_2	=	0x0082
+                    0081    698 _P0_1	=	0x0081
+                    0080    699 _P0_0	=	0x0080
+                    008F    700 _URX1IF	=	0x008f
+                    008D    701 _ADCIF	=	0x008d
+                    008B    702 _URX0IF	=	0x008b
+                    008A    703 _IT1	=	0x008a
+                    0089    704 _RFERRIF	=	0x0089
+                    0088    705 _IT0	=	0x0088
+                    0097    706 _P1_7	=	0x0097
+                    0096    707 _P1_6	=	0x0096
+                    0095    708 _P1_5	=	0x0095
+                    0094    709 _P1_4	=	0x0094
+                    0093    710 _P1_3	=	0x0093
+                    0092    711 _P1_2	=	0x0092
+                    0091    712 _P1_1	=	0x0091
+                    0090    713 _P1_0	=	0x0090
+                    0099    714 _ENCIF_1	=	0x0099
+                    0098    715 _ENCIF_0	=	0x0098
+                    00A7    716 _P2_7	=	0x00a7
+                    00A6    717 _P2_6	=	0x00a6
+                    00A5    718 _P2_5	=	0x00a5
+                    00A4    719 _P2_4	=	0x00a4
+                    00A3    720 _P2_3	=	0x00a3
+                    00A2    721 _P2_2	=	0x00a2
+                    00A1    722 _P2_1	=	0x00a1
+                    00A0    723 _P2_0	=	0x00a0
+                    00AF    724 _EA	=	0x00af
+                    00AD    725 _STIE	=	0x00ad
+                    00AC    726 _ENCIE	=	0x00ac
+                    00AB    727 _URX1IE	=	0x00ab
+                    00AA    728 _URX0IE	=	0x00aa
+                    00A9    729 _ADCIE	=	0x00a9
+                    00A8    730 _RFERRIE	=	0x00a8
+                    00BD    731 _P0IE	=	0x00bd
+                    00BC    732 _T4IE	=	0x00bc
+                    00BB    733 _T3IE	=	0x00bb
+                    00BA    734 _T2IE	=	0x00ba
+                    00B9    735 _T1IE	=	0x00b9
+                    00B8    736 _DMAIE	=	0x00b8
+                    00C7    737 _STIF	=	0x00c7
+                    00C5    738 _P0IF	=	0x00c5
+                    00C4    739 _T4IF	=	0x00c4
+                    00C3    740 _T3IF	=	0x00c3
+                    00C2    741 _T2IF	=	0x00c2
+                    00C1    742 _T1IF	=	0x00c1
+                    00C0    743 _DMAIF	=	0x00c0
+                    00D7    744 _CY	=	0x00d7
+                    00D6    745 _AC	=	0x00d6
+                    00D5    746 _F0	=	0x00d5
+                    00D4    747 _RS1	=	0x00d4
+                    00D3    748 _RS0	=	0x00d3
+                    00D2    749 _OV	=	0x00d2
+                    00D1    750 _F1	=	0x00d1
+                    00D0    751 _P	=	0x00d0
+                    00E7    752 _ACC_7	=	0x00e7
+                    00E6    753 _ACC_6	=	0x00e6
+                    00E5    754 _ACC_5	=	0x00e5
+                    00E4    755 _ACC_4	=	0x00e4
+                    00E3    756 _ACC_3	=	0x00e3
+                    00E2    757 _ACC_2	=	0x00e2
+                    00E1    758 _ACC_1	=	0x00e1
+                    00E0    759 _ACC_0	=	0x00e0
+                    00EC    760 _WDTIF	=	0x00ec
+                    00EB    761 _P1IF	=	0x00eb
+                    00EA    762 _UTX1IF	=	0x00ea
+                    00E9    763 _UTX0IF	=	0x00e9
+                    00E8    764 _P2IF	=	0x00e8
+                    00F7    765 _B_7	=	0x00f7
+                    00F6    766 _B_6	=	0x00f6
+                    00F5    767 _B_5	=	0x00f5
+                    00F4    768 _B_4	=	0x00f4
+                    00F3    769 _B_3	=	0x00f3
+                    00F2    770 _B_2	=	0x00f2
+                    00F1    771 _B_1	=	0x00f1
+                    00F0    772 _B_0	=	0x00f0
+                    00DE    773 _OVFIM	=	0x00de
+                    00DD    774 _T4CH1IF	=	0x00dd
+                    00DC    775 _T4CH0IF	=	0x00dc
+                    00DB    776 _T4OVFIF	=	0x00db
+                    00DA    777 _T3CH1IF	=	0x00da
+                    00D9    778 _T3CH0IF	=	0x00d9
+                    00D8    779 _T3OVFIF	=	0x00d8
+                    00FF    780 _MODE	=	0x00ff
+                    00FE    781 _RE	=	0x00fe
+                    00FD    782 _SLAVE	=	0x00fd
+                    00FC    783 _FE	=	0x00fc
+                    00FB    784 _ERR	=	0x00fb
+                    00FA    785 _RX_BYTE	=	0x00fa
+                    00F9    786 _TX_BYTE	=	0x00f9
+                    00F8    787 _ACTIVE	=	0x00f8
+                            788 ;--------------------------------------------------------
+                            789 ; overlayable register banks
+                            790 ;--------------------------------------------------------
+                            791 	.area REG_BANK_0	(REL,OVR,DATA)
+   0000                     792 	.ds 8
+                            793 ;--------------------------------------------------------
+                            794 ; internal ram data
+                            795 ;--------------------------------------------------------
+                            796 	.area DSEG    (DATA)
+                            797 ;--------------------------------------------------------
+                            798 ; overlayable items in internal ram 
+                            799 ;--------------------------------------------------------
+                            800 	.area OSEG    (OVR,DATA)
+                            801 ;--------------------------------------------------------
+                            802 ; indirectly addressable internal ram data
+                            803 ;--------------------------------------------------------
+                            804 	.area ISEG    (DATA)
+                            805 ;--------------------------------------------------------
+                            806 ; absolute internal ram data
+                            807 ;--------------------------------------------------------
+                            808 	.area IABS    (ABS,DATA)
+                            809 	.area IABS    (ABS,DATA)
+                            810 ;--------------------------------------------------------
+                            811 ; bit data
+                            812 ;--------------------------------------------------------
+                            813 	.area BSEG    (BIT)
+                            814 ;--------------------------------------------------------
+                            815 ; paged external ram data
+                            816 ;--------------------------------------------------------
+                            817 	.area PSEG    (PAG,XDATA)
+                            818 ;--------------------------------------------------------
+                            819 ; external ram data
+                            820 ;--------------------------------------------------------
+                            821 	.area XSEG    (XDATA)
+                    61A6    822 _MONMUX	=	0x61a6
+                    61A6    823 _OPAMPMC	=	0x61a6
+                    6230    824 _I2CCFG	=	0x6230
+                    6231    825 _I2CSTAT	=	0x6231
+                    6232    826 _I2CDATA	=	0x6232
+                    6233    827 _I2CADDR	=	0x6233
+                    6234    828 _I2CWC	=	0x6234
+                    6235    829 _I2CIO	=	0x6235
+                    6243    830 _OBSSEL0	=	0x6243
+                    6244    831 _OBSSEL1	=	0x6244
+                    6245    832 _OBSSEL2	=	0x6245
+                    6246    833 _OBSSEL3	=	0x6246
+                    6247    834 _OBSSEL4	=	0x6247
+                    6248    835 _OBSSEL5	=	0x6248
+                    6249    836 _CHVER	=	0x6249
+                    624A    837 _CHIPID	=	0x624a
+                    624B    838 _TESTREG0	=	0x624b
+                    6260    839 _DBGDATA	=	0x6260
+                    6262    840 _SRCRC	=	0x6262
+                    6264    841 _BATTMON	=	0x6264
+                    6265    842 _IVCTRL	=	0x6265
+                    6270    843 _FCTL	=	0x6270
+                    6271    844 _FADDRL	=	0x6271
+                    6272    845 _FADDRH	=	0x6272
+                    6273    846 _FWDATA	=	0x6273
+                    6276    847 _CHIPINFO0	=	0x6276
+                    6277    848 _CHIPINFO1	=	0x6277
+                    6281    849 _IRCTL	=	0x6281
+                    6290    850 _CLD	=	0x6290
+                    62A0    851 _XX_T1CCTL0	=	0x62a0
+                    62A1    852 _XX_T1CCTL1	=	0x62a1
+                    62A2    853 _XX_T1CCTL2	=	0x62a2
+                    62A3    854 _T1CCTL3	=	0x62a3
+                    62A4    855 _T1CCTL4	=	0x62a4
+                    62A6    856 _XX_T1CC0L	=	0x62a6
+                    62A7    857 _XX_T1CC0H	=	0x62a7
+                    62A8    858 _XX_T1CC1L	=	0x62a8
+                    62A9    859 _XX_T1CC1H	=	0x62a9
+                    62AA    860 _XX_T1CC2L	=	0x62aa
+                    62AB    861 _XX_T1CC2H	=	0x62ab
+                    62AC    862 _T1CC3L	=	0x62ac
+                    62AD    863 _T1CC3H	=	0x62ad
+                    62AE    864 _T1CC4L	=	0x62ae
+                    62AF    865 _T1CC4H	=	0x62af
+                    62B0    866 _STCC	=	0x62b0
+                    62B1    867 _STCS	=	0x62b1
+                    62B2    868 _STCV0	=	0x62b2
+                    62B3    869 _STCV1	=	0x62b3
+                    62B4    870 _STCV2	=	0x62b4
+                    62C0    871 _OPAMPC	=	0x62c0
+                    62C1    872 _OPAMPS	=	0x62c1
+                    62D0    873 _CMPCTL	=	0x62d0
+                    6000    874 _RFCORE_RAM	=	0x6000
+                    6000    875 _RXFIFO	=	0x6000
+                    6080    876 _TXFIFO	=	0x6080
+                    6100    877 _SRC_ADDR_TABLE	=	0x6100
+                    6160    878 _SRCRESMASK0	=	0x6160
+                    6161    879 _SRCRESMASK1	=	0x6161
+                    6162    880 _SRCRESMASK2	=	0x6162
+                    6163    881 _SRCRESINDEX	=	0x6163
+                    6164    882 _SRCEXTPENDEN0	=	0x6164
+                    6165    883 _SRCEXTPENDEN1	=	0x6165
+                    6166    884 _SRCEXTPENDEN2	=	0x6166
+                    6167    885 _SRCSHORTPENDEN0	=	0x6167
+                    6168    886 _SRCSHORTPENDEN1	=	0x6168
+                    6169    887 _SRCSHORTPENDEN2	=	0x6169
+                    616A    888 _EXT_ADDR0	=	0x616a
+                    616B    889 _EXT_ADDR1	=	0x616b
+                    616C    890 _EXT_ADDR2	=	0x616c
+                    616D    891 _EXT_ADDR3	=	0x616d
+                    616E    892 _EXT_ADDR4	=	0x616e
+                    616F    893 _EXT_ADDR5	=	0x616f
+                    6170    894 _EXT_ADDR6	=	0x6170
+                    6171    895 _EXT_ADDR7	=	0x6171
+                    6172    896 _PAN_ID0	=	0x6172
+                    6173    897 _PAN_ID1	=	0x6173
+                    6174    898 _SHORT_ADDR0	=	0x6174
+                    6175    899 _SHORT_ADDR1	=	0x6175
+                    6180    900 _FRMFILT0	=	0x6180
+                    6181    901 _FRMFILT1	=	0x6181
+                    6182    902 _SRCMATCH	=	0x6182
+                    6183    903 _SRCSHORTEN0	=	0x6183
+                    6184    904 _SRCSHORTEN1	=	0x6184
+                    6185    905 _SRCSHORTEN2	=	0x6185
+                    6186    906 _SRCEXTEN0	=	0x6186
+                    6187    907 _SRCEXTEN1	=	0x6187
+                    6188    908 _SRCEXTEN2	=	0x6188
+                    6189    909 _FRMCTRL0	=	0x6189
+                    618A    910 _FRMCTRL1	=	0x618a
+                    618B    911 _RXENABLE	=	0x618b
+                    618C    912 _RXMASKSET	=	0x618c
+                    618D    913 _RXMASKCLR	=	0x618d
+                    618E    914 _FREQTUNE	=	0x618e
+                    618F    915 _FREQCTRL	=	0x618f
+                    6190    916 _TXPOWER	=	0x6190
+                    6191    917 _TXCTRL	=	0x6191
+                    6192    918 _FSMSTAT0	=	0x6192
+                    6193    919 _FSMSTAT1	=	0x6193
+                    6194    920 _FIFOPCTRL	=	0x6194
+                    6195    921 _FSMCTRL	=	0x6195
+                    6196    922 _CCACTRL0	=	0x6196
+                    6197    923 _CCACTRL1	=	0x6197
+                    6198    924 _RSSI	=	0x6198
+                    6199    925 _RSSISTAT	=	0x6199
+                    619A    926 _RXFIRST	=	0x619a
+                    619B    927 _RXFIFOCNT	=	0x619b
+                    619C    928 _TXFIFOCNT	=	0x619c
+                    619D    929 _RXFIRST_PTR	=	0x619d
+                    619E    930 _RXLAST_PTR	=	0x619e
+                    619F    931 _RXP1_PTR	=	0x619f
+                    61A1    932 _TXFIRST_PTR	=	0x61a1
+                    61A2    933 _TXLAST_PTR	=	0x61a2
+                    61A3    934 _RFIRQM0	=	0x61a3
+                    61A4    935 _RFIRQM1	=	0x61a4
+                    61A5    936 _RFERRM	=	0x61a5
+                    61A7    937 _RFRND	=	0x61a7
+                    61A8    938 _MDMCTRL0	=	0x61a8
+                    61A9    939 _MDMCTRL1	=	0x61a9
+                    61AA    940 _FREQEST	=	0x61aa
+                    61AB    941 _RXCTRL	=	0x61ab
+                    61AC    942 _FSCTRL	=	0x61ac
+                    61AD    943 _FSCAL0	=	0x61ad
+                    61AE    944 _FSCAL1	=	0x61ae
+                    61AF    945 _FSCAL2	=	0x61af
+                    61B0    946 _FSCAL3	=	0x61b0
+                    61B1    947 _AGCCTRL0	=	0x61b1
+                    61B2    948 _AGCCTRL1	=	0x61b2
+                    61B3    949 _AGCCTRL2	=	0x61b3
+                    61B4    950 _AGCCTRL3	=	0x61b4
+                    61B5    951 _ADCTEST0	=	0x61b5
+                    61B6    952 _ADCTEST1	=	0x61b6
+                    61B7    953 _ADCTEST2	=	0x61b7
+                    61B8    954 _MDMTEST0	=	0x61b8
+                    61B9    955 _MDMTEST1	=	0x61b9
+                    61BA    956 _DACTEST0	=	0x61ba
+                    61BB    957 _DACTEST1	=	0x61bb
+                    61BC    958 _DACTEST2	=	0x61bc
+                    61BD    959 _ATEST	=	0x61bd
+                    61BE    960 _PTEST0	=	0x61be
+                    61BF    961 _PTEST1	=	0x61bf
+                    61FA    962 _TXFILTCFG	=	0x61fa
+                    61EB    963 _RFC_OBS_CTRL0	=	0x61eb
+                    61EC    964 _RFC_OBS_CTRL1	=	0x61ec
+                    61ED    965 _RFC_OBS_CTRL2	=	0x61ed
+                    61C0    966 _CSPPROG0	=	0x61c0
+                    61C1    967 _CSPPROG1	=	0x61c1
+                    61C2    968 _CSPPROG2	=	0x61c2
+                    61C3    969 _CSPPROG3	=	0x61c3
+                    61C4    970 _CSPPROG4	=	0x61c4
+                    61C5    971 _CSPPROG5	=	0x61c5
+                    61C6    972 _CSPPROG6	=	0x61c6
+                    61C7    973 _CSPPROG7	=	0x61c7
+                    61C8    974 _CSPPROG8	=	0x61c8
+                    61C9    975 _CSPPROG9	=	0x61c9
+                    61CA    976 _CSPPROG10	=	0x61ca
+                    61CB    977 _CSPPROG11	=	0x61cb
+                    61CC    978 _CSPPROG12	=	0x61cc
+                    61CD    979 _CSPPROG13	=	0x61cd
+                    61CE    980 _CSPPROG14	=	0x61ce
+                    61CF    981 _CSPPROG15	=	0x61cf
+                    61D0    982 _CSPPROG16	=	0x61d0
+                    61D1    983 _CSPPROG17	=	0x61d1
+                    61D2    984 _CSPPROG18	=	0x61d2
+                    61D3    985 _CSPPROG19	=	0x61d3
+                    61D4    986 _CSPPROG20	=	0x61d4
+                    61D5    987 _CSPPROG21	=	0x61d5
+                    61D6    988 _CSPPROG22	=	0x61d6
+                    61D7    989 _CSPPROG23	=	0x61d7
+                    61E0    990 _CSPCTRL	=	0x61e0
+                    61E1    991 _CSPSTAT	=	0x61e1
+                    61E2    992 _CSPX	=	0x61e2
+                    61E3    993 _CSPY	=	0x61e3
+                    61E4    994 _CSPZ	=	0x61e4
+                    61E5    995 _CSPT	=	0x61e5
+                    6200    996 _USBADDR	=	0x6200
+                    6201    997 _USBPOW	=	0x6201
+                    6202    998 _USBIIF	=	0x6202
+                    6204    999 _USBOIF	=	0x6204
+                    6206   1000 _USBCIF	=	0x6206
+                    6207   1001 _USBIIE	=	0x6207
+                    6209   1002 _USBOIE	=	0x6209
+                    620B   1003 _USBCIE	=	0x620b
+                    620C   1004 _USBFRML	=	0x620c
+                    620D   1005 _USBFRMH	=	0x620d
+                    620E   1006 _USBINDEX	=	0x620e
+                    620F   1007 _USBCTRL	=	0x620f
+                    6210   1008 _USBMAXI	=	0x6210
+                    6211   1009 _USBCS0	=	0x6211
+                    6211   1010 _USBCSIL	=	0x6211
+                    6212   1011 _USBCSIH	=	0x6212
+                    6213   1012 _USBMAXO	=	0x6213
+                    6214   1013 _USBCSOL	=	0x6214
+                    6215   1014 _USBCSOH	=	0x6215
+                    6216   1015 _USBCNT0	=	0x6216
+                    6216   1016 _USBCNTL	=	0x6216
+                    6217   1017 _USBCNTH	=	0x6217
+                    6220   1018 _USBF0	=	0x6220
+                    6222   1019 _USBF1	=	0x6222
+                    6224   1020 _USBF2	=	0x6224
+                    6226   1021 _USBF3	=	0x6226
+                    6228   1022 _USBF4	=	0x6228
+                    622A   1023 _USBF5	=	0x622a
+                    7080   1024 _X_P0	=	0x7080
+                    7086   1025 _X_U0CSR	=	0x7086
+                    7089   1026 _X_P0IFG	=	0x7089
+                    708A   1027 _X_P1IFG	=	0x708a
+                    708B   1028 _X_P2IFG	=	0x708b
+                    708C   1029 _X_PICTL	=	0x708c
+                    708D   1030 _X_P1IEN	=	0x708d
+                    708F   1031 _X_P0INP	=	0x708f
+                    7090   1032 _X_P1	=	0x7090
+                    7091   1033 _X_RFIRQF1	=	0x7091
+                    7093   1034 _X_MPAGE	=	0x7093
+                    7093   1035 _X__XPAGE	=	0x7093
+                    7094   1036 _X_T2CTRL	=	0x7094
+                    7095   1037 _X_ST0	=	0x7095
+                    7096   1038 _X_ST1	=	0x7096
+                    7097   1039 _X_ST2	=	0x7097
+                    709C   1040 _X_T2EVTCFG	=	0x709c
+                    709D   1041 _X_SLEEPSTA	=	0x709d
+                    709E   1042 _X_CLKCONSTA	=	0x709e
+                    709F   1043 _X_FMAP	=	0x709f
+                    709F   1044 _X_PSBANK	=	0x709f
+                    70A0   1045 _X_P2	=	0x70a0
+                    70A1   1046 _X_T2IRQF	=	0x70a1
+                    70A2   1047 _X_T2M0	=	0x70a2
+                    70A3   1048 _X_T2M1	=	0x70a3
+                    70A4   1049 _X_T2MOVF0	=	0x70a4
+                    70A5   1050 _X_T2MOVF1	=	0x70a5
+                    70A6   1051 _X_T2MOVF2	=	0x70a6
+                    70A7   1052 _X_T2IRQM	=	0x70a7
+                    70AB   1053 _X_P0IEN	=	0x70ab
+                    70AC   1054 _X_P2IEN	=	0x70ac
+                    70AD   1055 _X_STLOAD	=	0x70ad
+                    70AE   1056 _X_PMUX	=	0x70ae
+                    70AF   1057 _X_T1STAT	=	0x70af
+                    70B1   1058 _X_ENCDI	=	0x70b1
+                    70B2   1059 _X_ENCDO	=	0x70b2
+                    70B3   1060 _X_ENCCS	=	0x70b3
+                    70B4   1061 _X_ADCCON1	=	0x70b4
+                    70B5   1062 _X_ADCCON2	=	0x70b5
+                    70B6   1063 _X_ADCCON3	=	0x70b6
+                    70BA   1064 _X_ADCL	=	0x70ba
+                    70BB   1065 _X_ADCH	=	0x70bb
+                    70BC   1066 _X_RNDL	=	0x70bc
+                    70BD   1067 _X_RNDH	=	0x70bd
+                    70BE   1068 _X_SLEEPCMD	=	0x70be
+                    70BF   1069 _X_RFERRF	=	0x70bf
+                    70C1   1070 _X_U0DBUF	=	0x70c1
+                    70C2   1071 _X_U0BAUD	=	0x70c2
+                    70C3   1072 _X_T2MSEL	=	0x70c3
+                    70C4   1073 _X_U0UCR	=	0x70c4
+                    70C5   1074 _X_U0GCR	=	0x70c5
+                    70C6   1075 _X_CLKCONCMD	=	0x70c6
+                    70C7   1076 _X_MEMCTR	=	0x70c7
+                    70C9   1077 _X_WDCTL	=	0x70c9
+                    70CA   1078 _X_T3CNT	=	0x70ca
+                    70CB   1079 _X_T3CTL	=	0x70cb
+                    70CC   1080 _X_T3CCTL0	=	0x70cc
+                    70CD   1081 _X_T3CC0	=	0x70cd
+                    70CE   1082 _X_T3CCTL1	=	0x70ce
+                    70CF   1083 _X_T3CC1	=	0x70cf
+                    70D1   1084 _X_DMAIRQ	=	0x70d1
+                    70D2   1085 _X_DMA1CFGL	=	0x70d2
+                    70D3   1086 _X_DMA1CFGH	=	0x70d3
+                    70D4   1087 _X_DMA0CFGL	=	0x70d4
+                    70D5   1088 _X_DMA0CFGH	=	0x70d5
+                    70D6   1089 _X_DMAARM	=	0x70d6
+                    70D7   1090 _X_DMAREQ	=	0x70d7
+                    70D8   1091 _X_TIMIF	=	0x70d8
+                    70D9   1092 _X_RFD	=	0x70d9
+                    70DA   1093 _X_T1CC0L	=	0x70da
+                    70DB   1094 _X_T1CC0H	=	0x70db
+                    70DC   1095 _X_T1CC1L	=	0x70dc
+                    70DD   1096 _X_T1CC1H	=	0x70dd
+                    70DE   1097 _X_T1CC2L	=	0x70de
+                    70DF   1098 _X_T1CC2H	=	0x70df
+                    70E1   1099 _X_RFST	=	0x70e1
+                    70E2   1100 _X_T1CNTL	=	0x70e2
+                    70E3   1101 _X_T1CNTH	=	0x70e3
+                    70E4   1102 _X_T1CTL	=	0x70e4
+                    70E5   1103 _X_T1CCTL0	=	0x70e5
+                    70E6   1104 _X_T1CCTL1	=	0x70e6
+                    70E7   1105 _X_T1CCTL2	=	0x70e7
+                    70E9   1106 _X_RFIRQF0	=	0x70e9
+                    70EA   1107 _X_T4CNT	=	0x70ea
+                    70EB   1108 _X_T4CTL	=	0x70eb
+                    70EC   1109 _X_T4CCTL0	=	0x70ec
+                    70ED   1110 _X_T4CC0	=	0x70ed
+                    70EE   1111 _X_T4CCTL1	=	0x70ee
+                    70EF   1112 _X_T4CC1	=	0x70ef
+                    70F1   1113 _X_PERCFG	=	0x70f1
+                    70F2   1114 _X_APCFG	=	0x70f2
+                    70F3   1115 _X_P0SEL	=	0x70f3
+                    70F4   1116 _X_P1SEL	=	0x70f4
+                    70F5   1117 _X_P2SEL	=	0x70f5
+                    70F6   1118 _X_P1INP	=	0x70f6
+                    70F7   1119 _X_P2INP	=	0x70f7
+                    70F8   1120 _X_U1CSR	=	0x70f8
+                    70F9   1121 _X_U1DBUF	=	0x70f9
+                    70FA   1122 _X_U1BAUD	=	0x70fa
+                    70FB   1123 _X_U1UCR	=	0x70fb
+                    70FC   1124 _X_U1GCR	=	0x70fc
+                    70FD   1125 _X_P0DIR	=	0x70fd
+                    70FE   1126 _X_P1DIR	=	0x70fe
+                    70FF   1127 _X_P2DIR	=	0x70ff
+                    7800   1128 _X_INFOPAGE	=	0x7800
+                    780C   1129 _X_IEEE_ADDR	=	0x780c
+   0000                    1130 _policy_memb_memb_count:
+   0000                    1131 	.ds 2
+   0002                    1132 _policy_memb_memb_mem:
+   0002                    1133 	.ds 22
+   0018                    1134 _policy_cond_memb_memb_count:
+   0018                    1135 	.ds 2
+   001A                    1136 _policy_cond_memb_memb_mem:
+   001A                    1137 	.ds 80
+   006A                    1138 _policy_action_memb_memb_count:
+   006A                    1139 	.ds 2
+   006C                    1140 _policy_action_memb_memb_mem:
+   006C                    1141 	.ds 30
+                           1142 ;--------------------------------------------------------
+                           1143 ; absolute external ram data
+                           1144 ;--------------------------------------------------------
+                           1145 	.area XABS    (ABS,XDATA)
+                           1146 ;--------------------------------------------------------
+                           1147 ; external initialized ram data
+                           1148 ;--------------------------------------------------------
+                           1149 	.area XISEG   (XDATA)
+   0000                    1150 _policy_memb:
+   0000                    1151 	.ds 10
+   000A                    1152 _policy_cond_memb:
+   000A                    1153 	.ds 10
+   0014                    1154 _policy_action_memb:
+   0014                    1155 	.ds 10
+                           1156 	.area HOME    (CODE)
+                           1157 	.area GSINIT0 (CODE)
+                           1158 	.area GSINIT1 (CODE)
+                           1159 	.area GSINIT2 (CODE)
+                           1160 	.area GSINIT3 (CODE)
+                           1161 	.area GSINIT4 (CODE)
+                           1162 	.area GSINIT5 (CODE)
+                           1163 	.area GSINIT  (CODE)
+                           1164 	.area GSFINAL (CODE)
+                           1165 	.area CSEG    (CODE)
+                           1166 ;--------------------------------------------------------
+                           1167 ; global & static initialisations
+                           1168 ;--------------------------------------------------------
+                           1169 	.area HOME    (CODE)
+                           1170 	.area GSINIT  (CODE)
+                           1171 	.area GSFINAL (CODE)
+                           1172 	.area GSINIT  (CODE)
+                           1173 ;--------------------------------------------------------
+                           1174 ; Home
+                           1175 ;--------------------------------------------------------
+                           1176 	.area HOME    (CODE)
+                           1177 	.area HOME    (CODE)
+                           1178 ;--------------------------------------------------------
+                           1179 ; code
+                           1180 ;--------------------------------------------------------
+                           1181 	.area BANK1   (CODE)
+                           1182 ;------------------------------------------------------------
+                           1183 ;Allocation info for local variables in function 'policy_mem_pool_init'
+                           1184 ;------------------------------------------------------------
+                           1185 ;	policy.c:14: void policy_mem_pool_init()
+                           1186 ;	-----------------------------------------
+                           1187 ;	 function policy_mem_pool_init
+                           1188 ;	-----------------------------------------
+   0000                    1189 _policy_mem_pool_init:
+                    0007   1190 	ar7 = 0x07
+                    0006   1191 	ar6 = 0x06
+                    0005   1192 	ar5 = 0x05
+                    0004   1193 	ar4 = 0x04
+                    0003   1194 	ar3 = 0x03
+                    0002   1195 	ar2 = 0x02
+                    0001   1196 	ar1 = 0x01
+                    0000   1197 	ar0 = 0x00
+                           1198 ;	policy.c:16: memb_init(&policy_memb); 
+   0000 90s00r00           1199 	mov	dptr,#_policy_memb
+   0003 75 F0 00           1200 	mov	b,#0x00
+   0006 78r00              1201 	mov	r0,#_memb_init
+   0008 79s00              1202 	mov	r1,#(_memb_init >> 8)
+   000A 7As00              1203 	mov	r2,#(_memb_init >> 16)
+   000C 12s00r00           1204 	lcall	__sdcc_banked_call
+                           1205 ;	policy.c:17: memb_init(&policy_cond_memb); 
+   000F 90s00r0A           1206 	mov	dptr,#_policy_cond_memb
+   0012 75 F0 00           1207 	mov	b,#0x00
+   0015 78r00              1208 	mov	r0,#_memb_init
+   0017 79s00              1209 	mov	r1,#(_memb_init >> 8)
+   0019 7As00              1210 	mov	r2,#(_memb_init >> 16)
+   001B 12s00r00           1211 	lcall	__sdcc_banked_call
+                           1212 ;	policy.c:18: memb_init(&policy_action_memb); 
+   001E 90s00r14           1213 	mov	dptr,#_policy_action_memb
+   0021 75 F0 00           1214 	mov	b,#0x00
+   0024 78r00              1215 	mov	r0,#_memb_init
+   0026 79s00              1216 	mov	r1,#(_memb_init >> 8)
+   0028 7As00              1217 	mov	r2,#(_memb_init >> 16)
+   002A 12s00r00           1218 	lcall	__sdcc_banked_call
+   002D 02s00r00           1219 	ljmp	__sdcc_banked_ret
+                           1220 ;------------------------------------------------------------
+                           1221 ;Allocation info for local variables in function 'dev_policy_cond_alloc'
+                           1222 ;------------------------------------------------------------
+                           1223 ;tmp                       Allocated to registers r5 r6 r7 
+                           1224 ;------------------------------------------------------------
+                           1225 ;	policy.c:21: policy_cond_t *dev_policy_cond_alloc()
+                           1226 ;	-----------------------------------------
+                           1227 ;	 function dev_policy_cond_alloc
+                           1228 ;	-----------------------------------------
+   0030                    1229 _dev_policy_cond_alloc:
+                           1230 ;	policy.c:25: tmp = (policy_cond_t *)memb_alloc(&policy_cond_memb);
+   0030 90s00r0A           1231 	mov	dptr,#_policy_cond_memb
+   0033 75 F0 00           1232 	mov	b,#0x00
+   0036 78r00              1233 	mov	r0,#_memb_alloc
+   0038 79s00              1234 	mov	r1,#(_memb_alloc >> 8)
+   003A 7As00              1235 	mov	r2,#(_memb_alloc >> 16)
+   003C 12s00r00           1236 	lcall	__sdcc_banked_call
+   003F AD 82              1237 	mov	r5,dpl
+   0041 AE 83              1238 	mov	r6,dph
+   0043 AF F0              1239 	mov	r7,b
+                           1240 ;	policy.c:26: if(tmp) {
+   0045 ED                 1241 	mov	a,r5
+   0046 4E                 1242 	orl	a,r6
+   0047 60 08              1243 	jz	00102$
+                           1244 ;	policy.c:27: return tmp;
+   0049 8D 82              1245 	mov	dpl,r5
+   004B 8E 83              1246 	mov	dph,r6
+   004D 8F F0              1247 	mov	b,r7
+   004F 80 06              1248 	sjmp	00103$
+   0051                    1249 00102$:
+                           1250 ;	policy.c:30: return NULL;
+   0051 90 00 00           1251 	mov	dptr,#0x0000
+   0054 75 F0 00           1252 	mov	b,#0x00
+   0057                    1253 00103$:
+   0057 02s00r00           1254 	ljmp	__sdcc_banked_ret
+                           1255 ;------------------------------------------------------------
+                           1256 ;Allocation info for local variables in function 'dev_policy_cond_free'
+                           1257 ;------------------------------------------------------------
+                           1258 ;cond                      Allocated to registers r5 r6 r7 
+                           1259 ;------------------------------------------------------------
+                           1260 ;	policy.c:33: void dev_policy_cond_free(policy_cond_t *cond)
+                           1261 ;	-----------------------------------------
+                           1262 ;	 function dev_policy_cond_free
+                           1263 ;	-----------------------------------------
+   005A                    1264 _dev_policy_cond_free:
+   005A AD 82              1265 	mov	r5,dpl
+   005C AE 83              1266 	mov	r6,dph
+   005E AF F0              1267 	mov	r7,b
+                           1268 ;	policy.c:35: memb_free(&policy_cond_memb, cond); 
+   0060 C0 05              1269 	push	ar5
+   0062 C0 06              1270 	push	ar6
+   0064 C0 07              1271 	push	ar7
+   0066 90s00r0A           1272 	mov	dptr,#_policy_cond_memb
+   0069 75 F0 00           1273 	mov	b,#0x00
+   006C 78r00              1274 	mov	r0,#_memb_free
+   006E 79s00              1275 	mov	r1,#(_memb_free >> 8)
+   0070 7As00              1276 	mov	r2,#(_memb_free >> 16)
+   0072 12s00r00           1277 	lcall	__sdcc_banked_call
+   0075 15 81              1278 	dec	sp
+   0077 15 81              1279 	dec	sp
+   0079 15 81              1280 	dec	sp
+   007B 02s00r00           1281 	ljmp	__sdcc_banked_ret
+                           1282 ;------------------------------------------------------------
+                           1283 ;Allocation info for local variables in function 'dev_policy_cond_init'
+                           1284 ;------------------------------------------------------------
+                           1285 ;ip6_addr                  Allocated to stack - sp -8
+                           1286 ;device_id                 Allocated to stack - sp -11
+                           1287 ;obj_name                  Allocated to stack - sp -14
+                           1288 ;op                        Allocated to stack - sp -15
+                           1289 ;value                     Allocated to stack - sp -18
+                           1290 ;cond                      Allocated to stack - sp -2
+                           1291 ;------------------------------------------------------------
+                           1292 ;	policy.c:38: int16_t dev_policy_cond_init(policy_cond_t *cond, uip_ip6addr_t *ip6_addr, 
+                           1293 ;	-----------------------------------------
+                           1294 ;	 function dev_policy_cond_init
+                           1295 ;	-----------------------------------------
+   007E                    1296 _dev_policy_cond_init:
+   007E C0 82              1297 	push	dpl
+   0080 C0 83              1298 	push	dph
+   0082 C0 F0              1299 	push	b
+                           1300 ;	policy.c:42: if (!cond) {
+   0084 A8 81              1301 	mov	r0,sp
+   0086 18                 1302 	dec	r0
+   0087 18                 1303 	dec	r0
+   0088 E6                 1304 	mov	a,@r0
+   0089 08                 1305 	inc	r0
+   008A 46                 1306 	orl	a,@r0
+   008B 70 06              1307 	jnz	00102$
+                           1308 ;	policy.c:43: return FAIL;
+   008D 90 00 00           1309 	mov	dptr,#0x0000
+   0090 02s01rC7           1310 	ljmp	00103$
+   0093                    1311 00102$:
+                           1312 ;	policy.c:46: cond->next = NULL;
+   0093 A8 81              1313 	mov	r0,sp
+   0095 18                 1314 	dec	r0
+   0096 18                 1315 	dec	r0
+   0097 86 82              1316 	mov	dpl,@r0
+   0099 08                 1317 	inc	r0
+   009A 86 83              1318 	mov	dph,@r0
+   009C 08                 1319 	inc	r0
+   009D 86 F0              1320 	mov	b,@r0
+   009F E4                 1321 	clr	a
+   00A0 12s00r00           1322 	lcall	__gptrput
+   00A3 A3                 1323 	inc	dptr
+   00A4 E4                 1324 	clr	a
+   00A5 12s00r00           1325 	lcall	__gptrput
+   00A8 A3                 1326 	inc	dptr
+   00A9 E4                 1327 	clr	a
+   00AA 12s00r00           1328 	lcall	__gptrput
+                           1329 ;	policy.c:47: memcpy(&cond->ip6_addr, ip6_addr, sizeof(uip_ip6addr_t));
+   00AD E5 81              1330 	mov	a,sp
+   00AF 24 F8              1331 	add	a,#0xf8
+   00B1 F8                 1332 	mov	r0,a
+   00B2 86 02              1333 	mov	ar2,@r0
+   00B4 08                 1334 	inc	r0
+   00B5 86 03              1335 	mov	ar3,@r0
+   00B7 08                 1336 	inc	r0
+   00B8 86 04              1337 	mov	ar4,@r0
+   00BA A8 81              1338 	mov	r0,sp
+   00BC 18                 1339 	dec	r0
+   00BD 18                 1340 	dec	r0
+   00BE 74 03              1341 	mov	a,#0x03
+   00C0 26                 1342 	add	a,@r0
+   00C1 FD                 1343 	mov	r5,a
+   00C2 E4                 1344 	clr	a
+   00C3 08                 1345 	inc	r0
+   00C4 36                 1346 	addc	a,@r0
+   00C5 FE                 1347 	mov	r6,a
+   00C6 08                 1348 	inc	r0
+   00C7 86 07              1349 	mov	ar7,@r0
+   00C9 74 10              1350 	mov	a,#0x10
+   00CB C0 E0              1351 	push	acc
+   00CD E4                 1352 	clr	a
+   00CE C0 E0              1353 	push	acc
+   00D0 C0 02              1354 	push	ar2
+   00D2 C0 03              1355 	push	ar3
+   00D4 C0 04              1356 	push	ar4
+   00D6 8D 82              1357 	mov	dpl,r5
+   00D8 8E 83              1358 	mov	dph,r6
+   00DA 8F F0              1359 	mov	b,r7
+   00DC 78r00              1360 	mov	r0,#_memcpy
+   00DE 79s00              1361 	mov	r1,#(_memcpy >> 8)
+   00E0 7As00              1362 	mov	r2,#(_memcpy >> 16)
+   00E2 12s00r00           1363 	lcall	__sdcc_banked_call
+   00E5 E5 81              1364 	mov	a,sp
+   00E7 24 FB              1365 	add	a,#0xfb
+                           1366 ;	policy.c:48: memcpy(&cond->device_id, device_id, DEV_ID_SIZE);
+   00E9 F5 81              1367 	mov	sp,a
+   00EB 24 F5              1368 	add	a,#0xf5
+   00ED F8                 1369 	mov	r0,a
+   00EE 86 05              1370 	mov	ar5,@r0
+   00F0 08                 1371 	inc	r0
+   00F1 86 06              1372 	mov	ar6,@r0
+   00F3 08                 1373 	inc	r0
+   00F4 86 07              1374 	mov	ar7,@r0
+   00F6 A8 81              1375 	mov	r0,sp
+   00F8 18                 1376 	dec	r0
+   00F9 18                 1377 	dec	r0
+   00FA 74 13              1378 	mov	a,#0x13
+   00FC 26                 1379 	add	a,@r0
+   00FD FA                 1380 	mov	r2,a
+   00FE E4                 1381 	clr	a
+   00FF 08                 1382 	inc	r0
+   0100 36                 1383 	addc	a,@r0
+   0101 FB                 1384 	mov	r3,a
+   0102 08                 1385 	inc	r0
+   0103 86 04              1386 	mov	ar4,@r0
+   0105 74 08              1387 	mov	a,#0x08
+   0107 C0 E0              1388 	push	acc
+   0109 E4                 1389 	clr	a
+   010A C0 E0              1390 	push	acc
+   010C C0 05              1391 	push	ar5
+   010E C0 06              1392 	push	ar6
+   0110 C0 07              1393 	push	ar7
+   0112 8A 82              1394 	mov	dpl,r2
+   0114 8B 83              1395 	mov	dph,r3
+   0116 8C F0              1396 	mov	b,r4
+   0118 78r00              1397 	mov	r0,#_memcpy
+   011A 79s00              1398 	mov	r1,#(_memcpy >> 8)
+   011C 7As00              1399 	mov	r2,#(_memcpy >> 16)
+   011E 12s00r00           1400 	lcall	__sdcc_banked_call
+   0121 E5 81              1401 	mov	a,sp
+   0123 24 FB              1402 	add	a,#0xfb
+                           1403 ;	policy.c:49: strncpy(cond->obj_name, obj_name, MAX_OBJECT_NAME_LEN);
+   0125 F5 81              1404 	mov	sp,a
+   0127 24 F2              1405 	add	a,#0xf2
+   0129 F8                 1406 	mov	r0,a
+   012A 86 05              1407 	mov	ar5,@r0
+   012C 08                 1408 	inc	r0
+   012D 86 06              1409 	mov	ar6,@r0
+   012F 08                 1410 	inc	r0
+   0130 86 07              1411 	mov	ar7,@r0
+   0132 A8 81              1412 	mov	r0,sp
+   0134 18                 1413 	dec	r0
+   0135 18                 1414 	dec	r0
+   0136 74 1B              1415 	mov	a,#0x1B
+   0138 26                 1416 	add	a,@r0
+   0139 FA                 1417 	mov	r2,a
+   013A E4                 1418 	clr	a
+   013B 08                 1419 	inc	r0
+   013C 36                 1420 	addc	a,@r0
+   013D FB                 1421 	mov	r3,a
+   013E 08                 1422 	inc	r0
+   013F 86 04              1423 	mov	ar4,@r0
+   0141 74 08              1424 	mov	a,#0x08
+   0143 C0 E0              1425 	push	acc
+   0145 E4                 1426 	clr	a
+   0146 C0 E0              1427 	push	acc
+   0148 C0 05              1428 	push	ar5
+   014A C0 06              1429 	push	ar6
+   014C C0 07              1430 	push	ar7
+   014E 8A 82              1431 	mov	dpl,r2
+   0150 8B 83              1432 	mov	dph,r3
+   0152 8C F0              1433 	mov	b,r4
+   0154 78r00              1434 	mov	r0,#_strncpy
+   0156 79s00              1435 	mov	r1,#(_strncpy >> 8)
+   0158 7As00              1436 	mov	r2,#(_strncpy >> 16)
+   015A 12s00r00           1437 	lcall	__sdcc_banked_call
+   015D E5 81              1438 	mov	a,sp
+   015F 24 FB              1439 	add	a,#0xfb
+   0161 F5 81              1440 	mov	sp,a
+                           1441 ;	policy.c:50: cond->cond.operation = op;
+   0163 A8 81              1442 	mov	r0,sp
+   0165 18                 1443 	dec	r0
+   0166 18                 1444 	dec	r0
+   0167 74 23              1445 	mov	a,#0x23
+   0169 26                 1446 	add	a,@r0
+   016A FD                 1447 	mov	r5,a
+   016B E4                 1448 	clr	a
+   016C 08                 1449 	inc	r0
+   016D 36                 1450 	addc	a,@r0
+   016E FE                 1451 	mov	r6,a
+   016F 08                 1452 	inc	r0
+   0170 86 07              1453 	mov	ar7,@r0
+   0172 8D 82              1454 	mov	dpl,r5
+   0174 8E 83              1455 	mov	dph,r6
+   0176 8F F0              1456 	mov	b,r7
+   0178 E5 81              1457 	mov	a,sp
+   017A 24 F1              1458 	add	a,#0xf1
+   017C F8                 1459 	mov	r0,a
+   017D E6                 1460 	mov	a,@r0
+   017E 12s00r00           1461 	lcall	__gptrput
+                           1462 ;	policy.c:51: memcpy(&cond->cond.value, value, sizeof(cond_value_u));
+   0181 E5 81              1463 	mov	a,sp
+   0183 24 EE              1464 	add	a,#0xee
+   0185 F8                 1465 	mov	r0,a
+   0186 86 05              1466 	mov	ar5,@r0
+   0188 08                 1467 	inc	r0
+   0189 86 06              1468 	mov	ar6,@r0
+   018B 08                 1469 	inc	r0
+   018C 86 07              1470 	mov	ar7,@r0
+   018E A8 81              1471 	mov	r0,sp
+   0190 18                 1472 	dec	r0
+   0191 18                 1473 	dec	r0
+   0192 74 23              1474 	mov	a,#0x23
+   0194 26                 1475 	add	a,@r0
+   0195 FA                 1476 	mov	r2,a
+   0196 E4                 1477 	clr	a
+   0197 08                 1478 	inc	r0
+   0198 36                 1479 	addc	a,@r0
+   0199 FB                 1480 	mov	r3,a
+   019A 08                 1481 	inc	r0
+   019B 86 04              1482 	mov	ar4,@r0
+   019D 0A                 1483 	inc	r2
+   019E BA 00 01           1484 	cjne	r2,#0x00,00108$
+   01A1 0B                 1485 	inc	r3
+   01A2                    1486 00108$:
+   01A2 74 04              1487 	mov	a,#0x04
+   01A4 C0 E0              1488 	push	acc
+   01A6 E4                 1489 	clr	a
+   01A7 C0 E0              1490 	push	acc
+   01A9 C0 05              1491 	push	ar5
+   01AB C0 06              1492 	push	ar6
+   01AD C0 07              1493 	push	ar7
+   01AF 8A 82              1494 	mov	dpl,r2
+   01B1 8B 83              1495 	mov	dph,r3
+   01B3 8C F0              1496 	mov	b,r4
+   01B5 78r00              1497 	mov	r0,#_memcpy
+   01B7 79s00              1498 	mov	r1,#(_memcpy >> 8)
+   01B9 7As00              1499 	mov	r2,#(_memcpy >> 16)
+   01BB 12s00r00           1500 	lcall	__sdcc_banked_call
+   01BE E5 81              1501 	mov	a,sp
+   01C0 24 FB              1502 	add	a,#0xfb
+   01C2 F5 81              1503 	mov	sp,a
+                           1504 ;	policy.c:53: return SUCCESS;
+   01C4 90 00 01           1505 	mov	dptr,#0x0001
+   01C7                    1506 00103$:
+   01C7 15 81              1507 	dec	sp
+   01C9 15 81              1508 	dec	sp
+   01CB 15 81              1509 	dec	sp
+   01CD 02s00r00           1510 	ljmp	__sdcc_banked_ret
+                           1511 ;------------------------------------------------------------
+                           1512 ;Allocation info for local variables in function 'dev_policy_action_alloc'
+                           1513 ;------------------------------------------------------------
+                           1514 ;tmp                       Allocated to registers r5 r6 r7 
+                           1515 ;------------------------------------------------------------
+                           1516 ;	policy.c:56: policy_action_t *dev_policy_action_alloc()
+                           1517 ;	-----------------------------------------
+                           1518 ;	 function dev_policy_action_alloc
+                           1519 ;	-----------------------------------------
+   01D0                    1520 _dev_policy_action_alloc:
+                           1521 ;	policy.c:60: tmp = (policy_action_t *)memb_alloc(&policy_action_memb);
+   01D0 90s00r14           1522 	mov	dptr,#_policy_action_memb
+   01D3 75 F0 00           1523 	mov	b,#0x00
+   01D6 78r00              1524 	mov	r0,#_memb_alloc
+   01D8 79s00              1525 	mov	r1,#(_memb_alloc >> 8)
+   01DA 7As00              1526 	mov	r2,#(_memb_alloc >> 16)
+   01DC 12s00r00           1527 	lcall	__sdcc_banked_call
+   01DF AD 82              1528 	mov	r5,dpl
+   01E1 AE 83              1529 	mov	r6,dph
+   01E3 AF F0              1530 	mov	r7,b
+                           1531 ;	policy.c:61: if(tmp) {
+   01E5 ED                 1532 	mov	a,r5
+   01E6 4E                 1533 	orl	a,r6
+   01E7 60 08              1534 	jz	00102$
+                           1535 ;	policy.c:62: return tmp;
+   01E9 8D 82              1536 	mov	dpl,r5
+   01EB 8E 83              1537 	mov	dph,r6
+   01ED 8F F0              1538 	mov	b,r7
+   01EF 80 06              1539 	sjmp	00103$
+   01F1                    1540 00102$:
+                           1541 ;	policy.c:65: return NULL;
+   01F1 90 00 00           1542 	mov	dptr,#0x0000
+   01F4 75 F0 00           1543 	mov	b,#0x00
+   01F7                    1544 00103$:
+   01F7 02s00r00           1545 	ljmp	__sdcc_banked_ret
+                           1546 ;------------------------------------------------------------
+                           1547 ;Allocation info for local variables in function 'dev_policy_action_free'
+                           1548 ;------------------------------------------------------------
+                           1549 ;action                    Allocated to registers r5 r6 r7 
+                           1550 ;------------------------------------------------------------
+                           1551 ;	policy.c:69: void dev_policy_action_free(policy_action_t *action)
+                           1552 ;	-----------------------------------------
+                           1553 ;	 function dev_policy_action_free
+                           1554 ;	-----------------------------------------
+   01FA                    1555 _dev_policy_action_free:
+   01FA AD 82              1556 	mov	r5,dpl
+   01FC AE 83              1557 	mov	r6,dph
+   01FE AF F0              1558 	mov	r7,b
+                           1559 ;	policy.c:71: memb_free(&policy_action_memb, action);
+   0200 C0 05              1560 	push	ar5
+   0202 C0 06              1561 	push	ar6
+   0204 C0 07              1562 	push	ar7
+   0206 90s00r14           1563 	mov	dptr,#_policy_action_memb
+   0209 75 F0 00           1564 	mov	b,#0x00
+   020C 78r00              1565 	mov	r0,#_memb_free
+   020E 79s00              1566 	mov	r1,#(_memb_free >> 8)
+   0210 7As00              1567 	mov	r2,#(_memb_free >> 16)
+   0212 12s00r00           1568 	lcall	__sdcc_banked_call
+   0215 15 81              1569 	dec	sp
+   0217 15 81              1570 	dec	sp
+   0219 15 81              1571 	dec	sp
+   021B 02s00r00           1572 	ljmp	__sdcc_banked_ret
+                           1573 ;------------------------------------------------------------
+                           1574 ;Allocation info for local variables in function 'dev_policy_action_value_change_init'
+                           1575 ;------------------------------------------------------------
+                           1576 ;obj                       Allocated to stack - sp -5
+                           1577 ;value                     Allocated to stack - sp -8
+                           1578 ;action                    Allocated to registers r5 r6 r7 
+                           1579 ;------------------------------------------------------------
+                           1580 ;	policy.c:74: int16_t dev_policy_action_value_change_init(policy_action_t *action, object_instance_t *obj, 
+                           1581 ;	-----------------------------------------
+                           1582 ;	 function dev_policy_action_value_change_init
+                           1583 ;	-----------------------------------------
+   021E                    1584 _dev_policy_action_value_change_init:
+   021E AD 82              1585 	mov	r5,dpl
+   0220 AE 83              1586 	mov	r6,dph
+   0222 AF F0              1587 	mov	r7,b
+                           1588 ;	policy.c:77: if (!action) {
+   0224 ED                 1589 	mov	a,r5
+   0225 4E                 1590 	orl	a,r6
+   0226 70 06              1591 	jnz	00102$
+                           1592 ;	policy.c:78: return FAIL;
+   0228 90 00 00           1593 	mov	dptr,#0x0000
+   022B 02s02rB0           1594 	ljmp	00103$
+   022E                    1595 00102$:
+                           1596 ;	policy.c:81: action->next = NULL;
+   022E 8D 82              1597 	mov	dpl,r5
+   0230 8E 83              1598 	mov	dph,r6
+   0232 8F F0              1599 	mov	b,r7
+   0234 E4                 1600 	clr	a
+   0235 12s00r00           1601 	lcall	__gptrput
+   0238 A3                 1602 	inc	dptr
+   0239 E4                 1603 	clr	a
+   023A 12s00r00           1604 	lcall	__gptrput
+   023D A3                 1605 	inc	dptr
+   023E E4                 1606 	clr	a
+   023F 12s00r00           1607 	lcall	__gptrput
+                           1608 ;	policy.c:82: action->type = POLICY_ACTION_VALUE_CHANGE;
+   0242 74 03              1609 	mov	a,#0x03
+   0244 2D                 1610 	add	a,r5
+   0245 FA                 1611 	mov	r2,a
+   0246 E4                 1612 	clr	a
+   0247 3E                 1613 	addc	a,r6
+   0248 FB                 1614 	mov	r3,a
+   0249 8F 04              1615 	mov	ar4,r7
+   024B 8A 82              1616 	mov	dpl,r2
+   024D 8B 83              1617 	mov	dph,r3
+   024F 8C F0              1618 	mov	b,r4
+   0251 E4                 1619 	clr	a
+   0252 12s00r00           1620 	lcall	__gptrput
+                           1621 ;	policy.c:83: action->action.resource_op.obj = obj;
+   0255 74 04              1622 	mov	a,#0x04
+   0257 2D                 1623 	add	a,r5
+   0258 FD                 1624 	mov	r5,a
+   0259 E4                 1625 	clr	a
+   025A 3E                 1626 	addc	a,r6
+   025B FE                 1627 	mov	r6,a
+   025C 8D 82              1628 	mov	dpl,r5
+   025E 8E 83              1629 	mov	dph,r6
+   0260 8F F0              1630 	mov	b,r7
+   0262 E5 81              1631 	mov	a,sp
+   0264 24 FB              1632 	add	a,#0xfb
+   0266 F8                 1633 	mov	r0,a
+   0267 E6                 1634 	mov	a,@r0
+   0268 12s00r00           1635 	lcall	__gptrput
+   026B A3                 1636 	inc	dptr
+   026C 08                 1637 	inc	r0
+   026D E6                 1638 	mov	a,@r0
+   026E 12s00r00           1639 	lcall	__gptrput
+   0271 A3                 1640 	inc	dptr
+   0272 08                 1641 	inc	r0
+   0273 E6                 1642 	mov	a,@r0
+   0274 12s00r00           1643 	lcall	__gptrput
+                           1644 ;	policy.c:84: memcpy(&action->action.resource_op.value, value, sizeof(resource_value_u));
+   0277 E5 81              1645 	mov	a,sp
+   0279 24 F8              1646 	add	a,#0xf8
+   027B F8                 1647 	mov	r0,a
+   027C 86 02              1648 	mov	ar2,@r0
+   027E 08                 1649 	inc	r0
+   027F 86 03              1650 	mov	ar3,@r0
+   0281 08                 1651 	inc	r0
+   0282 86 04              1652 	mov	ar4,@r0
+   0284 74 03              1653 	mov	a,#0x03
+   0286 2D                 1654 	add	a,r5
+   0287 FD                 1655 	mov	r5,a
+   0288 E4                 1656 	clr	a
+   0289 3E                 1657 	addc	a,r6
+   028A FE                 1658 	mov	r6,a
+   028B 74 08              1659 	mov	a,#0x08
+   028D C0 E0              1660 	push	acc
+   028F E4                 1661 	clr	a
+   0290 C0 E0              1662 	push	acc
+   0292 C0 02              1663 	push	ar2
+   0294 C0 03              1664 	push	ar3
+   0296 C0 04              1665 	push	ar4
+   0298 8D 82              1666 	mov	dpl,r5
+   029A 8E 83              1667 	mov	dph,r6
+   029C 8F F0              1668 	mov	b,r7
+   029E 78r00              1669 	mov	r0,#_memcpy
+   02A0 79s00              1670 	mov	r1,#(_memcpy >> 8)
+   02A2 7As00              1671 	mov	r2,#(_memcpy >> 16)
+   02A4 12s00r00           1672 	lcall	__sdcc_banked_call
+   02A7 E5 81              1673 	mov	a,sp
+   02A9 24 FB              1674 	add	a,#0xfb
+   02AB F5 81              1675 	mov	sp,a
+                           1676 ;	policy.c:86: return SUCCESS;
+   02AD 90 00 01           1677 	mov	dptr,#0x0001
+   02B0                    1678 00103$:
+   02B0 02s00r00           1679 	ljmp	__sdcc_banked_ret
+                           1680 ;------------------------------------------------------------
+                           1681 ;Allocation info for local variables in function 'dev_policy_action_message_init'
+                           1682 ;------------------------------------------------------------
+                           1683 ;level                     Allocated to stack - sp -4
+                           1684 ;message                   Allocated to stack - sp -7
+                           1685 ;action                    Allocated to registers r5 r6 r7 
+                           1686 ;------------------------------------------------------------
+                           1687 ;	policy.c:89: int16_t dev_policy_action_message_init(policy_action_t *action, uint16_t level, uint8_t *message)
+                           1688 ;	-----------------------------------------
+                           1689 ;	 function dev_policy_action_message_init
+                           1690 ;	-----------------------------------------
+   02B3                    1691 _dev_policy_action_message_init:
+   02B3 AD 82              1692 	mov	r5,dpl
+   02B5 AE 83              1693 	mov	r6,dph
+   02B7 AF F0              1694 	mov	r7,b
+                           1695 ;	policy.c:91: if (!action) {
+   02B9 ED                 1696 	mov	a,r5
+   02BA 4E                 1697 	orl	a,r6
+   02BB 70 06              1698 	jnz	00102$
+                           1699 ;	policy.c:92: return FAIL;
+   02BD 90 00 00           1700 	mov	dptr,#0x0000
+   02C0 02s03r40           1701 	ljmp	00103$
+   02C3                    1702 00102$:
+                           1703 ;	policy.c:95: action->next = NULL;
+   02C3 8D 82              1704 	mov	dpl,r5
+   02C5 8E 83              1705 	mov	dph,r6
+   02C7 8F F0              1706 	mov	b,r7
+   02C9 E4                 1707 	clr	a
+   02CA 12s00r00           1708 	lcall	__gptrput
+   02CD A3                 1709 	inc	dptr
+   02CE E4                 1710 	clr	a
+   02CF 12s00r00           1711 	lcall	__gptrput
+   02D2 A3                 1712 	inc	dptr
+   02D3 E4                 1713 	clr	a
+   02D4 12s00r00           1714 	lcall	__gptrput
+                           1715 ;	policy.c:96: action->type = POLICY_ACTION_MESSAGE;
+   02D7 74 03              1716 	mov	a,#0x03
+   02D9 2D                 1717 	add	a,r5
+   02DA FA                 1718 	mov	r2,a
+   02DB E4                 1719 	clr	a
+   02DC 3E                 1720 	addc	a,r6
+   02DD FB                 1721 	mov	r3,a
+   02DE 8F 04              1722 	mov	ar4,r7
+   02E0 8A 82              1723 	mov	dpl,r2
+   02E2 8B 83              1724 	mov	dph,r3
+   02E4 8C F0              1725 	mov	b,r4
+   02E6 74 01              1726 	mov	a,#0x01
+   02E8 12s00r00           1727 	lcall	__gptrput
+                           1728 ;	policy.c:97: action->action.message.level = level;
+   02EB 74 04              1729 	mov	a,#0x04
+   02ED 2D                 1730 	add	a,r5
+   02EE FD                 1731 	mov	r5,a
+   02EF E4                 1732 	clr	a
+   02F0 3E                 1733 	addc	a,r6
+   02F1 FE                 1734 	mov	r6,a
+   02F2 8D 82              1735 	mov	dpl,r5
+   02F4 8E 83              1736 	mov	dph,r6
+   02F6 8F F0              1737 	mov	b,r7
+   02F8 E5 81              1738 	mov	a,sp
+   02FA 24 FC              1739 	add	a,#0xfc
+   02FC F8                 1740 	mov	r0,a
+   02FD E6                 1741 	mov	a,@r0
+   02FE 12s00r00           1742 	lcall	__gptrput
+   0301 A3                 1743 	inc	dptr
+   0302 08                 1744 	inc	r0
+   0303 E6                 1745 	mov	a,@r0
+   0304 12s00r00           1746 	lcall	__gptrput
+                           1747 ;	policy.c:98: memcpy(action->action.message.msg, message, POLICY_ACTION_MESSAGE_LEN);
+   0307 E5 81              1748 	mov	a,sp
+   0309 24 F9              1749 	add	a,#0xf9
+   030B F8                 1750 	mov	r0,a
+   030C 86 02              1751 	mov	ar2,@r0
+   030E 08                 1752 	inc	r0
+   030F 86 03              1753 	mov	ar3,@r0
+   0311 08                 1754 	inc	r0
+   0312 86 04              1755 	mov	ar4,@r0
+   0314 74 02              1756 	mov	a,#0x02
+   0316 2D                 1757 	add	a,r5
+   0317 FD                 1758 	mov	r5,a
+   0318 E4                 1759 	clr	a
+   0319 3E                 1760 	addc	a,r6
+   031A FE                 1761 	mov	r6,a
+   031B 74 08              1762 	mov	a,#0x08
+   031D C0 E0              1763 	push	acc
+   031F E4                 1764 	clr	a
+   0320 C0 E0              1765 	push	acc
+   0322 C0 02              1766 	push	ar2
+   0324 C0 03              1767 	push	ar3
+   0326 C0 04              1768 	push	ar4
+   0328 8D 82              1769 	mov	dpl,r5
+   032A 8E 83              1770 	mov	dph,r6
+   032C 8F F0              1771 	mov	b,r7
+   032E 78r00              1772 	mov	r0,#_memcpy
+   0330 79s00              1773 	mov	r1,#(_memcpy >> 8)
+   0332 7As00              1774 	mov	r2,#(_memcpy >> 16)
+   0334 12s00r00           1775 	lcall	__sdcc_banked_call
+   0337 E5 81              1776 	mov	a,sp
+   0339 24 FB              1777 	add	a,#0xfb
+   033B F5 81              1778 	mov	sp,a
+                           1779 ;	policy.c:100: return SUCCESS;
+   033D 90 00 01           1780 	mov	dptr,#0x0001
+   0340                    1781 00103$:
+   0340 02s00r00           1782 	ljmp	__sdcc_banked_ret
+                           1783 ;------------------------------------------------------------
+                           1784 ;Allocation info for local variables in function 'dev_policy_alloc'
+                           1785 ;------------------------------------------------------------
+                           1786 ;tmp                       Allocated to registers r5 r6 r7 
+                           1787 ;------------------------------------------------------------
+                           1788 ;	policy.c:103: dev_policy_t *dev_policy_alloc()
+                           1789 ;	-----------------------------------------
+                           1790 ;	 function dev_policy_alloc
+                           1791 ;	-----------------------------------------
+   0343                    1792 _dev_policy_alloc:
+                           1793 ;	policy.c:107: tmp = (dev_policy_t *)memb_alloc(&policy_memb);
+   0343 90s00r00           1794 	mov	dptr,#_policy_memb
+   0346 75 F0 00           1795 	mov	b,#0x00
+   0349 78r00              1796 	mov	r0,#_memb_alloc
+   034B 79s00              1797 	mov	r1,#(_memb_alloc >> 8)
+   034D 7As00              1798 	mov	r2,#(_memb_alloc >> 16)
+   034F 12s00r00           1799 	lcall	__sdcc_banked_call
+   0352 AD 82              1800 	mov	r5,dpl
+   0354 AE 83              1801 	mov	r6,dph
+   0356 AF F0              1802 	mov	r7,b
+                           1803 ;	policy.c:108: if(tmp) {
+   0358 ED                 1804 	mov	a,r5
+   0359 4E                 1805 	orl	a,r6
+   035A 60 08              1806 	jz	00102$
+                           1807 ;	policy.c:109: return tmp;
+   035C 8D 82              1808 	mov	dpl,r5
+   035E 8E 83              1809 	mov	dph,r6
+   0360 8F F0              1810 	mov	b,r7
+   0362 80 06              1811 	sjmp	00103$
+   0364                    1812 00102$:
+                           1813 ;	policy.c:112: return NULL;
+   0364 90 00 00           1814 	mov	dptr,#0x0000
+   0367 75 F0 00           1815 	mov	b,#0x00
+   036A                    1816 00103$:
+   036A 02s00r00           1817 	ljmp	__sdcc_banked_ret
+                           1818 ;------------------------------------------------------------
+                           1819 ;Allocation info for local variables in function 'dev_policy_free'
+                           1820 ;------------------------------------------------------------
+                           1821 ;policy                    Allocated to registers r5 r6 r7 
+                           1822 ;cond                      Allocated to registers r2 r3 r4 
+                           1823 ;cond1                     Allocated to stack - sp -5
+                           1824 ;action                    Allocated to registers r2 r3 r4 
+                           1825 ;action1                   Allocated to stack - sp -2
+                           1826 ;------------------------------------------------------------
+                           1827 ;	policy.c:116: void dev_policy_free(dev_policy_t *policy)
+                           1828 ;	-----------------------------------------
+                           1829 ;	 function dev_policy_free
+                           1830 ;	-----------------------------------------
+   036D                    1831 _dev_policy_free:
+   036D E5 81              1832 	mov	a,sp
+   036F 24 06              1833 	add	a,#0x06
+   0371 F5 81              1834 	mov	sp,a
+   0373 AD 82              1835 	mov	r5,dpl
+   0375 AE 83              1836 	mov	r6,dph
+   0377 AF F0              1837 	mov	r7,b
+                           1838 ;	policy.c:121: cond = policy->cond_list;
+   0379 74 05              1839 	mov	a,#0x05
+   037B 2D                 1840 	add	a,r5
+   037C FA                 1841 	mov	r2,a
+   037D E4                 1842 	clr	a
+   037E 3E                 1843 	addc	a,r6
+   037F FB                 1844 	mov	r3,a
+   0380 8F 04              1845 	mov	ar4,r7
+   0382 8A 82              1846 	mov	dpl,r2
+   0384 8B 83              1847 	mov	dph,r3
+   0386 8C F0              1848 	mov	b,r4
+   0388 12s00r00           1849 	lcall	__gptrget
+   038B FA                 1850 	mov	r2,a
+   038C A3                 1851 	inc	dptr
+   038D 12s00r00           1852 	lcall	__gptrget
+   0390 FB                 1853 	mov	r3,a
+   0391 A3                 1854 	inc	dptr
+   0392 12s00r00           1855 	lcall	__gptrget
+   0395 FC                 1856 	mov	r4,a
+                           1857 ;	policy.c:122: while (cond) {
+   0396                    1858 00101$:
+   0396 EA                 1859 	mov	a,r2
+   0397 4B                 1860 	orl	a,r3
+   0398 60 69              1861 	jz	00103$
+                           1862 ;	policy.c:123: cond1 = cond->next;
+   039A C0 05              1863 	push	ar5
+   039C C0 06              1864 	push	ar6
+   039E C0 07              1865 	push	ar7
+   03A0 8A 82              1866 	mov	dpl,r2
+   03A2 8B 83              1867 	mov	dph,r3
+   03A4 8C F0              1868 	mov	b,r4
+   03A6 12s00r00           1869 	lcall	__gptrget
+   03A9 FD                 1870 	mov	r5,a
+   03AA A3                 1871 	inc	dptr
+   03AB 12s00r00           1872 	lcall	__gptrget
+   03AE FE                 1873 	mov	r6,a
+   03AF A3                 1874 	inc	dptr
+   03B0 12s00r00           1875 	lcall	__gptrget
+   03B3 FF                 1876 	mov	r7,a
+   03B4 E5 81              1877 	mov	a,sp
+   03B6 24 F8              1878 	add	a,#0xf8
+   03B8 F8                 1879 	mov	r0,a
+   03B9 A6 05              1880 	mov	@r0,ar5
+   03BB 08                 1881 	inc	r0
+   03BC A6 06              1882 	mov	@r0,ar6
+   03BE 08                 1883 	inc	r0
+   03BF A6 07              1884 	mov	@r0,ar7
+                           1885 ;	policy.c:124: memb_free(&policy_cond_memb, cond);
+   03C1 8A 05              1886 	mov	ar5,r2
+   03C3 8B 06              1887 	mov	ar6,r3
+   03C5 8C 07              1888 	mov	ar7,r4
+   03C7 C0 07              1889 	push	ar7
+   03C9 C0 06              1890 	push	ar6
+   03CB C0 05              1891 	push	ar5
+   03CD C0 05              1892 	push	ar5
+   03CF C0 06              1893 	push	ar6
+   03D1 C0 07              1894 	push	ar7
+   03D3 90s00r0A           1895 	mov	dptr,#_policy_cond_memb
+   03D6 75 F0 00           1896 	mov	b,#0x00
+   03D9 78r00              1897 	mov	r0,#_memb_free
+   03DB 79s00              1898 	mov	r1,#(_memb_free >> 8)
+   03DD 7As00              1899 	mov	r2,#(_memb_free >> 16)
+   03DF 12s00r00           1900 	lcall	__sdcc_banked_call
+   03E2 15 81              1901 	dec	sp
+   03E4 15 81              1902 	dec	sp
+   03E6 15 81              1903 	dec	sp
+   03E8 D0 05              1904 	pop	ar5
+   03EA D0 06              1905 	pop	ar6
+   03EC D0 07              1906 	pop	ar7
+                           1907 ;	policy.c:125: cond = cond1;
+   03EE E5 81              1908 	mov	a,sp
+   03F0 24 F8              1909 	add	a,#0xf8
+   03F2 F8                 1910 	mov	r0,a
+   03F3 86 02              1911 	mov	ar2,@r0
+   03F5 08                 1912 	inc	r0
+   03F6 86 03              1913 	mov	ar3,@r0
+   03F8 08                 1914 	inc	r0
+   03F9 86 04              1915 	mov	ar4,@r0
+   03FB D0 07              1916 	pop	ar7
+   03FD D0 06              1917 	pop	ar6
+   03FF D0 05              1918 	pop	ar5
+   0401 80 93              1919 	sjmp	00101$
+   0403                    1920 00103$:
+                           1921 ;	policy.c:128: action = policy->action_list;
+   0403 74 08              1922 	mov	a,#0x08
+   0405 2D                 1923 	add	a,r5
+   0406 FA                 1924 	mov	r2,a
+   0407 E4                 1925 	clr	a
+   0408 3E                 1926 	addc	a,r6
+   0409 FB                 1927 	mov	r3,a
+   040A 8F 04              1928 	mov	ar4,r7
+   040C 8A 82              1929 	mov	dpl,r2
+   040E 8B 83              1930 	mov	dph,r3
+   0410 8C F0              1931 	mov	b,r4
+   0412 12s00r00           1932 	lcall	__gptrget
+   0415 FA                 1933 	mov	r2,a
+   0416 A3                 1934 	inc	dptr
+   0417 12s00r00           1935 	lcall	__gptrget
+   041A FB                 1936 	mov	r3,a
+   041B A3                 1937 	inc	dptr
+   041C 12s00r00           1938 	lcall	__gptrget
+   041F FC                 1939 	mov	r4,a
+                           1940 ;	policy.c:129: while (action) {
+   0420                    1941 00104$:
+   0420 EA                 1942 	mov	a,r2
+   0421 4B                 1943 	orl	a,r3
+   0422 60 69              1944 	jz	00106$
+                           1945 ;	policy.c:130: action1 = action->next;
+   0424 C0 05              1946 	push	ar5
+   0426 C0 06              1947 	push	ar6
+   0428 C0 07              1948 	push	ar7
+   042A 8A 82              1949 	mov	dpl,r2
+   042C 8B 83              1950 	mov	dph,r3
+   042E 8C F0              1951 	mov	b,r4
+   0430 12s00r00           1952 	lcall	__gptrget
+   0433 FD                 1953 	mov	r5,a
+   0434 A3                 1954 	inc	dptr
+   0435 12s00r00           1955 	lcall	__gptrget
+   0438 FE                 1956 	mov	r6,a
+   0439 A3                 1957 	inc	dptr
+   043A 12s00r00           1958 	lcall	__gptrget
+   043D FF                 1959 	mov	r7,a
+   043E E5 81              1960 	mov	a,sp
+   0440 24 FB              1961 	add	a,#0xfb
+   0442 F8                 1962 	mov	r0,a
+   0443 A6 05              1963 	mov	@r0,ar5
+   0445 08                 1964 	inc	r0
+   0446 A6 06              1965 	mov	@r0,ar6
+   0448 08                 1966 	inc	r0
+   0449 A6 07              1967 	mov	@r0,ar7
+                           1968 ;	policy.c:131: memb_free(&policy_action_memb, action);
+   044B 8A 05              1969 	mov	ar5,r2
+   044D 8B 06              1970 	mov	ar6,r3
+   044F 8C 07              1971 	mov	ar7,r4
+   0451 C0 07              1972 	push	ar7
+   0453 C0 06              1973 	push	ar6
+   0455 C0 05              1974 	push	ar5
+   0457 C0 05              1975 	push	ar5
+   0459 C0 06              1976 	push	ar6
+   045B C0 07              1977 	push	ar7
+   045D 90s00r14           1978 	mov	dptr,#_policy_action_memb
+   0460 75 F0 00           1979 	mov	b,#0x00
+   0463 78r00              1980 	mov	r0,#_memb_free
+   0465 79s00              1981 	mov	r1,#(_memb_free >> 8)
+   0467 7As00              1982 	mov	r2,#(_memb_free >> 16)
+   0469 12s00r00           1983 	lcall	__sdcc_banked_call
+   046C 15 81              1984 	dec	sp
+   046E 15 81              1985 	dec	sp
+   0470 15 81              1986 	dec	sp
+   0472 D0 05              1987 	pop	ar5
+   0474 D0 06              1988 	pop	ar6
+   0476 D0 07              1989 	pop	ar7
+                           1990 ;	policy.c:132: action = action1; 
+   0478 E5 81              1991 	mov	a,sp
+   047A 24 FB              1992 	add	a,#0xfb
+   047C F8                 1993 	mov	r0,a
+   047D 86 02              1994 	mov	ar2,@r0
+   047F 08                 1995 	inc	r0
+   0480 86 03              1996 	mov	ar3,@r0
+   0482 08                 1997 	inc	r0
+   0483 86 04              1998 	mov	ar4,@r0
+   0485 D0 07              1999 	pop	ar7
+   0487 D0 06              2000 	pop	ar6
+   0489 D0 05              2001 	pop	ar5
+   048B 80 93              2002 	sjmp	00104$
+   048D                    2003 00106$:
+                           2004 ;	policy.c:135: memb_free(&policy_memb, policy);
+   048D C0 05              2005 	push	ar5
+   048F C0 06              2006 	push	ar6
+   0491 C0 07              2007 	push	ar7
+   0493 90s00r00           2008 	mov	dptr,#_policy_memb
+   0496 75 F0 00           2009 	mov	b,#0x00
+   0499 78r00              2010 	mov	r0,#_memb_free
+   049B 79s00              2011 	mov	r1,#(_memb_free >> 8)
+   049D 7As00              2012 	mov	r2,#(_memb_free >> 16)
+   049F 12s00r00           2013 	lcall	__sdcc_banked_call
+   04A2 15 81              2014 	dec	sp
+   04A4 15 81              2015 	dec	sp
+   04A6 15 81              2016 	dec	sp
+   04A8 E5 81              2017 	mov	a,sp
+   04AA 24 FA              2018 	add	a,#0xFA
+   04AC F5 81              2019 	mov	sp,a
+   04AE 02s00r00           2020 	ljmp	__sdcc_banked_ret
+                           2021 ;------------------------------------------------------------
+                           2022 ;Allocation info for local variables in function 'dev_policy_init'
+                           2023 ;------------------------------------------------------------
+                           2024 ;policy_id                 Allocated to stack - sp -4
+                           2025 ;policy                    Allocated to registers r5 r6 r7 
+                           2026 ;------------------------------------------------------------
+                           2027 ;	policy.c:138: int16_t dev_policy_init(dev_policy_t *policy, uint16_t policy_id)
+                           2028 ;	-----------------------------------------
+                           2029 ;	 function dev_policy_init
+                           2030 ;	-----------------------------------------
+   04B1                    2031 _dev_policy_init:
+   04B1 AD 82              2032 	mov	r5,dpl
+   04B3 AE 83              2033 	mov	r6,dph
+   04B5 AF F0              2034 	mov	r7,b
+                           2035 ;	policy.c:140: policy->policy_id = policy_id;
+   04B7 74 03              2036 	mov	a,#0x03
+   04B9 2D                 2037 	add	a,r5
+   04BA FA                 2038 	mov	r2,a
+   04BB E4                 2039 	clr	a
+   04BC 3E                 2040 	addc	a,r6
+   04BD FB                 2041 	mov	r3,a
+   04BE 8F 04              2042 	mov	ar4,r7
+   04C0 8A 82              2043 	mov	dpl,r2
+   04C2 8B 83              2044 	mov	dph,r3
+   04C4 8C F0              2045 	mov	b,r4
+   04C6 E5 81              2046 	mov	a,sp
+   04C8 24 FC              2047 	add	a,#0xfc
+   04CA F8                 2048 	mov	r0,a
+   04CB E6                 2049 	mov	a,@r0
+   04CC 12s00r00           2050 	lcall	__gptrput
+   04CF A3                 2051 	inc	dptr
+   04D0 08                 2052 	inc	r0
+   04D1 E6                 2053 	mov	a,@r0
+   04D2 12s00r00           2054 	lcall	__gptrput
+                           2055 ;	policy.c:141: policy->cond_list = NULL;
+   04D5 74 05              2056 	mov	a,#0x05
+   04D7 2D                 2057 	add	a,r5
+   04D8 FA                 2058 	mov	r2,a
+   04D9 E4                 2059 	clr	a
+   04DA 3E                 2060 	addc	a,r6
+   04DB FB                 2061 	mov	r3,a
+   04DC 8F 04              2062 	mov	ar4,r7
+   04DE 8A 82              2063 	mov	dpl,r2
+   04E0 8B 83              2064 	mov	dph,r3
+   04E2 8C F0              2065 	mov	b,r4
+   04E4 E4                 2066 	clr	a
+   04E5 12s00r00           2067 	lcall	__gptrput
+   04E8 A3                 2068 	inc	dptr
+   04E9 E4                 2069 	clr	a
+   04EA 12s00r00           2070 	lcall	__gptrput
+   04ED A3                 2071 	inc	dptr
+   04EE E4                 2072 	clr	a
+   04EF 12s00r00           2073 	lcall	__gptrput
+                           2074 ;	policy.c:142: policy->action_list = NULL;
+   04F2 74 08              2075 	mov	a,#0x08
+   04F4 2D                 2076 	add	a,r5
+   04F5 FD                 2077 	mov	r5,a
+   04F6 E4                 2078 	clr	a
+   04F7 3E                 2079 	addc	a,r6
+   04F8 FE                 2080 	mov	r6,a
+   04F9 8D 82              2081 	mov	dpl,r5
+   04FB 8E 83              2082 	mov	dph,r6
+   04FD 8F F0              2083 	mov	b,r7
+   04FF E4                 2084 	clr	a
+   0500 12s00r00           2085 	lcall	__gptrput
+   0503 A3                 2086 	inc	dptr
+   0504 E4                 2087 	clr	a
+   0505 12s00r00           2088 	lcall	__gptrput
+   0508 A3                 2089 	inc	dptr
+   0509 E4                 2090 	clr	a
+   050A 12s00r00           2091 	lcall	__gptrput
+                           2092 ;	policy.c:144: return SUCCESS;
+   050D 90 00 01           2093 	mov	dptr,#0x0001
+   0510 02s00r00           2094 	ljmp	__sdcc_banked_ret
+                           2095 ;------------------------------------------------------------
+                           2096 ;Allocation info for local variables in function 'dev_policy_add_cond'
+                           2097 ;------------------------------------------------------------
+                           2098 ;cond                      Allocated to stack - sp -8
+                           2099 ;policy                    Allocated to registers r5 r6 r7 
+                           2100 ;sloc0                     Allocated to stack - sp -2
+                           2101 ;------------------------------------------------------------
+                           2102 ;	policy.c:147: int16_t dev_policy_add_cond(dev_policy_t *policy, policy_cond_t *cond)
+                           2103 ;	-----------------------------------------
+                           2104 ;	 function dev_policy_add_cond
+                           2105 ;	-----------------------------------------
+   0513                    2106 _dev_policy_add_cond:
+   0513 05 81              2107 	inc	sp
+   0515 05 81              2108 	inc	sp
+   0517 05 81              2109 	inc	sp
+   0519 AD 82              2110 	mov	r5,dpl
+   051B AE 83              2111 	mov	r6,dph
+   051D AF F0              2112 	mov	r7,b
+                           2113 ;	policy.c:149: cond->next = policy->cond_list;
+   051F E5 81              2114 	mov	a,sp
+   0521 24 F8              2115 	add	a,#0xf8
+   0523 F8                 2116 	mov	r0,a
+   0524 86 02              2117 	mov	ar2,@r0
+   0526 08                 2118 	inc	r0
+   0527 86 03              2119 	mov	ar3,@r0
+   0529 08                 2120 	inc	r0
+   052A 86 04              2121 	mov	ar4,@r0
+   052C A8 81              2122 	mov	r0,sp
+   052E 18                 2123 	dec	r0
+   052F 18                 2124 	dec	r0
+   0530 74 05              2125 	mov	a,#0x05
+   0532 2D                 2126 	add	a,r5
+   0533 F6                 2127 	mov	@r0,a
+   0534 E4                 2128 	clr	a
+   0535 3E                 2129 	addc	a,r6
+   0536 08                 2130 	inc	r0
+   0537 F6                 2131 	mov	@r0,a
+   0538 08                 2132 	inc	r0
+   0539 A6 07              2133 	mov	@r0,ar7
+   053B A8 81              2134 	mov	r0,sp
+   053D 18                 2135 	dec	r0
+   053E 18                 2136 	dec	r0
+   053F 86 82              2137 	mov	dpl,@r0
+   0541 08                 2138 	inc	r0
+   0542 86 83              2139 	mov	dph,@r0
+   0544 08                 2140 	inc	r0
+   0545 86 F0              2141 	mov	b,@r0
+   0547 12s00r00           2142 	lcall	__gptrget
+   054A FD                 2143 	mov	r5,a
+   054B A3                 2144 	inc	dptr
+   054C 12s00r00           2145 	lcall	__gptrget
+   054F FE                 2146 	mov	r6,a
+   0550 A3                 2147 	inc	dptr
+   0551 12s00r00           2148 	lcall	__gptrget
+   0554 FF                 2149 	mov	r7,a
+   0555 8A 82              2150 	mov	dpl,r2
+   0557 8B 83              2151 	mov	dph,r3
+   0559 8C F0              2152 	mov	b,r4
+   055B ED                 2153 	mov	a,r5
+   055C 12s00r00           2154 	lcall	__gptrput
+   055F A3                 2155 	inc	dptr
+   0560 EE                 2156 	mov	a,r6
+   0561 12s00r00           2157 	lcall	__gptrput
+   0564 A3                 2158 	inc	dptr
+   0565 EF                 2159 	mov	a,r7
+   0566 12s00r00           2160 	lcall	__gptrput
+                           2161 ;	policy.c:150: policy->cond_list = cond;
+   0569 A8 81              2162 	mov	r0,sp
+   056B 18                 2163 	dec	r0
+   056C 18                 2164 	dec	r0
+   056D 86 82              2165 	mov	dpl,@r0
+   056F 08                 2166 	inc	r0
+   0570 86 83              2167 	mov	dph,@r0
+   0572 08                 2168 	inc	r0
+   0573 86 F0              2169 	mov	b,@r0
+   0575 EA                 2170 	mov	a,r2
+   0576 12s00r00           2171 	lcall	__gptrput
+   0579 A3                 2172 	inc	dptr
+   057A EB                 2173 	mov	a,r3
+   057B 12s00r00           2174 	lcall	__gptrput
+   057E A3                 2175 	inc	dptr
+   057F EC                 2176 	mov	a,r4
+   0580 12s00r00           2177 	lcall	__gptrput
+                           2178 ;	policy.c:152: return SUCCESS;
+   0583 90 00 01           2179 	mov	dptr,#0x0001
+   0586 15 81              2180 	dec	sp
+   0588 15 81              2181 	dec	sp
+   058A 15 81              2182 	dec	sp
+   058C 02s00r00           2183 	ljmp	__sdcc_banked_ret
+                           2184 ;------------------------------------------------------------
+                           2185 ;Allocation info for local variables in function 'dev_policy_add_action'
+                           2186 ;------------------------------------------------------------
+                           2187 ;action                    Allocated to stack - sp -8
+                           2188 ;policy                    Allocated to registers r5 r6 r7 
+                           2189 ;sloc0                     Allocated to stack - sp -2
+                           2190 ;------------------------------------------------------------
+                           2191 ;	policy.c:155: int16_t dev_policy_add_action(dev_policy_t *policy, policy_action_t *action)
+                           2192 ;	-----------------------------------------
+                           2193 ;	 function dev_policy_add_action
+                           2194 ;	-----------------------------------------
+   058F                    2195 _dev_policy_add_action:
+   058F 05 81              2196 	inc	sp
+   0591 05 81              2197 	inc	sp
+   0593 05 81              2198 	inc	sp
+   0595 AD 82              2199 	mov	r5,dpl
+   0597 AE 83              2200 	mov	r6,dph
+   0599 AF F0              2201 	mov	r7,b
+                           2202 ;	policy.c:157: action->next = policy->action_list;
+   059B E5 81              2203 	mov	a,sp
+   059D 24 F8              2204 	add	a,#0xf8
+   059F F8                 2205 	mov	r0,a
+   05A0 86 02              2206 	mov	ar2,@r0
+   05A2 08                 2207 	inc	r0
+   05A3 86 03              2208 	mov	ar3,@r0
+   05A5 08                 2209 	inc	r0
+   05A6 86 04              2210 	mov	ar4,@r0
+   05A8 A8 81              2211 	mov	r0,sp
+   05AA 18                 2212 	dec	r0
+   05AB 18                 2213 	dec	r0
+   05AC 74 08              2214 	mov	a,#0x08
+   05AE 2D                 2215 	add	a,r5
+   05AF F6                 2216 	mov	@r0,a
+   05B0 E4                 2217 	clr	a
+   05B1 3E                 2218 	addc	a,r6
+   05B2 08                 2219 	inc	r0
+   05B3 F6                 2220 	mov	@r0,a
+   05B4 08                 2221 	inc	r0
+   05B5 A6 07              2222 	mov	@r0,ar7
+   05B7 A8 81              2223 	mov	r0,sp
+   05B9 18                 2224 	dec	r0
+   05BA 18                 2225 	dec	r0
+   05BB 86 82              2226 	mov	dpl,@r0
+   05BD 08                 2227 	inc	r0
+   05BE 86 83              2228 	mov	dph,@r0
+   05C0 08                 2229 	inc	r0
+   05C1 86 F0              2230 	mov	b,@r0
+   05C3 12s00r00           2231 	lcall	__gptrget
+   05C6 FD                 2232 	mov	r5,a
+   05C7 A3                 2233 	inc	dptr
+   05C8 12s00r00           2234 	lcall	__gptrget
+   05CB FE                 2235 	mov	r6,a
+   05CC A3                 2236 	inc	dptr
+   05CD 12s00r00           2237 	lcall	__gptrget
+   05D0 FF                 2238 	mov	r7,a
+   05D1 8A 82              2239 	mov	dpl,r2
+   05D3 8B 83              2240 	mov	dph,r3
+   05D5 8C F0              2241 	mov	b,r4
+   05D7 ED                 2242 	mov	a,r5
+   05D8 12s00r00           2243 	lcall	__gptrput
+   05DB A3                 2244 	inc	dptr
+   05DC EE                 2245 	mov	a,r6
+   05DD 12s00r00           2246 	lcall	__gptrput
+   05E0 A3                 2247 	inc	dptr
+   05E1 EF                 2248 	mov	a,r7
+   05E2 12s00r00           2249 	lcall	__gptrput
+                           2250 ;	policy.c:158: policy->action_list = action;
+   05E5 A8 81              2251 	mov	r0,sp
+   05E7 18                 2252 	dec	r0
+   05E8 18                 2253 	dec	r0
+   05E9 86 82              2254 	mov	dpl,@r0
+   05EB 08                 2255 	inc	r0
+   05EC 86 83              2256 	mov	dph,@r0
+   05EE 08                 2257 	inc	r0
+   05EF 86 F0              2258 	mov	b,@r0
+   05F1 EA                 2259 	mov	a,r2
+   05F2 12s00r00           2260 	lcall	__gptrput
+   05F5 A3                 2261 	inc	dptr
+   05F6 EB                 2262 	mov	a,r3
+   05F7 12s00r00           2263 	lcall	__gptrput
+   05FA A3                 2264 	inc	dptr
+   05FB EC                 2265 	mov	a,r4
+   05FC 12s00r00           2266 	lcall	__gptrput
+                           2267 ;	policy.c:160: return SUCCESS;
+   05FF 90 00 01           2268 	mov	dptr,#0x0001
+   0602 15 81              2269 	dec	sp
+   0604 15 81              2270 	dec	sp
+   0606 15 81              2271 	dec	sp
+   0608 02s00r00           2272 	ljmp	__sdcc_banked_ret
+                           2273 	.area CSEG    (CODE)
+                           2274 	.area CONST   (CODE)
+                           2275 	.area XINIT   (CODE)
+   0000                    2276 __xinit__policy_memb:
+   0000 0B 00              2277 	.byte #0x0B,#0x00	; 11
+   0002 02 00              2278 	.byte #0x02,#0x00	; 2
+   0004r00s00 00           2279 	.byte _policy_memb_memb_count,(_policy_memb_memb_count >> 8),#0x00
+   0007r02s00 00           2280 	.byte _policy_memb_memb_mem,(_policy_memb_memb_mem >> 8),#0x00
+   000A                    2281 __xinit__policy_cond_memb:
+   000A 28 00              2282 	.byte #0x28,#0x00	; 40
+   000C 02 00              2283 	.byte #0x02,#0x00	; 2
+   000Er18s00 00           2284 	.byte _policy_cond_memb_memb_count,(_policy_cond_memb_memb_count >> 8),#0x00
+   0011r1As00 00           2285 	.byte _policy_cond_memb_memb_mem,(_policy_cond_memb_memb_mem >> 8),#0x00
+   0014                    2286 __xinit__policy_action_memb:
+   0014 0F 00              2287 	.byte #0x0F,#0x00	; 15
+   0016 02 00              2288 	.byte #0x02,#0x00	; 2
+   0018r6As00 00           2289 	.byte _policy_action_memb_memb_count,(_policy_action_memb_memb_count >> 8),#0x00
+   001Br6Cs00 00           2290 	.byte _policy_action_memb_memb_mem,(_policy_action_memb_memb_mem >> 8),#0x00
+                           2291 	.area CABS    (ABS,CODE)

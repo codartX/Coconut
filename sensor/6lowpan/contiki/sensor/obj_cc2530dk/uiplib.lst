@@ -1,0 +1,2084 @@
+                              1 ;--------------------------------------------------------
+                              2 ; File Created by SDCC : free open source ANSI-C Compiler
+                              3 ; Version 3.1.1 #7100 (Oct 29 2014) (Linux)
+                              4 ; This file was generated Wed Dec  2 18:10:59 2015
+                              5 ;--------------------------------------------------------
+                              6 	.module uiplib
+                              7 	.optsdcc -mmcs51 --model-huge
+                              8 	
+                              9 ;--------------------------------------------------------
+                             10 ; Public variables in this module
+                             11 ;--------------------------------------------------------
+                             12 	.globl _memset
+                             13 	.globl _memmove
+                             14 	.globl _ACTIVE
+                             15 	.globl _TX_BYTE
+                             16 	.globl _RX_BYTE
+                             17 	.globl _ERR
+                             18 	.globl _FE
+                             19 	.globl _SLAVE
+                             20 	.globl _RE
+                             21 	.globl _MODE
+                             22 	.globl _T3OVFIF
+                             23 	.globl _T3CH0IF
+                             24 	.globl _T3CH1IF
+                             25 	.globl _T4OVFIF
+                             26 	.globl _T4CH0IF
+                             27 	.globl _T4CH1IF
+                             28 	.globl _OVFIM
+                             29 	.globl _B_0
+                             30 	.globl _B_1
+                             31 	.globl _B_2
+                             32 	.globl _B_3
+                             33 	.globl _B_4
+                             34 	.globl _B_5
+                             35 	.globl _B_6
+                             36 	.globl _B_7
+                             37 	.globl _P2IF
+                             38 	.globl _UTX0IF
+                             39 	.globl _UTX1IF
+                             40 	.globl _P1IF
+                             41 	.globl _WDTIF
+                             42 	.globl _ACC_0
+                             43 	.globl _ACC_1
+                             44 	.globl _ACC_2
+                             45 	.globl _ACC_3
+                             46 	.globl _ACC_4
+                             47 	.globl _ACC_5
+                             48 	.globl _ACC_6
+                             49 	.globl _ACC_7
+                             50 	.globl _P
+                             51 	.globl _F1
+                             52 	.globl _OV
+                             53 	.globl _RS0
+                             54 	.globl _RS1
+                             55 	.globl _F0
+                             56 	.globl _AC
+                             57 	.globl _CY
+                             58 	.globl _DMAIF
+                             59 	.globl _T1IF
+                             60 	.globl _T2IF
+                             61 	.globl _T3IF
+                             62 	.globl _T4IF
+                             63 	.globl _P0IF
+                             64 	.globl _STIF
+                             65 	.globl _DMAIE
+                             66 	.globl _T1IE
+                             67 	.globl _T2IE
+                             68 	.globl _T3IE
+                             69 	.globl _T4IE
+                             70 	.globl _P0IE
+                             71 	.globl _RFERRIE
+                             72 	.globl _ADCIE
+                             73 	.globl _URX0IE
+                             74 	.globl _URX1IE
+                             75 	.globl _ENCIE
+                             76 	.globl _STIE
+                             77 	.globl _EA
+                             78 	.globl _P2_0
+                             79 	.globl _P2_1
+                             80 	.globl _P2_2
+                             81 	.globl _P2_3
+                             82 	.globl _P2_4
+                             83 	.globl _P2_5
+                             84 	.globl _P2_6
+                             85 	.globl _P2_7
+                             86 	.globl _ENCIF_0
+                             87 	.globl _ENCIF_1
+                             88 	.globl _P1_0
+                             89 	.globl _P1_1
+                             90 	.globl _P1_2
+                             91 	.globl _P1_3
+                             92 	.globl _P1_4
+                             93 	.globl _P1_5
+                             94 	.globl _P1_6
+                             95 	.globl _P1_7
+                             96 	.globl _IT0
+                             97 	.globl _RFERRIF
+                             98 	.globl _IT1
+                             99 	.globl _URX0IF
+                            100 	.globl _ADCIF
+                            101 	.globl _URX1IF
+                            102 	.globl _P0_0
+                            103 	.globl _P0_1
+                            104 	.globl _P0_2
+                            105 	.globl _P0_3
+                            106 	.globl _P0_4
+                            107 	.globl _P0_5
+                            108 	.globl _P0_6
+                            109 	.globl _P0_7
+                            110 	.globl _WDCTL
+                            111 	.globl _U1GCR
+                            112 	.globl _U1UCR
+                            113 	.globl _U1BAUD
+                            114 	.globl _U1DBUF
+                            115 	.globl _U1CSR
+                            116 	.globl _U0GCR
+                            117 	.globl _U0UCR
+                            118 	.globl _U0BAUD
+                            119 	.globl _U0DBUF
+                            120 	.globl _U0CSR
+                            121 	.globl _TIMIF
+                            122 	.globl _T4CC1
+                            123 	.globl _T4CCTL1
+                            124 	.globl _T4CC0
+                            125 	.globl _T4CCTL0
+                            126 	.globl _T4CTL
+                            127 	.globl _T4CNT
+                            128 	.globl _T3CC1
+                            129 	.globl _T3CCTL1
+                            130 	.globl _T3CC0
+                            131 	.globl _T3CCTL0
+                            132 	.globl _T3CTL
+                            133 	.globl _T3CNT
+                            134 	.globl _T2MSEL
+                            135 	.globl _T2IRQM
+                            136 	.globl _T2MOVF2
+                            137 	.globl _T2MOVF1
+                            138 	.globl _T2MOVF0
+                            139 	.globl _T2M1
+                            140 	.globl _T2M0
+                            141 	.globl _T2IRQF
+                            142 	.globl _T2EVTCFG
+                            143 	.globl _T2CTRL
+                            144 	.globl _T1STAT
+                            145 	.globl _T1CCTL2
+                            146 	.globl _T1CCTL1
+                            147 	.globl _T1CCTL0
+                            148 	.globl _T1CTL
+                            149 	.globl _T1CNTH
+                            150 	.globl _T1CNTL
+                            151 	.globl _T1CC2H
+                            152 	.globl _T1CC2L
+                            153 	.globl _T1CC1H
+                            154 	.globl _T1CC1L
+                            155 	.globl _T1CC0H
+                            156 	.globl _T1CC0L
+                            157 	.globl _CLKCONSTA
+                            158 	.globl _CLKCONCMD
+                            159 	.globl _SLEEPSTA
+                            160 	.globl _SLEEPCMD
+                            161 	.globl _STLOAD
+                            162 	.globl _ST2
+                            163 	.globl _ST1
+                            164 	.globl _ST0
+                            165 	.globl _RFERRF
+                            166 	.globl _RFIRQF0
+                            167 	.globl _RFST
+                            168 	.globl _RFD
+                            169 	.globl _RFIRQF1
+                            170 	.globl _PSBANK
+                            171 	.globl _FMAP
+                            172 	.globl _MEMCTR
+                            173 	.globl __XPAGE
+                            174 	.globl _MPAGE
+                            175 	.globl _PMUX
+                            176 	.globl _P2DIR
+                            177 	.globl _P1DIR
+                            178 	.globl _P0DIR
+                            179 	.globl _P2INP
+                            180 	.globl _P1INP
+                            181 	.globl _P2SEL
+                            182 	.globl _P1SEL
+                            183 	.globl _P0SEL
+                            184 	.globl _APCFG
+                            185 	.globl _PERCFG
+                            186 	.globl _P0INP
+                            187 	.globl _P2IEN
+                            188 	.globl _P1IEN
+                            189 	.globl _P0IEN
+                            190 	.globl _PICTL
+                            191 	.globl _P2IFG
+                            192 	.globl _P1IFG
+                            193 	.globl _P0IFG
+                            194 	.globl _DMAREQ
+                            195 	.globl _DMAARM
+                            196 	.globl _DMA0CFGH
+                            197 	.globl _DMA0CFGL
+                            198 	.globl _DMA1CFGH
+                            199 	.globl _DMA1CFGL
+                            200 	.globl _DMAIRQ
+                            201 	.globl _ENCCS
+                            202 	.globl _ENCDO
+                            203 	.globl _ENCDI
+                            204 	.globl _RNDH
+                            205 	.globl _RNDL
+                            206 	.globl _ADCH
+                            207 	.globl _ADCL
+                            208 	.globl _ADCCON3
+                            209 	.globl _ADCCON2
+                            210 	.globl _ADCCON1
+                            211 	.globl _B
+                            212 	.globl _IRCON2
+                            213 	.globl _ACC
+                            214 	.globl _PSW
+                            215 	.globl _IRCON
+                            216 	.globl _IP1
+                            217 	.globl _IEN1
+                            218 	.globl _IP0
+                            219 	.globl _IEN0
+                            220 	.globl _P2
+                            221 	.globl _S1CON
+                            222 	.globl _IEN2
+                            223 	.globl _S0CON
+                            224 	.globl _DPS
+                            225 	.globl _P1
+                            226 	.globl _TCON
+                            227 	.globl _PCON
+                            228 	.globl _DPH1
+                            229 	.globl _DPL1
+                            230 	.globl _DPH0
+                            231 	.globl _DPL0
+                            232 	.globl _SP
+                            233 	.globl _P0
+                            234 	.globl _X_IEEE_ADDR
+                            235 	.globl _X_INFOPAGE
+                            236 	.globl _X_P2DIR
+                            237 	.globl _X_P1DIR
+                            238 	.globl _X_P0DIR
+                            239 	.globl _X_U1GCR
+                            240 	.globl _X_U1UCR
+                            241 	.globl _X_U1BAUD
+                            242 	.globl _X_U1DBUF
+                            243 	.globl _X_U1CSR
+                            244 	.globl _X_P2INP
+                            245 	.globl _X_P1INP
+                            246 	.globl _X_P2SEL
+                            247 	.globl _X_P1SEL
+                            248 	.globl _X_P0SEL
+                            249 	.globl _X_APCFG
+                            250 	.globl _X_PERCFG
+                            251 	.globl _X_T4CC1
+                            252 	.globl _X_T4CCTL1
+                            253 	.globl _X_T4CC0
+                            254 	.globl _X_T4CCTL0
+                            255 	.globl _X_T4CTL
+                            256 	.globl _X_T4CNT
+                            257 	.globl _X_RFIRQF0
+                            258 	.globl _X_T1CCTL2
+                            259 	.globl _X_T1CCTL1
+                            260 	.globl _X_T1CCTL0
+                            261 	.globl _X_T1CTL
+                            262 	.globl _X_T1CNTH
+                            263 	.globl _X_T1CNTL
+                            264 	.globl _X_RFST
+                            265 	.globl _X_T1CC2H
+                            266 	.globl _X_T1CC2L
+                            267 	.globl _X_T1CC1H
+                            268 	.globl _X_T1CC1L
+                            269 	.globl _X_T1CC0H
+                            270 	.globl _X_T1CC0L
+                            271 	.globl _X_RFD
+                            272 	.globl _X_TIMIF
+                            273 	.globl _X_DMAREQ
+                            274 	.globl _X_DMAARM
+                            275 	.globl _X_DMA0CFGH
+                            276 	.globl _X_DMA0CFGL
+                            277 	.globl _X_DMA1CFGH
+                            278 	.globl _X_DMA1CFGL
+                            279 	.globl _X_DMAIRQ
+                            280 	.globl _X_T3CC1
+                            281 	.globl _X_T3CCTL1
+                            282 	.globl _X_T3CC0
+                            283 	.globl _X_T3CCTL0
+                            284 	.globl _X_T3CTL
+                            285 	.globl _X_T3CNT
+                            286 	.globl _X_WDCTL
+                            287 	.globl _X_MEMCTR
+                            288 	.globl _X_CLKCONCMD
+                            289 	.globl _X_U0GCR
+                            290 	.globl _X_U0UCR
+                            291 	.globl _X_T2MSEL
+                            292 	.globl _X_U0BAUD
+                            293 	.globl _X_U0DBUF
+                            294 	.globl _X_RFERRF
+                            295 	.globl _X_SLEEPCMD
+                            296 	.globl _X_RNDH
+                            297 	.globl _X_RNDL
+                            298 	.globl _X_ADCH
+                            299 	.globl _X_ADCL
+                            300 	.globl _X_ADCCON3
+                            301 	.globl _X_ADCCON2
+                            302 	.globl _X_ADCCON1
+                            303 	.globl _X_ENCCS
+                            304 	.globl _X_ENCDO
+                            305 	.globl _X_ENCDI
+                            306 	.globl _X_T1STAT
+                            307 	.globl _X_PMUX
+                            308 	.globl _X_STLOAD
+                            309 	.globl _X_P2IEN
+                            310 	.globl _X_P0IEN
+                            311 	.globl _X_T2IRQM
+                            312 	.globl _X_T2MOVF2
+                            313 	.globl _X_T2MOVF1
+                            314 	.globl _X_T2MOVF0
+                            315 	.globl _X_T2M1
+                            316 	.globl _X_T2M0
+                            317 	.globl _X_T2IRQF
+                            318 	.globl _X_P2
+                            319 	.globl _X_PSBANK
+                            320 	.globl _X_FMAP
+                            321 	.globl _X_CLKCONSTA
+                            322 	.globl _X_SLEEPSTA
+                            323 	.globl _X_T2EVTCFG
+                            324 	.globl _X_ST2
+                            325 	.globl _X_ST1
+                            326 	.globl _X_ST0
+                            327 	.globl _X_T2CTRL
+                            328 	.globl _X__XPAGE
+                            329 	.globl _X_MPAGE
+                            330 	.globl _X_RFIRQF1
+                            331 	.globl _X_P1
+                            332 	.globl _X_P0INP
+                            333 	.globl _X_P1IEN
+                            334 	.globl _X_PICTL
+                            335 	.globl _X_P2IFG
+                            336 	.globl _X_P1IFG
+                            337 	.globl _X_P0IFG
+                            338 	.globl _X_U0CSR
+                            339 	.globl _X_P0
+                            340 	.globl _USBF5
+                            341 	.globl _USBF4
+                            342 	.globl _USBF3
+                            343 	.globl _USBF2
+                            344 	.globl _USBF1
+                            345 	.globl _USBF0
+                            346 	.globl _USBCNTH
+                            347 	.globl _USBCNTL
+                            348 	.globl _USBCNT0
+                            349 	.globl _USBCSOH
+                            350 	.globl _USBCSOL
+                            351 	.globl _USBMAXO
+                            352 	.globl _USBCSIH
+                            353 	.globl _USBCSIL
+                            354 	.globl _USBCS0
+                            355 	.globl _USBMAXI
+                            356 	.globl _USBCTRL
+                            357 	.globl _USBINDEX
+                            358 	.globl _USBFRMH
+                            359 	.globl _USBFRML
+                            360 	.globl _USBCIE
+                            361 	.globl _USBOIE
+                            362 	.globl _USBIIE
+                            363 	.globl _USBCIF
+                            364 	.globl _USBOIF
+                            365 	.globl _USBIIF
+                            366 	.globl _USBPOW
+                            367 	.globl _USBADDR
+                            368 	.globl _CSPT
+                            369 	.globl _CSPZ
+                            370 	.globl _CSPY
+                            371 	.globl _CSPX
+                            372 	.globl _CSPSTAT
+                            373 	.globl _CSPCTRL
+                            374 	.globl _CSPPROG23
+                            375 	.globl _CSPPROG22
+                            376 	.globl _CSPPROG21
+                            377 	.globl _CSPPROG20
+                            378 	.globl _CSPPROG19
+                            379 	.globl _CSPPROG18
+                            380 	.globl _CSPPROG17
+                            381 	.globl _CSPPROG16
+                            382 	.globl _CSPPROG15
+                            383 	.globl _CSPPROG14
+                            384 	.globl _CSPPROG13
+                            385 	.globl _CSPPROG12
+                            386 	.globl _CSPPROG11
+                            387 	.globl _CSPPROG10
+                            388 	.globl _CSPPROG9
+                            389 	.globl _CSPPROG8
+                            390 	.globl _CSPPROG7
+                            391 	.globl _CSPPROG6
+                            392 	.globl _CSPPROG5
+                            393 	.globl _CSPPROG4
+                            394 	.globl _CSPPROG3
+                            395 	.globl _CSPPROG2
+                            396 	.globl _CSPPROG1
+                            397 	.globl _CSPPROG0
+                            398 	.globl _RFC_OBS_CTRL2
+                            399 	.globl _RFC_OBS_CTRL1
+                            400 	.globl _RFC_OBS_CTRL0
+                            401 	.globl _TXFILTCFG
+                            402 	.globl _PTEST1
+                            403 	.globl _PTEST0
+                            404 	.globl _ATEST
+                            405 	.globl _DACTEST2
+                            406 	.globl _DACTEST1
+                            407 	.globl _DACTEST0
+                            408 	.globl _MDMTEST1
+                            409 	.globl _MDMTEST0
+                            410 	.globl _ADCTEST2
+                            411 	.globl _ADCTEST1
+                            412 	.globl _ADCTEST0
+                            413 	.globl _AGCCTRL3
+                            414 	.globl _AGCCTRL2
+                            415 	.globl _AGCCTRL1
+                            416 	.globl _AGCCTRL0
+                            417 	.globl _FSCAL3
+                            418 	.globl _FSCAL2
+                            419 	.globl _FSCAL1
+                            420 	.globl _FSCAL0
+                            421 	.globl _FSCTRL
+                            422 	.globl _RXCTRL
+                            423 	.globl _FREQEST
+                            424 	.globl _MDMCTRL1
+                            425 	.globl _MDMCTRL0
+                            426 	.globl _RFRND
+                            427 	.globl _RFERRM
+                            428 	.globl _RFIRQM1
+                            429 	.globl _RFIRQM0
+                            430 	.globl _TXLAST_PTR
+                            431 	.globl _TXFIRST_PTR
+                            432 	.globl _RXP1_PTR
+                            433 	.globl _RXLAST_PTR
+                            434 	.globl _RXFIRST_PTR
+                            435 	.globl _TXFIFOCNT
+                            436 	.globl _RXFIFOCNT
+                            437 	.globl _RXFIRST
+                            438 	.globl _RSSISTAT
+                            439 	.globl _RSSI
+                            440 	.globl _CCACTRL1
+                            441 	.globl _CCACTRL0
+                            442 	.globl _FSMCTRL
+                            443 	.globl _FIFOPCTRL
+                            444 	.globl _FSMSTAT1
+                            445 	.globl _FSMSTAT0
+                            446 	.globl _TXCTRL
+                            447 	.globl _TXPOWER
+                            448 	.globl _FREQCTRL
+                            449 	.globl _FREQTUNE
+                            450 	.globl _RXMASKCLR
+                            451 	.globl _RXMASKSET
+                            452 	.globl _RXENABLE
+                            453 	.globl _FRMCTRL1
+                            454 	.globl _FRMCTRL0
+                            455 	.globl _SRCEXTEN2
+                            456 	.globl _SRCEXTEN1
+                            457 	.globl _SRCEXTEN0
+                            458 	.globl _SRCSHORTEN2
+                            459 	.globl _SRCSHORTEN1
+                            460 	.globl _SRCSHORTEN0
+                            461 	.globl _SRCMATCH
+                            462 	.globl _FRMFILT1
+                            463 	.globl _FRMFILT0
+                            464 	.globl _SHORT_ADDR1
+                            465 	.globl _SHORT_ADDR0
+                            466 	.globl _PAN_ID1
+                            467 	.globl _PAN_ID0
+                            468 	.globl _EXT_ADDR7
+                            469 	.globl _EXT_ADDR6
+                            470 	.globl _EXT_ADDR5
+                            471 	.globl _EXT_ADDR4
+                            472 	.globl _EXT_ADDR3
+                            473 	.globl _EXT_ADDR2
+                            474 	.globl _EXT_ADDR1
+                            475 	.globl _EXT_ADDR0
+                            476 	.globl _SRCSHORTPENDEN2
+                            477 	.globl _SRCSHORTPENDEN1
+                            478 	.globl _SRCSHORTPENDEN0
+                            479 	.globl _SRCEXTPENDEN2
+                            480 	.globl _SRCEXTPENDEN1
+                            481 	.globl _SRCEXTPENDEN0
+                            482 	.globl _SRCRESINDEX
+                            483 	.globl _SRCRESMASK2
+                            484 	.globl _SRCRESMASK1
+                            485 	.globl _SRCRESMASK0
+                            486 	.globl _SRC_ADDR_TABLE
+                            487 	.globl _TXFIFO
+                            488 	.globl _RXFIFO
+                            489 	.globl _RFCORE_RAM
+                            490 	.globl _CMPCTL
+                            491 	.globl _OPAMPS
+                            492 	.globl _OPAMPC
+                            493 	.globl _STCV2
+                            494 	.globl _STCV1
+                            495 	.globl _STCV0
+                            496 	.globl _STCS
+                            497 	.globl _STCC
+                            498 	.globl _T1CC4H
+                            499 	.globl _T1CC4L
+                            500 	.globl _T1CC3H
+                            501 	.globl _T1CC3L
+                            502 	.globl _XX_T1CC2H
+                            503 	.globl _XX_T1CC2L
+                            504 	.globl _XX_T1CC1H
+                            505 	.globl _XX_T1CC1L
+                            506 	.globl _XX_T1CC0H
+                            507 	.globl _XX_T1CC0L
+                            508 	.globl _T1CCTL4
+                            509 	.globl _T1CCTL3
+                            510 	.globl _XX_T1CCTL2
+                            511 	.globl _XX_T1CCTL1
+                            512 	.globl _XX_T1CCTL0
+                            513 	.globl _CLD
+                            514 	.globl _IRCTL
+                            515 	.globl _CHIPINFO1
+                            516 	.globl _CHIPINFO0
+                            517 	.globl _FWDATA
+                            518 	.globl _FADDRH
+                            519 	.globl _FADDRL
+                            520 	.globl _FCTL
+                            521 	.globl _IVCTRL
+                            522 	.globl _BATTMON
+                            523 	.globl _SRCRC
+                            524 	.globl _DBGDATA
+                            525 	.globl _TESTREG0
+                            526 	.globl _CHIPID
+                            527 	.globl _CHVER
+                            528 	.globl _OBSSEL5
+                            529 	.globl _OBSSEL4
+                            530 	.globl _OBSSEL3
+                            531 	.globl _OBSSEL2
+                            532 	.globl _OBSSEL1
+                            533 	.globl _OBSSEL0
+                            534 	.globl _I2CIO
+                            535 	.globl _I2CWC
+                            536 	.globl _I2CADDR
+                            537 	.globl _I2CDATA
+                            538 	.globl _I2CSTAT
+                            539 	.globl _I2CCFG
+                            540 	.globl _OPAMPMC
+                            541 	.globl _MONMUX
+                            542 	.globl _uiplib_ip6addrconv
+                            543 	.globl _uiplib_ip4addrconv
+                            544 	.globl _uiplib_ipaddrconv
+                            545 ;--------------------------------------------------------
+                            546 ; special function registers
+                            547 ;--------------------------------------------------------
+                            548 	.area RSEG    (ABS,DATA)
+   0000                     549 	.org 0x0000
+                    0080    550 _P0	=	0x0080
+                    0081    551 _SP	=	0x0081
+                    0082    552 _DPL0	=	0x0082
+                    0083    553 _DPH0	=	0x0083
+                    0084    554 _DPL1	=	0x0084
+                    0085    555 _DPH1	=	0x0085
+                    0087    556 _PCON	=	0x0087
+                    0088    557 _TCON	=	0x0088
+                    0090    558 _P1	=	0x0090
+                    0092    559 _DPS	=	0x0092
+                    0098    560 _S0CON	=	0x0098
+                    009A    561 _IEN2	=	0x009a
+                    009B    562 _S1CON	=	0x009b
+                    00A0    563 _P2	=	0x00a0
+                    00A8    564 _IEN0	=	0x00a8
+                    00A9    565 _IP0	=	0x00a9
+                    00B8    566 _IEN1	=	0x00b8
+                    00B9    567 _IP1	=	0x00b9
+                    00C0    568 _IRCON	=	0x00c0
+                    00D0    569 _PSW	=	0x00d0
+                    00E0    570 _ACC	=	0x00e0
+                    00E8    571 _IRCON2	=	0x00e8
+                    00F0    572 _B	=	0x00f0
+                    00B4    573 _ADCCON1	=	0x00b4
+                    00B5    574 _ADCCON2	=	0x00b5
+                    00B6    575 _ADCCON3	=	0x00b6
+                    00BA    576 _ADCL	=	0x00ba
+                    00BB    577 _ADCH	=	0x00bb
+                    00BC    578 _RNDL	=	0x00bc
+                    00BD    579 _RNDH	=	0x00bd
+                    00B1    580 _ENCDI	=	0x00b1
+                    00B2    581 _ENCDO	=	0x00b2
+                    00B3    582 _ENCCS	=	0x00b3
+                    00D1    583 _DMAIRQ	=	0x00d1
+                    00D2    584 _DMA1CFGL	=	0x00d2
+                    00D3    585 _DMA1CFGH	=	0x00d3
+                    00D4    586 _DMA0CFGL	=	0x00d4
+                    00D5    587 _DMA0CFGH	=	0x00d5
+                    00D6    588 _DMAARM	=	0x00d6
+                    00D7    589 _DMAREQ	=	0x00d7
+                    0089    590 _P0IFG	=	0x0089
+                    008A    591 _P1IFG	=	0x008a
+                    008B    592 _P2IFG	=	0x008b
+                    008C    593 _PICTL	=	0x008c
+                    00AB    594 _P0IEN	=	0x00ab
+                    008D    595 _P1IEN	=	0x008d
+                    00AC    596 _P2IEN	=	0x00ac
+                    008F    597 _P0INP	=	0x008f
+                    00F1    598 _PERCFG	=	0x00f1
+                    00F2    599 _APCFG	=	0x00f2
+                    00F3    600 _P0SEL	=	0x00f3
+                    00F4    601 _P1SEL	=	0x00f4
+                    00F5    602 _P2SEL	=	0x00f5
+                    00F6    603 _P1INP	=	0x00f6
+                    00F7    604 _P2INP	=	0x00f7
+                    00FD    605 _P0DIR	=	0x00fd
+                    00FE    606 _P1DIR	=	0x00fe
+                    00FF    607 _P2DIR	=	0x00ff
+                    00AE    608 _PMUX	=	0x00ae
+                    0093    609 _MPAGE	=	0x0093
+                    0093    610 __XPAGE	=	0x0093
+                    00C7    611 _MEMCTR	=	0x00c7
+                    009F    612 _FMAP	=	0x009f
+                    009F    613 _PSBANK	=	0x009f
+                    0091    614 _RFIRQF1	=	0x0091
+                    00D9    615 _RFD	=	0x00d9
+                    00E1    616 _RFST	=	0x00e1
+                    00E9    617 _RFIRQF0	=	0x00e9
+                    00BF    618 _RFERRF	=	0x00bf
+                    0095    619 _ST0	=	0x0095
+                    0096    620 _ST1	=	0x0096
+                    0097    621 _ST2	=	0x0097
+                    00AD    622 _STLOAD	=	0x00ad
+                    00BE    623 _SLEEPCMD	=	0x00be
+                    009D    624 _SLEEPSTA	=	0x009d
+                    00C6    625 _CLKCONCMD	=	0x00c6
+                    009E    626 _CLKCONSTA	=	0x009e
+                    00DA    627 _T1CC0L	=	0x00da
+                    00DB    628 _T1CC0H	=	0x00db
+                    00DC    629 _T1CC1L	=	0x00dc
+                    00DD    630 _T1CC1H	=	0x00dd
+                    00DE    631 _T1CC2L	=	0x00de
+                    00DF    632 _T1CC2H	=	0x00df
+                    00E2    633 _T1CNTL	=	0x00e2
+                    00E3    634 _T1CNTH	=	0x00e3
+                    00E4    635 _T1CTL	=	0x00e4
+                    00E5    636 _T1CCTL0	=	0x00e5
+                    00E6    637 _T1CCTL1	=	0x00e6
+                    00E7    638 _T1CCTL2	=	0x00e7
+                    00AF    639 _T1STAT	=	0x00af
+                    0094    640 _T2CTRL	=	0x0094
+                    009C    641 _T2EVTCFG	=	0x009c
+                    00A1    642 _T2IRQF	=	0x00a1
+                    00A2    643 _T2M0	=	0x00a2
+                    00A3    644 _T2M1	=	0x00a3
+                    00A4    645 _T2MOVF0	=	0x00a4
+                    00A5    646 _T2MOVF1	=	0x00a5
+                    00A6    647 _T2MOVF2	=	0x00a6
+                    00A7    648 _T2IRQM	=	0x00a7
+                    00C3    649 _T2MSEL	=	0x00c3
+                    00CA    650 _T3CNT	=	0x00ca
+                    00CB    651 _T3CTL	=	0x00cb
+                    00CC    652 _T3CCTL0	=	0x00cc
+                    00CD    653 _T3CC0	=	0x00cd
+                    00CE    654 _T3CCTL1	=	0x00ce
+                    00CF    655 _T3CC1	=	0x00cf
+                    00EA    656 _T4CNT	=	0x00ea
+                    00EB    657 _T4CTL	=	0x00eb
+                    00EC    658 _T4CCTL0	=	0x00ec
+                    00ED    659 _T4CC0	=	0x00ed
+                    00EE    660 _T4CCTL1	=	0x00ee
+                    00EF    661 _T4CC1	=	0x00ef
+                    00D8    662 _TIMIF	=	0x00d8
+                    0086    663 _U0CSR	=	0x0086
+                    00C1    664 _U0DBUF	=	0x00c1
+                    00C2    665 _U0BAUD	=	0x00c2
+                    00C4    666 _U0UCR	=	0x00c4
+                    00C5    667 _U0GCR	=	0x00c5
+                    00F8    668 _U1CSR	=	0x00f8
+                    00F9    669 _U1DBUF	=	0x00f9
+                    00FA    670 _U1BAUD	=	0x00fa
+                    00FB    671 _U1UCR	=	0x00fb
+                    00FC    672 _U1GCR	=	0x00fc
+                    00C9    673 _WDCTL	=	0x00c9
+                            674 ;--------------------------------------------------------
+                            675 ; special function bits
+                            676 ;--------------------------------------------------------
+                            677 	.area RSEG    (ABS,DATA)
+   0000                     678 	.org 0x0000
+                    0087    679 _P0_7	=	0x0087
+                    0086    680 _P0_6	=	0x0086
+                    0085    681 _P0_5	=	0x0085
+                    0084    682 _P0_4	=	0x0084
+                    0083    683 _P0_3	=	0x0083
+                    0082    684 _P0_2	=	0x0082
+                    0081    685 _P0_1	=	0x0081
+                    0080    686 _P0_0	=	0x0080
+                    008F    687 _URX1IF	=	0x008f
+                    008D    688 _ADCIF	=	0x008d
+                    008B    689 _URX0IF	=	0x008b
+                    008A    690 _IT1	=	0x008a
+                    0089    691 _RFERRIF	=	0x0089
+                    0088    692 _IT0	=	0x0088
+                    0097    693 _P1_7	=	0x0097
+                    0096    694 _P1_6	=	0x0096
+                    0095    695 _P1_5	=	0x0095
+                    0094    696 _P1_4	=	0x0094
+                    0093    697 _P1_3	=	0x0093
+                    0092    698 _P1_2	=	0x0092
+                    0091    699 _P1_1	=	0x0091
+                    0090    700 _P1_0	=	0x0090
+                    0099    701 _ENCIF_1	=	0x0099
+                    0098    702 _ENCIF_0	=	0x0098
+                    00A7    703 _P2_7	=	0x00a7
+                    00A6    704 _P2_6	=	0x00a6
+                    00A5    705 _P2_5	=	0x00a5
+                    00A4    706 _P2_4	=	0x00a4
+                    00A3    707 _P2_3	=	0x00a3
+                    00A2    708 _P2_2	=	0x00a2
+                    00A1    709 _P2_1	=	0x00a1
+                    00A0    710 _P2_0	=	0x00a0
+                    00AF    711 _EA	=	0x00af
+                    00AD    712 _STIE	=	0x00ad
+                    00AC    713 _ENCIE	=	0x00ac
+                    00AB    714 _URX1IE	=	0x00ab
+                    00AA    715 _URX0IE	=	0x00aa
+                    00A9    716 _ADCIE	=	0x00a9
+                    00A8    717 _RFERRIE	=	0x00a8
+                    00BD    718 _P0IE	=	0x00bd
+                    00BC    719 _T4IE	=	0x00bc
+                    00BB    720 _T3IE	=	0x00bb
+                    00BA    721 _T2IE	=	0x00ba
+                    00B9    722 _T1IE	=	0x00b9
+                    00B8    723 _DMAIE	=	0x00b8
+                    00C7    724 _STIF	=	0x00c7
+                    00C5    725 _P0IF	=	0x00c5
+                    00C4    726 _T4IF	=	0x00c4
+                    00C3    727 _T3IF	=	0x00c3
+                    00C2    728 _T2IF	=	0x00c2
+                    00C1    729 _T1IF	=	0x00c1
+                    00C0    730 _DMAIF	=	0x00c0
+                    00D7    731 _CY	=	0x00d7
+                    00D6    732 _AC	=	0x00d6
+                    00D5    733 _F0	=	0x00d5
+                    00D4    734 _RS1	=	0x00d4
+                    00D3    735 _RS0	=	0x00d3
+                    00D2    736 _OV	=	0x00d2
+                    00D1    737 _F1	=	0x00d1
+                    00D0    738 _P	=	0x00d0
+                    00E7    739 _ACC_7	=	0x00e7
+                    00E6    740 _ACC_6	=	0x00e6
+                    00E5    741 _ACC_5	=	0x00e5
+                    00E4    742 _ACC_4	=	0x00e4
+                    00E3    743 _ACC_3	=	0x00e3
+                    00E2    744 _ACC_2	=	0x00e2
+                    00E1    745 _ACC_1	=	0x00e1
+                    00E0    746 _ACC_0	=	0x00e0
+                    00EC    747 _WDTIF	=	0x00ec
+                    00EB    748 _P1IF	=	0x00eb
+                    00EA    749 _UTX1IF	=	0x00ea
+                    00E9    750 _UTX0IF	=	0x00e9
+                    00E8    751 _P2IF	=	0x00e8
+                    00F7    752 _B_7	=	0x00f7
+                    00F6    753 _B_6	=	0x00f6
+                    00F5    754 _B_5	=	0x00f5
+                    00F4    755 _B_4	=	0x00f4
+                    00F3    756 _B_3	=	0x00f3
+                    00F2    757 _B_2	=	0x00f2
+                    00F1    758 _B_1	=	0x00f1
+                    00F0    759 _B_0	=	0x00f0
+                    00DE    760 _OVFIM	=	0x00de
+                    00DD    761 _T4CH1IF	=	0x00dd
+                    00DC    762 _T4CH0IF	=	0x00dc
+                    00DB    763 _T4OVFIF	=	0x00db
+                    00DA    764 _T3CH1IF	=	0x00da
+                    00D9    765 _T3CH0IF	=	0x00d9
+                    00D8    766 _T3OVFIF	=	0x00d8
+                    00FF    767 _MODE	=	0x00ff
+                    00FE    768 _RE	=	0x00fe
+                    00FD    769 _SLAVE	=	0x00fd
+                    00FC    770 _FE	=	0x00fc
+                    00FB    771 _ERR	=	0x00fb
+                    00FA    772 _RX_BYTE	=	0x00fa
+                    00F9    773 _TX_BYTE	=	0x00f9
+                    00F8    774 _ACTIVE	=	0x00f8
+                            775 ;--------------------------------------------------------
+                            776 ; overlayable register banks
+                            777 ;--------------------------------------------------------
+                            778 	.area REG_BANK_0	(REL,OVR,DATA)
+   0000                     779 	.ds 8
+                            780 ;--------------------------------------------------------
+                            781 ; internal ram data
+                            782 ;--------------------------------------------------------
+                            783 	.area DSEG    (DATA)
+                            784 ;--------------------------------------------------------
+                            785 ; overlayable items in internal ram 
+                            786 ;--------------------------------------------------------
+                            787 	.area OSEG    (OVR,DATA)
+                            788 ;--------------------------------------------------------
+                            789 ; indirectly addressable internal ram data
+                            790 ;--------------------------------------------------------
+                            791 	.area ISEG    (DATA)
+                            792 ;--------------------------------------------------------
+                            793 ; absolute internal ram data
+                            794 ;--------------------------------------------------------
+                            795 	.area IABS    (ABS,DATA)
+                            796 	.area IABS    (ABS,DATA)
+                            797 ;--------------------------------------------------------
+                            798 ; bit data
+                            799 ;--------------------------------------------------------
+                            800 	.area BSEG    (BIT)
+                            801 ;--------------------------------------------------------
+                            802 ; paged external ram data
+                            803 ;--------------------------------------------------------
+                            804 	.area PSEG    (PAG,XDATA)
+                            805 ;--------------------------------------------------------
+                            806 ; external ram data
+                            807 ;--------------------------------------------------------
+                            808 	.area XSEG    (XDATA)
+                    61A6    809 _MONMUX	=	0x61a6
+                    61A6    810 _OPAMPMC	=	0x61a6
+                    6230    811 _I2CCFG	=	0x6230
+                    6231    812 _I2CSTAT	=	0x6231
+                    6232    813 _I2CDATA	=	0x6232
+                    6233    814 _I2CADDR	=	0x6233
+                    6234    815 _I2CWC	=	0x6234
+                    6235    816 _I2CIO	=	0x6235
+                    6243    817 _OBSSEL0	=	0x6243
+                    6244    818 _OBSSEL1	=	0x6244
+                    6245    819 _OBSSEL2	=	0x6245
+                    6246    820 _OBSSEL3	=	0x6246
+                    6247    821 _OBSSEL4	=	0x6247
+                    6248    822 _OBSSEL5	=	0x6248
+                    6249    823 _CHVER	=	0x6249
+                    624A    824 _CHIPID	=	0x624a
+                    624B    825 _TESTREG0	=	0x624b
+                    6260    826 _DBGDATA	=	0x6260
+                    6262    827 _SRCRC	=	0x6262
+                    6264    828 _BATTMON	=	0x6264
+                    6265    829 _IVCTRL	=	0x6265
+                    6270    830 _FCTL	=	0x6270
+                    6271    831 _FADDRL	=	0x6271
+                    6272    832 _FADDRH	=	0x6272
+                    6273    833 _FWDATA	=	0x6273
+                    6276    834 _CHIPINFO0	=	0x6276
+                    6277    835 _CHIPINFO1	=	0x6277
+                    6281    836 _IRCTL	=	0x6281
+                    6290    837 _CLD	=	0x6290
+                    62A0    838 _XX_T1CCTL0	=	0x62a0
+                    62A1    839 _XX_T1CCTL1	=	0x62a1
+                    62A2    840 _XX_T1CCTL2	=	0x62a2
+                    62A3    841 _T1CCTL3	=	0x62a3
+                    62A4    842 _T1CCTL4	=	0x62a4
+                    62A6    843 _XX_T1CC0L	=	0x62a6
+                    62A7    844 _XX_T1CC0H	=	0x62a7
+                    62A8    845 _XX_T1CC1L	=	0x62a8
+                    62A9    846 _XX_T1CC1H	=	0x62a9
+                    62AA    847 _XX_T1CC2L	=	0x62aa
+                    62AB    848 _XX_T1CC2H	=	0x62ab
+                    62AC    849 _T1CC3L	=	0x62ac
+                    62AD    850 _T1CC3H	=	0x62ad
+                    62AE    851 _T1CC4L	=	0x62ae
+                    62AF    852 _T1CC4H	=	0x62af
+                    62B0    853 _STCC	=	0x62b0
+                    62B1    854 _STCS	=	0x62b1
+                    62B2    855 _STCV0	=	0x62b2
+                    62B3    856 _STCV1	=	0x62b3
+                    62B4    857 _STCV2	=	0x62b4
+                    62C0    858 _OPAMPC	=	0x62c0
+                    62C1    859 _OPAMPS	=	0x62c1
+                    62D0    860 _CMPCTL	=	0x62d0
+                    6000    861 _RFCORE_RAM	=	0x6000
+                    6000    862 _RXFIFO	=	0x6000
+                    6080    863 _TXFIFO	=	0x6080
+                    6100    864 _SRC_ADDR_TABLE	=	0x6100
+                    6160    865 _SRCRESMASK0	=	0x6160
+                    6161    866 _SRCRESMASK1	=	0x6161
+                    6162    867 _SRCRESMASK2	=	0x6162
+                    6163    868 _SRCRESINDEX	=	0x6163
+                    6164    869 _SRCEXTPENDEN0	=	0x6164
+                    6165    870 _SRCEXTPENDEN1	=	0x6165
+                    6166    871 _SRCEXTPENDEN2	=	0x6166
+                    6167    872 _SRCSHORTPENDEN0	=	0x6167
+                    6168    873 _SRCSHORTPENDEN1	=	0x6168
+                    6169    874 _SRCSHORTPENDEN2	=	0x6169
+                    616A    875 _EXT_ADDR0	=	0x616a
+                    616B    876 _EXT_ADDR1	=	0x616b
+                    616C    877 _EXT_ADDR2	=	0x616c
+                    616D    878 _EXT_ADDR3	=	0x616d
+                    616E    879 _EXT_ADDR4	=	0x616e
+                    616F    880 _EXT_ADDR5	=	0x616f
+                    6170    881 _EXT_ADDR6	=	0x6170
+                    6171    882 _EXT_ADDR7	=	0x6171
+                    6172    883 _PAN_ID0	=	0x6172
+                    6173    884 _PAN_ID1	=	0x6173
+                    6174    885 _SHORT_ADDR0	=	0x6174
+                    6175    886 _SHORT_ADDR1	=	0x6175
+                    6180    887 _FRMFILT0	=	0x6180
+                    6181    888 _FRMFILT1	=	0x6181
+                    6182    889 _SRCMATCH	=	0x6182
+                    6183    890 _SRCSHORTEN0	=	0x6183
+                    6184    891 _SRCSHORTEN1	=	0x6184
+                    6185    892 _SRCSHORTEN2	=	0x6185
+                    6186    893 _SRCEXTEN0	=	0x6186
+                    6187    894 _SRCEXTEN1	=	0x6187
+                    6188    895 _SRCEXTEN2	=	0x6188
+                    6189    896 _FRMCTRL0	=	0x6189
+                    618A    897 _FRMCTRL1	=	0x618a
+                    618B    898 _RXENABLE	=	0x618b
+                    618C    899 _RXMASKSET	=	0x618c
+                    618D    900 _RXMASKCLR	=	0x618d
+                    618E    901 _FREQTUNE	=	0x618e
+                    618F    902 _FREQCTRL	=	0x618f
+                    6190    903 _TXPOWER	=	0x6190
+                    6191    904 _TXCTRL	=	0x6191
+                    6192    905 _FSMSTAT0	=	0x6192
+                    6193    906 _FSMSTAT1	=	0x6193
+                    6194    907 _FIFOPCTRL	=	0x6194
+                    6195    908 _FSMCTRL	=	0x6195
+                    6196    909 _CCACTRL0	=	0x6196
+                    6197    910 _CCACTRL1	=	0x6197
+                    6198    911 _RSSI	=	0x6198
+                    6199    912 _RSSISTAT	=	0x6199
+                    619A    913 _RXFIRST	=	0x619a
+                    619B    914 _RXFIFOCNT	=	0x619b
+                    619C    915 _TXFIFOCNT	=	0x619c
+                    619D    916 _RXFIRST_PTR	=	0x619d
+                    619E    917 _RXLAST_PTR	=	0x619e
+                    619F    918 _RXP1_PTR	=	0x619f
+                    61A1    919 _TXFIRST_PTR	=	0x61a1
+                    61A2    920 _TXLAST_PTR	=	0x61a2
+                    61A3    921 _RFIRQM0	=	0x61a3
+                    61A4    922 _RFIRQM1	=	0x61a4
+                    61A5    923 _RFERRM	=	0x61a5
+                    61A7    924 _RFRND	=	0x61a7
+                    61A8    925 _MDMCTRL0	=	0x61a8
+                    61A9    926 _MDMCTRL1	=	0x61a9
+                    61AA    927 _FREQEST	=	0x61aa
+                    61AB    928 _RXCTRL	=	0x61ab
+                    61AC    929 _FSCTRL	=	0x61ac
+                    61AD    930 _FSCAL0	=	0x61ad
+                    61AE    931 _FSCAL1	=	0x61ae
+                    61AF    932 _FSCAL2	=	0x61af
+                    61B0    933 _FSCAL3	=	0x61b0
+                    61B1    934 _AGCCTRL0	=	0x61b1
+                    61B2    935 _AGCCTRL1	=	0x61b2
+                    61B3    936 _AGCCTRL2	=	0x61b3
+                    61B4    937 _AGCCTRL3	=	0x61b4
+                    61B5    938 _ADCTEST0	=	0x61b5
+                    61B6    939 _ADCTEST1	=	0x61b6
+                    61B7    940 _ADCTEST2	=	0x61b7
+                    61B8    941 _MDMTEST0	=	0x61b8
+                    61B9    942 _MDMTEST1	=	0x61b9
+                    61BA    943 _DACTEST0	=	0x61ba
+                    61BB    944 _DACTEST1	=	0x61bb
+                    61BC    945 _DACTEST2	=	0x61bc
+                    61BD    946 _ATEST	=	0x61bd
+                    61BE    947 _PTEST0	=	0x61be
+                    61BF    948 _PTEST1	=	0x61bf
+                    61FA    949 _TXFILTCFG	=	0x61fa
+                    61EB    950 _RFC_OBS_CTRL0	=	0x61eb
+                    61EC    951 _RFC_OBS_CTRL1	=	0x61ec
+                    61ED    952 _RFC_OBS_CTRL2	=	0x61ed
+                    61C0    953 _CSPPROG0	=	0x61c0
+                    61C1    954 _CSPPROG1	=	0x61c1
+                    61C2    955 _CSPPROG2	=	0x61c2
+                    61C3    956 _CSPPROG3	=	0x61c3
+                    61C4    957 _CSPPROG4	=	0x61c4
+                    61C5    958 _CSPPROG5	=	0x61c5
+                    61C6    959 _CSPPROG6	=	0x61c6
+                    61C7    960 _CSPPROG7	=	0x61c7
+                    61C8    961 _CSPPROG8	=	0x61c8
+                    61C9    962 _CSPPROG9	=	0x61c9
+                    61CA    963 _CSPPROG10	=	0x61ca
+                    61CB    964 _CSPPROG11	=	0x61cb
+                    61CC    965 _CSPPROG12	=	0x61cc
+                    61CD    966 _CSPPROG13	=	0x61cd
+                    61CE    967 _CSPPROG14	=	0x61ce
+                    61CF    968 _CSPPROG15	=	0x61cf
+                    61D0    969 _CSPPROG16	=	0x61d0
+                    61D1    970 _CSPPROG17	=	0x61d1
+                    61D2    971 _CSPPROG18	=	0x61d2
+                    61D3    972 _CSPPROG19	=	0x61d3
+                    61D4    973 _CSPPROG20	=	0x61d4
+                    61D5    974 _CSPPROG21	=	0x61d5
+                    61D6    975 _CSPPROG22	=	0x61d6
+                    61D7    976 _CSPPROG23	=	0x61d7
+                    61E0    977 _CSPCTRL	=	0x61e0
+                    61E1    978 _CSPSTAT	=	0x61e1
+                    61E2    979 _CSPX	=	0x61e2
+                    61E3    980 _CSPY	=	0x61e3
+                    61E4    981 _CSPZ	=	0x61e4
+                    61E5    982 _CSPT	=	0x61e5
+                    6200    983 _USBADDR	=	0x6200
+                    6201    984 _USBPOW	=	0x6201
+                    6202    985 _USBIIF	=	0x6202
+                    6204    986 _USBOIF	=	0x6204
+                    6206    987 _USBCIF	=	0x6206
+                    6207    988 _USBIIE	=	0x6207
+                    6209    989 _USBOIE	=	0x6209
+                    620B    990 _USBCIE	=	0x620b
+                    620C    991 _USBFRML	=	0x620c
+                    620D    992 _USBFRMH	=	0x620d
+                    620E    993 _USBINDEX	=	0x620e
+                    620F    994 _USBCTRL	=	0x620f
+                    6210    995 _USBMAXI	=	0x6210
+                    6211    996 _USBCS0	=	0x6211
+                    6211    997 _USBCSIL	=	0x6211
+                    6212    998 _USBCSIH	=	0x6212
+                    6213    999 _USBMAXO	=	0x6213
+                    6214   1000 _USBCSOL	=	0x6214
+                    6215   1001 _USBCSOH	=	0x6215
+                    6216   1002 _USBCNT0	=	0x6216
+                    6216   1003 _USBCNTL	=	0x6216
+                    6217   1004 _USBCNTH	=	0x6217
+                    6220   1005 _USBF0	=	0x6220
+                    6222   1006 _USBF1	=	0x6222
+                    6224   1007 _USBF2	=	0x6224
+                    6226   1008 _USBF3	=	0x6226
+                    6228   1009 _USBF4	=	0x6228
+                    622A   1010 _USBF5	=	0x622a
+                    7080   1011 _X_P0	=	0x7080
+                    7086   1012 _X_U0CSR	=	0x7086
+                    7089   1013 _X_P0IFG	=	0x7089
+                    708A   1014 _X_P1IFG	=	0x708a
+                    708B   1015 _X_P2IFG	=	0x708b
+                    708C   1016 _X_PICTL	=	0x708c
+                    708D   1017 _X_P1IEN	=	0x708d
+                    708F   1018 _X_P0INP	=	0x708f
+                    7090   1019 _X_P1	=	0x7090
+                    7091   1020 _X_RFIRQF1	=	0x7091
+                    7093   1021 _X_MPAGE	=	0x7093
+                    7093   1022 _X__XPAGE	=	0x7093
+                    7094   1023 _X_T2CTRL	=	0x7094
+                    7095   1024 _X_ST0	=	0x7095
+                    7096   1025 _X_ST1	=	0x7096
+                    7097   1026 _X_ST2	=	0x7097
+                    709C   1027 _X_T2EVTCFG	=	0x709c
+                    709D   1028 _X_SLEEPSTA	=	0x709d
+                    709E   1029 _X_CLKCONSTA	=	0x709e
+                    709F   1030 _X_FMAP	=	0x709f
+                    709F   1031 _X_PSBANK	=	0x709f
+                    70A0   1032 _X_P2	=	0x70a0
+                    70A1   1033 _X_T2IRQF	=	0x70a1
+                    70A2   1034 _X_T2M0	=	0x70a2
+                    70A3   1035 _X_T2M1	=	0x70a3
+                    70A4   1036 _X_T2MOVF0	=	0x70a4
+                    70A5   1037 _X_T2MOVF1	=	0x70a5
+                    70A6   1038 _X_T2MOVF2	=	0x70a6
+                    70A7   1039 _X_T2IRQM	=	0x70a7
+                    70AB   1040 _X_P0IEN	=	0x70ab
+                    70AC   1041 _X_P2IEN	=	0x70ac
+                    70AD   1042 _X_STLOAD	=	0x70ad
+                    70AE   1043 _X_PMUX	=	0x70ae
+                    70AF   1044 _X_T1STAT	=	0x70af
+                    70B1   1045 _X_ENCDI	=	0x70b1
+                    70B2   1046 _X_ENCDO	=	0x70b2
+                    70B3   1047 _X_ENCCS	=	0x70b3
+                    70B4   1048 _X_ADCCON1	=	0x70b4
+                    70B5   1049 _X_ADCCON2	=	0x70b5
+                    70B6   1050 _X_ADCCON3	=	0x70b6
+                    70BA   1051 _X_ADCL	=	0x70ba
+                    70BB   1052 _X_ADCH	=	0x70bb
+                    70BC   1053 _X_RNDL	=	0x70bc
+                    70BD   1054 _X_RNDH	=	0x70bd
+                    70BE   1055 _X_SLEEPCMD	=	0x70be
+                    70BF   1056 _X_RFERRF	=	0x70bf
+                    70C1   1057 _X_U0DBUF	=	0x70c1
+                    70C2   1058 _X_U0BAUD	=	0x70c2
+                    70C3   1059 _X_T2MSEL	=	0x70c3
+                    70C4   1060 _X_U0UCR	=	0x70c4
+                    70C5   1061 _X_U0GCR	=	0x70c5
+                    70C6   1062 _X_CLKCONCMD	=	0x70c6
+                    70C7   1063 _X_MEMCTR	=	0x70c7
+                    70C9   1064 _X_WDCTL	=	0x70c9
+                    70CA   1065 _X_T3CNT	=	0x70ca
+                    70CB   1066 _X_T3CTL	=	0x70cb
+                    70CC   1067 _X_T3CCTL0	=	0x70cc
+                    70CD   1068 _X_T3CC0	=	0x70cd
+                    70CE   1069 _X_T3CCTL1	=	0x70ce
+                    70CF   1070 _X_T3CC1	=	0x70cf
+                    70D1   1071 _X_DMAIRQ	=	0x70d1
+                    70D2   1072 _X_DMA1CFGL	=	0x70d2
+                    70D3   1073 _X_DMA1CFGH	=	0x70d3
+                    70D4   1074 _X_DMA0CFGL	=	0x70d4
+                    70D5   1075 _X_DMA0CFGH	=	0x70d5
+                    70D6   1076 _X_DMAARM	=	0x70d6
+                    70D7   1077 _X_DMAREQ	=	0x70d7
+                    70D8   1078 _X_TIMIF	=	0x70d8
+                    70D9   1079 _X_RFD	=	0x70d9
+                    70DA   1080 _X_T1CC0L	=	0x70da
+                    70DB   1081 _X_T1CC0H	=	0x70db
+                    70DC   1082 _X_T1CC1L	=	0x70dc
+                    70DD   1083 _X_T1CC1H	=	0x70dd
+                    70DE   1084 _X_T1CC2L	=	0x70de
+                    70DF   1085 _X_T1CC2H	=	0x70df
+                    70E1   1086 _X_RFST	=	0x70e1
+                    70E2   1087 _X_T1CNTL	=	0x70e2
+                    70E3   1088 _X_T1CNTH	=	0x70e3
+                    70E4   1089 _X_T1CTL	=	0x70e4
+                    70E5   1090 _X_T1CCTL0	=	0x70e5
+                    70E6   1091 _X_T1CCTL1	=	0x70e6
+                    70E7   1092 _X_T1CCTL2	=	0x70e7
+                    70E9   1093 _X_RFIRQF0	=	0x70e9
+                    70EA   1094 _X_T4CNT	=	0x70ea
+                    70EB   1095 _X_T4CTL	=	0x70eb
+                    70EC   1096 _X_T4CCTL0	=	0x70ec
+                    70ED   1097 _X_T4CC0	=	0x70ed
+                    70EE   1098 _X_T4CCTL1	=	0x70ee
+                    70EF   1099 _X_T4CC1	=	0x70ef
+                    70F1   1100 _X_PERCFG	=	0x70f1
+                    70F2   1101 _X_APCFG	=	0x70f2
+                    70F3   1102 _X_P0SEL	=	0x70f3
+                    70F4   1103 _X_P1SEL	=	0x70f4
+                    70F5   1104 _X_P2SEL	=	0x70f5
+                    70F6   1105 _X_P1INP	=	0x70f6
+                    70F7   1106 _X_P2INP	=	0x70f7
+                    70F8   1107 _X_U1CSR	=	0x70f8
+                    70F9   1108 _X_U1DBUF	=	0x70f9
+                    70FA   1109 _X_U1BAUD	=	0x70fa
+                    70FB   1110 _X_U1UCR	=	0x70fb
+                    70FC   1111 _X_U1GCR	=	0x70fc
+                    70FD   1112 _X_P0DIR	=	0x70fd
+                    70FE   1113 _X_P1DIR	=	0x70fe
+                    70FF   1114 _X_P2DIR	=	0x70ff
+                    7800   1115 _X_INFOPAGE	=	0x7800
+                    780C   1116 _X_IEEE_ADDR	=	0x780c
+                           1117 ;--------------------------------------------------------
+                           1118 ; absolute external ram data
+                           1119 ;--------------------------------------------------------
+                           1120 	.area XABS    (ABS,XDATA)
+                           1121 ;--------------------------------------------------------
+                           1122 ; external initialized ram data
+                           1123 ;--------------------------------------------------------
+                           1124 	.area XISEG   (XDATA)
+                           1125 	.area HOME    (CODE)
+                           1126 	.area GSINIT0 (CODE)
+                           1127 	.area GSINIT1 (CODE)
+                           1128 	.area GSINIT2 (CODE)
+                           1129 	.area GSINIT3 (CODE)
+                           1130 	.area GSINIT4 (CODE)
+                           1131 	.area GSINIT5 (CODE)
+                           1132 	.area GSINIT  (CODE)
+                           1133 	.area GSFINAL (CODE)
+                           1134 	.area CSEG    (CODE)
+                           1135 ;--------------------------------------------------------
+                           1136 ; global & static initialisations
+                           1137 ;--------------------------------------------------------
+                           1138 	.area HOME    (CODE)
+                           1139 	.area GSINIT  (CODE)
+                           1140 	.area GSFINAL (CODE)
+                           1141 	.area GSINIT  (CODE)
+                           1142 ;--------------------------------------------------------
+                           1143 ; Home
+                           1144 ;--------------------------------------------------------
+                           1145 	.area HOME    (CODE)
+                           1146 	.area HOME    (CODE)
+                           1147 ;--------------------------------------------------------
+                           1148 ; code
+                           1149 ;--------------------------------------------------------
+                           1150 	.area BANK1   (CODE)
+                           1151 ;------------------------------------------------------------
+                           1152 ;Allocation info for local variables in function 'uiplib_ip6addrconv'
+                           1153 ;------------------------------------------------------------
+                           1154 ;ipaddr                    Allocated to stack - sp -25
+                           1155 ;addrstr                   Allocated to stack - sp -19
+                           1156 ;value                     Allocated to stack - sp -16
+                           1157 ;tmp                       Allocated to registers r6 r7 
+                           1158 ;zero                      Allocated to stack - sp -14
+                           1159 ;len                       Allocated to stack - sp -12
+                           1160 ;c                         Allocated to stack - sp -10
+                           1161 ;sloc0                     Allocated to stack - sp -9
+                           1162 ;sloc1                     Allocated to stack - sp -4
+                           1163 ;sloc2                     Allocated to stack - sp -6
+                           1164 ;sloc3                     Allocated to stack - sp -3
+                           1165 ;sloc4                     Allocated to stack - sp -2
+                           1166 ;------------------------------------------------------------
+                           1167 ;	../../../contiki-sensinode//core/net/uiplib.c:45: uiplib_ip6addrconv(const char *addrstr, uip_ip6addr_t *ipaddr)
+                           1168 ;	-----------------------------------------
+                           1169 ;	 function uiplib_ip6addrconv
+                           1170 ;	-----------------------------------------
+   0000                    1171 _uiplib_ip6addrconv:
+                    0007   1172 	ar7 = 0x07
+                    0006   1173 	ar6 = 0x06
+                    0005   1174 	ar5 = 0x05
+                    0004   1175 	ar4 = 0x04
+                    0003   1176 	ar3 = 0x03
+                    0002   1177 	ar2 = 0x02
+                    0001   1178 	ar1 = 0x01
+                    0000   1179 	ar0 = 0x00
+   0000 C0 82              1180 	push	dpl
+   0002 C0 83              1181 	push	dph
+   0004 C0 F0              1182 	push	b
+   0006 E5 81              1183 	mov	a,sp
+   0008 24 11              1184 	add	a,#0x11
+                           1185 ;	../../../contiki-sensinode//core/net/uiplib.c:50: char c = 0;  //gcc warning if not initialized
+   000A F5 81              1186 	mov	sp,a
+   000C 24 F6              1187 	add	a,#0xf6
+   000E F8                 1188 	mov	r0,a
+   000F 76 00              1189 	mov	@r0,#0x00
+                           1190 ;	../../../contiki-sensinode//core/net/uiplib.c:52: value = 0;
+   0011 E5 81              1191 	mov	a,sp
+   0013 24 F0              1192 	add	a,#0xf0
+   0015 F8                 1193 	mov	r0,a
+   0016 E4                 1194 	clr	a
+   0017 F6                 1195 	mov	@r0,a
+   0018 08                 1196 	inc	r0
+   0019 F6                 1197 	mov	@r0,a
+                           1198 ;	../../../contiki-sensinode//core/net/uiplib.c:53: zero = -1;
+   001A E5 81              1199 	mov	a,sp
+   001C 24 F2              1200 	add	a,#0xf2
+   001E F8                 1201 	mov	r0,a
+   001F 76 FF              1202 	mov	@r0,#0xFF
+   0021 08                 1203 	inc	r0
+   0022 76 FF              1204 	mov	@r0,#0xFF
+                           1205 ;	../../../contiki-sensinode//core/net/uiplib.c:54: if(*addrstr == '[') addrstr++;
+   0024 E5 81              1206 	mov	a,sp
+   0026 24 ED              1207 	add	a,#0xed
+   0028 F8                 1208 	mov	r0,a
+   0029 86 82              1209 	mov	dpl,@r0
+   002B 08                 1210 	inc	r0
+   002C 86 83              1211 	mov	dph,@r0
+   002E 08                 1212 	inc	r0
+   002F 86 F0              1213 	mov	b,@r0
+   0031 12s00r00           1214 	lcall	__gptrget
+   0034 FB                 1215 	mov	r3,a
+   0035 BB 5B 0B           1216 	cjne	r3,#0x5B,00102$
+   0038 E5 81              1217 	mov	a,sp
+   003A 24 ED              1218 	add	a,#0xed
+   003C F8                 1219 	mov	r0,a
+   003D 06                 1220 	inc	@r0
+   003E B6 00 02           1221 	cjne	@r0,#0x00,00189$
+   0041 08                 1222 	inc	r0
+   0042 06                 1223 	inc	@r0
+   0043                    1224 00189$:
+   0043                    1225 00102$:
+                           1226 ;	../../../contiki-sensinode//core/net/uiplib.c:56: for(len = 0; len < sizeof(uip_ip6addr_t) - 1; addrstr++) {
+   0043 E4                 1227 	clr	a
+   0044 FA                 1228 	mov	r2,a
+   0045 FB                 1229 	mov	r3,a
+   0046 E5 81              1230 	mov	a,sp
+   0048 24 F4              1231 	add	a,#0xf4
+   004A F8                 1232 	mov	r0,a
+   004B E4                 1233 	clr	a
+   004C F6                 1234 	mov	@r0,a
+   004D 08                 1235 	inc	r0
+   004E F6                 1236 	mov	@r0,a
+   004F                    1237 00129$:
+   004F E5 81              1238 	mov	a,sp
+   0051 24 F4              1239 	add	a,#0xf4
+   0053 F8                 1240 	mov	r0,a
+   0054 C3                 1241 	clr	c
+   0055 E6                 1242 	mov	a,@r0
+   0056 94 0F              1243 	subb	a,#0x0F
+   0058 08                 1244 	inc	r0
+   0059 E6                 1245 	mov	a,@r0
+   005A 94 00              1246 	subb	a,#0x00
+   005C 40 03              1247 	jc	00190$
+   005E 02s02r6C           1248 	ljmp	00132$
+   0061                    1249 00190$:
+                           1250 ;	../../../contiki-sensinode//core/net/uiplib.c:57: c = *addrstr;
+   0061 E5 81              1251 	mov	a,sp
+   0063 24 ED              1252 	add	a,#0xed
+   0065 F8                 1253 	mov	r0,a
+   0066 86 82              1254 	mov	dpl,@r0
+   0068 08                 1255 	inc	r0
+   0069 86 83              1256 	mov	dph,@r0
+   006B 08                 1257 	inc	r0
+   006C 86 F0              1258 	mov	b,@r0
+   006E 12s00r00           1259 	lcall	__gptrget
+   0071 FE                 1260 	mov	r6,a
+   0072 E5 81              1261 	mov	a,sp
+   0074 24 F6              1262 	add	a,#0xf6
+   0076 F8                 1263 	mov	r0,a
+   0077 A6 06              1264 	mov	@r0,ar6
+                           1265 ;	../../../contiki-sensinode//core/net/uiplib.c:58: if(c == ':' || c == '\0' || c == ']' || c == '/') {
+   0079 E5 81              1266 	mov	a,sp
+   007B 24 F6              1267 	add	a,#0xf6
+   007D F8                 1268 	mov	r0,a
+   007E B6 3A 02           1269 	cjne	@r0,#0x3A,00191$
+   0081 80 1F              1270 	sjmp	00123$
+   0083                    1271 00191$:
+   0083 E5 81              1272 	mov	a,sp
+   0085 24 F6              1273 	add	a,#0xf6
+   0087 F8                 1274 	mov	r0,a
+   0088 E6                 1275 	mov	a,@r0
+   0089 60 17              1276 	jz	00123$
+   008B E5 81              1277 	mov	a,sp
+   008D 24 F6              1278 	add	a,#0xf6
+   008F F8                 1279 	mov	r0,a
+   0090 B6 5D 02           1280 	cjne	@r0,#0x5D,00193$
+   0093 80 0D              1281 	sjmp	00123$
+   0095                    1282 00193$:
+   0095 E5 81              1283 	mov	a,sp
+   0097 24 F6              1284 	add	a,#0xf6
+   0099 F8                 1285 	mov	r0,a
+   009A B6 2F 02           1286 	cjne	@r0,#0x2F,00194$
+   009D 80 03              1287 	sjmp	00195$
+   009F                    1288 00194$:
+   009F 02s01r91           1289 	ljmp	00124$
+   00A2                    1290 00195$:
+   00A2                    1291 00123$:
+                           1292 ;	../../../contiki-sensinode//core/net/uiplib.c:59: ipaddr->u8[len] = (value >> 8) & 0xff;
+   00A2 E5 81              1293 	mov	a,sp
+   00A4 24 E7              1294 	add	a,#0xe7
+   00A6 F8                 1295 	mov	r0,a
+   00A7 E5 81              1296 	mov	a,sp
+   00A9 24 F7              1297 	add	a,#0xf7
+   00AB F9                 1298 	mov	r1,a
+   00AC E6                 1299 	mov	a,@r0
+   00AD F7                 1300 	mov	@r1,a
+   00AE 08                 1301 	inc	r0
+   00AF 09                 1302 	inc	r1
+   00B0 E6                 1303 	mov	a,@r0
+   00B1 F7                 1304 	mov	@r1,a
+   00B2 08                 1305 	inc	r0
+   00B3 09                 1306 	inc	r1
+   00B4 E6                 1307 	mov	a,@r0
+   00B5 F7                 1308 	mov	@r1,a
+   00B6 E5 81              1309 	mov	a,sp
+   00B8 24 F7              1310 	add	a,#0xf7
+   00BA F8                 1311 	mov	r0,a
+   00BB E5 81              1312 	mov	a,sp
+   00BD 24 F4              1313 	add	a,#0xf4
+   00BF F9                 1314 	mov	r1,a
+   00C0 E7                 1315 	mov	a,@r1
+   00C1 26                 1316 	add	a,@r0
+   00C2 FC                 1317 	mov	r4,a
+   00C3 09                 1318 	inc	r1
+   00C4 E7                 1319 	mov	a,@r1
+   00C5 08                 1320 	inc	r0
+   00C6 36                 1321 	addc	a,@r0
+   00C7 FE                 1322 	mov	r6,a
+   00C8 08                 1323 	inc	r0
+   00C9 86 07              1324 	mov	ar7,@r0
+   00CB E5 81              1325 	mov	a,sp
+   00CD 24 F0              1326 	add	a,#0xf0
+   00CF F8                 1327 	mov	r0,a
+   00D0 08                 1328 	inc	r0
+   00D1 86 05              1329 	mov	ar5,@r0
+   00D3 8C 82              1330 	mov	dpl,r4
+   00D5 8E 83              1331 	mov	dph,r6
+   00D7 8F F0              1332 	mov	b,r7
+   00D9 ED                 1333 	mov	a,r5
+   00DA 12s00r00           1334 	lcall	__gptrput
+                           1335 ;	../../../contiki-sensinode//core/net/uiplib.c:60: ipaddr->u8[len + 1] = value & 0xff;
+   00DD E5 81              1336 	mov	a,sp
+   00DF 24 F4              1337 	add	a,#0xf4
+   00E1 F8                 1338 	mov	r0,a
+   00E2 E6                 1339 	mov	a,@r0
+   00E3 04                 1340 	inc	a
+   00E4 C8                 1341 	xch	a,r0
+   00E5 E5 81              1342 	mov	a,sp
+   00E7 24 F7              1343 	add	a,#0xf7
+   00E9 C8                 1344 	xch	a,r0
+   00EA 26                 1345 	add	a,@r0
+   00EB FE                 1346 	mov	r6,a
+   00EC 08                 1347 	inc	r0
+   00ED E4                 1348 	clr	a
+   00EE 36                 1349 	addc	a,@r0
+   00EF FD                 1350 	mov	r5,a
+   00F0 08                 1351 	inc	r0
+   00F1 86 03              1352 	mov	ar3,@r0
+   00F3 E5 81              1353 	mov	a,sp
+   00F5 24 F0              1354 	add	a,#0xf0
+   00F7 F8                 1355 	mov	r0,a
+   00F8 86 04              1356 	mov	ar4,@r0
+   00FA 7F 00              1357 	mov	r7,#0x00
+   00FC 8E 82              1358 	mov	dpl,r6
+   00FE 8D 83              1359 	mov	dph,r5
+   0100 8B F0              1360 	mov	b,r3
+   0102 EC                 1361 	mov	a,r4
+   0103 12s00r00           1362 	lcall	__gptrput
+                           1363 ;	../../../contiki-sensinode//core/net/uiplib.c:61: len += 2;
+   0106 E5 81              1364 	mov	a,sp
+   0108 24 F4              1365 	add	a,#0xf4
+   010A F8                 1366 	mov	r0,a
+   010B 74 02              1367 	mov	a,#0x02
+   010D 26                 1368 	add	a,@r0
+   010E F6                 1369 	mov	@r0,a
+   010F E4                 1370 	clr	a
+   0110 08                 1371 	inc	r0
+   0111 36                 1372 	addc	a,@r0
+   0112 F6                 1373 	mov	@r0,a
+   0113 E5 81              1374 	mov	a,sp
+   0115 24 F4              1375 	add	a,#0xf4
+   0117 F8                 1376 	mov	r0,a
+   0118 86 02              1377 	mov	ar2,@r0
+   011A 08                 1378 	inc	r0
+   011B 86 03              1379 	mov	ar3,@r0
+                           1380 ;	../../../contiki-sensinode//core/net/uiplib.c:62: value = 0;
+   011D E5 81              1381 	mov	a,sp
+   011F 24 F0              1382 	add	a,#0xf0
+   0121 F8                 1383 	mov	r0,a
+   0122 E4                 1384 	clr	a
+   0123 F6                 1385 	mov	@r0,a
+   0124 08                 1386 	inc	r0
+   0125 F6                 1387 	mov	@r0,a
+                           1388 ;	../../../contiki-sensinode//core/net/uiplib.c:64: if(c == '\0' || c == ']' || c == '/') {
+   0126 E5 81              1389 	mov	a,sp
+   0128 24 F6              1390 	add	a,#0xf6
+   012A F8                 1391 	mov	r0,a
+   012B E6                 1392 	mov	a,@r0
+   012C 70 03              1393 	jnz	00196$
+   012E 02s02r6C           1394 	ljmp	00132$
+   0131                    1395 00196$:
+   0131 E5 81              1396 	mov	a,sp
+   0133 24 F6              1397 	add	a,#0xf6
+   0135 F8                 1398 	mov	r0,a
+   0136 B6 5D 03           1399 	cjne	@r0,#0x5D,00197$
+   0139 02s02r6C           1400 	ljmp	00132$
+   013C                    1401 00197$:
+   013C E5 81              1402 	mov	a,sp
+   013E 24 F6              1403 	add	a,#0xf6
+   0140 F8                 1404 	mov	r0,a
+   0141 B6 2F 03           1405 	cjne	@r0,#0x2F,00198$
+   0144 02s02r6C           1406 	ljmp	00132$
+   0147                    1407 00198$:
+                           1408 ;	../../../contiki-sensinode//core/net/uiplib.c:68: if(*(addrstr + 1) == ':') {
+   0147 E5 81              1409 	mov	a,sp
+   0149 24 ED              1410 	add	a,#0xed
+   014B F8                 1411 	mov	r0,a
+   014C 74 01              1412 	mov	a,#0x01
+   014E 26                 1413 	add	a,@r0
+   014F FD                 1414 	mov	r5,a
+   0150 E4                 1415 	clr	a
+   0151 08                 1416 	inc	r0
+   0152 36                 1417 	addc	a,@r0
+   0153 FE                 1418 	mov	r6,a
+   0154 08                 1419 	inc	r0
+   0155 86 07              1420 	mov	ar7,@r0
+   0157 8D 82              1421 	mov	dpl,r5
+   0159 8E 83              1422 	mov	dph,r6
+   015B 8F F0              1423 	mov	b,r7
+   015D 12s00r00           1424 	lcall	__gptrget
+   0160 FD                 1425 	mov	r5,a
+   0161 BD 3A 02           1426 	cjne	r5,#0x3A,00199$
+   0164 80 03              1427 	sjmp	00200$
+   0166                    1428 00199$:
+   0166 02s02r5E           1429 	ljmp	00131$
+   0169                    1430 00200$:
+                           1431 ;	../../../contiki-sensinode//core/net/uiplib.c:70: if(zero < 0) {
+   0169 E5 81              1432 	mov	a,sp
+   016B 24 F2              1433 	add	a,#0xf2
+   016D F8                 1434 	mov	r0,a
+   016E 08                 1435 	inc	r0
+   016F E6                 1436 	mov	a,@r0
+   0170 30 E7 10           1437 	jnb	acc.7,00108$
+                           1438 ;	../../../contiki-sensinode//core/net/uiplib.c:71: zero = len;
+   0173 E5 81              1439 	mov	a,sp
+   0175 24 F4              1440 	add	a,#0xf4
+   0177 F8                 1441 	mov	r0,a
+   0178 E5 81              1442 	mov	a,sp
+   017A 24 F2              1443 	add	a,#0xf2
+   017C F9                 1444 	mov	r1,a
+   017D E6                 1445 	mov	a,@r0
+   017E F7                 1446 	mov	@r1,a
+   017F 08                 1447 	inc	r0
+   0180 09                 1448 	inc	r1
+   0181 E6                 1449 	mov	a,@r0
+   0182 F7                 1450 	mov	@r1,a
+   0183                    1451 00108$:
+                           1452 ;	../../../contiki-sensinode//core/net/uiplib.c:73: addrstr++;
+   0183 E5 81              1453 	mov	a,sp
+   0185 24 ED              1454 	add	a,#0xed
+   0187 F8                 1455 	mov	r0,a
+   0188 06                 1456 	inc	@r0
+   0189 B6 00 02           1457 	cjne	@r0,#0x00,00202$
+   018C 08                 1458 	inc	r0
+   018D 06                 1459 	inc	@r0
+   018E                    1460 00202$:
+   018E 02s02r5E           1461 	ljmp	00131$
+   0191                    1462 00124$:
+                           1463 ;	../../../contiki-sensinode//core/net/uiplib.c:76: if(c >= '0' && c <= '9') {
+   0191 E5 81              1464 	mov	a,sp
+   0193 24 F6              1465 	add	a,#0xf6
+   0195 F8                 1466 	mov	r0,a
+   0196 C3                 1467 	clr	c
+   0197 E6                 1468 	mov	a,@r0
+   0198 64 80              1469 	xrl	a,#0x80
+   019A 94 B0              1470 	subb	a,#0xb0
+   019C 40 27              1471 	jc	00120$
+   019E E5 81              1472 	mov	a,sp
+   01A0 24 F6              1473 	add	a,#0xf6
+   01A2 F8                 1474 	mov	r0,a
+   01A3 C3                 1475 	clr	c
+   01A4 74 B9              1476 	mov	a,#(0x39 ^ 0x80)
+   01A6 86 F0              1477 	mov	b,@r0
+   01A8 63 F0 80           1478 	xrl	b,#0x80
+   01AB 95 F0              1479 	subb	a,b
+   01AD 40 16              1480 	jc	00120$
+                           1481 ;	../../../contiki-sensinode//core/net/uiplib.c:77: tmp = c - '0';
+   01AF E5 81              1482 	mov	a,sp
+   01B1 24 F6              1483 	add	a,#0xf6
+   01B3 F8                 1484 	mov	r0,a
+   01B4 86 04              1485 	mov	ar4,@r0
+   01B6 E6                 1486 	mov	a,@r0
+   01B7 33                 1487 	rlc	a
+   01B8 95 E0              1488 	subb	a,acc
+   01BA FF                 1489 	mov	r7,a
+   01BB EC                 1490 	mov	a,r4
+   01BC 24 D0              1491 	add	a,#0xD0
+   01BE FE                 1492 	mov	r6,a
+   01BF EF                 1493 	mov	a,r7
+   01C0 34 FF              1494 	addc	a,#0xFF
+   01C2 FF                 1495 	mov	r7,a
+   01C3 80 6E              1496 	sjmp	00121$
+   01C5                    1497 00120$:
+                           1498 ;	../../../contiki-sensinode//core/net/uiplib.c:78: } else if(c >= 'a' && c <= 'f') {
+   01C5 E5 81              1499 	mov	a,sp
+   01C7 24 F6              1500 	add	a,#0xf6
+   01C9 F8                 1501 	mov	r0,a
+   01CA C3                 1502 	clr	c
+   01CB E6                 1503 	mov	a,@r0
+   01CC 64 80              1504 	xrl	a,#0x80
+   01CE 94 E1              1505 	subb	a,#0xe1
+   01D0 40 27              1506 	jc	00116$
+   01D2 E5 81              1507 	mov	a,sp
+   01D4 24 F6              1508 	add	a,#0xf6
+   01D6 F8                 1509 	mov	r0,a
+   01D7 C3                 1510 	clr	c
+   01D8 74 E6              1511 	mov	a,#(0x66 ^ 0x80)
+   01DA 86 F0              1512 	mov	b,@r0
+   01DC 63 F0 80           1513 	xrl	b,#0x80
+   01DF 95 F0              1514 	subb	a,b
+   01E1 40 16              1515 	jc	00116$
+                           1516 ;	../../../contiki-sensinode//core/net/uiplib.c:79: tmp = c - 'a' + 10;
+   01E3 E5 81              1517 	mov	a,sp
+   01E5 24 F6              1518 	add	a,#0xf6
+   01E7 F8                 1519 	mov	r0,a
+   01E8 86 04              1520 	mov	ar4,@r0
+   01EA E6                 1521 	mov	a,@r0
+   01EB 33                 1522 	rlc	a
+   01EC 95 E0              1523 	subb	a,acc
+   01EE FD                 1524 	mov	r5,a
+   01EF 74 A9              1525 	mov	a,#0xA9
+   01F1 2C                 1526 	add	a,r4
+   01F2 FE                 1527 	mov	r6,a
+   01F3 74 FF              1528 	mov	a,#0xFF
+   01F5 3D                 1529 	addc	a,r5
+   01F6 FF                 1530 	mov	r7,a
+   01F7 80 3A              1531 	sjmp	00121$
+   01F9                    1532 00116$:
+                           1533 ;	../../../contiki-sensinode//core/net/uiplib.c:80: } else if(c >= 'A' && c <= 'F') {
+   01F9 E5 81              1534 	mov	a,sp
+   01FB 24 F6              1535 	add	a,#0xf6
+   01FD F8                 1536 	mov	r0,a
+   01FE C3                 1537 	clr	c
+   01FF E6                 1538 	mov	a,@r0
+   0200 64 80              1539 	xrl	a,#0x80
+   0202 94 C1              1540 	subb	a,#0xc1
+   0204 40 27              1541 	jc	00112$
+   0206 E5 81              1542 	mov	a,sp
+   0208 24 F6              1543 	add	a,#0xf6
+   020A F8                 1544 	mov	r0,a
+   020B C3                 1545 	clr	c
+   020C 74 C6              1546 	mov	a,#(0x46 ^ 0x80)
+   020E 86 F0              1547 	mov	b,@r0
+   0210 63 F0 80           1548 	xrl	b,#0x80
+   0213 95 F0              1549 	subb	a,b
+   0215 40 16              1550 	jc	00112$
+                           1551 ;	../../../contiki-sensinode//core/net/uiplib.c:81: tmp = c - 'A' + 10;
+   0217 E5 81              1552 	mov	a,sp
+   0219 24 F6              1553 	add	a,#0xf6
+   021B F8                 1554 	mov	r0,a
+   021C 86 04              1555 	mov	ar4,@r0
+   021E E6                 1556 	mov	a,@r0
+   021F 33                 1557 	rlc	a
+   0220 95 E0              1558 	subb	a,acc
+   0222 FD                 1559 	mov	r5,a
+   0223 74 C9              1560 	mov	a,#0xC9
+   0225 2C                 1561 	add	a,r4
+   0226 FE                 1562 	mov	r6,a
+   0227 74 FF              1563 	mov	a,#0xFF
+   0229 3D                 1564 	addc	a,r5
+   022A FF                 1565 	mov	r7,a
+   022B 80 06              1566 	sjmp	00121$
+   022D                    1567 00112$:
+                           1568 ;	../../../contiki-sensinode//core/net/uiplib.c:84: return 0;
+   022D 90 00 00           1569 	mov	dptr,#0x0000
+   0230 02s03r82           1570 	ljmp	00141$
+   0233                    1571 00121$:
+                           1572 ;	../../../contiki-sensinode//core/net/uiplib.c:86: value = (value << 4) + (tmp & 0xf);
+   0233 E5 81              1573 	mov	a,sp
+   0235 24 F0              1574 	add	a,#0xf0
+   0237 F8                 1575 	mov	r0,a
+   0238 86 04              1576 	mov	ar4,@r0
+   023A 08                 1577 	inc	r0
+   023B E6                 1578 	mov	a,@r0
+   023C C4                 1579 	swap	a
+   023D 54 F0              1580 	anl	a,#0xF0
+   023F CC                 1581 	xch	a,r4
+   0240 C4                 1582 	swap	a
+   0241 CC                 1583 	xch	a,r4
+   0242 6C                 1584 	xrl	a,r4
+   0243 CC                 1585 	xch	a,r4
+   0244 54 F0              1586 	anl	a,#0xF0
+   0246 CC                 1587 	xch	a,r4
+   0247 6C                 1588 	xrl	a,r4
+   0248 FD                 1589 	mov	r5,a
+   0249 53 06 0F           1590 	anl	ar6,#0x0F
+   024C 7F 00              1591 	mov	r7,#0x00
+   024E EE                 1592 	mov	a,r6
+   024F 2C                 1593 	add	a,r4
+   0250 FC                 1594 	mov	r4,a
+   0251 EF                 1595 	mov	a,r7
+   0252 3D                 1596 	addc	a,r5
+   0253 FD                 1597 	mov	r5,a
+   0254 E5 81              1598 	mov	a,sp
+   0256 24 F0              1599 	add	a,#0xf0
+   0258 F8                 1600 	mov	r0,a
+   0259 A6 04              1601 	mov	@r0,ar4
+   025B 08                 1602 	inc	r0
+   025C A6 05              1603 	mov	@r0,ar5
+   025E                    1604 00131$:
+                           1605 ;	../../../contiki-sensinode//core/net/uiplib.c:56: for(len = 0; len < sizeof(uip_ip6addr_t) - 1; addrstr++) {
+   025E E5 81              1606 	mov	a,sp
+   0260 24 ED              1607 	add	a,#0xed
+   0262 F8                 1608 	mov	r0,a
+   0263 06                 1609 	inc	@r0
+   0264 B6 00 02           1610 	cjne	@r0,#0x00,00209$
+   0267 08                 1611 	inc	r0
+   0268 06                 1612 	inc	@r0
+   0269                    1613 00209$:
+   0269 02s00r4F           1614 	ljmp	00129$
+   026C                    1615 00132$:
+                           1616 ;	../../../contiki-sensinode//core/net/uiplib.c:89: if(c != '\0' && c != ']' && c != '/') {
+   026C E5 81              1617 	mov	a,sp
+   026E 24 F6              1618 	add	a,#0xf6
+   0270 F8                 1619 	mov	r0,a
+   0271 E6                 1620 	mov	a,@r0
+   0272 60 1A              1621 	jz	00134$
+   0274 E5 81              1622 	mov	a,sp
+   0276 24 F6              1623 	add	a,#0xf6
+   0278 F8                 1624 	mov	r0,a
+   0279 B6 5D 02           1625 	cjne	@r0,#0x5D,00211$
+   027C 80 10              1626 	sjmp	00134$
+   027E                    1627 00211$:
+   027E E5 81              1628 	mov	a,sp
+   0280 24 F6              1629 	add	a,#0xf6
+   0282 F8                 1630 	mov	r0,a
+   0283 B6 2F 02           1631 	cjne	@r0,#0x2F,00212$
+   0286 80 06              1632 	sjmp	00134$
+   0288                    1633 00212$:
+                           1634 ;	../../../contiki-sensinode//core/net/uiplib.c:91: return 0;
+   0288 90 00 00           1635 	mov	dptr,#0x0000
+   028B 02s03r82           1636 	ljmp	00141$
+   028E                    1637 00134$:
+                           1638 ;	../../../contiki-sensinode//core/net/uiplib.c:93: if(len < sizeof(uip_ip6addr_t)) {
+   028E C3                 1639 	clr	c
+   028F EA                 1640 	mov	a,r2
+   0290 94 10              1641 	subb	a,#0x10
+   0292 EB                 1642 	mov	a,r3
+   0293 94 00              1643 	subb	a,#0x00
+   0295 40 03              1644 	jc	00213$
+   0297 02s03r7F           1645 	ljmp	00140$
+   029A                    1646 00213$:
+                           1647 ;	../../../contiki-sensinode//core/net/uiplib.c:94: if(zero < 0) {
+   029A E5 81              1648 	mov	a,sp
+   029C 24 F2              1649 	add	a,#0xf2
+   029E F8                 1650 	mov	r0,a
+   029F 08                 1651 	inc	r0
+   02A0 E6                 1652 	mov	a,@r0
+   02A1 30 E7 06           1653 	jnb	acc.7,00138$
+                           1654 ;	../../../contiki-sensinode//core/net/uiplib.c:96: return 0;
+   02A4 90 00 00           1655 	mov	dptr,#0x0000
+   02A7 02s03r82           1656 	ljmp	00141$
+   02AA                    1657 00138$:
+                           1658 ;	../../../contiki-sensinode//core/net/uiplib.c:99: &ipaddr->u8[zero], len - zero);
+   02AA E5 81              1659 	mov	a,sp
+   02AC 24 F2              1660 	add	a,#0xf2
+   02AE F8                 1661 	mov	r0,a
+   02AF 86 06              1662 	mov	ar6,@r0
+   02B1 08                 1663 	inc	r0
+   02B2 86 07              1664 	mov	ar7,@r0
+   02B4 E5 81              1665 	mov	a,sp
+   02B6 24 F7              1666 	add	a,#0xf7
+   02B8 F8                 1667 	mov	r0,a
+   02B9 EA                 1668 	mov	a,r2
+   02BA C3                 1669 	clr	c
+   02BB 9E                 1670 	subb	a,r6
+   02BC F6                 1671 	mov	@r0,a
+   02BD EB                 1672 	mov	a,r3
+   02BE 9F                 1673 	subb	a,r7
+   02BF 08                 1674 	inc	r0
+   02C0 F6                 1675 	mov	@r0,a
+   02C1 E5 81              1676 	mov	a,sp
+   02C3 24 E7              1677 	add	a,#0xe7
+   02C5 F8                 1678 	mov	r0,a
+   02C6 86 04              1679 	mov	ar4,@r0
+   02C8 08                 1680 	inc	r0
+   02C9 86 06              1681 	mov	ar6,@r0
+   02CB 08                 1682 	inc	r0
+   02CC 86 07              1683 	mov	ar7,@r0
+   02CE E5 81              1684 	mov	a,sp
+   02D0 24 F2              1685 	add	a,#0xf2
+   02D2 F8                 1686 	mov	r0,a
+   02D3 E5 81              1687 	mov	a,sp
+   02D5 24 FA              1688 	add	a,#0xfa
+   02D7 F9                 1689 	mov	r1,a
+   02D8 E6                 1690 	mov	a,@r0
+   02D9 2C                 1691 	add	a,r4
+   02DA F7                 1692 	mov	@r1,a
+   02DB 08                 1693 	inc	r0
+   02DC E6                 1694 	mov	a,@r0
+   02DD 3E                 1695 	addc	a,r6
+   02DE 09                 1696 	inc	r1
+   02DF F7                 1697 	mov	@r1,a
+   02E0 09                 1698 	inc	r1
+   02E1 A7 07              1699 	mov	@r1,ar7
+   02E3 E5 81              1700 	mov	a,sp
+   02E5 24 FA              1701 	add	a,#0xfa
+   02E7 F8                 1702 	mov	r0,a
+   02E8 A9 81              1703 	mov	r1,sp
+   02EA 19                 1704 	dec	r1
+   02EB 19                 1705 	dec	r1
+   02EC E6                 1706 	mov	a,@r0
+   02ED F7                 1707 	mov	@r1,a
+   02EE 08                 1708 	inc	r0
+   02EF 09                 1709 	inc	r1
+   02F0 E6                 1710 	mov	a,@r0
+   02F1 F7                 1711 	mov	@r1,a
+   02F2 08                 1712 	inc	r0
+   02F3 09                 1713 	inc	r1
+   02F4 E6                 1714 	mov	a,@r0
+   02F5 F7                 1715 	mov	@r1,a
+                           1716 ;	../../../contiki-sensinode//core/net/uiplib.c:98: memmove(&ipaddr->u8[zero + sizeof(uip_ip6addr_t) - len],
+   02F6 E5 81              1717 	mov	a,sp
+   02F8 24 F2              1718 	add	a,#0xf2
+   02FA F8                 1719 	mov	r0,a
+   02FB 86 05              1720 	mov	ar5,@r0
+   02FD E5 81              1721 	mov	a,sp
+   02FF 24 FD              1722 	add	a,#0xfd
+   0301 F8                 1723 	mov	r0,a
+   0302 74 10              1724 	mov	a,#0x10
+   0304 2D                 1725 	add	a,r5
+   0305 F6                 1726 	mov	@r0,a
+   0306 8A 05              1727 	mov	ar5,r2
+   0308 E5 81              1728 	mov	a,sp
+   030A 24 FD              1729 	add	a,#0xfd
+   030C F8                 1730 	mov	r0,a
+   030D E6                 1731 	mov	a,@r0
+   030E C3                 1732 	clr	c
+   030F 9D                 1733 	subb	a,r5
+   0310 2C                 1734 	add	a,r4
+   0311 FD                 1735 	mov	r5,a
+   0312 E4                 1736 	clr	a
+   0313 3E                 1737 	addc	a,r6
+   0314 FE                 1738 	mov	r6,a
+   0315 C0 03              1739 	push	ar3
+   0317 C0 02              1740 	push	ar2
+   0319 E5 81              1741 	mov	a,sp
+   031B 24 F5              1742 	add	a,#0xf5
+   031D F8                 1743 	mov	r0,a
+   031E E6                 1744 	mov	a,@r0
+   031F C0 E0              1745 	push	acc
+   0321 08                 1746 	inc	r0
+   0322 E6                 1747 	mov	a,@r0
+   0323 C0 E0              1748 	push	acc
+   0325 E5 81              1749 	mov	a,sp
+   0327 24 FA              1750 	add	a,#0xfa
+   0329 F8                 1751 	mov	r0,a
+   032A E6                 1752 	mov	a,@r0
+   032B C0 E0              1753 	push	acc
+   032D 08                 1754 	inc	r0
+   032E E6                 1755 	mov	a,@r0
+   032F C0 E0              1756 	push	acc
+   0331 08                 1757 	inc	r0
+   0332 E6                 1758 	mov	a,@r0
+   0333 C0 E0              1759 	push	acc
+   0335 8D 82              1760 	mov	dpl,r5
+   0337 8E 83              1761 	mov	dph,r6
+   0339 8F F0              1762 	mov	b,r7
+   033B 78r00              1763 	mov	r0,#_memmove
+   033D 79s00              1764 	mov	r1,#(_memmove >> 8)
+   033F 7As00              1765 	mov	r2,#(_memmove >> 16)
+   0341 12s00r00           1766 	lcall	__sdcc_banked_call
+   0344 E5 81              1767 	mov	a,sp
+   0346 24 FB              1768 	add	a,#0xfb
+   0348 F5 81              1769 	mov	sp,a
+   034A D0 02              1770 	pop	ar2
+   034C D0 03              1771 	pop	ar3
+                           1772 ;	../../../contiki-sensinode//core/net/uiplib.c:100: memset(&ipaddr->u8[zero], 0, sizeof(uip_ip6addr_t) - len);
+   034E 74 10              1773 	mov	a,#0x10
+   0350 C3                 1774 	clr	c
+   0351 9A                 1775 	subb	a,r2
+   0352 FA                 1776 	mov	r2,a
+   0353 E4                 1777 	clr	a
+   0354 9B                 1778 	subb	a,r3
+   0355 FB                 1779 	mov	r3,a
+   0356 E5 81              1780 	mov	a,sp
+   0358 24 FA              1781 	add	a,#0xfa
+   035A F8                 1782 	mov	r0,a
+   035B 86 05              1783 	mov	ar5,@r0
+   035D 08                 1784 	inc	r0
+   035E 86 06              1785 	mov	ar6,@r0
+   0360 08                 1786 	inc	r0
+   0361 86 07              1787 	mov	ar7,@r0
+   0363 C0 02              1788 	push	ar2
+   0365 C0 03              1789 	push	ar3
+   0367 E4                 1790 	clr	a
+   0368 C0 E0              1791 	push	acc
+   036A 8D 82              1792 	mov	dpl,r5
+   036C 8E 83              1793 	mov	dph,r6
+   036E 8F F0              1794 	mov	b,r7
+   0370 78r00              1795 	mov	r0,#_memset
+   0372 79s00              1796 	mov	r1,#(_memset >> 8)
+   0374 7As00              1797 	mov	r2,#(_memset >> 16)
+   0376 12s00r00           1798 	lcall	__sdcc_banked_call
+   0379 15 81              1799 	dec	sp
+   037B 15 81              1800 	dec	sp
+   037D 15 81              1801 	dec	sp
+   037F                    1802 00140$:
+                           1803 ;	../../../contiki-sensinode//core/net/uiplib.c:103: return 1;
+   037F 90 00 01           1804 	mov	dptr,#0x0001
+   0382                    1805 00141$:
+   0382 E5 81              1806 	mov	a,sp
+   0384 24 EC              1807 	add	a,#0xEC
+   0386 F5 81              1808 	mov	sp,a
+   0388 02s00r00           1809 	ljmp	__sdcc_banked_ret
+                           1810 ;------------------------------------------------------------
+                           1811 ;Allocation info for local variables in function 'uiplib_ip4addrconv'
+                           1812 ;------------------------------------------------------------
+                           1813 ;ipaddr                    Allocated to stack - sp -12
+                           1814 ;addrstr                   Allocated to stack - sp -6
+                           1815 ;tmp                       Allocated to stack - sp -3
+                           1816 ;c                         Allocated to stack - sp -2
+                           1817 ;i                         Allocated to registers r2 
+                           1818 ;j                         Allocated to stack - sp -1
+                           1819 ;charsread                 Allocated to registers r4 
+                           1820 ;sloc0                     Allocated to stack - sp +0
+                           1821 ;------------------------------------------------------------
+                           1822 ;	../../../contiki-sensinode//core/net/uiplib.c:109: uiplib_ip4addrconv(const char *addrstr, uip_ip4addr_t *ipaddr)
+                           1823 ;	-----------------------------------------
+                           1824 ;	 function uiplib_ip4addrconv
+                           1825 ;	-----------------------------------------
+   038B                    1826 _uiplib_ip4addrconv:
+   038B C0 82              1827 	push	dpl
+   038D C0 83              1828 	push	dph
+   038F C0 F0              1829 	push	b
+   0391 E5 81              1830 	mov	a,sp
+   0393 24 04              1831 	add	a,#0x04
+                           1832 ;	../../../contiki-sensinode//core/net/uiplib.c:114: uint8_t charsread = 0;
+                           1833 ;	../../../contiki-sensinode//core/net/uiplib.c:116: tmp = 0;
+   0395 F5 81              1834 	mov	sp,a
+   0397 7C 00              1835 	mov	r4,#0x00
+   0399 24 FD              1836 	add	a,#0xfd
+   039B F8                 1837 	mov	r0,a
+   039C 76 00              1838 	mov	@r0,#0x00
+                           1839 ;	../../../contiki-sensinode//core/net/uiplib.c:118: for(i = 0; i < 4; ++i) {
+   039E 7A 00              1840 	mov	r2,#0x00
+   03A0                    1841 00117$:
+   03A0 BA 04 00           1842 	cjne	r2,#0x04,00143$
+   03A3                    1843 00143$:
+   03A3 40 03              1844 	jc	00144$
+   03A5 02s04rAA           1845 	ljmp	00120$
+   03A8                    1846 00144$:
+                           1847 ;	../../../contiki-sensinode//core/net/uiplib.c:120: do {
+   03A8 E5 81              1848 	mov	a,sp
+   03AA 24 FA              1849 	add	a,#0xfa
+   03AC F8                 1850 	mov	r0,a
+   03AD 86 05              1851 	mov	ar5,@r0
+   03AF 08                 1852 	inc	r0
+   03B0 86 06              1853 	mov	ar6,@r0
+   03B2 08                 1854 	inc	r0
+   03B3 86 07              1855 	mov	ar7,@r0
+   03B5 A8 81              1856 	mov	r0,sp
+   03B7 A6 04              1857 	mov	@r0,ar4
+   03B9 A8 81              1858 	mov	r0,sp
+   03BB 18                 1859 	dec	r0
+   03BC 76 00              1860 	mov	@r0,#0x00
+   03BE                    1861 00114$:
+                           1862 ;	../../../contiki-sensinode//core/net/uiplib.c:121: c = *addrstr;
+   03BE 8D 82              1863 	mov	dpl,r5
+   03C0 8E 83              1864 	mov	dph,r6
+   03C2 8F F0              1865 	mov	b,r7
+   03C4 12s00r00           1866 	lcall	__gptrget
+   03C7 FC                 1867 	mov	r4,a
+   03C8 A8 81              1868 	mov	r0,sp
+   03CA 18                 1869 	dec	r0
+   03CB 18                 1870 	dec	r0
+   03CC A6 04              1871 	mov	@r0,ar4
+                           1872 ;	../../../contiki-sensinode//core/net/uiplib.c:122: ++j;
+   03CE A8 81              1873 	mov	r0,sp
+   03D0 18                 1874 	dec	r0
+   03D1 06                 1875 	inc	@r0
+                           1876 ;	../../../contiki-sensinode//core/net/uiplib.c:123: if(j > 4) {
+   03D2 A8 81              1877 	mov	r0,sp
+   03D4 18                 1878 	dec	r0
+   03D5 E6                 1879 	mov	a,@r0
+   03D6 24 FB              1880 	add	a,#0xff - 0x04
+   03D8 50 06              1881 	jnc	00102$
+                           1882 ;	../../../contiki-sensinode//core/net/uiplib.c:124: return 0;
+   03DA 90 00 00           1883 	mov	dptr,#0x0000
+   03DD 02s04rB5           1884 	ljmp	00121$
+   03E0                    1885 00102$:
+                           1886 ;	../../../contiki-sensinode//core/net/uiplib.c:126: if(c == '.' || c == 0 || c == ' ') {
+   03E0 A8 81              1887 	mov	r0,sp
+   03E2 18                 1888 	dec	r0
+   03E3 18                 1889 	dec	r0
+   03E4 B6 2E 02           1890 	cjne	@r0,#0x2E,00146$
+   03E7 80 0E              1891 	sjmp	00107$
+   03E9                    1892 00146$:
+   03E9 A8 81              1893 	mov	r0,sp
+   03EB 18                 1894 	dec	r0
+   03EC 18                 1895 	dec	r0
+   03ED E6                 1896 	mov	a,@r0
+   03EE 60 07              1897 	jz	00107$
+   03F0 A8 81              1898 	mov	r0,sp
+   03F2 18                 1899 	dec	r0
+   03F3 18                 1900 	dec	r0
+   03F4 B6 20 37           1901 	cjne	@r0,#0x20,00108$
+   03F7                    1902 00107$:
+                           1903 ;	../../../contiki-sensinode//core/net/uiplib.c:127: ipaddr->u8[i] = tmp;
+   03F7 C0 05              1904 	push	ar5
+   03F9 C0 06              1905 	push	ar6
+   03FB C0 07              1906 	push	ar7
+   03FD E5 81              1907 	mov	a,sp
+   03FF 24 F1              1908 	add	a,#0xf1
+   0401 F8                 1909 	mov	r0,a
+   0402 86 05              1910 	mov	ar5,@r0
+   0404 08                 1911 	inc	r0
+   0405 86 06              1912 	mov	ar6,@r0
+   0407 08                 1913 	inc	r0
+   0408 86 07              1914 	mov	ar7,@r0
+   040A EA                 1915 	mov	a,r2
+   040B 2D                 1916 	add	a,r5
+   040C FD                 1917 	mov	r5,a
+   040D E4                 1918 	clr	a
+   040E 3E                 1919 	addc	a,r6
+   040F FE                 1920 	mov	r6,a
+   0410 8D 82              1921 	mov	dpl,r5
+   0412 8E 83              1922 	mov	dph,r6
+   0414 8F F0              1923 	mov	b,r7
+   0416 E5 81              1924 	mov	a,sp
+   0418 24 FA              1925 	add	a,#0xfa
+   041A F8                 1926 	mov	r0,a
+   041B E6                 1927 	mov	a,@r0
+   041C 12s00r00           1928 	lcall	__gptrput
+                           1929 ;	../../../contiki-sensinode//core/net/uiplib.c:128: tmp = 0;
+   041F E5 81              1930 	mov	a,sp
+   0421 24 FA              1931 	add	a,#0xfa
+   0423 F8                 1932 	mov	r0,a
+   0424 76 00              1933 	mov	@r0,#0x00
+   0426 D0 07              1934 	pop	ar7
+   0428 D0 06              1935 	pop	ar6
+   042A D0 05              1936 	pop	ar5
+   042C 80 43              1937 	sjmp	00109$
+   042E                    1938 00108$:
+                           1939 ;	../../../contiki-sensinode//core/net/uiplib.c:129: } else if(c >= '0' && c <= '9') {
+   042E A8 81              1940 	mov	r0,sp
+   0430 18                 1941 	dec	r0
+   0431 18                 1942 	dec	r0
+   0432 C3                 1943 	clr	c
+   0433 E6                 1944 	mov	a,@r0
+   0434 64 80              1945 	xrl	a,#0x80
+   0436 94 B0              1946 	subb	a,#0xb0
+   0438 40 32              1947 	jc	00104$
+   043A A8 81              1948 	mov	r0,sp
+   043C 18                 1949 	dec	r0
+   043D 18                 1950 	dec	r0
+   043E C3                 1951 	clr	c
+   043F 74 B9              1952 	mov	a,#(0x39 ^ 0x80)
+   0441 86 F0              1953 	mov	b,@r0
+   0443 63 F0 80           1954 	xrl	b,#0x80
+   0446 95 F0              1955 	subb	a,b
+   0448 40 22              1956 	jc	00104$
+                           1957 ;	../../../contiki-sensinode//core/net/uiplib.c:130: tmp = (tmp * 10) + (c - '0');
+   044A C0 02              1958 	push	ar2
+   044C E5 81              1959 	mov	a,sp
+   044E 24 FC              1960 	add	a,#0xfc
+   0450 F8                 1961 	mov	r0,a
+   0451 E6                 1962 	mov	a,@r0
+   0452 75 F0 0A           1963 	mov	b,#0x0A
+   0455 A4                 1964 	mul	ab
+   0456 FA                 1965 	mov	r2,a
+   0457 E5 81              1966 	mov	a,sp
+   0459 24 FD              1967 	add	a,#0xfd
+   045B F8                 1968 	mov	r0,a
+   045C E6                 1969 	mov	a,@r0
+   045D 24 D0              1970 	add	a,#0xD0
+   045F 2A                 1971 	add	a,r2
+   0460 FB                 1972 	mov	r3,a
+   0461 E5 81              1973 	mov	a,sp
+   0463 24 FC              1974 	add	a,#0xfc
+   0465 F8                 1975 	mov	r0,a
+   0466 A6 03              1976 	mov	@r0,ar3
+   0468 D0 02              1977 	pop	ar2
+   046A 80 05              1978 	sjmp	00109$
+   046C                    1979 00104$:
+                           1980 ;	../../../contiki-sensinode//core/net/uiplib.c:132: return 0;
+   046C 90 00 00           1981 	mov	dptr,#0x0000
+   046F 80 44              1982 	sjmp	00121$
+   0471                    1983 00109$:
+                           1984 ;	../../../contiki-sensinode//core/net/uiplib.c:134: ++addrstr;
+   0471 0D                 1985 	inc	r5
+   0472 BD 00 01           1986 	cjne	r5,#0x00,00152$
+   0475 0E                 1987 	inc	r6
+   0476                    1988 00152$:
+   0476 E5 81              1989 	mov	a,sp
+   0478 24 FA              1990 	add	a,#0xfa
+   047A F8                 1991 	mov	r0,a
+   047B A6 05              1992 	mov	@r0,ar5
+   047D 08                 1993 	inc	r0
+   047E A6 06              1994 	mov	@r0,ar6
+   0480 08                 1995 	inc	r0
+   0481 A6 07              1996 	mov	@r0,ar7
+                           1997 ;	../../../contiki-sensinode//core/net/uiplib.c:135: ++charsread;
+   0483 A8 81              1998 	mov	r0,sp
+   0485 06                 1999 	inc	@r0
+   0486 A8 81              2000 	mov	r0,sp
+   0488 86 04              2001 	mov	ar4,@r0
+                           2002 ;	../../../contiki-sensinode//core/net/uiplib.c:136: } while(c != '.' && c != 0 && c != ' ');
+   048A A8 81              2003 	mov	r0,sp
+   048C 18                 2004 	dec	r0
+   048D 18                 2005 	dec	r0
+   048E B6 2E 02           2006 	cjne	@r0,#0x2E,00153$
+   0491 80 13              2007 	sjmp	00119$
+   0493                    2008 00153$:
+   0493 A8 81              2009 	mov	r0,sp
+   0495 18                 2010 	dec	r0
+   0496 18                 2011 	dec	r0
+   0497 E6                 2012 	mov	a,@r0
+   0498 60 0C              2013 	jz	00119$
+   049A A8 81              2014 	mov	r0,sp
+   049C 18                 2015 	dec	r0
+   049D 18                 2016 	dec	r0
+   049E B6 20 02           2017 	cjne	@r0,#0x20,00155$
+   04A1 80 03              2018 	sjmp	00156$
+   04A3                    2019 00155$:
+   04A3 02s03rBE           2020 	ljmp	00114$
+   04A6                    2021 00156$:
+   04A6                    2022 00119$:
+                           2023 ;	../../../contiki-sensinode//core/net/uiplib.c:118: for(i = 0; i < 4; ++i) {
+   04A6 0A                 2024 	inc	r2
+   04A7 02s03rA0           2025 	ljmp	00117$
+   04AA                    2026 00120$:
+                           2027 ;	../../../contiki-sensinode//core/net/uiplib.c:139: return charsread-1;
+   04AA 7F 00              2028 	mov	r7,#0x00
+   04AC 1C                 2029 	dec	r4
+   04AD BC FF 01           2030 	cjne	r4,#0xFF,00157$
+   04B0 1F                 2031 	dec	r7
+   04B1                    2032 00157$:
+   04B1 8C 82              2033 	mov	dpl,r4
+   04B3 8F 83              2034 	mov	dph,r7
+   04B5                    2035 00121$:
+   04B5 E5 81              2036 	mov	a,sp
+   04B7 24 F9              2037 	add	a,#0xF9
+   04B9 F5 81              2038 	mov	sp,a
+   04BB 02s00r00           2039 	ljmp	__sdcc_banked_ret
+                           2040 ;------------------------------------------------------------
+                           2041 ;Allocation info for local variables in function 'uiplib_ipaddrconv'
+                           2042 ;------------------------------------------------------------
+                           2043 ;ipaddr                    Allocated to stack - sp -5
+                           2044 ;addrstr                   Allocated to registers r5 r6 r7 
+                           2045 ;------------------------------------------------------------
+                           2046 ;	../../../contiki-sensinode//core/net/uiplib.c:143: uiplib_ipaddrconv(const char *addrstr, uip_ipaddr_t *ipaddr)
+                           2047 ;	-----------------------------------------
+                           2048 ;	 function uiplib_ipaddrconv
+                           2049 ;	-----------------------------------------
+   04BE                    2050 _uiplib_ipaddrconv:
+   04BE AD 82              2051 	mov	r5,dpl
+   04C0 AE 83              2052 	mov	r6,dph
+   04C2 AF F0              2053 	mov	r7,b
+                           2054 ;	../../../contiki-sensinode//core/net/uiplib.c:146: return uiplib_ip6addrconv(addrstr, ipaddr);
+   04C4 E5 81              2055 	mov	a,sp
+   04C6 24 FB              2056 	add	a,#0xfb
+   04C8 F8                 2057 	mov	r0,a
+   04C9 E6                 2058 	mov	a,@r0
+   04CA C0 E0              2059 	push	acc
+   04CC 08                 2060 	inc	r0
+   04CD E6                 2061 	mov	a,@r0
+   04CE C0 E0              2062 	push	acc
+   04D0 08                 2063 	inc	r0
+   04D1 E6                 2064 	mov	a,@r0
+   04D2 C0 E0              2065 	push	acc
+   04D4 8D 82              2066 	mov	dpl,r5
+   04D6 8E 83              2067 	mov	dph,r6
+   04D8 8F F0              2068 	mov	b,r7
+   04DA 78r00              2069 	mov	r0,#_uiplib_ip6addrconv
+   04DC 79s00              2070 	mov	r1,#(_uiplib_ip6addrconv >> 8)
+   04DE 7As00              2071 	mov	r2,#(_uiplib_ip6addrconv >> 16)
+   04E0 12s00r00           2072 	lcall	__sdcc_banked_call
+   04E3 AE 82              2073 	mov	r6,dpl
+   04E5 AF 83              2074 	mov	r7,dph
+   04E7 15 81              2075 	dec	sp
+   04E9 15 81              2076 	dec	sp
+   04EB 15 81              2077 	dec	sp
+   04ED 8E 82              2078 	mov	dpl,r6
+   04EF 8F 83              2079 	mov	dph,r7
+   04F1 02s00r00           2080 	ljmp	__sdcc_banked_ret
+                           2081 	.area CSEG    (CODE)
+                           2082 	.area CONST   (CODE)
+                           2083 	.area XINIT   (CODE)
+                           2084 	.area CABS    (ABS,CODE)

@@ -1,0 +1,2364 @@
+                              1 ;--------------------------------------------------------
+                              2 ; File Created by SDCC : free open source ANSI-C Compiler
+                              3 ; Version 3.1.1 #7100 (Oct 29 2014) (Linux)
+                              4 ; This file was generated Wed Dec  2 18:10:57 2015
+                              5 ;--------------------------------------------------------
+                              6 	.module queuebuf
+                              7 	.optsdcc -mmcs51 --model-huge
+                              8 	
+                              9 ;--------------------------------------------------------
+                             10 ; Public variables in this module
+                             11 ;--------------------------------------------------------
+                             12 	.globl _packetbuf_attr_copyfrom
+                             13 	.globl _packetbuf_attr_copyto
+                             14 	.globl _packetbuf_hdralloc
+                             15 	.globl _packetbuf_copyto_hdr
+                             16 	.globl _packetbuf_copyto
+                             17 	.globl _packetbuf_copyfrom
+                             18 	.globl _packetbuf_reference_ptr
+                             19 	.globl _packetbuf_is_reference
+                             20 	.globl _packetbuf_datalen
+                             21 	.globl _packetbuf_hdrptr
+                             22 	.globl _packetbuf_clear
+                             23 	.globl _memb_inmemb
+                             24 	.globl _memb_free
+                             25 	.globl _memb_alloc
+                             26 	.globl _memb_init
+                             27 	.globl _memcpy
+                             28 	.globl _ACTIVE
+                             29 	.globl _TX_BYTE
+                             30 	.globl _RX_BYTE
+                             31 	.globl _ERR
+                             32 	.globl _FE
+                             33 	.globl _SLAVE
+                             34 	.globl _RE
+                             35 	.globl _MODE
+                             36 	.globl _T3OVFIF
+                             37 	.globl _T3CH0IF
+                             38 	.globl _T3CH1IF
+                             39 	.globl _T4OVFIF
+                             40 	.globl _T4CH0IF
+                             41 	.globl _T4CH1IF
+                             42 	.globl _OVFIM
+                             43 	.globl _B_0
+                             44 	.globl _B_1
+                             45 	.globl _B_2
+                             46 	.globl _B_3
+                             47 	.globl _B_4
+                             48 	.globl _B_5
+                             49 	.globl _B_6
+                             50 	.globl _B_7
+                             51 	.globl _P2IF
+                             52 	.globl _UTX0IF
+                             53 	.globl _UTX1IF
+                             54 	.globl _P1IF
+                             55 	.globl _WDTIF
+                             56 	.globl _ACC_0
+                             57 	.globl _ACC_1
+                             58 	.globl _ACC_2
+                             59 	.globl _ACC_3
+                             60 	.globl _ACC_4
+                             61 	.globl _ACC_5
+                             62 	.globl _ACC_6
+                             63 	.globl _ACC_7
+                             64 	.globl _P
+                             65 	.globl _F1
+                             66 	.globl _OV
+                             67 	.globl _RS0
+                             68 	.globl _RS1
+                             69 	.globl _F0
+                             70 	.globl _AC
+                             71 	.globl _CY
+                             72 	.globl _DMAIF
+                             73 	.globl _T1IF
+                             74 	.globl _T2IF
+                             75 	.globl _T3IF
+                             76 	.globl _T4IF
+                             77 	.globl _P0IF
+                             78 	.globl _STIF
+                             79 	.globl _DMAIE
+                             80 	.globl _T1IE
+                             81 	.globl _T2IE
+                             82 	.globl _T3IE
+                             83 	.globl _T4IE
+                             84 	.globl _P0IE
+                             85 	.globl _RFERRIE
+                             86 	.globl _ADCIE
+                             87 	.globl _URX0IE
+                             88 	.globl _URX1IE
+                             89 	.globl _ENCIE
+                             90 	.globl _STIE
+                             91 	.globl _EA
+                             92 	.globl _P2_0
+                             93 	.globl _P2_1
+                             94 	.globl _P2_2
+                             95 	.globl _P2_3
+                             96 	.globl _P2_4
+                             97 	.globl _P2_5
+                             98 	.globl _P2_6
+                             99 	.globl _P2_7
+                            100 	.globl _ENCIF_0
+                            101 	.globl _ENCIF_1
+                            102 	.globl _P1_0
+                            103 	.globl _P1_1
+                            104 	.globl _P1_2
+                            105 	.globl _P1_3
+                            106 	.globl _P1_4
+                            107 	.globl _P1_5
+                            108 	.globl _P1_6
+                            109 	.globl _P1_7
+                            110 	.globl _IT0
+                            111 	.globl _RFERRIF
+                            112 	.globl _IT1
+                            113 	.globl _URX0IF
+                            114 	.globl _ADCIF
+                            115 	.globl _URX1IF
+                            116 	.globl _P0_0
+                            117 	.globl _P0_1
+                            118 	.globl _P0_2
+                            119 	.globl _P0_3
+                            120 	.globl _P0_4
+                            121 	.globl _P0_5
+                            122 	.globl _P0_6
+                            123 	.globl _P0_7
+                            124 	.globl _WDCTL
+                            125 	.globl _U1GCR
+                            126 	.globl _U1UCR
+                            127 	.globl _U1BAUD
+                            128 	.globl _U1DBUF
+                            129 	.globl _U1CSR
+                            130 	.globl _U0GCR
+                            131 	.globl _U0UCR
+                            132 	.globl _U0BAUD
+                            133 	.globl _U0DBUF
+                            134 	.globl _U0CSR
+                            135 	.globl _TIMIF
+                            136 	.globl _T4CC1
+                            137 	.globl _T4CCTL1
+                            138 	.globl _T4CC0
+                            139 	.globl _T4CCTL0
+                            140 	.globl _T4CTL
+                            141 	.globl _T4CNT
+                            142 	.globl _T3CC1
+                            143 	.globl _T3CCTL1
+                            144 	.globl _T3CC0
+                            145 	.globl _T3CCTL0
+                            146 	.globl _T3CTL
+                            147 	.globl _T3CNT
+                            148 	.globl _T2MSEL
+                            149 	.globl _T2IRQM
+                            150 	.globl _T2MOVF2
+                            151 	.globl _T2MOVF1
+                            152 	.globl _T2MOVF0
+                            153 	.globl _T2M1
+                            154 	.globl _T2M0
+                            155 	.globl _T2IRQF
+                            156 	.globl _T2EVTCFG
+                            157 	.globl _T2CTRL
+                            158 	.globl _T1STAT
+                            159 	.globl _T1CCTL2
+                            160 	.globl _T1CCTL1
+                            161 	.globl _T1CCTL0
+                            162 	.globl _T1CTL
+                            163 	.globl _T1CNTH
+                            164 	.globl _T1CNTL
+                            165 	.globl _T1CC2H
+                            166 	.globl _T1CC2L
+                            167 	.globl _T1CC1H
+                            168 	.globl _T1CC1L
+                            169 	.globl _T1CC0H
+                            170 	.globl _T1CC0L
+                            171 	.globl _CLKCONSTA
+                            172 	.globl _CLKCONCMD
+                            173 	.globl _SLEEPSTA
+                            174 	.globl _SLEEPCMD
+                            175 	.globl _STLOAD
+                            176 	.globl _ST2
+                            177 	.globl _ST1
+                            178 	.globl _ST0
+                            179 	.globl _RFERRF
+                            180 	.globl _RFIRQF0
+                            181 	.globl _RFST
+                            182 	.globl _RFD
+                            183 	.globl _RFIRQF1
+                            184 	.globl _PSBANK
+                            185 	.globl _FMAP
+                            186 	.globl _MEMCTR
+                            187 	.globl __XPAGE
+                            188 	.globl _MPAGE
+                            189 	.globl _PMUX
+                            190 	.globl _P2DIR
+                            191 	.globl _P1DIR
+                            192 	.globl _P0DIR
+                            193 	.globl _P2INP
+                            194 	.globl _P1INP
+                            195 	.globl _P2SEL
+                            196 	.globl _P1SEL
+                            197 	.globl _P0SEL
+                            198 	.globl _APCFG
+                            199 	.globl _PERCFG
+                            200 	.globl _P0INP
+                            201 	.globl _P2IEN
+                            202 	.globl _P1IEN
+                            203 	.globl _P0IEN
+                            204 	.globl _PICTL
+                            205 	.globl _P2IFG
+                            206 	.globl _P1IFG
+                            207 	.globl _P0IFG
+                            208 	.globl _DMAREQ
+                            209 	.globl _DMAARM
+                            210 	.globl _DMA0CFGH
+                            211 	.globl _DMA0CFGL
+                            212 	.globl _DMA1CFGH
+                            213 	.globl _DMA1CFGL
+                            214 	.globl _DMAIRQ
+                            215 	.globl _ENCCS
+                            216 	.globl _ENCDO
+                            217 	.globl _ENCDI
+                            218 	.globl _RNDH
+                            219 	.globl _RNDL
+                            220 	.globl _ADCH
+                            221 	.globl _ADCL
+                            222 	.globl _ADCCON3
+                            223 	.globl _ADCCON2
+                            224 	.globl _ADCCON1
+                            225 	.globl _B
+                            226 	.globl _IRCON2
+                            227 	.globl _ACC
+                            228 	.globl _PSW
+                            229 	.globl _IRCON
+                            230 	.globl _IP1
+                            231 	.globl _IEN1
+                            232 	.globl _IP0
+                            233 	.globl _IEN0
+                            234 	.globl _P2
+                            235 	.globl _S1CON
+                            236 	.globl _IEN2
+                            237 	.globl _S0CON
+                            238 	.globl _DPS
+                            239 	.globl _P1
+                            240 	.globl _TCON
+                            241 	.globl _PCON
+                            242 	.globl _DPH1
+                            243 	.globl _DPL1
+                            244 	.globl _DPH0
+                            245 	.globl _DPL0
+                            246 	.globl _SP
+                            247 	.globl _P0
+                            248 	.globl _X_IEEE_ADDR
+                            249 	.globl _X_INFOPAGE
+                            250 	.globl _X_P2DIR
+                            251 	.globl _X_P1DIR
+                            252 	.globl _X_P0DIR
+                            253 	.globl _X_U1GCR
+                            254 	.globl _X_U1UCR
+                            255 	.globl _X_U1BAUD
+                            256 	.globl _X_U1DBUF
+                            257 	.globl _X_U1CSR
+                            258 	.globl _X_P2INP
+                            259 	.globl _X_P1INP
+                            260 	.globl _X_P2SEL
+                            261 	.globl _X_P1SEL
+                            262 	.globl _X_P0SEL
+                            263 	.globl _X_APCFG
+                            264 	.globl _X_PERCFG
+                            265 	.globl _X_T4CC1
+                            266 	.globl _X_T4CCTL1
+                            267 	.globl _X_T4CC0
+                            268 	.globl _X_T4CCTL0
+                            269 	.globl _X_T4CTL
+                            270 	.globl _X_T4CNT
+                            271 	.globl _X_RFIRQF0
+                            272 	.globl _X_T1CCTL2
+                            273 	.globl _X_T1CCTL1
+                            274 	.globl _X_T1CCTL0
+                            275 	.globl _X_T1CTL
+                            276 	.globl _X_T1CNTH
+                            277 	.globl _X_T1CNTL
+                            278 	.globl _X_RFST
+                            279 	.globl _X_T1CC2H
+                            280 	.globl _X_T1CC2L
+                            281 	.globl _X_T1CC1H
+                            282 	.globl _X_T1CC1L
+                            283 	.globl _X_T1CC0H
+                            284 	.globl _X_T1CC0L
+                            285 	.globl _X_RFD
+                            286 	.globl _X_TIMIF
+                            287 	.globl _X_DMAREQ
+                            288 	.globl _X_DMAARM
+                            289 	.globl _X_DMA0CFGH
+                            290 	.globl _X_DMA0CFGL
+                            291 	.globl _X_DMA1CFGH
+                            292 	.globl _X_DMA1CFGL
+                            293 	.globl _X_DMAIRQ
+                            294 	.globl _X_T3CC1
+                            295 	.globl _X_T3CCTL1
+                            296 	.globl _X_T3CC0
+                            297 	.globl _X_T3CCTL0
+                            298 	.globl _X_T3CTL
+                            299 	.globl _X_T3CNT
+                            300 	.globl _X_WDCTL
+                            301 	.globl _X_MEMCTR
+                            302 	.globl _X_CLKCONCMD
+                            303 	.globl _X_U0GCR
+                            304 	.globl _X_U0UCR
+                            305 	.globl _X_T2MSEL
+                            306 	.globl _X_U0BAUD
+                            307 	.globl _X_U0DBUF
+                            308 	.globl _X_RFERRF
+                            309 	.globl _X_SLEEPCMD
+                            310 	.globl _X_RNDH
+                            311 	.globl _X_RNDL
+                            312 	.globl _X_ADCH
+                            313 	.globl _X_ADCL
+                            314 	.globl _X_ADCCON3
+                            315 	.globl _X_ADCCON2
+                            316 	.globl _X_ADCCON1
+                            317 	.globl _X_ENCCS
+                            318 	.globl _X_ENCDO
+                            319 	.globl _X_ENCDI
+                            320 	.globl _X_T1STAT
+                            321 	.globl _X_PMUX
+                            322 	.globl _X_STLOAD
+                            323 	.globl _X_P2IEN
+                            324 	.globl _X_P0IEN
+                            325 	.globl _X_T2IRQM
+                            326 	.globl _X_T2MOVF2
+                            327 	.globl _X_T2MOVF1
+                            328 	.globl _X_T2MOVF0
+                            329 	.globl _X_T2M1
+                            330 	.globl _X_T2M0
+                            331 	.globl _X_T2IRQF
+                            332 	.globl _X_P2
+                            333 	.globl _X_PSBANK
+                            334 	.globl _X_FMAP
+                            335 	.globl _X_CLKCONSTA
+                            336 	.globl _X_SLEEPSTA
+                            337 	.globl _X_T2EVTCFG
+                            338 	.globl _X_ST2
+                            339 	.globl _X_ST1
+                            340 	.globl _X_ST0
+                            341 	.globl _X_T2CTRL
+                            342 	.globl _X__XPAGE
+                            343 	.globl _X_MPAGE
+                            344 	.globl _X_RFIRQF1
+                            345 	.globl _X_P1
+                            346 	.globl _X_P0INP
+                            347 	.globl _X_P1IEN
+                            348 	.globl _X_PICTL
+                            349 	.globl _X_P2IFG
+                            350 	.globl _X_P1IFG
+                            351 	.globl _X_P0IFG
+                            352 	.globl _X_U0CSR
+                            353 	.globl _X_P0
+                            354 	.globl _USBF5
+                            355 	.globl _USBF4
+                            356 	.globl _USBF3
+                            357 	.globl _USBF2
+                            358 	.globl _USBF1
+                            359 	.globl _USBF0
+                            360 	.globl _USBCNTH
+                            361 	.globl _USBCNTL
+                            362 	.globl _USBCNT0
+                            363 	.globl _USBCSOH
+                            364 	.globl _USBCSOL
+                            365 	.globl _USBMAXO
+                            366 	.globl _USBCSIH
+                            367 	.globl _USBCSIL
+                            368 	.globl _USBCS0
+                            369 	.globl _USBMAXI
+                            370 	.globl _USBCTRL
+                            371 	.globl _USBINDEX
+                            372 	.globl _USBFRMH
+                            373 	.globl _USBFRML
+                            374 	.globl _USBCIE
+                            375 	.globl _USBOIE
+                            376 	.globl _USBIIE
+                            377 	.globl _USBCIF
+                            378 	.globl _USBOIF
+                            379 	.globl _USBIIF
+                            380 	.globl _USBPOW
+                            381 	.globl _USBADDR
+                            382 	.globl _CSPT
+                            383 	.globl _CSPZ
+                            384 	.globl _CSPY
+                            385 	.globl _CSPX
+                            386 	.globl _CSPSTAT
+                            387 	.globl _CSPCTRL
+                            388 	.globl _CSPPROG23
+                            389 	.globl _CSPPROG22
+                            390 	.globl _CSPPROG21
+                            391 	.globl _CSPPROG20
+                            392 	.globl _CSPPROG19
+                            393 	.globl _CSPPROG18
+                            394 	.globl _CSPPROG17
+                            395 	.globl _CSPPROG16
+                            396 	.globl _CSPPROG15
+                            397 	.globl _CSPPROG14
+                            398 	.globl _CSPPROG13
+                            399 	.globl _CSPPROG12
+                            400 	.globl _CSPPROG11
+                            401 	.globl _CSPPROG10
+                            402 	.globl _CSPPROG9
+                            403 	.globl _CSPPROG8
+                            404 	.globl _CSPPROG7
+                            405 	.globl _CSPPROG6
+                            406 	.globl _CSPPROG5
+                            407 	.globl _CSPPROG4
+                            408 	.globl _CSPPROG3
+                            409 	.globl _CSPPROG2
+                            410 	.globl _CSPPROG1
+                            411 	.globl _CSPPROG0
+                            412 	.globl _RFC_OBS_CTRL2
+                            413 	.globl _RFC_OBS_CTRL1
+                            414 	.globl _RFC_OBS_CTRL0
+                            415 	.globl _TXFILTCFG
+                            416 	.globl _PTEST1
+                            417 	.globl _PTEST0
+                            418 	.globl _ATEST
+                            419 	.globl _DACTEST2
+                            420 	.globl _DACTEST1
+                            421 	.globl _DACTEST0
+                            422 	.globl _MDMTEST1
+                            423 	.globl _MDMTEST0
+                            424 	.globl _ADCTEST2
+                            425 	.globl _ADCTEST1
+                            426 	.globl _ADCTEST0
+                            427 	.globl _AGCCTRL3
+                            428 	.globl _AGCCTRL2
+                            429 	.globl _AGCCTRL1
+                            430 	.globl _AGCCTRL0
+                            431 	.globl _FSCAL3
+                            432 	.globl _FSCAL2
+                            433 	.globl _FSCAL1
+                            434 	.globl _FSCAL0
+                            435 	.globl _FSCTRL
+                            436 	.globl _RXCTRL
+                            437 	.globl _FREQEST
+                            438 	.globl _MDMCTRL1
+                            439 	.globl _MDMCTRL0
+                            440 	.globl _RFRND
+                            441 	.globl _RFERRM
+                            442 	.globl _RFIRQM1
+                            443 	.globl _RFIRQM0
+                            444 	.globl _TXLAST_PTR
+                            445 	.globl _TXFIRST_PTR
+                            446 	.globl _RXP1_PTR
+                            447 	.globl _RXLAST_PTR
+                            448 	.globl _RXFIRST_PTR
+                            449 	.globl _TXFIFOCNT
+                            450 	.globl _RXFIFOCNT
+                            451 	.globl _RXFIRST
+                            452 	.globl _RSSISTAT
+                            453 	.globl _RSSI
+                            454 	.globl _CCACTRL1
+                            455 	.globl _CCACTRL0
+                            456 	.globl _FSMCTRL
+                            457 	.globl _FIFOPCTRL
+                            458 	.globl _FSMSTAT1
+                            459 	.globl _FSMSTAT0
+                            460 	.globl _TXCTRL
+                            461 	.globl _TXPOWER
+                            462 	.globl _FREQCTRL
+                            463 	.globl _FREQTUNE
+                            464 	.globl _RXMASKCLR
+                            465 	.globl _RXMASKSET
+                            466 	.globl _RXENABLE
+                            467 	.globl _FRMCTRL1
+                            468 	.globl _FRMCTRL0
+                            469 	.globl _SRCEXTEN2
+                            470 	.globl _SRCEXTEN1
+                            471 	.globl _SRCEXTEN0
+                            472 	.globl _SRCSHORTEN2
+                            473 	.globl _SRCSHORTEN1
+                            474 	.globl _SRCSHORTEN0
+                            475 	.globl _SRCMATCH
+                            476 	.globl _FRMFILT1
+                            477 	.globl _FRMFILT0
+                            478 	.globl _SHORT_ADDR1
+                            479 	.globl _SHORT_ADDR0
+                            480 	.globl _PAN_ID1
+                            481 	.globl _PAN_ID0
+                            482 	.globl _EXT_ADDR7
+                            483 	.globl _EXT_ADDR6
+                            484 	.globl _EXT_ADDR5
+                            485 	.globl _EXT_ADDR4
+                            486 	.globl _EXT_ADDR3
+                            487 	.globl _EXT_ADDR2
+                            488 	.globl _EXT_ADDR1
+                            489 	.globl _EXT_ADDR0
+                            490 	.globl _SRCSHORTPENDEN2
+                            491 	.globl _SRCSHORTPENDEN1
+                            492 	.globl _SRCSHORTPENDEN0
+                            493 	.globl _SRCEXTPENDEN2
+                            494 	.globl _SRCEXTPENDEN1
+                            495 	.globl _SRCEXTPENDEN0
+                            496 	.globl _SRCRESINDEX
+                            497 	.globl _SRCRESMASK2
+                            498 	.globl _SRCRESMASK1
+                            499 	.globl _SRCRESMASK0
+                            500 	.globl _SRC_ADDR_TABLE
+                            501 	.globl _TXFIFO
+                            502 	.globl _RXFIFO
+                            503 	.globl _RFCORE_RAM
+                            504 	.globl _CMPCTL
+                            505 	.globl _OPAMPS
+                            506 	.globl _OPAMPC
+                            507 	.globl _STCV2
+                            508 	.globl _STCV1
+                            509 	.globl _STCV0
+                            510 	.globl _STCS
+                            511 	.globl _STCC
+                            512 	.globl _T1CC4H
+                            513 	.globl _T1CC4L
+                            514 	.globl _T1CC3H
+                            515 	.globl _T1CC3L
+                            516 	.globl _XX_T1CC2H
+                            517 	.globl _XX_T1CC2L
+                            518 	.globl _XX_T1CC1H
+                            519 	.globl _XX_T1CC1L
+                            520 	.globl _XX_T1CC0H
+                            521 	.globl _XX_T1CC0L
+                            522 	.globl _T1CCTL4
+                            523 	.globl _T1CCTL3
+                            524 	.globl _XX_T1CCTL2
+                            525 	.globl _XX_T1CCTL1
+                            526 	.globl _XX_T1CCTL0
+                            527 	.globl _CLD
+                            528 	.globl _IRCTL
+                            529 	.globl _CHIPINFO1
+                            530 	.globl _CHIPINFO0
+                            531 	.globl _FWDATA
+                            532 	.globl _FADDRH
+                            533 	.globl _FADDRL
+                            534 	.globl _FCTL
+                            535 	.globl _IVCTRL
+                            536 	.globl _BATTMON
+                            537 	.globl _SRCRC
+                            538 	.globl _DBGDATA
+                            539 	.globl _TESTREG0
+                            540 	.globl _CHIPID
+                            541 	.globl _CHVER
+                            542 	.globl _OBSSEL5
+                            543 	.globl _OBSSEL4
+                            544 	.globl _OBSSEL3
+                            545 	.globl _OBSSEL2
+                            546 	.globl _OBSSEL1
+                            547 	.globl _OBSSEL0
+                            548 	.globl _I2CIO
+                            549 	.globl _I2CWC
+                            550 	.globl _I2CADDR
+                            551 	.globl _I2CDATA
+                            552 	.globl _I2CSTAT
+                            553 	.globl _I2CCFG
+                            554 	.globl _OPAMPMC
+                            555 	.globl _MONMUX
+                            556 	.globl _queuebuf_init
+                            557 	.globl _queuebuf_new_from_packetbuf
+                            558 	.globl _queuebuf_update_attr_from_packetbuf
+                            559 	.globl _queuebuf_free
+                            560 	.globl _queuebuf_to_packetbuf
+                            561 	.globl _queuebuf_dataptr
+                            562 	.globl _queuebuf_datalen
+                            563 	.globl _queuebuf_addr
+                            564 	.globl _queuebuf_attr
+                            565 	.globl _queuebuf_debug_print
+                            566 ;--------------------------------------------------------
+                            567 ; special function registers
+                            568 ;--------------------------------------------------------
+                            569 	.area RSEG    (ABS,DATA)
+   0000                     570 	.org 0x0000
+                    0080    571 _P0	=	0x0080
+                    0081    572 _SP	=	0x0081
+                    0082    573 _DPL0	=	0x0082
+                    0083    574 _DPH0	=	0x0083
+                    0084    575 _DPL1	=	0x0084
+                    0085    576 _DPH1	=	0x0085
+                    0087    577 _PCON	=	0x0087
+                    0088    578 _TCON	=	0x0088
+                    0090    579 _P1	=	0x0090
+                    0092    580 _DPS	=	0x0092
+                    0098    581 _S0CON	=	0x0098
+                    009A    582 _IEN2	=	0x009a
+                    009B    583 _S1CON	=	0x009b
+                    00A0    584 _P2	=	0x00a0
+                    00A8    585 _IEN0	=	0x00a8
+                    00A9    586 _IP0	=	0x00a9
+                    00B8    587 _IEN1	=	0x00b8
+                    00B9    588 _IP1	=	0x00b9
+                    00C0    589 _IRCON	=	0x00c0
+                    00D0    590 _PSW	=	0x00d0
+                    00E0    591 _ACC	=	0x00e0
+                    00E8    592 _IRCON2	=	0x00e8
+                    00F0    593 _B	=	0x00f0
+                    00B4    594 _ADCCON1	=	0x00b4
+                    00B5    595 _ADCCON2	=	0x00b5
+                    00B6    596 _ADCCON3	=	0x00b6
+                    00BA    597 _ADCL	=	0x00ba
+                    00BB    598 _ADCH	=	0x00bb
+                    00BC    599 _RNDL	=	0x00bc
+                    00BD    600 _RNDH	=	0x00bd
+                    00B1    601 _ENCDI	=	0x00b1
+                    00B2    602 _ENCDO	=	0x00b2
+                    00B3    603 _ENCCS	=	0x00b3
+                    00D1    604 _DMAIRQ	=	0x00d1
+                    00D2    605 _DMA1CFGL	=	0x00d2
+                    00D3    606 _DMA1CFGH	=	0x00d3
+                    00D4    607 _DMA0CFGL	=	0x00d4
+                    00D5    608 _DMA0CFGH	=	0x00d5
+                    00D6    609 _DMAARM	=	0x00d6
+                    00D7    610 _DMAREQ	=	0x00d7
+                    0089    611 _P0IFG	=	0x0089
+                    008A    612 _P1IFG	=	0x008a
+                    008B    613 _P2IFG	=	0x008b
+                    008C    614 _PICTL	=	0x008c
+                    00AB    615 _P0IEN	=	0x00ab
+                    008D    616 _P1IEN	=	0x008d
+                    00AC    617 _P2IEN	=	0x00ac
+                    008F    618 _P0INP	=	0x008f
+                    00F1    619 _PERCFG	=	0x00f1
+                    00F2    620 _APCFG	=	0x00f2
+                    00F3    621 _P0SEL	=	0x00f3
+                    00F4    622 _P1SEL	=	0x00f4
+                    00F5    623 _P2SEL	=	0x00f5
+                    00F6    624 _P1INP	=	0x00f6
+                    00F7    625 _P2INP	=	0x00f7
+                    00FD    626 _P0DIR	=	0x00fd
+                    00FE    627 _P1DIR	=	0x00fe
+                    00FF    628 _P2DIR	=	0x00ff
+                    00AE    629 _PMUX	=	0x00ae
+                    0093    630 _MPAGE	=	0x0093
+                    0093    631 __XPAGE	=	0x0093
+                    00C7    632 _MEMCTR	=	0x00c7
+                    009F    633 _FMAP	=	0x009f
+                    009F    634 _PSBANK	=	0x009f
+                    0091    635 _RFIRQF1	=	0x0091
+                    00D9    636 _RFD	=	0x00d9
+                    00E1    637 _RFST	=	0x00e1
+                    00E9    638 _RFIRQF0	=	0x00e9
+                    00BF    639 _RFERRF	=	0x00bf
+                    0095    640 _ST0	=	0x0095
+                    0096    641 _ST1	=	0x0096
+                    0097    642 _ST2	=	0x0097
+                    00AD    643 _STLOAD	=	0x00ad
+                    00BE    644 _SLEEPCMD	=	0x00be
+                    009D    645 _SLEEPSTA	=	0x009d
+                    00C6    646 _CLKCONCMD	=	0x00c6
+                    009E    647 _CLKCONSTA	=	0x009e
+                    00DA    648 _T1CC0L	=	0x00da
+                    00DB    649 _T1CC0H	=	0x00db
+                    00DC    650 _T1CC1L	=	0x00dc
+                    00DD    651 _T1CC1H	=	0x00dd
+                    00DE    652 _T1CC2L	=	0x00de
+                    00DF    653 _T1CC2H	=	0x00df
+                    00E2    654 _T1CNTL	=	0x00e2
+                    00E3    655 _T1CNTH	=	0x00e3
+                    00E4    656 _T1CTL	=	0x00e4
+                    00E5    657 _T1CCTL0	=	0x00e5
+                    00E6    658 _T1CCTL1	=	0x00e6
+                    00E7    659 _T1CCTL2	=	0x00e7
+                    00AF    660 _T1STAT	=	0x00af
+                    0094    661 _T2CTRL	=	0x0094
+                    009C    662 _T2EVTCFG	=	0x009c
+                    00A1    663 _T2IRQF	=	0x00a1
+                    00A2    664 _T2M0	=	0x00a2
+                    00A3    665 _T2M1	=	0x00a3
+                    00A4    666 _T2MOVF0	=	0x00a4
+                    00A5    667 _T2MOVF1	=	0x00a5
+                    00A6    668 _T2MOVF2	=	0x00a6
+                    00A7    669 _T2IRQM	=	0x00a7
+                    00C3    670 _T2MSEL	=	0x00c3
+                    00CA    671 _T3CNT	=	0x00ca
+                    00CB    672 _T3CTL	=	0x00cb
+                    00CC    673 _T3CCTL0	=	0x00cc
+                    00CD    674 _T3CC0	=	0x00cd
+                    00CE    675 _T3CCTL1	=	0x00ce
+                    00CF    676 _T3CC1	=	0x00cf
+                    00EA    677 _T4CNT	=	0x00ea
+                    00EB    678 _T4CTL	=	0x00eb
+                    00EC    679 _T4CCTL0	=	0x00ec
+                    00ED    680 _T4CC0	=	0x00ed
+                    00EE    681 _T4CCTL1	=	0x00ee
+                    00EF    682 _T4CC1	=	0x00ef
+                    00D8    683 _TIMIF	=	0x00d8
+                    0086    684 _U0CSR	=	0x0086
+                    00C1    685 _U0DBUF	=	0x00c1
+                    00C2    686 _U0BAUD	=	0x00c2
+                    00C4    687 _U0UCR	=	0x00c4
+                    00C5    688 _U0GCR	=	0x00c5
+                    00F8    689 _U1CSR	=	0x00f8
+                    00F9    690 _U1DBUF	=	0x00f9
+                    00FA    691 _U1BAUD	=	0x00fa
+                    00FB    692 _U1UCR	=	0x00fb
+                    00FC    693 _U1GCR	=	0x00fc
+                    00C9    694 _WDCTL	=	0x00c9
+                            695 ;--------------------------------------------------------
+                            696 ; special function bits
+                            697 ;--------------------------------------------------------
+                            698 	.area RSEG    (ABS,DATA)
+   0000                     699 	.org 0x0000
+                    0087    700 _P0_7	=	0x0087
+                    0086    701 _P0_6	=	0x0086
+                    0085    702 _P0_5	=	0x0085
+                    0084    703 _P0_4	=	0x0084
+                    0083    704 _P0_3	=	0x0083
+                    0082    705 _P0_2	=	0x0082
+                    0081    706 _P0_1	=	0x0081
+                    0080    707 _P0_0	=	0x0080
+                    008F    708 _URX1IF	=	0x008f
+                    008D    709 _ADCIF	=	0x008d
+                    008B    710 _URX0IF	=	0x008b
+                    008A    711 _IT1	=	0x008a
+                    0089    712 _RFERRIF	=	0x0089
+                    0088    713 _IT0	=	0x0088
+                    0097    714 _P1_7	=	0x0097
+                    0096    715 _P1_6	=	0x0096
+                    0095    716 _P1_5	=	0x0095
+                    0094    717 _P1_4	=	0x0094
+                    0093    718 _P1_3	=	0x0093
+                    0092    719 _P1_2	=	0x0092
+                    0091    720 _P1_1	=	0x0091
+                    0090    721 _P1_0	=	0x0090
+                    0099    722 _ENCIF_1	=	0x0099
+                    0098    723 _ENCIF_0	=	0x0098
+                    00A7    724 _P2_7	=	0x00a7
+                    00A6    725 _P2_6	=	0x00a6
+                    00A5    726 _P2_5	=	0x00a5
+                    00A4    727 _P2_4	=	0x00a4
+                    00A3    728 _P2_3	=	0x00a3
+                    00A2    729 _P2_2	=	0x00a2
+                    00A1    730 _P2_1	=	0x00a1
+                    00A0    731 _P2_0	=	0x00a0
+                    00AF    732 _EA	=	0x00af
+                    00AD    733 _STIE	=	0x00ad
+                    00AC    734 _ENCIE	=	0x00ac
+                    00AB    735 _URX1IE	=	0x00ab
+                    00AA    736 _URX0IE	=	0x00aa
+                    00A9    737 _ADCIE	=	0x00a9
+                    00A8    738 _RFERRIE	=	0x00a8
+                    00BD    739 _P0IE	=	0x00bd
+                    00BC    740 _T4IE	=	0x00bc
+                    00BB    741 _T3IE	=	0x00bb
+                    00BA    742 _T2IE	=	0x00ba
+                    00B9    743 _T1IE	=	0x00b9
+                    00B8    744 _DMAIE	=	0x00b8
+                    00C7    745 _STIF	=	0x00c7
+                    00C5    746 _P0IF	=	0x00c5
+                    00C4    747 _T4IF	=	0x00c4
+                    00C3    748 _T3IF	=	0x00c3
+                    00C2    749 _T2IF	=	0x00c2
+                    00C1    750 _T1IF	=	0x00c1
+                    00C0    751 _DMAIF	=	0x00c0
+                    00D7    752 _CY	=	0x00d7
+                    00D6    753 _AC	=	0x00d6
+                    00D5    754 _F0	=	0x00d5
+                    00D4    755 _RS1	=	0x00d4
+                    00D3    756 _RS0	=	0x00d3
+                    00D2    757 _OV	=	0x00d2
+                    00D1    758 _F1	=	0x00d1
+                    00D0    759 _P	=	0x00d0
+                    00E7    760 _ACC_7	=	0x00e7
+                    00E6    761 _ACC_6	=	0x00e6
+                    00E5    762 _ACC_5	=	0x00e5
+                    00E4    763 _ACC_4	=	0x00e4
+                    00E3    764 _ACC_3	=	0x00e3
+                    00E2    765 _ACC_2	=	0x00e2
+                    00E1    766 _ACC_1	=	0x00e1
+                    00E0    767 _ACC_0	=	0x00e0
+                    00EC    768 _WDTIF	=	0x00ec
+                    00EB    769 _P1IF	=	0x00eb
+                    00EA    770 _UTX1IF	=	0x00ea
+                    00E9    771 _UTX0IF	=	0x00e9
+                    00E8    772 _P2IF	=	0x00e8
+                    00F7    773 _B_7	=	0x00f7
+                    00F6    774 _B_6	=	0x00f6
+                    00F5    775 _B_5	=	0x00f5
+                    00F4    776 _B_4	=	0x00f4
+                    00F3    777 _B_3	=	0x00f3
+                    00F2    778 _B_2	=	0x00f2
+                    00F1    779 _B_1	=	0x00f1
+                    00F0    780 _B_0	=	0x00f0
+                    00DE    781 _OVFIM	=	0x00de
+                    00DD    782 _T4CH1IF	=	0x00dd
+                    00DC    783 _T4CH0IF	=	0x00dc
+                    00DB    784 _T4OVFIF	=	0x00db
+                    00DA    785 _T3CH1IF	=	0x00da
+                    00D9    786 _T3CH0IF	=	0x00d9
+                    00D8    787 _T3OVFIF	=	0x00d8
+                    00FF    788 _MODE	=	0x00ff
+                    00FE    789 _RE	=	0x00fe
+                    00FD    790 _SLAVE	=	0x00fd
+                    00FC    791 _FE	=	0x00fc
+                    00FB    792 _ERR	=	0x00fb
+                    00FA    793 _RX_BYTE	=	0x00fa
+                    00F9    794 _TX_BYTE	=	0x00f9
+                    00F8    795 _ACTIVE	=	0x00f8
+                            796 ;--------------------------------------------------------
+                            797 ; overlayable register banks
+                            798 ;--------------------------------------------------------
+                            799 	.area REG_BANK_0	(REL,OVR,DATA)
+   0000                     800 	.ds 8
+                            801 ;--------------------------------------------------------
+                            802 ; internal ram data
+                            803 ;--------------------------------------------------------
+                            804 	.area DSEG    (DATA)
+                            805 ;--------------------------------------------------------
+                            806 ; overlayable items in internal ram 
+                            807 ;--------------------------------------------------------
+                            808 	.area OSEG    (OVR,DATA)
+                            809 ;--------------------------------------------------------
+                            810 ; indirectly addressable internal ram data
+                            811 ;--------------------------------------------------------
+                            812 	.area ISEG    (DATA)
+                            813 ;--------------------------------------------------------
+                            814 ; absolute internal ram data
+                            815 ;--------------------------------------------------------
+                            816 	.area IABS    (ABS,DATA)
+                            817 	.area IABS    (ABS,DATA)
+                            818 ;--------------------------------------------------------
+                            819 ; bit data
+                            820 ;--------------------------------------------------------
+                            821 	.area BSEG    (BIT)
+                            822 ;--------------------------------------------------------
+                            823 ; paged external ram data
+                            824 ;--------------------------------------------------------
+                            825 	.area PSEG    (PAG,XDATA)
+                            826 ;--------------------------------------------------------
+                            827 ; external ram data
+                            828 ;--------------------------------------------------------
+                            829 	.area XSEG    (XDATA)
+                    61A6    830 _MONMUX	=	0x61a6
+                    61A6    831 _OPAMPMC	=	0x61a6
+                    6230    832 _I2CCFG	=	0x6230
+                    6231    833 _I2CSTAT	=	0x6231
+                    6232    834 _I2CDATA	=	0x6232
+                    6233    835 _I2CADDR	=	0x6233
+                    6234    836 _I2CWC	=	0x6234
+                    6235    837 _I2CIO	=	0x6235
+                    6243    838 _OBSSEL0	=	0x6243
+                    6244    839 _OBSSEL1	=	0x6244
+                    6245    840 _OBSSEL2	=	0x6245
+                    6246    841 _OBSSEL3	=	0x6246
+                    6247    842 _OBSSEL4	=	0x6247
+                    6248    843 _OBSSEL5	=	0x6248
+                    6249    844 _CHVER	=	0x6249
+                    624A    845 _CHIPID	=	0x624a
+                    624B    846 _TESTREG0	=	0x624b
+                    6260    847 _DBGDATA	=	0x6260
+                    6262    848 _SRCRC	=	0x6262
+                    6264    849 _BATTMON	=	0x6264
+                    6265    850 _IVCTRL	=	0x6265
+                    6270    851 _FCTL	=	0x6270
+                    6271    852 _FADDRL	=	0x6271
+                    6272    853 _FADDRH	=	0x6272
+                    6273    854 _FWDATA	=	0x6273
+                    6276    855 _CHIPINFO0	=	0x6276
+                    6277    856 _CHIPINFO1	=	0x6277
+                    6281    857 _IRCTL	=	0x6281
+                    6290    858 _CLD	=	0x6290
+                    62A0    859 _XX_T1CCTL0	=	0x62a0
+                    62A1    860 _XX_T1CCTL1	=	0x62a1
+                    62A2    861 _XX_T1CCTL2	=	0x62a2
+                    62A3    862 _T1CCTL3	=	0x62a3
+                    62A4    863 _T1CCTL4	=	0x62a4
+                    62A6    864 _XX_T1CC0L	=	0x62a6
+                    62A7    865 _XX_T1CC0H	=	0x62a7
+                    62A8    866 _XX_T1CC1L	=	0x62a8
+                    62A9    867 _XX_T1CC1H	=	0x62a9
+                    62AA    868 _XX_T1CC2L	=	0x62aa
+                    62AB    869 _XX_T1CC2H	=	0x62ab
+                    62AC    870 _T1CC3L	=	0x62ac
+                    62AD    871 _T1CC3H	=	0x62ad
+                    62AE    872 _T1CC4L	=	0x62ae
+                    62AF    873 _T1CC4H	=	0x62af
+                    62B0    874 _STCC	=	0x62b0
+                    62B1    875 _STCS	=	0x62b1
+                    62B2    876 _STCV0	=	0x62b2
+                    62B3    877 _STCV1	=	0x62b3
+                    62B4    878 _STCV2	=	0x62b4
+                    62C0    879 _OPAMPC	=	0x62c0
+                    62C1    880 _OPAMPS	=	0x62c1
+                    62D0    881 _CMPCTL	=	0x62d0
+                    6000    882 _RFCORE_RAM	=	0x6000
+                    6000    883 _RXFIFO	=	0x6000
+                    6080    884 _TXFIFO	=	0x6080
+                    6100    885 _SRC_ADDR_TABLE	=	0x6100
+                    6160    886 _SRCRESMASK0	=	0x6160
+                    6161    887 _SRCRESMASK1	=	0x6161
+                    6162    888 _SRCRESMASK2	=	0x6162
+                    6163    889 _SRCRESINDEX	=	0x6163
+                    6164    890 _SRCEXTPENDEN0	=	0x6164
+                    6165    891 _SRCEXTPENDEN1	=	0x6165
+                    6166    892 _SRCEXTPENDEN2	=	0x6166
+                    6167    893 _SRCSHORTPENDEN0	=	0x6167
+                    6168    894 _SRCSHORTPENDEN1	=	0x6168
+                    6169    895 _SRCSHORTPENDEN2	=	0x6169
+                    616A    896 _EXT_ADDR0	=	0x616a
+                    616B    897 _EXT_ADDR1	=	0x616b
+                    616C    898 _EXT_ADDR2	=	0x616c
+                    616D    899 _EXT_ADDR3	=	0x616d
+                    616E    900 _EXT_ADDR4	=	0x616e
+                    616F    901 _EXT_ADDR5	=	0x616f
+                    6170    902 _EXT_ADDR6	=	0x6170
+                    6171    903 _EXT_ADDR7	=	0x6171
+                    6172    904 _PAN_ID0	=	0x6172
+                    6173    905 _PAN_ID1	=	0x6173
+                    6174    906 _SHORT_ADDR0	=	0x6174
+                    6175    907 _SHORT_ADDR1	=	0x6175
+                    6180    908 _FRMFILT0	=	0x6180
+                    6181    909 _FRMFILT1	=	0x6181
+                    6182    910 _SRCMATCH	=	0x6182
+                    6183    911 _SRCSHORTEN0	=	0x6183
+                    6184    912 _SRCSHORTEN1	=	0x6184
+                    6185    913 _SRCSHORTEN2	=	0x6185
+                    6186    914 _SRCEXTEN0	=	0x6186
+                    6187    915 _SRCEXTEN1	=	0x6187
+                    6188    916 _SRCEXTEN2	=	0x6188
+                    6189    917 _FRMCTRL0	=	0x6189
+                    618A    918 _FRMCTRL1	=	0x618a
+                    618B    919 _RXENABLE	=	0x618b
+                    618C    920 _RXMASKSET	=	0x618c
+                    618D    921 _RXMASKCLR	=	0x618d
+                    618E    922 _FREQTUNE	=	0x618e
+                    618F    923 _FREQCTRL	=	0x618f
+                    6190    924 _TXPOWER	=	0x6190
+                    6191    925 _TXCTRL	=	0x6191
+                    6192    926 _FSMSTAT0	=	0x6192
+                    6193    927 _FSMSTAT1	=	0x6193
+                    6194    928 _FIFOPCTRL	=	0x6194
+                    6195    929 _FSMCTRL	=	0x6195
+                    6196    930 _CCACTRL0	=	0x6196
+                    6197    931 _CCACTRL1	=	0x6197
+                    6198    932 _RSSI	=	0x6198
+                    6199    933 _RSSISTAT	=	0x6199
+                    619A    934 _RXFIRST	=	0x619a
+                    619B    935 _RXFIFOCNT	=	0x619b
+                    619C    936 _TXFIFOCNT	=	0x619c
+                    619D    937 _RXFIRST_PTR	=	0x619d
+                    619E    938 _RXLAST_PTR	=	0x619e
+                    619F    939 _RXP1_PTR	=	0x619f
+                    61A1    940 _TXFIRST_PTR	=	0x61a1
+                    61A2    941 _TXLAST_PTR	=	0x61a2
+                    61A3    942 _RFIRQM0	=	0x61a3
+                    61A4    943 _RFIRQM1	=	0x61a4
+                    61A5    944 _RFERRM	=	0x61a5
+                    61A7    945 _RFRND	=	0x61a7
+                    61A8    946 _MDMCTRL0	=	0x61a8
+                    61A9    947 _MDMCTRL1	=	0x61a9
+                    61AA    948 _FREQEST	=	0x61aa
+                    61AB    949 _RXCTRL	=	0x61ab
+                    61AC    950 _FSCTRL	=	0x61ac
+                    61AD    951 _FSCAL0	=	0x61ad
+                    61AE    952 _FSCAL1	=	0x61ae
+                    61AF    953 _FSCAL2	=	0x61af
+                    61B0    954 _FSCAL3	=	0x61b0
+                    61B1    955 _AGCCTRL0	=	0x61b1
+                    61B2    956 _AGCCTRL1	=	0x61b2
+                    61B3    957 _AGCCTRL2	=	0x61b3
+                    61B4    958 _AGCCTRL3	=	0x61b4
+                    61B5    959 _ADCTEST0	=	0x61b5
+                    61B6    960 _ADCTEST1	=	0x61b6
+                    61B7    961 _ADCTEST2	=	0x61b7
+                    61B8    962 _MDMTEST0	=	0x61b8
+                    61B9    963 _MDMTEST1	=	0x61b9
+                    61BA    964 _DACTEST0	=	0x61ba
+                    61BB    965 _DACTEST1	=	0x61bb
+                    61BC    966 _DACTEST2	=	0x61bc
+                    61BD    967 _ATEST	=	0x61bd
+                    61BE    968 _PTEST0	=	0x61be
+                    61BF    969 _PTEST1	=	0x61bf
+                    61FA    970 _TXFILTCFG	=	0x61fa
+                    61EB    971 _RFC_OBS_CTRL0	=	0x61eb
+                    61EC    972 _RFC_OBS_CTRL1	=	0x61ec
+                    61ED    973 _RFC_OBS_CTRL2	=	0x61ed
+                    61C0    974 _CSPPROG0	=	0x61c0
+                    61C1    975 _CSPPROG1	=	0x61c1
+                    61C2    976 _CSPPROG2	=	0x61c2
+                    61C3    977 _CSPPROG3	=	0x61c3
+                    61C4    978 _CSPPROG4	=	0x61c4
+                    61C5    979 _CSPPROG5	=	0x61c5
+                    61C6    980 _CSPPROG6	=	0x61c6
+                    61C7    981 _CSPPROG7	=	0x61c7
+                    61C8    982 _CSPPROG8	=	0x61c8
+                    61C9    983 _CSPPROG9	=	0x61c9
+                    61CA    984 _CSPPROG10	=	0x61ca
+                    61CB    985 _CSPPROG11	=	0x61cb
+                    61CC    986 _CSPPROG12	=	0x61cc
+                    61CD    987 _CSPPROG13	=	0x61cd
+                    61CE    988 _CSPPROG14	=	0x61ce
+                    61CF    989 _CSPPROG15	=	0x61cf
+                    61D0    990 _CSPPROG16	=	0x61d0
+                    61D1    991 _CSPPROG17	=	0x61d1
+                    61D2    992 _CSPPROG18	=	0x61d2
+                    61D3    993 _CSPPROG19	=	0x61d3
+                    61D4    994 _CSPPROG20	=	0x61d4
+                    61D5    995 _CSPPROG21	=	0x61d5
+                    61D6    996 _CSPPROG22	=	0x61d6
+                    61D7    997 _CSPPROG23	=	0x61d7
+                    61E0    998 _CSPCTRL	=	0x61e0
+                    61E1    999 _CSPSTAT	=	0x61e1
+                    61E2   1000 _CSPX	=	0x61e2
+                    61E3   1001 _CSPY	=	0x61e3
+                    61E4   1002 _CSPZ	=	0x61e4
+                    61E5   1003 _CSPT	=	0x61e5
+                    6200   1004 _USBADDR	=	0x6200
+                    6201   1005 _USBPOW	=	0x6201
+                    6202   1006 _USBIIF	=	0x6202
+                    6204   1007 _USBOIF	=	0x6204
+                    6206   1008 _USBCIF	=	0x6206
+                    6207   1009 _USBIIE	=	0x6207
+                    6209   1010 _USBOIE	=	0x6209
+                    620B   1011 _USBCIE	=	0x620b
+                    620C   1012 _USBFRML	=	0x620c
+                    620D   1013 _USBFRMH	=	0x620d
+                    620E   1014 _USBINDEX	=	0x620e
+                    620F   1015 _USBCTRL	=	0x620f
+                    6210   1016 _USBMAXI	=	0x6210
+                    6211   1017 _USBCS0	=	0x6211
+                    6211   1018 _USBCSIL	=	0x6211
+                    6212   1019 _USBCSIH	=	0x6212
+                    6213   1020 _USBMAXO	=	0x6213
+                    6214   1021 _USBCSOL	=	0x6214
+                    6215   1022 _USBCSOH	=	0x6215
+                    6216   1023 _USBCNT0	=	0x6216
+                    6216   1024 _USBCNTL	=	0x6216
+                    6217   1025 _USBCNTH	=	0x6217
+                    6220   1026 _USBF0	=	0x6220
+                    6222   1027 _USBF1	=	0x6222
+                    6224   1028 _USBF2	=	0x6224
+                    6226   1029 _USBF3	=	0x6226
+                    6228   1030 _USBF4	=	0x6228
+                    622A   1031 _USBF5	=	0x622a
+                    7080   1032 _X_P0	=	0x7080
+                    7086   1033 _X_U0CSR	=	0x7086
+                    7089   1034 _X_P0IFG	=	0x7089
+                    708A   1035 _X_P1IFG	=	0x708a
+                    708B   1036 _X_P2IFG	=	0x708b
+                    708C   1037 _X_PICTL	=	0x708c
+                    708D   1038 _X_P1IEN	=	0x708d
+                    708F   1039 _X_P0INP	=	0x708f
+                    7090   1040 _X_P1	=	0x7090
+                    7091   1041 _X_RFIRQF1	=	0x7091
+                    7093   1042 _X_MPAGE	=	0x7093
+                    7093   1043 _X__XPAGE	=	0x7093
+                    7094   1044 _X_T2CTRL	=	0x7094
+                    7095   1045 _X_ST0	=	0x7095
+                    7096   1046 _X_ST1	=	0x7096
+                    7097   1047 _X_ST2	=	0x7097
+                    709C   1048 _X_T2EVTCFG	=	0x709c
+                    709D   1049 _X_SLEEPSTA	=	0x709d
+                    709E   1050 _X_CLKCONSTA	=	0x709e
+                    709F   1051 _X_FMAP	=	0x709f
+                    709F   1052 _X_PSBANK	=	0x709f
+                    70A0   1053 _X_P2	=	0x70a0
+                    70A1   1054 _X_T2IRQF	=	0x70a1
+                    70A2   1055 _X_T2M0	=	0x70a2
+                    70A3   1056 _X_T2M1	=	0x70a3
+                    70A4   1057 _X_T2MOVF0	=	0x70a4
+                    70A5   1058 _X_T2MOVF1	=	0x70a5
+                    70A6   1059 _X_T2MOVF2	=	0x70a6
+                    70A7   1060 _X_T2IRQM	=	0x70a7
+                    70AB   1061 _X_P0IEN	=	0x70ab
+                    70AC   1062 _X_P2IEN	=	0x70ac
+                    70AD   1063 _X_STLOAD	=	0x70ad
+                    70AE   1064 _X_PMUX	=	0x70ae
+                    70AF   1065 _X_T1STAT	=	0x70af
+                    70B1   1066 _X_ENCDI	=	0x70b1
+                    70B2   1067 _X_ENCDO	=	0x70b2
+                    70B3   1068 _X_ENCCS	=	0x70b3
+                    70B4   1069 _X_ADCCON1	=	0x70b4
+                    70B5   1070 _X_ADCCON2	=	0x70b5
+                    70B6   1071 _X_ADCCON3	=	0x70b6
+                    70BA   1072 _X_ADCL	=	0x70ba
+                    70BB   1073 _X_ADCH	=	0x70bb
+                    70BC   1074 _X_RNDL	=	0x70bc
+                    70BD   1075 _X_RNDH	=	0x70bd
+                    70BE   1076 _X_SLEEPCMD	=	0x70be
+                    70BF   1077 _X_RFERRF	=	0x70bf
+                    70C1   1078 _X_U0DBUF	=	0x70c1
+                    70C2   1079 _X_U0BAUD	=	0x70c2
+                    70C3   1080 _X_T2MSEL	=	0x70c3
+                    70C4   1081 _X_U0UCR	=	0x70c4
+                    70C5   1082 _X_U0GCR	=	0x70c5
+                    70C6   1083 _X_CLKCONCMD	=	0x70c6
+                    70C7   1084 _X_MEMCTR	=	0x70c7
+                    70C9   1085 _X_WDCTL	=	0x70c9
+                    70CA   1086 _X_T3CNT	=	0x70ca
+                    70CB   1087 _X_T3CTL	=	0x70cb
+                    70CC   1088 _X_T3CCTL0	=	0x70cc
+                    70CD   1089 _X_T3CC0	=	0x70cd
+                    70CE   1090 _X_T3CCTL1	=	0x70ce
+                    70CF   1091 _X_T3CC1	=	0x70cf
+                    70D1   1092 _X_DMAIRQ	=	0x70d1
+                    70D2   1093 _X_DMA1CFGL	=	0x70d2
+                    70D3   1094 _X_DMA1CFGH	=	0x70d3
+                    70D4   1095 _X_DMA0CFGL	=	0x70d4
+                    70D5   1096 _X_DMA0CFGH	=	0x70d5
+                    70D6   1097 _X_DMAARM	=	0x70d6
+                    70D7   1098 _X_DMAREQ	=	0x70d7
+                    70D8   1099 _X_TIMIF	=	0x70d8
+                    70D9   1100 _X_RFD	=	0x70d9
+                    70DA   1101 _X_T1CC0L	=	0x70da
+                    70DB   1102 _X_T1CC0H	=	0x70db
+                    70DC   1103 _X_T1CC1L	=	0x70dc
+                    70DD   1104 _X_T1CC1H	=	0x70dd
+                    70DE   1105 _X_T1CC2L	=	0x70de
+                    70DF   1106 _X_T1CC2H	=	0x70df
+                    70E1   1107 _X_RFST	=	0x70e1
+                    70E2   1108 _X_T1CNTL	=	0x70e2
+                    70E3   1109 _X_T1CNTH	=	0x70e3
+                    70E4   1110 _X_T1CTL	=	0x70e4
+                    70E5   1111 _X_T1CCTL0	=	0x70e5
+                    70E6   1112 _X_T1CCTL1	=	0x70e6
+                    70E7   1113 _X_T1CCTL2	=	0x70e7
+                    70E9   1114 _X_RFIRQF0	=	0x70e9
+                    70EA   1115 _X_T4CNT	=	0x70ea
+                    70EB   1116 _X_T4CTL	=	0x70eb
+                    70EC   1117 _X_T4CCTL0	=	0x70ec
+                    70ED   1118 _X_T4CC0	=	0x70ed
+                    70EE   1119 _X_T4CCTL1	=	0x70ee
+                    70EF   1120 _X_T4CC1	=	0x70ef
+                    70F1   1121 _X_PERCFG	=	0x70f1
+                    70F2   1122 _X_APCFG	=	0x70f2
+                    70F3   1123 _X_P0SEL	=	0x70f3
+                    70F4   1124 _X_P1SEL	=	0x70f4
+                    70F5   1125 _X_P2SEL	=	0x70f5
+                    70F6   1126 _X_P1INP	=	0x70f6
+                    70F7   1127 _X_P2INP	=	0x70f7
+                    70F8   1128 _X_U1CSR	=	0x70f8
+                    70F9   1129 _X_U1DBUF	=	0x70f9
+                    70FA   1130 _X_U1BAUD	=	0x70fa
+                    70FB   1131 _X_U1UCR	=	0x70fb
+                    70FC   1132 _X_U1GCR	=	0x70fc
+                    70FD   1133 _X_P0DIR	=	0x70fd
+                    70FE   1134 _X_P1DIR	=	0x70fe
+                    70FF   1135 _X_P2DIR	=	0x70ff
+                    7800   1136 _X_INFOPAGE	=	0x7800
+                    780C   1137 _X_IEEE_ADDR	=	0x780c
+   0000                    1138 _bufmem_memb_count:
+   0000                    1139 	.ds 6
+   0006                    1140 _bufmem_memb_mem:
+   0006                    1141 	.ds 18
+   0018                    1142 _refbufmem_memb_count:
+   0018                    1143 	.ds 2
+   001A                    1144 _refbufmem_memb_mem:
+   001A                    1145 	.ds 108
+   0086                    1146 _buframmem_memb_count:
+   0086                    1147 	.ds 6
+   008C                    1148 _buframmem_memb_mem:
+   008C                    1149 	.ds 1260
+                           1150 ;--------------------------------------------------------
+                           1151 ; absolute external ram data
+                           1152 ;--------------------------------------------------------
+                           1153 	.area XABS    (ABS,XDATA)
+                           1154 ;--------------------------------------------------------
+                           1155 ; external initialized ram data
+                           1156 ;--------------------------------------------------------
+                           1157 	.area XISEG   (XDATA)
+   0000                    1158 _bufmem:
+   0000                    1159 	.ds 10
+   000A                    1160 _refbufmem:
+   000A                    1161 	.ds 10
+   0014                    1162 _buframmem:
+   0014                    1163 	.ds 10
+                           1164 	.area HOME    (CODE)
+                           1165 	.area GSINIT0 (CODE)
+                           1166 	.area GSINIT1 (CODE)
+                           1167 	.area GSINIT2 (CODE)
+                           1168 	.area GSINIT3 (CODE)
+                           1169 	.area GSINIT4 (CODE)
+                           1170 	.area GSINIT5 (CODE)
+                           1171 	.area GSINIT  (CODE)
+                           1172 	.area GSFINAL (CODE)
+                           1173 	.area CSEG    (CODE)
+                           1174 ;--------------------------------------------------------
+                           1175 ; global & static initialisations
+                           1176 ;--------------------------------------------------------
+                           1177 	.area HOME    (CODE)
+                           1178 	.area GSINIT  (CODE)
+                           1179 	.area GSFINAL (CODE)
+                           1180 	.area GSINIT  (CODE)
+                           1181 ;--------------------------------------------------------
+                           1182 ; Home
+                           1183 ;--------------------------------------------------------
+                           1184 	.area HOME    (CODE)
+                           1185 	.area HOME    (CODE)
+                           1186 ;--------------------------------------------------------
+                           1187 ; code
+                           1188 ;--------------------------------------------------------
+                           1189 	.area BANK1   (CODE)
+                           1190 ;------------------------------------------------------------
+                           1191 ;Allocation info for local variables in function 'queuebuf_load_to_ram'
+                           1192 ;------------------------------------------------------------
+                           1193 ;b                         Allocated to registers r5 r6 r7 
+                           1194 ;------------------------------------------------------------
+                           1195 ;	../../../contiki-sensinode//core/net/queuebuf.c:286: queuebuf_load_to_ram(struct queuebuf *b)
+                           1196 ;	-----------------------------------------
+                           1197 ;	 function queuebuf_load_to_ram
+                           1198 ;	-----------------------------------------
+   0000                    1199 _queuebuf_load_to_ram:
+                    0007   1200 	ar7 = 0x07
+                    0006   1201 	ar6 = 0x06
+                    0005   1202 	ar5 = 0x05
+                    0004   1203 	ar4 = 0x04
+                    0003   1204 	ar3 = 0x03
+                    0002   1205 	ar2 = 0x02
+                    0001   1206 	ar1 = 0x01
+                    0000   1207 	ar0 = 0x00
+                           1208 ;	../../../contiki-sensinode//core/net/queuebuf.c:288: return b->ram_ptr;
+   0000 12s00r00           1209 	lcall	__gptrget
+   0003 FD                 1210 	mov	r5,a
+   0004 A3                 1211 	inc	dptr
+   0005 12s00r00           1212 	lcall	__gptrget
+   0008 FE                 1213 	mov	r6,a
+   0009 A3                 1214 	inc	dptr
+   000A 12s00r00           1215 	lcall	__gptrget
+   000D FF                 1216 	mov	r7,a
+   000E 8D 82              1217 	mov	dpl,r5
+   0010 8E 83              1218 	mov	dph,r6
+   0012 8F F0              1219 	mov	b,r7
+   0014 02s00r00           1220 	ljmp	__sdcc_banked_ret
+                           1221 ;------------------------------------------------------------
+                           1222 ;Allocation info for local variables in function 'queuebuf_init'
+                           1223 ;------------------------------------------------------------
+                           1224 ;	../../../contiki-sensinode//core/net/queuebuf.c:293: queuebuf_init(void)
+                           1225 ;	-----------------------------------------
+                           1226 ;	 function queuebuf_init
+                           1227 ;	-----------------------------------------
+   0017                    1228 _queuebuf_init:
+                           1229 ;	../../../contiki-sensinode//core/net/queuebuf.c:302: memb_init(&buframmem);
+   0017 90s00r14           1230 	mov	dptr,#_buframmem
+   001A 75 F0 00           1231 	mov	b,#0x00
+   001D 78r00              1232 	mov	r0,#_memb_init
+   001F 79s00              1233 	mov	r1,#(_memb_init >> 8)
+   0021 7As00              1234 	mov	r2,#(_memb_init >> 16)
+   0023 12s00r00           1235 	lcall	__sdcc_banked_call
+                           1236 ;	../../../contiki-sensinode//core/net/queuebuf.c:303: memb_init(&bufmem);
+   0026 90s00r00           1237 	mov	dptr,#_bufmem
+   0029 75 F0 00           1238 	mov	b,#0x00
+   002C 78r00              1239 	mov	r0,#_memb_init
+   002E 79s00              1240 	mov	r1,#(_memb_init >> 8)
+   0030 7As00              1241 	mov	r2,#(_memb_init >> 16)
+   0032 12s00r00           1242 	lcall	__sdcc_banked_call
+                           1243 ;	../../../contiki-sensinode//core/net/queuebuf.c:304: memb_init(&refbufmem);
+   0035 90s00r0A           1244 	mov	dptr,#_refbufmem
+   0038 75 F0 00           1245 	mov	b,#0x00
+   003B 78r00              1246 	mov	r0,#_memb_init
+   003D 79s00              1247 	mov	r1,#(_memb_init >> 8)
+   003F 7As00              1248 	mov	r2,#(_memb_init >> 16)
+   0041 12s00r00           1249 	lcall	__sdcc_banked_call
+   0044 02s00r00           1250 	ljmp	__sdcc_banked_ret
+                           1251 ;------------------------------------------------------------
+                           1252 ;Allocation info for local variables in function 'queuebuf_new_from_packetbuf'
+                           1253 ;------------------------------------------------------------
+                           1254 ;buf                       Allocated to registers r5 r6 r7 
+                           1255 ;rbuf                      Allocated to stack - sp -5
+                           1256 ;buframptr                 Allocated to registers r2 r3 r4 
+                           1257 ;sloc0                     Allocated to stack - sp -2
+                           1258 ;------------------------------------------------------------
+                           1259 ;	../../../contiki-sensinode//core/net/queuebuf.c:315: queuebuf_new_from_packetbuf(void)
+                           1260 ;	-----------------------------------------
+                           1261 ;	 function queuebuf_new_from_packetbuf
+                           1262 ;	-----------------------------------------
+   0047                    1263 _queuebuf_new_from_packetbuf:
+   0047 E5 81              1264 	mov	a,sp
+   0049 24 06              1265 	add	a,#0x06
+   004B F5 81              1266 	mov	sp,a
+                           1267 ;	../../../contiki-sensinode//core/net/queuebuf.c:321: if(packetbuf_is_reference()) {
+   004D 78r00              1268 	mov	r0,#_packetbuf_is_reference
+   004F 79s00              1269 	mov	r1,#(_packetbuf_is_reference >> 8)
+   0051 7As00              1270 	mov	r2,#(_packetbuf_is_reference >> 16)
+   0053 12s00r00           1271 	lcall	__sdcc_banked_call
+   0056 E5 82              1272 	mov	a,dpl
+   0058 85 83 F0           1273 	mov	b,dph
+   005B 45 F0              1274 	orl	a,b
+   005D 70 03              1275 	jnz	00120$
+   005F 02s01r52           1276 	ljmp	00108$
+   0062                    1277 00120$:
+                           1278 ;	../../../contiki-sensinode//core/net/queuebuf.c:322: rbuf = memb_alloc(&refbufmem);
+   0062 90s00r0A           1279 	mov	dptr,#_refbufmem
+   0065 75 F0 00           1280 	mov	b,#0x00
+   0068 78r00              1281 	mov	r0,#_memb_alloc
+   006A 79s00              1282 	mov	r1,#(_memb_alloc >> 8)
+   006C 7As00              1283 	mov	r2,#(_memb_alloc >> 16)
+   006E 12s00r00           1284 	lcall	__sdcc_banked_call
+   0071 AD 82              1285 	mov	r5,dpl
+   0073 AE 83              1286 	mov	r6,dph
+   0075 AF F0              1287 	mov	r7,b
+   0077 E5 81              1288 	mov	a,sp
+   0079 24 FB              1289 	add	a,#0xfb
+   007B F8                 1290 	mov	r0,a
+   007C A6 05              1291 	mov	@r0,ar5
+   007E 08                 1292 	inc	r0
+   007F A6 06              1293 	mov	@r0,ar6
+   0081 08                 1294 	inc	r0
+   0082 A6 07              1295 	mov	@r0,ar7
+                           1296 ;	../../../contiki-sensinode//core/net/queuebuf.c:323: if(rbuf != NULL) {
+   0084 E5 81              1297 	mov	a,sp
+   0086 24 FB              1298 	add	a,#0xfb
+   0088 F8                 1299 	mov	r0,a
+   0089 E6                 1300 	mov	a,@r0
+   008A 08                 1301 	inc	r0
+   008B 46                 1302 	orl	a,@r0
+   008C 70 03              1303 	jnz	00121$
+   008E 02s01r3C           1304 	ljmp	00102$
+   0091                    1305 00121$:
+                           1306 ;	../../../contiki-sensinode//core/net/queuebuf.c:327: rbuf->len = packetbuf_datalen();
+   0091 78r00              1307 	mov	r0,#_packetbuf_datalen
+   0093 79s00              1308 	mov	r1,#(_packetbuf_datalen >> 8)
+   0095 7As00              1309 	mov	r2,#(_packetbuf_datalen >> 16)
+   0097 12s00r00           1310 	lcall	__sdcc_banked_call
+   009A AB 82              1311 	mov	r3,dpl
+   009C AC 83              1312 	mov	r4,dph
+   009E E5 81              1313 	mov	a,sp
+   00A0 24 FB              1314 	add	a,#0xfb
+   00A2 F8                 1315 	mov	r0,a
+   00A3 86 82              1316 	mov	dpl,@r0
+   00A5 08                 1317 	inc	r0
+   00A6 86 83              1318 	mov	dph,@r0
+   00A8 08                 1319 	inc	r0
+   00A9 86 F0              1320 	mov	b,@r0
+   00AB EB                 1321 	mov	a,r3
+   00AC 12s00r00           1322 	lcall	__gptrput
+   00AF A3                 1323 	inc	dptr
+   00B0 EC                 1324 	mov	a,r4
+   00B1 12s00r00           1325 	lcall	__gptrput
+                           1326 ;	../../../contiki-sensinode//core/net/queuebuf.c:328: rbuf->ref = packetbuf_reference_ptr();
+   00B4 E5 81              1327 	mov	a,sp
+   00B6 24 FB              1328 	add	a,#0xfb
+   00B8 F8                 1329 	mov	r0,a
+   00B9 74 02              1330 	mov	a,#0x02
+   00BB 26                 1331 	add	a,@r0
+   00BC FA                 1332 	mov	r2,a
+   00BD E4                 1333 	clr	a
+   00BE 08                 1334 	inc	r0
+   00BF 36                 1335 	addc	a,@r0
+   00C0 FB                 1336 	mov	r3,a
+   00C1 08                 1337 	inc	r0
+   00C2 86 04              1338 	mov	ar4,@r0
+   00C4 C0 04              1339 	push	ar4
+   00C6 C0 03              1340 	push	ar3
+   00C8 C0 02              1341 	push	ar2
+   00CA 78r00              1342 	mov	r0,#_packetbuf_reference_ptr
+   00CC 79s00              1343 	mov	r1,#(_packetbuf_reference_ptr >> 8)
+   00CE 7As00              1344 	mov	r2,#(_packetbuf_reference_ptr >> 16)
+   00D0 12s00r00           1345 	lcall	__sdcc_banked_call
+   00D3 AD 82              1346 	mov	r5,dpl
+   00D5 AE 83              1347 	mov	r6,dph
+   00D7 AF F0              1348 	mov	r7,b
+   00D9 D0 02              1349 	pop	ar2
+   00DB D0 03              1350 	pop	ar3
+   00DD D0 04              1351 	pop	ar4
+   00DF 8A 82              1352 	mov	dpl,r2
+   00E1 8B 83              1353 	mov	dph,r3
+   00E3 8C F0              1354 	mov	b,r4
+   00E5 ED                 1355 	mov	a,r5
+   00E6 12s00r00           1356 	lcall	__gptrput
+   00E9 A3                 1357 	inc	dptr
+   00EA EE                 1358 	mov	a,r6
+   00EB 12s00r00           1359 	lcall	__gptrput
+   00EE A3                 1360 	inc	dptr
+   00EF EF                 1361 	mov	a,r7
+   00F0 12s00r00           1362 	lcall	__gptrput
+                           1363 ;	../../../contiki-sensinode//core/net/queuebuf.c:329: rbuf->hdrlen = packetbuf_copyto_hdr(rbuf->hdr);
+   00F3 E5 81              1364 	mov	a,sp
+   00F5 24 FB              1365 	add	a,#0xfb
+   00F7 F8                 1366 	mov	r0,a
+   00F8 74 35              1367 	mov	a,#0x35
+   00FA 26                 1368 	add	a,@r0
+   00FB FD                 1369 	mov	r5,a
+   00FC E4                 1370 	clr	a
+   00FD 08                 1371 	inc	r0
+   00FE 36                 1372 	addc	a,@r0
+   00FF FE                 1373 	mov	r6,a
+   0100 08                 1374 	inc	r0
+   0101 86 07              1375 	mov	ar7,@r0
+   0103 E5 81              1376 	mov	a,sp
+   0105 24 FB              1377 	add	a,#0xfb
+   0107 F8                 1378 	mov	r0,a
+   0108 74 05              1379 	mov	a,#0x05
+   010A 26                 1380 	add	a,@r0
+   010B FA                 1381 	mov	r2,a
+   010C E4                 1382 	clr	a
+   010D 08                 1383 	inc	r0
+   010E 36                 1384 	addc	a,@r0
+   010F FB                 1385 	mov	r3,a
+   0110 08                 1386 	inc	r0
+   0111 86 04              1387 	mov	ar4,@r0
+   0113 8A 82              1388 	mov	dpl,r2
+   0115 8B 83              1389 	mov	dph,r3
+   0117 8C F0              1390 	mov	b,r4
+   0119 C0 07              1391 	push	ar7
+   011B C0 06              1392 	push	ar6
+   011D C0 05              1393 	push	ar5
+   011F 78r00              1394 	mov	r0,#_packetbuf_copyto_hdr
+   0121 79s00              1395 	mov	r1,#(_packetbuf_copyto_hdr >> 8)
+   0123 7As00              1396 	mov	r2,#(_packetbuf_copyto_hdr >> 16)
+   0125 12s00r00           1397 	lcall	__sdcc_banked_call
+   0128 AB 82              1398 	mov	r3,dpl
+   012A AC 83              1399 	mov	r4,dph
+   012C D0 05              1400 	pop	ar5
+   012E D0 06              1401 	pop	ar6
+   0130 D0 07              1402 	pop	ar7
+   0132 8D 82              1403 	mov	dpl,r5
+   0134 8E 83              1404 	mov	dph,r6
+   0136 8F F0              1405 	mov	b,r7
+   0138 EB                 1406 	mov	a,r3
+   0139 12s00r00           1407 	lcall	__gptrput
+   013C                    1408 00102$:
+                           1409 ;	../../../contiki-sensinode//core/net/queuebuf.c:333: return (struct queuebuf *)rbuf;
+   013C E5 81              1410 	mov	a,sp
+   013E 24 FB              1411 	add	a,#0xfb
+   0140 F8                 1412 	mov	r0,a
+   0141 86 05              1413 	mov	ar5,@r0
+   0143 08                 1414 	inc	r0
+   0144 86 06              1415 	mov	ar6,@r0
+   0146 08                 1416 	inc	r0
+   0147 86 07              1417 	mov	ar7,@r0
+   0149 8D 82              1418 	mov	dpl,r5
+   014B 8E 83              1419 	mov	dph,r6
+   014D 8F F0              1420 	mov	b,r7
+   014F 02s02r5A           1421 	ljmp	00110$
+   0152                    1422 00108$:
+                           1423 ;	../../../contiki-sensinode//core/net/queuebuf.c:336: buf = memb_alloc(&bufmem);
+   0152 90s00r00           1424 	mov	dptr,#_bufmem
+   0155 75 F0 00           1425 	mov	b,#0x00
+   0158 78r00              1426 	mov	r0,#_memb_alloc
+   015A 79s00              1427 	mov	r1,#(_memb_alloc >> 8)
+   015C 7As00              1428 	mov	r2,#(_memb_alloc >> 16)
+   015E 12s00r00           1429 	lcall	__sdcc_banked_call
+   0161 AD 82              1430 	mov	r5,dpl
+   0163 AE 83              1431 	mov	r6,dph
+   0165 AF F0              1432 	mov	r7,b
+                           1433 ;	../../../contiki-sensinode//core/net/queuebuf.c:337: if(buf != NULL) {
+   0167 ED                 1434 	mov	a,r5
+   0168 4E                 1435 	orl	a,r6
+   0169 70 03              1436 	jnz	00122$
+   016B 02s02r54           1437 	ljmp	00106$
+   016E                    1438 00122$:
+                           1439 ;	../../../contiki-sensinode//core/net/queuebuf.c:344: buf->ram_ptr = memb_alloc(&buframmem);
+   016E 90s00r14           1440 	mov	dptr,#_buframmem
+   0171 75 F0 00           1441 	mov	b,#0x00
+   0174 C0 07              1442 	push	ar7
+   0176 C0 06              1443 	push	ar6
+   0178 C0 05              1444 	push	ar5
+   017A 78r00              1445 	mov	r0,#_memb_alloc
+   017C 79s00              1446 	mov	r1,#(_memb_alloc >> 8)
+   017E 7As00              1447 	mov	r2,#(_memb_alloc >> 16)
+   0180 12s00r00           1448 	lcall	__sdcc_banked_call
+   0183 AA 82              1449 	mov	r2,dpl
+   0185 AB 83              1450 	mov	r3,dph
+   0187 AC F0              1451 	mov	r4,b
+   0189 D0 05              1452 	pop	ar5
+   018B D0 06              1453 	pop	ar6
+   018D D0 07              1454 	pop	ar7
+   018F 8D 82              1455 	mov	dpl,r5
+   0191 8E 83              1456 	mov	dph,r6
+   0193 8F F0              1457 	mov	b,r7
+   0195 EA                 1458 	mov	a,r2
+   0196 12s00r00           1459 	lcall	__gptrput
+   0199 A3                 1460 	inc	dptr
+   019A EB                 1461 	mov	a,r3
+   019B 12s00r00           1462 	lcall	__gptrput
+   019E A3                 1463 	inc	dptr
+   019F EC                 1464 	mov	a,r4
+   01A0 12s00r00           1465 	lcall	__gptrput
+                           1466 ;	../../../contiki-sensinode//core/net/queuebuf.c:357: if(buf->ram_ptr == NULL) {
+   01A3 8D 82              1467 	mov	dpl,r5
+   01A5 8E 83              1468 	mov	dph,r6
+   01A7 8F F0              1469 	mov	b,r7
+   01A9 A8 81              1470 	mov	r0,sp
+   01AB 18                 1471 	dec	r0
+   01AC 18                 1472 	dec	r0
+   01AD 12s00r00           1473 	lcall	__gptrget
+   01B0 F6                 1474 	mov	@r0,a
+   01B1 A3                 1475 	inc	dptr
+   01B2 12s00r00           1476 	lcall	__gptrget
+   01B5 08                 1477 	inc	r0
+   01B6 F6                 1478 	mov	@r0,a
+   01B7 A3                 1479 	inc	dptr
+   01B8 12s00r00           1480 	lcall	__gptrget
+   01BB 08                 1481 	inc	r0
+   01BC F6                 1482 	mov	@r0,a
+   01BD EA                 1483 	mov	a,r2
+   01BE 4B                 1484 	orl	a,r3
+                           1485 ;	../../../contiki-sensinode//core/net/queuebuf.c:359: return NULL;
+   01BF 70 08              1486 	jnz	00104$
+   01C1 90 00 00           1487 	mov	dptr,#0x0000
+   01C4 F5 F0              1488 	mov	b,a
+   01C6 02s02r5A           1489 	ljmp	00110$
+   01C9                    1490 00104$:
+                           1491 ;	../../../contiki-sensinode//core/net/queuebuf.c:361: buframptr = buf->ram_ptr;
+   01C9 C0 05              1492 	push	ar5
+   01CB C0 06              1493 	push	ar6
+   01CD C0 07              1494 	push	ar7
+   01CF E5 81              1495 	mov	a,sp
+   01D1 24 FB              1496 	add	a,#0xfb
+   01D3 F8                 1497 	mov	r0,a
+   01D4 86 02              1498 	mov	ar2,@r0
+   01D6 08                 1499 	inc	r0
+   01D7 86 03              1500 	mov	ar3,@r0
+   01D9 08                 1501 	inc	r0
+   01DA 86 04              1502 	mov	ar4,@r0
+                           1503 ;	../../../contiki-sensinode//core/net/queuebuf.c:364: buframptr->len = packetbuf_copyto(buframptr->data);
+   01DC 74 02              1504 	mov	a,#0x02
+   01DE 2A                 1505 	add	a,r2
+   01DF FD                 1506 	mov	r5,a
+   01E0 E4                 1507 	clr	a
+   01E1 3B                 1508 	addc	a,r3
+   01E2 FE                 1509 	mov	r6,a
+   01E3 8C 07              1510 	mov	ar7,r4
+   01E5 8D 82              1511 	mov	dpl,r5
+   01E7 8E 83              1512 	mov	dph,r6
+   01E9 8F F0              1513 	mov	b,r7
+   01EB C0 05              1514 	push	ar5
+   01ED C0 04              1515 	push	ar4
+   01EF C0 03              1516 	push	ar3
+   01F1 C0 02              1517 	push	ar2
+   01F3 78r00              1518 	mov	r0,#_packetbuf_copyto
+   01F5 79s00              1519 	mov	r1,#(_packetbuf_copyto >> 8)
+   01F7 7As00              1520 	mov	r2,#(_packetbuf_copyto >> 16)
+   01F9 12s00r00           1521 	lcall	__sdcc_banked_call
+   01FC AE 82              1522 	mov	r6,dpl
+   01FE AF 83              1523 	mov	r7,dph
+   0200 D0 02              1524 	pop	ar2
+   0202 D0 03              1525 	pop	ar3
+   0204 D0 04              1526 	pop	ar4
+   0206 D0 05              1527 	pop	ar5
+   0208 8A 82              1528 	mov	dpl,r2
+   020A 8B 83              1529 	mov	dph,r3
+   020C 8C F0              1530 	mov	b,r4
+   020E EE                 1531 	mov	a,r6
+   020F 12s00r00           1532 	lcall	__gptrput
+   0212 A3                 1533 	inc	dptr
+   0213 EF                 1534 	mov	a,r7
+   0214 12s00r00           1535 	lcall	__gptrput
+                           1536 ;	../../../contiki-sensinode//core/net/queuebuf.c:365: packetbuf_attr_copyto(buframptr->attrs, buframptr->addrs);
+   0217 74 B2              1537 	mov	a,#0xB2
+   0219 2A                 1538 	add	a,r2
+   021A FD                 1539 	mov	r5,a
+   021B E4                 1540 	clr	a
+   021C 3B                 1541 	addc	a,r3
+   021D FE                 1542 	mov	r6,a
+   021E 8C 07              1543 	mov	ar7,r4
+   0220 74 82              1544 	mov	a,#0x82
+   0222 2A                 1545 	add	a,r2
+   0223 FA                 1546 	mov	r2,a
+   0224 E4                 1547 	clr	a
+   0225 3B                 1548 	addc	a,r3
+   0226 FB                 1549 	mov	r3,a
+   0227 C0 07              1550 	push	ar7
+   0229 C0 06              1551 	push	ar6
+   022B C0 05              1552 	push	ar5
+   022D C0 05              1553 	push	ar5
+   022F C0 06              1554 	push	ar6
+   0231 C0 07              1555 	push	ar7
+   0233 8A 82              1556 	mov	dpl,r2
+   0235 8B 83              1557 	mov	dph,r3
+   0237 8C F0              1558 	mov	b,r4
+   0239 78r00              1559 	mov	r0,#_packetbuf_attr_copyto
+   023B 79s00              1560 	mov	r1,#(_packetbuf_attr_copyto >> 8)
+   023D 7As00              1561 	mov	r2,#(_packetbuf_attr_copyto >> 16)
+   023F 12s00r00           1562 	lcall	__sdcc_banked_call
+   0242 15 81              1563 	dec	sp
+   0244 15 81              1564 	dec	sp
+   0246 15 81              1565 	dec	sp
+   0248 D0 05              1566 	pop	ar5
+   024A D0 06              1567 	pop	ar6
+   024C D0 07              1568 	pop	ar7
+                           1569 ;	../../../contiki-sensinode//core/net/queuebuf.c:391: return buf;
+   024E D0 07              1570 	pop	ar7
+   0250 D0 06              1571 	pop	ar6
+   0252 D0 05              1572 	pop	ar5
+                           1573 ;	../../../contiki-sensinode//core/net/queuebuf.c:365: packetbuf_attr_copyto(buframptr->attrs, buframptr->addrs);
+   0254                    1574 00106$:
+                           1575 ;	../../../contiki-sensinode//core/net/queuebuf.c:391: return buf;
+   0254 8D 82              1576 	mov	dpl,r5
+   0256 8E 83              1577 	mov	dph,r6
+   0258 8F F0              1578 	mov	b,r7
+   025A                    1579 00110$:
+   025A E5 81              1580 	mov	a,sp
+   025C 24 FA              1581 	add	a,#0xFA
+   025E F5 81              1582 	mov	sp,a
+   0260 02s00r00           1583 	ljmp	__sdcc_banked_ret
+                           1584 ;------------------------------------------------------------
+                           1585 ;Allocation info for local variables in function 'queuebuf_update_attr_from_packetbuf'
+                           1586 ;------------------------------------------------------------
+                           1587 ;buf                       Allocated to registers r5 r6 r7 
+                           1588 ;buframptr                 Allocated to registers r5 r6 r7 
+                           1589 ;------------------------------------------------------------
+                           1590 ;	../../../contiki-sensinode//core/net/queuebuf.c:396: queuebuf_update_attr_from_packetbuf(struct queuebuf *buf)
+                           1591 ;	-----------------------------------------
+                           1592 ;	 function queuebuf_update_attr_from_packetbuf
+                           1593 ;	-----------------------------------------
+   0263                    1594 _queuebuf_update_attr_from_packetbuf:
+                           1595 ;	../../../contiki-sensinode//core/net/queuebuf.c:398: struct queuebuf_data *buframptr = queuebuf_load_to_ram(buf);
+   0263 78r00              1596 	mov	r0,#_queuebuf_load_to_ram
+   0265 79s00              1597 	mov	r1,#(_queuebuf_load_to_ram >> 8)
+   0267 7As00              1598 	mov	r2,#(_queuebuf_load_to_ram >> 16)
+   0269 12s00r00           1599 	lcall	__sdcc_banked_call
+   026C AD 82              1600 	mov	r5,dpl
+   026E AE 83              1601 	mov	r6,dph
+   0270 AF F0              1602 	mov	r7,b
+                           1603 ;	../../../contiki-sensinode//core/net/queuebuf.c:399: packetbuf_attr_copyto(buframptr->attrs, buframptr->addrs);
+   0272 74 B2              1604 	mov	a,#0xB2
+   0274 2D                 1605 	add	a,r5
+   0275 FA                 1606 	mov	r2,a
+   0276 E4                 1607 	clr	a
+   0277 3E                 1608 	addc	a,r6
+   0278 FB                 1609 	mov	r3,a
+   0279 8F 04              1610 	mov	ar4,r7
+   027B 74 82              1611 	mov	a,#0x82
+   027D 2D                 1612 	add	a,r5
+   027E FD                 1613 	mov	r5,a
+   027F E4                 1614 	clr	a
+   0280 3E                 1615 	addc	a,r6
+   0281 FE                 1616 	mov	r6,a
+   0282 C0 02              1617 	push	ar2
+   0284 C0 03              1618 	push	ar3
+   0286 C0 04              1619 	push	ar4
+   0288 8D 82              1620 	mov	dpl,r5
+   028A 8E 83              1621 	mov	dph,r6
+   028C 8F F0              1622 	mov	b,r7
+   028E 78r00              1623 	mov	r0,#_packetbuf_attr_copyto
+   0290 79s00              1624 	mov	r1,#(_packetbuf_attr_copyto >> 8)
+   0292 7As00              1625 	mov	r2,#(_packetbuf_attr_copyto >> 16)
+   0294 12s00r00           1626 	lcall	__sdcc_banked_call
+   0297 15 81              1627 	dec	sp
+   0299 15 81              1628 	dec	sp
+   029B 15 81              1629 	dec	sp
+   029D 02s00r00           1630 	ljmp	__sdcc_banked_ret
+                           1631 ;------------------------------------------------------------
+                           1632 ;Allocation info for local variables in function 'queuebuf_free'
+                           1633 ;------------------------------------------------------------
+                           1634 ;buf                       Allocated to registers r5 r6 r7 
+                           1635 ;------------------------------------------------------------
+                           1636 ;	../../../contiki-sensinode//core/net/queuebuf.c:408: queuebuf_free(struct queuebuf *buf)
+                           1637 ;	-----------------------------------------
+                           1638 ;	 function queuebuf_free
+                           1639 ;	-----------------------------------------
+   02A0                    1640 _queuebuf_free:
+   02A0 AD 82              1641 	mov	r5,dpl
+   02A2 AE 83              1642 	mov	r6,dph
+   02A4 AF F0              1643 	mov	r7,b
+                           1644 ;	../../../contiki-sensinode//core/net/queuebuf.c:410: if(memb_inmemb(&bufmem, buf)) {
+   02A6 8D 02              1645 	mov	ar2,r5
+   02A8 8E 03              1646 	mov	ar3,r6
+   02AA 8F 04              1647 	mov	ar4,r7
+   02AC C0 07              1648 	push	ar7
+   02AE C0 06              1649 	push	ar6
+   02B0 C0 05              1650 	push	ar5
+   02B2 C0 02              1651 	push	ar2
+   02B4 C0 03              1652 	push	ar3
+   02B6 C0 04              1653 	push	ar4
+   02B8 90s00r00           1654 	mov	dptr,#_bufmem
+   02BB 75 F0 00           1655 	mov	b,#0x00
+   02BE 78r00              1656 	mov	r0,#_memb_inmemb
+   02C0 79s00              1657 	mov	r1,#(_memb_inmemb >> 8)
+   02C2 7As00              1658 	mov	r2,#(_memb_inmemb >> 16)
+   02C4 12s00r00           1659 	lcall	__sdcc_banked_call
+   02C7 AB 82              1660 	mov	r3,dpl
+   02C9 AC 83              1661 	mov	r4,dph
+   02CB 15 81              1662 	dec	sp
+   02CD 15 81              1663 	dec	sp
+   02CF 15 81              1664 	dec	sp
+   02D1 D0 05              1665 	pop	ar5
+   02D3 D0 06              1666 	pop	ar6
+   02D5 D0 07              1667 	pop	ar7
+   02D7 EB                 1668 	mov	a,r3
+   02D8 4C                 1669 	orl	a,r4
+   02D9 60 5E              1670 	jz	00104$
+                           1671 ;	../../../contiki-sensinode//core/net/queuebuf.c:418: memb_free(&buframmem, buf->ram_ptr);
+   02DB 8D 82              1672 	mov	dpl,r5
+   02DD 8E 83              1673 	mov	dph,r6
+   02DF 8F F0              1674 	mov	b,r7
+   02E1 12s00r00           1675 	lcall	__gptrget
+   02E4 FA                 1676 	mov	r2,a
+   02E5 A3                 1677 	inc	dptr
+   02E6 12s00r00           1678 	lcall	__gptrget
+   02E9 FB                 1679 	mov	r3,a
+   02EA A3                 1680 	inc	dptr
+   02EB 12s00r00           1681 	lcall	__gptrget
+   02EE FC                 1682 	mov	r4,a
+   02EF C0 07              1683 	push	ar7
+   02F1 C0 06              1684 	push	ar6
+   02F3 C0 05              1685 	push	ar5
+   02F5 C0 02              1686 	push	ar2
+   02F7 C0 03              1687 	push	ar3
+   02F9 C0 04              1688 	push	ar4
+   02FB 90s00r14           1689 	mov	dptr,#_buframmem
+   02FE 75 F0 00           1690 	mov	b,#0x00
+   0301 78r00              1691 	mov	r0,#_memb_free
+   0303 79s00              1692 	mov	r1,#(_memb_free >> 8)
+   0305 7As00              1693 	mov	r2,#(_memb_free >> 16)
+   0307 12s00r00           1694 	lcall	__sdcc_banked_call
+   030A 15 81              1695 	dec	sp
+   030C 15 81              1696 	dec	sp
+   030E 15 81              1697 	dec	sp
+   0310 D0 05              1698 	pop	ar5
+   0312 D0 06              1699 	pop	ar6
+   0314 D0 07              1700 	pop	ar7
+                           1701 ;	../../../contiki-sensinode//core/net/queuebuf.c:420: memb_free(&bufmem, buf);
+   0316 8D 02              1702 	mov	ar2,r5
+   0318 8E 03              1703 	mov	ar3,r6
+   031A 8F 04              1704 	mov	ar4,r7
+   031C C0 02              1705 	push	ar2
+   031E C0 03              1706 	push	ar3
+   0320 C0 04              1707 	push	ar4
+   0322 90s00r00           1708 	mov	dptr,#_bufmem
+   0325 75 F0 00           1709 	mov	b,#0x00
+   0328 78r00              1710 	mov	r0,#_memb_free
+   032A 79s00              1711 	mov	r1,#(_memb_free >> 8)
+   032C 7As00              1712 	mov	r2,#(_memb_free >> 16)
+   032E 12s00r00           1713 	lcall	__sdcc_banked_call
+   0331 15 81              1714 	dec	sp
+   0333 15 81              1715 	dec	sp
+   0335 15 81              1716 	dec	sp
+   0337 80 50              1717 	sjmp	00106$
+   0339                    1718 00104$:
+                           1719 ;	../../../contiki-sensinode//core/net/queuebuf.c:428: } else if(memb_inmemb(&refbufmem, buf)) {
+   0339 8D 02              1720 	mov	ar2,r5
+   033B 8E 03              1721 	mov	ar3,r6
+   033D 8F 04              1722 	mov	ar4,r7
+   033F C0 07              1723 	push	ar7
+   0341 C0 06              1724 	push	ar6
+   0343 C0 05              1725 	push	ar5
+   0345 C0 02              1726 	push	ar2
+   0347 C0 03              1727 	push	ar3
+   0349 C0 04              1728 	push	ar4
+   034B 90s00r0A           1729 	mov	dptr,#_refbufmem
+   034E 75 F0 00           1730 	mov	b,#0x00
+   0351 78r00              1731 	mov	r0,#_memb_inmemb
+   0353 79s00              1732 	mov	r1,#(_memb_inmemb >> 8)
+   0355 7As00              1733 	mov	r2,#(_memb_inmemb >> 16)
+   0357 12s00r00           1734 	lcall	__sdcc_banked_call
+   035A AB 82              1735 	mov	r3,dpl
+   035C AC 83              1736 	mov	r4,dph
+   035E 15 81              1737 	dec	sp
+   0360 15 81              1738 	dec	sp
+   0362 15 81              1739 	dec	sp
+   0364 D0 05              1740 	pop	ar5
+   0366 D0 06              1741 	pop	ar6
+   0368 D0 07              1742 	pop	ar7
+   036A EB                 1743 	mov	a,r3
+   036B 4C                 1744 	orl	a,r4
+   036C 60 1B              1745 	jz	00106$
+                           1746 ;	../../../contiki-sensinode//core/net/queuebuf.c:429: memb_free(&refbufmem, buf);
+   036E C0 05              1747 	push	ar5
+   0370 C0 06              1748 	push	ar6
+   0372 C0 07              1749 	push	ar7
+   0374 90s00r0A           1750 	mov	dptr,#_refbufmem
+   0377 75 F0 00           1751 	mov	b,#0x00
+   037A 78r00              1752 	mov	r0,#_memb_free
+   037C 79s00              1753 	mov	r1,#(_memb_free >> 8)
+   037E 7As00              1754 	mov	r2,#(_memb_free >> 16)
+   0380 12s00r00           1755 	lcall	__sdcc_banked_call
+   0383 15 81              1756 	dec	sp
+   0385 15 81              1757 	dec	sp
+   0387 15 81              1758 	dec	sp
+   0389                    1759 00106$:
+   0389 02s00r00           1760 	ljmp	__sdcc_banked_ret
+                           1761 ;------------------------------------------------------------
+                           1762 ;Allocation info for local variables in function 'queuebuf_to_packetbuf'
+                           1763 ;------------------------------------------------------------
+                           1764 ;b                         Allocated to registers r5 r6 r7 
+                           1765 ;r                         Allocated to stack - sp -7
+                           1766 ;buframptr                 Allocated to registers r7 r6 r5 
+                           1767 ;sloc0                     Allocated to stack - sp -4
+                           1768 ;sloc1                     Allocated to stack - sp -2
+                           1769 ;------------------------------------------------------------
+                           1770 ;	../../../contiki-sensinode//core/net/queuebuf.c:437: queuebuf_to_packetbuf(struct queuebuf *b)
+                           1771 ;	-----------------------------------------
+                           1772 ;	 function queuebuf_to_packetbuf
+                           1773 ;	-----------------------------------------
+   038C                    1774 _queuebuf_to_packetbuf:
+   038C E5 81              1775 	mov	a,sp
+   038E 24 08              1776 	add	a,#0x08
+   0390 F5 81              1777 	mov	sp,a
+   0392 AD 82              1778 	mov	r5,dpl
+   0394 AE 83              1779 	mov	r6,dph
+   0396 AF F0              1780 	mov	r7,b
+                           1781 ;	../../../contiki-sensinode//core/net/queuebuf.c:440: if(memb_inmemb(&bufmem, b)) {
+   0398 8D 02              1782 	mov	ar2,r5
+   039A 8E 03              1783 	mov	ar3,r6
+   039C 8F 04              1784 	mov	ar4,r7
+   039E C0 07              1785 	push	ar7
+   03A0 C0 06              1786 	push	ar6
+   03A2 C0 05              1787 	push	ar5
+   03A4 C0 02              1788 	push	ar2
+   03A6 C0 03              1789 	push	ar3
+   03A8 C0 04              1790 	push	ar4
+   03AA 90s00r00           1791 	mov	dptr,#_bufmem
+   03AD 75 F0 00           1792 	mov	b,#0x00
+   03B0 78r00              1793 	mov	r0,#_memb_inmemb
+   03B2 79s00              1794 	mov	r1,#(_memb_inmemb >> 8)
+   03B4 7As00              1795 	mov	r2,#(_memb_inmemb >> 16)
+   03B6 12s00r00           1796 	lcall	__sdcc_banked_call
+   03B9 AB 82              1797 	mov	r3,dpl
+   03BB AC 83              1798 	mov	r4,dph
+   03BD 15 81              1799 	dec	sp
+   03BF 15 81              1800 	dec	sp
+   03C1 15 81              1801 	dec	sp
+   03C3 D0 05              1802 	pop	ar5
+   03C5 D0 06              1803 	pop	ar6
+   03C7 D0 07              1804 	pop	ar7
+   03C9 EB                 1805 	mov	a,r3
+   03CA 4C                 1806 	orl	a,r4
+   03CB 70 03              1807 	jnz	00112$
+   03CD 02s04r73           1808 	ljmp	00104$
+   03D0                    1809 00112$:
+                           1810 ;	../../../contiki-sensinode//core/net/queuebuf.c:441: struct queuebuf_data *buframptr = queuebuf_load_to_ram(b);
+   03D0 8D 82              1811 	mov	dpl,r5
+   03D2 8E 83              1812 	mov	dph,r6
+   03D4 8F F0              1813 	mov	b,r7
+   03D6 78r00              1814 	mov	r0,#_queuebuf_load_to_ram
+   03D8 79s00              1815 	mov	r1,#(_queuebuf_load_to_ram >> 8)
+   03DA 7As00              1816 	mov	r2,#(_queuebuf_load_to_ram >> 16)
+   03DC 12s00r00           1817 	lcall	__sdcc_banked_call
+   03DF AA 82              1818 	mov	r2,dpl
+   03E1 AB 83              1819 	mov	r3,dph
+   03E3 AC F0              1820 	mov	r4,b
+   03E5 8A 07              1821 	mov	ar7,r2
+   03E7 8B 06              1822 	mov	ar6,r3
+   03E9 8C 05              1823 	mov	ar5,r4
+                           1824 ;	../../../contiki-sensinode//core/net/queuebuf.c:442: packetbuf_copyfrom(buframptr->data, buframptr->len);
+   03EB 8F 82              1825 	mov	dpl,r7
+   03ED 8E 83              1826 	mov	dph,r6
+   03EF 8D F0              1827 	mov	b,r5
+   03F1 E5 81              1828 	mov	a,sp
+   03F3 24 FC              1829 	add	a,#0xfc
+   03F5 F8                 1830 	mov	r0,a
+   03F6 12s00r00           1831 	lcall	__gptrget
+   03F9 F6                 1832 	mov	@r0,a
+   03FA A3                 1833 	inc	dptr
+   03FB 12s00r00           1834 	lcall	__gptrget
+   03FE 08                 1835 	inc	r0
+   03FF F6                 1836 	mov	@r0,a
+   0400 74 02              1837 	mov	a,#0x02
+   0402 2F                 1838 	add	a,r7
+   0403 FA                 1839 	mov	r2,a
+   0404 E4                 1840 	clr	a
+   0405 3E                 1841 	addc	a,r6
+   0406 FB                 1842 	mov	r3,a
+   0407 8D 04              1843 	mov	ar4,r5
+   0409 C0 07              1844 	push	ar7
+   040B C0 06              1845 	push	ar6
+   040D C0 05              1846 	push	ar5
+   040F E5 81              1847 	mov	a,sp
+   0411 24 F9              1848 	add	a,#0xf9
+   0413 F8                 1849 	mov	r0,a
+   0414 E6                 1850 	mov	a,@r0
+   0415 C0 E0              1851 	push	acc
+   0417 08                 1852 	inc	r0
+   0418 E6                 1853 	mov	a,@r0
+   0419 C0 E0              1854 	push	acc
+   041B 8A 82              1855 	mov	dpl,r2
+   041D 8B 83              1856 	mov	dph,r3
+   041F 8C F0              1857 	mov	b,r4
+   0421 78r00              1858 	mov	r0,#_packetbuf_copyfrom
+   0423 79s00              1859 	mov	r1,#(_packetbuf_copyfrom >> 8)
+   0425 7As00              1860 	mov	r2,#(_packetbuf_copyfrom >> 16)
+   0427 12s00r00           1861 	lcall	__sdcc_banked_call
+   042A 15 81              1862 	dec	sp
+   042C 15 81              1863 	dec	sp
+   042E D0 05              1864 	pop	ar5
+   0430 D0 06              1865 	pop	ar6
+   0432 D0 07              1866 	pop	ar7
+                           1867 ;	../../../contiki-sensinode//core/net/queuebuf.c:443: packetbuf_attr_copyfrom(buframptr->attrs, buframptr->addrs);
+   0434 A8 81              1868 	mov	r0,sp
+   0436 18                 1869 	dec	r0
+   0437 18                 1870 	dec	r0
+   0438 74 B2              1871 	mov	a,#0xB2
+   043A 2F                 1872 	add	a,r7
+   043B F6                 1873 	mov	@r0,a
+   043C E4                 1874 	clr	a
+   043D 3E                 1875 	addc	a,r6
+   043E 08                 1876 	inc	r0
+   043F F6                 1877 	mov	@r0,a
+   0440 08                 1878 	inc	r0
+   0441 A6 05              1879 	mov	@r0,ar5
+   0443 74 82              1880 	mov	a,#0x82
+   0445 2F                 1881 	add	a,r7
+   0446 FA                 1882 	mov	r2,a
+   0447 E4                 1883 	clr	a
+   0448 3E                 1884 	addc	a,r6
+   0449 FB                 1885 	mov	r3,a
+   044A 8D 04              1886 	mov	ar4,r5
+   044C A8 81              1887 	mov	r0,sp
+   044E 18                 1888 	dec	r0
+   044F 18                 1889 	dec	r0
+   0450 E6                 1890 	mov	a,@r0
+   0451 C0 E0              1891 	push	acc
+   0453 08                 1892 	inc	r0
+   0454 E6                 1893 	mov	a,@r0
+   0455 C0 E0              1894 	push	acc
+   0457 08                 1895 	inc	r0
+   0458 E6                 1896 	mov	a,@r0
+   0459 C0 E0              1897 	push	acc
+   045B 8A 82              1898 	mov	dpl,r2
+   045D 8B 83              1899 	mov	dph,r3
+   045F 8C F0              1900 	mov	b,r4
+   0461 78r00              1901 	mov	r0,#_packetbuf_attr_copyfrom
+   0463 79s00              1902 	mov	r1,#(_packetbuf_attr_copyfrom >> 8)
+   0465 7As00              1903 	mov	r2,#(_packetbuf_attr_copyfrom >> 16)
+   0467 12s00r00           1904 	lcall	__sdcc_banked_call
+   046A 15 81              1905 	dec	sp
+   046C 15 81              1906 	dec	sp
+   046E 15 81              1907 	dec	sp
+   0470 02s05rAB           1908 	ljmp	00106$
+   0473                    1909 00104$:
+                           1910 ;	../../../contiki-sensinode//core/net/queuebuf.c:444: } else if(memb_inmemb(&refbufmem, b)) {
+   0473 8D 02              1911 	mov	ar2,r5
+   0475 8E 03              1912 	mov	ar3,r6
+   0477 8F 04              1913 	mov	ar4,r7
+   0479 C0 07              1914 	push	ar7
+   047B C0 06              1915 	push	ar6
+   047D C0 05              1916 	push	ar5
+   047F C0 02              1917 	push	ar2
+   0481 C0 03              1918 	push	ar3
+   0483 C0 04              1919 	push	ar4
+   0485 90s00r0A           1920 	mov	dptr,#_refbufmem
+   0488 75 F0 00           1921 	mov	b,#0x00
+   048B 78r00              1922 	mov	r0,#_memb_inmemb
+   048D 79s00              1923 	mov	r1,#(_memb_inmemb >> 8)
+   048F 7As00              1924 	mov	r2,#(_memb_inmemb >> 16)
+   0491 12s00r00           1925 	lcall	__sdcc_banked_call
+   0494 AB 82              1926 	mov	r3,dpl
+   0496 AC 83              1927 	mov	r4,dph
+   0498 15 81              1928 	dec	sp
+   049A 15 81              1929 	dec	sp
+   049C 15 81              1930 	dec	sp
+   049E D0 05              1931 	pop	ar5
+   04A0 D0 06              1932 	pop	ar6
+   04A2 D0 07              1933 	pop	ar7
+   04A4 EB                 1934 	mov	a,r3
+   04A5 4C                 1935 	orl	a,r4
+   04A6 70 03              1936 	jnz	00113$
+   04A8 02s05rAB           1937 	ljmp	00106$
+   04AB                    1938 00113$:
+                           1939 ;	../../../contiki-sensinode//core/net/queuebuf.c:445: r = (struct queuebuf_ref *)b;
+   04AB E5 81              1940 	mov	a,sp
+   04AD 24 F9              1941 	add	a,#0xf9
+   04AF F8                 1942 	mov	r0,a
+   04B0 A6 05              1943 	mov	@r0,ar5
+   04B2 08                 1944 	inc	r0
+   04B3 A6 06              1945 	mov	@r0,ar6
+   04B5 08                 1946 	inc	r0
+   04B6 A6 07              1947 	mov	@r0,ar7
+                           1948 ;	../../../contiki-sensinode//core/net/queuebuf.c:446: packetbuf_clear();
+   04B8 78r00              1949 	mov	r0,#_packetbuf_clear
+   04BA 79s00              1950 	mov	r1,#(_packetbuf_clear >> 8)
+   04BC 7As00              1951 	mov	r2,#(_packetbuf_clear >> 16)
+   04BE 12s00r00           1952 	lcall	__sdcc_banked_call
+                           1953 ;	../../../contiki-sensinode//core/net/queuebuf.c:447: packetbuf_copyfrom(r->ref, r->len);
+   04C1 E5 81              1954 	mov	a,sp
+   04C3 24 F9              1955 	add	a,#0xf9
+   04C5 F8                 1956 	mov	r0,a
+   04C6 86 82              1957 	mov	dpl,@r0
+   04C8 08                 1958 	inc	r0
+   04C9 86 83              1959 	mov	dph,@r0
+   04CB 08                 1960 	inc	r0
+   04CC 86 F0              1961 	mov	b,@r0
+   04CE 12s00r00           1962 	lcall	__gptrget
+   04D1 FB                 1963 	mov	r3,a
+   04D2 A3                 1964 	inc	dptr
+   04D3 12s00r00           1965 	lcall	__gptrget
+   04D6 FC                 1966 	mov	r4,a
+   04D7 E5 81              1967 	mov	a,sp
+   04D9 24 F9              1968 	add	a,#0xf9
+   04DB F8                 1969 	mov	r0,a
+   04DC 74 02              1970 	mov	a,#0x02
+   04DE 26                 1971 	add	a,@r0
+   04DF FA                 1972 	mov	r2,a
+   04E0 E4                 1973 	clr	a
+   04E1 08                 1974 	inc	r0
+   04E2 36                 1975 	addc	a,@r0
+   04E3 FE                 1976 	mov	r6,a
+   04E4 08                 1977 	inc	r0
+   04E5 86 07              1978 	mov	ar7,@r0
+   04E7 8A 82              1979 	mov	dpl,r2
+   04E9 8E 83              1980 	mov	dph,r6
+   04EB 8F F0              1981 	mov	b,r7
+   04ED 12s00r00           1982 	lcall	__gptrget
+   04F0 FA                 1983 	mov	r2,a
+   04F1 A3                 1984 	inc	dptr
+   04F2 12s00r00           1985 	lcall	__gptrget
+   04F5 FE                 1986 	mov	r6,a
+   04F6 A3                 1987 	inc	dptr
+   04F7 12s00r00           1988 	lcall	__gptrget
+   04FA FF                 1989 	mov	r7,a
+   04FB C0 03              1990 	push	ar3
+   04FD C0 04              1991 	push	ar4
+   04FF 8A 82              1992 	mov	dpl,r2
+   0501 8E 83              1993 	mov	dph,r6
+   0503 8F F0              1994 	mov	b,r7
+   0505 78r00              1995 	mov	r0,#_packetbuf_copyfrom
+   0507 79s00              1996 	mov	r1,#(_packetbuf_copyfrom >> 8)
+   0509 7As00              1997 	mov	r2,#(_packetbuf_copyfrom >> 16)
+   050B 12s00r00           1998 	lcall	__sdcc_banked_call
+   050E 15 81              1999 	dec	sp
+   0510 15 81              2000 	dec	sp
+                           2001 ;	../../../contiki-sensinode//core/net/queuebuf.c:448: packetbuf_hdralloc(r->hdrlen);
+   0512 E5 81              2002 	mov	a,sp
+   0514 24 F9              2003 	add	a,#0xf9
+   0516 F8                 2004 	mov	r0,a
+   0517 74 35              2005 	mov	a,#0x35
+   0519 26                 2006 	add	a,@r0
+   051A FD                 2007 	mov	r5,a
+   051B E4                 2008 	clr	a
+   051C 08                 2009 	inc	r0
+   051D 36                 2010 	addc	a,@r0
+   051E FE                 2011 	mov	r6,a
+   051F 08                 2012 	inc	r0
+   0520 86 07              2013 	mov	ar7,@r0
+   0522 8D 82              2014 	mov	dpl,r5
+   0524 8E 83              2015 	mov	dph,r6
+   0526 8F F0              2016 	mov	b,r7
+   0528 12s00r00           2017 	lcall	__gptrget
+   052B FC                 2018 	mov	r4,a
+   052C 7B 00              2019 	mov	r3,#0x00
+   052E 8C 82              2020 	mov	dpl,r4
+   0530 8B 83              2021 	mov	dph,r3
+   0532 C0 07              2022 	push	ar7
+   0534 C0 06              2023 	push	ar6
+   0536 C0 05              2024 	push	ar5
+   0538 78r00              2025 	mov	r0,#_packetbuf_hdralloc
+   053A 79s00              2026 	mov	r1,#(_packetbuf_hdralloc >> 8)
+   053C 7As00              2027 	mov	r2,#(_packetbuf_hdralloc >> 16)
+   053E 12s00r00           2028 	lcall	__sdcc_banked_call
+   0541 D0 05              2029 	pop	ar5
+   0543 D0 06              2030 	pop	ar6
+   0545 D0 07              2031 	pop	ar7
+                           2032 ;	../../../contiki-sensinode//core/net/queuebuf.c:449: memcpy(packetbuf_hdrptr(), r->hdr, r->hdrlen);
+   0547 8D 82              2033 	mov	dpl,r5
+   0549 8E 83              2034 	mov	dph,r6
+   054B 8F F0              2035 	mov	b,r7
+   054D 12s00r00           2036 	lcall	__gptrget
+   0550 FD                 2037 	mov	r5,a
+   0551 A8 81              2038 	mov	r0,sp
+   0553 18                 2039 	dec	r0
+   0554 18                 2040 	dec	r0
+   0555 A6 05              2041 	mov	@r0,ar5
+   0557 08                 2042 	inc	r0
+   0558 76 00              2043 	mov	@r0,#0x00
+   055A E5 81              2044 	mov	a,sp
+   055C 24 F9              2045 	add	a,#0xf9
+   055E F8                 2046 	mov	r0,a
+   055F 74 05              2047 	mov	a,#0x05
+   0561 26                 2048 	add	a,@r0
+   0562 FB                 2049 	mov	r3,a
+   0563 E4                 2050 	clr	a
+   0564 08                 2051 	inc	r0
+   0565 36                 2052 	addc	a,@r0
+   0566 FC                 2053 	mov	r4,a
+   0567 08                 2054 	inc	r0
+   0568 86 06              2055 	mov	ar6,@r0
+   056A C0 06              2056 	push	ar6
+   056C C0 04              2057 	push	ar4
+   056E C0 03              2058 	push	ar3
+   0570 78r00              2059 	mov	r0,#_packetbuf_hdrptr
+   0572 79s00              2060 	mov	r1,#(_packetbuf_hdrptr >> 8)
+   0574 7As00              2061 	mov	r2,#(_packetbuf_hdrptr >> 16)
+   0576 12s00r00           2062 	lcall	__sdcc_banked_call
+   0579 AA 82              2063 	mov	r2,dpl
+   057B AD 83              2064 	mov	r5,dph
+   057D AF F0              2065 	mov	r7,b
+   057F D0 03              2066 	pop	ar3
+   0581 D0 04              2067 	pop	ar4
+   0583 D0 06              2068 	pop	ar6
+   0585 A8 81              2069 	mov	r0,sp
+   0587 18                 2070 	dec	r0
+   0588 18                 2071 	dec	r0
+   0589 E6                 2072 	mov	a,@r0
+   058A C0 E0              2073 	push	acc
+   058C 08                 2074 	inc	r0
+   058D E6                 2075 	mov	a,@r0
+   058E C0 E0              2076 	push	acc
+   0590 C0 03              2077 	push	ar3
+   0592 C0 04              2078 	push	ar4
+   0594 C0 06              2079 	push	ar6
+   0596 8A 82              2080 	mov	dpl,r2
+   0598 8D 83              2081 	mov	dph,r5
+   059A 8F F0              2082 	mov	b,r7
+   059C 78r00              2083 	mov	r0,#_memcpy
+   059E 79s00              2084 	mov	r1,#(_memcpy >> 8)
+   05A0 7As00              2085 	mov	r2,#(_memcpy >> 16)
+   05A2 12s00r00           2086 	lcall	__sdcc_banked_call
+   05A5 E5 81              2087 	mov	a,sp
+   05A7 24 FB              2088 	add	a,#0xfb
+   05A9 F5 81              2089 	mov	sp,a
+   05AB                    2090 00106$:
+   05AB E5 81              2091 	mov	a,sp
+   05AD 24 F8              2092 	add	a,#0xF8
+   05AF F5 81              2093 	mov	sp,a
+   05B1 02s00r00           2094 	ljmp	__sdcc_banked_ret
+                           2095 ;------------------------------------------------------------
+                           2096 ;Allocation info for local variables in function 'queuebuf_dataptr'
+                           2097 ;------------------------------------------------------------
+                           2098 ;b                         Allocated to registers r5 r6 r7 
+                           2099 ;r                         Allocated to registers r5 r6 r7 
+                           2100 ;buframptr                 Allocated to registers 
+                           2101 ;------------------------------------------------------------
+                           2102 ;	../../../contiki-sensinode//core/net/queuebuf.c:454: queuebuf_dataptr(struct queuebuf *b)
+                           2103 ;	-----------------------------------------
+                           2104 ;	 function queuebuf_dataptr
+                           2105 ;	-----------------------------------------
+   05B4                    2106 _queuebuf_dataptr:
+   05B4 AD 82              2107 	mov	r5,dpl
+   05B6 AE 83              2108 	mov	r6,dph
+   05B8 AF F0              2109 	mov	r7,b
+                           2110 ;	../../../contiki-sensinode//core/net/queuebuf.c:458: if(memb_inmemb(&bufmem, b)) {
+   05BA 8D 02              2111 	mov	ar2,r5
+   05BC 8E 03              2112 	mov	ar3,r6
+   05BE 8F 04              2113 	mov	ar4,r7
+   05C0 C0 07              2114 	push	ar7
+   05C2 C0 06              2115 	push	ar6
+   05C4 C0 05              2116 	push	ar5
+   05C6 C0 02              2117 	push	ar2
+   05C8 C0 03              2118 	push	ar3
+   05CA C0 04              2119 	push	ar4
+   05CC 90s00r00           2120 	mov	dptr,#_bufmem
+   05CF 75 F0 00           2121 	mov	b,#0x00
+   05D2 78r00              2122 	mov	r0,#_memb_inmemb
+   05D4 79s00              2123 	mov	r1,#(_memb_inmemb >> 8)
+   05D6 7As00              2124 	mov	r2,#(_memb_inmemb >> 16)
+   05D8 12s00r00           2125 	lcall	__sdcc_banked_call
+   05DB AB 82              2126 	mov	r3,dpl
+   05DD AC 83              2127 	mov	r4,dph
+   05DF 15 81              2128 	dec	sp
+   05E1 15 81              2129 	dec	sp
+   05E3 15 81              2130 	dec	sp
+   05E5 D0 05              2131 	pop	ar5
+   05E7 D0 06              2132 	pop	ar6
+   05E9 D0 07              2133 	pop	ar7
+   05EB EB                 2134 	mov	a,r3
+   05EC 4C                 2135 	orl	a,r4
+   05ED 60 24              2136 	jz	00104$
+                           2137 ;	../../../contiki-sensinode//core/net/queuebuf.c:459: struct queuebuf_data *buframptr = queuebuf_load_to_ram(b);
+   05EF 8D 82              2138 	mov	dpl,r5
+   05F1 8E 83              2139 	mov	dph,r6
+   05F3 8F F0              2140 	mov	b,r7
+   05F5 78r00              2141 	mov	r0,#_queuebuf_load_to_ram
+   05F7 79s00              2142 	mov	r1,#(_queuebuf_load_to_ram >> 8)
+   05F9 7As00              2143 	mov	r2,#(_queuebuf_load_to_ram >> 16)
+   05FB 12s00r00           2144 	lcall	__sdcc_banked_call
+   05FE AA 82              2145 	mov	r2,dpl
+   0600 AB 83              2146 	mov	r3,dph
+   0602 AC F0              2147 	mov	r4,b
+                           2148 ;	../../../contiki-sensinode//core/net/queuebuf.c:460: return buframptr->data;
+   0604 74 02              2149 	mov	a,#0x02
+   0606 2A                 2150 	add	a,r2
+   0607 FA                 2151 	mov	r2,a
+   0608 E4                 2152 	clr	a
+   0609 3B                 2153 	addc	a,r3
+   060A FB                 2154 	mov	r3,a
+   060B 8A 82              2155 	mov	dpl,r2
+   060D 8B 83              2156 	mov	dph,r3
+   060F 8C F0              2157 	mov	b,r4
+   0611 80 5E              2158 	sjmp	00106$
+   0613                    2159 00104$:
+                           2160 ;	../../../contiki-sensinode//core/net/queuebuf.c:461: } else if(memb_inmemb(&refbufmem, b)) {
+   0613 8D 02              2161 	mov	ar2,r5
+   0615 8E 03              2162 	mov	ar3,r6
+   0617 8F 04              2163 	mov	ar4,r7
+   0619 C0 07              2164 	push	ar7
+   061B C0 06              2165 	push	ar6
+   061D C0 05              2166 	push	ar5
+   061F C0 02              2167 	push	ar2
+   0621 C0 03              2168 	push	ar3
+   0623 C0 04              2169 	push	ar4
+   0625 90s00r0A           2170 	mov	dptr,#_refbufmem
+   0628 75 F0 00           2171 	mov	b,#0x00
+   062B 78r00              2172 	mov	r0,#_memb_inmemb
+   062D 79s00              2173 	mov	r1,#(_memb_inmemb >> 8)
+   062F 7As00              2174 	mov	r2,#(_memb_inmemb >> 16)
+   0631 12s00r00           2175 	lcall	__sdcc_banked_call
+   0634 AB 82              2176 	mov	r3,dpl
+   0636 AC 83              2177 	mov	r4,dph
+   0638 15 81              2178 	dec	sp
+   063A 15 81              2179 	dec	sp
+   063C 15 81              2180 	dec	sp
+   063E D0 05              2181 	pop	ar5
+   0640 D0 06              2182 	pop	ar6
+   0642 D0 07              2183 	pop	ar7
+   0644 EB                 2184 	mov	a,r3
+   0645 4C                 2185 	orl	a,r4
+   0646 60 23              2186 	jz	00105$
+                           2187 ;	../../../contiki-sensinode//core/net/queuebuf.c:462: r = (struct queuebuf_ref *)b;
+                           2188 ;	../../../contiki-sensinode//core/net/queuebuf.c:463: return r->ref;
+   0648 74 02              2189 	mov	a,#0x02
+   064A 2D                 2190 	add	a,r5
+   064B FD                 2191 	mov	r5,a
+   064C E4                 2192 	clr	a
+   064D 3E                 2193 	addc	a,r6
+   064E FE                 2194 	mov	r6,a
+   064F 8D 82              2195 	mov	dpl,r5
+   0651 8E 83              2196 	mov	dph,r6
+   0653 8F F0              2197 	mov	b,r7
+   0655 12s00r00           2198 	lcall	__gptrget
+   0658 FD                 2199 	mov	r5,a
+   0659 A3                 2200 	inc	dptr
+   065A 12s00r00           2201 	lcall	__gptrget
+   065D FE                 2202 	mov	r6,a
+   065E A3                 2203 	inc	dptr
+   065F 12s00r00           2204 	lcall	__gptrget
+   0662 FF                 2205 	mov	r7,a
+   0663 8D 82              2206 	mov	dpl,r5
+   0665 8E 83              2207 	mov	dph,r6
+   0667 8F F0              2208 	mov	b,r7
+   0669 80 06              2209 	sjmp	00106$
+   066B                    2210 00105$:
+                           2211 ;	../../../contiki-sensinode//core/net/queuebuf.c:465: return NULL;
+   066B 90 00 00           2212 	mov	dptr,#0x0000
+   066E 75 F0 00           2213 	mov	b,#0x00
+   0671                    2214 00106$:
+   0671 02s00r00           2215 	ljmp	__sdcc_banked_ret
+                           2216 ;------------------------------------------------------------
+                           2217 ;Allocation info for local variables in function 'queuebuf_datalen'
+                           2218 ;------------------------------------------------------------
+                           2219 ;b                         Allocated to registers r5 r6 r7 
+                           2220 ;buframptr                 Allocated to registers r5 r6 r7 
+                           2221 ;------------------------------------------------------------
+                           2222 ;	../../../contiki-sensinode//core/net/queuebuf.c:469: queuebuf_datalen(struct queuebuf *b)
+                           2223 ;	-----------------------------------------
+                           2224 ;	 function queuebuf_datalen
+                           2225 ;	-----------------------------------------
+   0674                    2226 _queuebuf_datalen:
+                           2227 ;	../../../contiki-sensinode//core/net/queuebuf.c:471: struct queuebuf_data *buframptr = queuebuf_load_to_ram(b);
+   0674 78r00              2228 	mov	r0,#_queuebuf_load_to_ram
+   0676 79s00              2229 	mov	r1,#(_queuebuf_load_to_ram >> 8)
+   0678 7As00              2230 	mov	r2,#(_queuebuf_load_to_ram >> 16)
+   067A 12s00r00           2231 	lcall	__sdcc_banked_call
+                           2232 ;	../../../contiki-sensinode//core/net/queuebuf.c:472: return buframptr->len;
+   067D AF F0              2233 	mov	r7,b
+   067F 12s00r00           2234 	lcall	__gptrget
+   0682 FD                 2235 	mov	r5,a
+   0683 A3                 2236 	inc	dptr
+   0684 12s00r00           2237 	lcall	__gptrget
+   0687 FE                 2238 	mov	r6,a
+   0688 8D 82              2239 	mov	dpl,r5
+   068A 8E 83              2240 	mov	dph,r6
+   068C 02s00r00           2241 	ljmp	__sdcc_banked_ret
+                           2242 ;------------------------------------------------------------
+                           2243 ;Allocation info for local variables in function 'queuebuf_addr'
+                           2244 ;------------------------------------------------------------
+                           2245 ;type                      Allocated to stack - sp -3
+                           2246 ;b                         Allocated to registers r5 r6 r7 
+                           2247 ;buframptr                 Allocated to registers 
+                           2248 ;------------------------------------------------------------
+                           2249 ;	../../../contiki-sensinode//core/net/queuebuf.c:476: queuebuf_addr(struct queuebuf *b, uint8_t type)
+                           2250 ;	-----------------------------------------
+                           2251 ;	 function queuebuf_addr
+                           2252 ;	-----------------------------------------
+   068F                    2253 _queuebuf_addr:
+                           2254 ;	../../../contiki-sensinode//core/net/queuebuf.c:478: struct queuebuf_data *buframptr = queuebuf_load_to_ram(b);
+   068F 78r00              2255 	mov	r0,#_queuebuf_load_to_ram
+   0691 79s00              2256 	mov	r1,#(_queuebuf_load_to_ram >> 8)
+   0693 7As00              2257 	mov	r2,#(_queuebuf_load_to_ram >> 16)
+   0695 12s00r00           2258 	lcall	__sdcc_banked_call
+   0698 AD 82              2259 	mov	r5,dpl
+   069A AE 83              2260 	mov	r6,dph
+   069C AF F0              2261 	mov	r7,b
+                           2262 ;	../../../contiki-sensinode//core/net/queuebuf.c:479: return &buframptr->addrs[type - PACKETBUF_ADDR_FIRST].addr;
+   069E 74 B2              2263 	mov	a,#0xB2
+   06A0 2D                 2264 	add	a,r5
+   06A1 FD                 2265 	mov	r5,a
+   06A2 E4                 2266 	clr	a
+   06A3 3E                 2267 	addc	a,r6
+   06A4 FE                 2268 	mov	r6,a
+   06A5 E5 81              2269 	mov	a,sp
+   06A7 24 FD              2270 	add	a,#0xfd
+   06A9 F8                 2271 	mov	r0,a
+   06AA E6                 2272 	mov	a,@r0
+   06AB 24 E8              2273 	add	a,#0xE8
+   06AD C4                 2274 	swap	a
+   06AE 03                 2275 	rr	a
+   06AF 54 F8              2276 	anl	a,#0xF8
+   06B1 FC                 2277 	mov	r4,a
+   06B2 2D                 2278 	add	a,r5
+   06B3 FD                 2279 	mov	r5,a
+   06B4 E4                 2280 	clr	a
+   06B5 3E                 2281 	addc	a,r6
+   06B6 FE                 2282 	mov	r6,a
+   06B7 8D 82              2283 	mov	dpl,r5
+   06B9 8E 83              2284 	mov	dph,r6
+   06BB 8F F0              2285 	mov	b,r7
+   06BD 02s00r00           2286 	ljmp	__sdcc_banked_ret
+                           2287 ;------------------------------------------------------------
+                           2288 ;Allocation info for local variables in function 'queuebuf_attr'
+                           2289 ;------------------------------------------------------------
+                           2290 ;type                      Allocated to stack - sp -3
+                           2291 ;b                         Allocated to registers r5 r6 r7 
+                           2292 ;buframptr                 Allocated to registers 
+                           2293 ;------------------------------------------------------------
+                           2294 ;	../../../contiki-sensinode//core/net/queuebuf.c:483: queuebuf_attr(struct queuebuf *b, uint8_t type)
+                           2295 ;	-----------------------------------------
+                           2296 ;	 function queuebuf_attr
+                           2297 ;	-----------------------------------------
+   06C0                    2298 _queuebuf_attr:
+                           2299 ;	../../../contiki-sensinode//core/net/queuebuf.c:485: struct queuebuf_data *buframptr = queuebuf_load_to_ram(b);
+   06C0 78r00              2300 	mov	r0,#_queuebuf_load_to_ram
+   06C2 79s00              2301 	mov	r1,#(_queuebuf_load_to_ram >> 8)
+   06C4 7As00              2302 	mov	r2,#(_queuebuf_load_to_ram >> 16)
+   06C6 12s00r00           2303 	lcall	__sdcc_banked_call
+   06C9 AD 82              2304 	mov	r5,dpl
+   06CB AE 83              2305 	mov	r6,dph
+   06CD AF F0              2306 	mov	r7,b
+                           2307 ;	../../../contiki-sensinode//core/net/queuebuf.c:486: return buframptr->attrs[type].val;
+   06CF 74 82              2308 	mov	a,#0x82
+   06D1 2D                 2309 	add	a,r5
+   06D2 FD                 2310 	mov	r5,a
+   06D3 E4                 2311 	clr	a
+   06D4 3E                 2312 	addc	a,r6
+   06D5 FE                 2313 	mov	r6,a
+   06D6 E5 81              2314 	mov	a,sp
+   06D8 24 FD              2315 	add	a,#0xfd
+   06DA F8                 2316 	mov	r0,a
+   06DB E6                 2317 	mov	a,@r0
+   06DC 25 E0              2318 	add	a,acc
+   06DE FC                 2319 	mov	r4,a
+   06DF 2D                 2320 	add	a,r5
+   06E0 FD                 2321 	mov	r5,a
+   06E1 E4                 2322 	clr	a
+   06E2 3E                 2323 	addc	a,r6
+   06E3 FE                 2324 	mov	r6,a
+   06E4 8D 82              2325 	mov	dpl,r5
+   06E6 8E 83              2326 	mov	dph,r6
+   06E8 8F F0              2327 	mov	b,r7
+   06EA 12s00r00           2328 	lcall	__gptrget
+   06ED FD                 2329 	mov	r5,a
+   06EE A3                 2330 	inc	dptr
+   06EF 12s00r00           2331 	lcall	__gptrget
+   06F2 FE                 2332 	mov	r6,a
+   06F3 8D 82              2333 	mov	dpl,r5
+   06F5 8E 83              2334 	mov	dph,r6
+   06F7 02s00r00           2335 	ljmp	__sdcc_banked_ret
+                           2336 ;------------------------------------------------------------
+                           2337 ;Allocation info for local variables in function 'queuebuf_debug_print'
+                           2338 ;------------------------------------------------------------
+                           2339 ;	../../../contiki-sensinode//core/net/queuebuf.c:490: queuebuf_debug_print(void)
+                           2340 ;	-----------------------------------------
+                           2341 ;	 function queuebuf_debug_print
+                           2342 ;	-----------------------------------------
+   06FA                    2343 _queuebuf_debug_print:
+                           2344 ;	../../../contiki-sensinode//core/net/queuebuf.c:501: }
+   06FA 02s00r00           2345 	ljmp	__sdcc_banked_ret
+                           2346 	.area CSEG    (CODE)
+                           2347 	.area CONST   (CODE)
+                           2348 	.area XINIT   (CODE)
+   0000                    2349 __xinit__bufmem:
+   0000 03 00              2350 	.byte #0x03,#0x00	; 3
+   0002 06 00              2351 	.byte #0x06,#0x00	; 6
+   0004r00s00 00           2352 	.byte _bufmem_memb_count,(_bufmem_memb_count >> 8),#0x00
+   0007r06s00 00           2353 	.byte _bufmem_memb_mem,(_bufmem_memb_mem >> 8),#0x00
+   000A                    2354 __xinit__refbufmem:
+   000A 36 00              2355 	.byte #0x36,#0x00	; 54
+   000C 02 00              2356 	.byte #0x02,#0x00	; 2
+   000Er18s00 00           2357 	.byte _refbufmem_memb_count,(_refbufmem_memb_count >> 8),#0x00
+   0011r1As00 00           2358 	.byte _refbufmem_memb_mem,(_refbufmem_memb_mem >> 8),#0x00
+   0014                    2359 __xinit__buframmem:
+   0014 D2 00              2360 	.byte #0xD2,#0x00	; 210
+   0016 06 00              2361 	.byte #0x06,#0x00	; 6
+   0018r86s00 00           2362 	.byte _buframmem_memb_count,(_buframmem_memb_count >> 8),#0x00
+   001Br8Cs00 00           2363 	.byte _buframmem_memb_mem,(_buframmem_memb_mem >> 8),#0x00
+                           2364 	.area CABS    (ABS,CODE)
