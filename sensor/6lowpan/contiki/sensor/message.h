@@ -44,13 +44,14 @@ typedef struct _msg_header_t {
     uint8_t  msg_type:6;
     uint8_t  method;
     uint16_t msg_id;
+    uint16_t len;
     uint8_t  device_id[8];
     uint8_t  parameters[0];
 } msg_header_t;
 
 #define MSG_HEAD_LEN    sizeof(msg_header_t)
 
-uint16_t build_msg(uint8_t *buf, uint16_t len, msg_type_e msg_type, 
+uint16_t build_msg(uint8_t *buf, msg_type_e msg_type, 
                    msg_method_e method, uint8_t *parameters);
 
 #define get_msg_type(payload) (msg_type_e)(((msg_header_t *)payload)->msg_type) 
@@ -59,19 +60,21 @@ uint16_t build_msg(uint8_t *buf, uint16_t len, msg_type_e msg_type,
 
 #define get_msg_id(payload) (((msg_header_t *)payload)->msg_id) 
 
+#define get_msg_len(payload) (((msg_header_t *)payload)->len) 
+
 #define get_msg_device_id(payload) (((msg_header_t *)payload)->device_id) 
 
 #define get_msg_parameters(payload) (((msg_header_t *)payload)->parameters) 
 
-uint16_t create_new_device_msg(uint8_t *buf, uint16_t len, msg_type_e msg_type);
+uint16_t create_new_device_msg(uint8_t *buf, msg_type_e msg_type);
 
-uint16_t create_report_msg(uint8_t *buf, uint16_t len, uint8_t *device_id, object_instance_t *obj);
+uint16_t create_report_msg(uint8_t *buf, uint8_t *device_id, object_instance_t *obj);
 
-uint16_t create_get_config_msg(uint8_t *buf, uint16_t len);
+uint16_t create_get_config_msg(uint8_t *buf);
 
-uint16_t create_log_msg(uint8_t *buf, uint16_t len, uint8_t level, uint8_t *log);
+uint16_t create_log_msg(uint8_t *buf, uint8_t level, uint8_t *log);
 
-uint16_t create_subscribe_msg(uint8_t *buf, uint16_t len, uint8_t *obj_name, uint16_t resource_id);
+uint16_t create_subscribe_msg(uint8_t *buf, uint8_t *obj_name, uint16_t resource_id);
 
-uint16_t create_unsubscribe_msg(uint8_t *buf, uint16_t len, uint8_t *obj_name, uint16_t resource_id);
+uint16_t create_unsubscribe_msg(uint8_t *buf, uint8_t *obj_name, uint16_t resource_id);
 #endif

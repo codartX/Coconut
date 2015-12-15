@@ -45,10 +45,8 @@ DEVICE_INIT_BLOCK ='''\
     object_instance_t *obj_instance = NULL;
     subscriber_t *sub = NULL;
     resource_value_u value;
-    uint8_t device_id[] = {<device_id_1>,<device_id_2>,<device_id_3>,<device_id_4>,
-                           <device_id_5>,<device_id_6>,<device_id_7>,<device_id_8>};
        
-    retval = device_init(device_id);
+    retval = device_init(uip_lladdr.addr);
     if (retval == FAIL) {
         PRINTF("device init fail\\n");
         return false;
@@ -193,12 +191,7 @@ def main(argv):
 
     f2.write(IPSO_RESOURCE_END_BLOCK)
 
-    dev_id_array = json_data['device_id']
-    replacements = {'<device_id_1>': str(dev_id_array[0]), '<device_id_2>': str(dev_id_array[1]), 
-                    '<device_id_3>': str(dev_id_array[2]), '<device_id_4>': str(dev_id_array[3]), 
-                    '<device_id_5>': str(dev_id_array[4]), '<device_id_6>': str(dev_id_array[5]), 
-                    '<device_id_7>': str(dev_id_array[6]), '<device_id_8>': str(dev_id_array[7])}
-    f.write(replace_all(DEVICE_INIT_BLOCK, replacements))
+    f.write(DEVICE_INIT_BLOCK)
 
     for object in json_data['objects']:
         if not 'object_id' in object:

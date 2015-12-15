@@ -148,7 +148,7 @@ uint32_t create_security_error_msg(uint8_t *buf, uint32_t error_code, uint8_t ke
     error_msg->security_header.content_type = SECURITY_ERROR;
     error_msg->security_header.version = SECURITY_VERSION;
     error_msg->security_header.key_version = key_version;
-    error_msg->security_header.len = sizeof(security_error_msg_t);
+    error_msg->security_header.len = sizeof(error_msg->error_code);
     error_msg->error_code = error_code;
     
     return sizeof(security_error_msg_t);

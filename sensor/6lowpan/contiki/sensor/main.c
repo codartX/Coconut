@@ -77,7 +77,7 @@ discover_request_handler()
 {
     uint16_t len = 0;
     
-    len = create_new_device_msg(output_buf, MAX_PAYLOAD_LEN, TYPE_RESPONSE);
+    len = create_new_device_msg(output_buf, TYPE_RESPONSE);
     if (len > 0) {
         send_msg(output_buf, len, &UIP_IP_BUF->srcipaddr);
     }
@@ -486,7 +486,7 @@ message_handler(void)
     if(uip_newdata()) {
         len = uip_datalen();
         memcpy(output_buf, uip_appdata, len);
-#if 0
+#if 1
         PRINTF("Recv len:%d, data:", len);
         for (i = 0; i < len; i++) {
             PRINTF("%x ", output_buf[i]);
@@ -521,9 +521,10 @@ message_handler(void)
             
             return;
         } else if(security_header->content_type == SECURITY_ERROR) {
-            i = *((uint16_t *)(security_header + sizeof(security_header_t)));
+            i = *((uint16_t *)(output_buf + sizeof(security_header_t)));
             PRINTF("Security Error:%d", i);
-            if (i == SECURITY_ERROR_INVALID_KEY_VERSION || i == SECURITY_ERROR_DECRYPT_ERROR) {
+            if (i == SECURITY_ERROR_INVALID_KEY_VERSION || i == SECURITY_ERROR_DECRYPT_ERROR ||
+                i == SECURITY_ERROR_INVALID_PWD) {
                 shared_key = get_network_shared_key();
                 if (shared_key) {
                     shared_key->used = false;
@@ -716,8 +717,7 @@ PROCESS_THREAD(coconut_sensor_process, ev, data)
                 /*send register*/
                 etimer_restart(&et);
 
-                len = create_new_device_msg(output_buf + sizeof(security_header_t), 
-                                            MAX_PAYLOAD_LEN - sizeof(security_header_t), TYPE_REQUEST);
+                len = create_new_device_msg(output_buf + sizeof(security_header_t), TYPE_REQUEST);
                 len = create_security_data_msg(output_buf, output_buf + sizeof(security_header_t), len);
                 if (len) {
                     debug_print_msg(output_buf, len);
@@ -729,14 +729,12 @@ PROCESS_THREAD(coconut_sensor_process, ev, data)
                 while (obj) {
                     sub = obj->sub_list;
                     while (sub) {
-                        len = create_report_msg(output_buf + sizeof(security_header_t), 
-                                                MAX_PAYLOAD_LEN - sizeof(security_header_t), 
-                                                g_device.device_id, obj); 
+                        len = create_report_msg(output_buf + sizeof(security_header_t), g_device.device_id, obj); 
                         len = create_security_data_msg(output_buf, output_buf + sizeof(security_header_t), len);
                         if (sub->system) {
                             send_msg_to_gateway(output_buf, len);
                         } else {
-
+                            send_msg(output_buf, len, &sub->ip6_addr);
                         }
                         sub = sub->next;
                     }

@@ -46,22 +46,21 @@ typedef enum _retcode_e {
     RETCODE_DEVICE_CONNECT_ERROR,
 } retcode_e;
 
-typedef struct _msg_header_t {
+typedef struct __attribute__((__packed__)) _msg_header_t {
     uint8_t  version:2;
     uint8_t  msg_type:6;
     uint8_t  method;
     uint16_t msg_id;
+    uint16_t len;
     uint8_t  device_id[DEVICE_ID_SIZE];
     uint8_t  parameters[0];
 } msg_header_t;
 
 #define MSG_HEAD_LEN    sizeof(msg_header_t)
 
-uint32_t build_msg_header(uint8_t *buf, uint32_t len, msg_type_e msg_type,
-                          msg_method_e method, uint8_t *device_id);
-
-uint32_t build_msg(uint8_t *buf, uint32_t len, msg_type_e msg_type,
-                   msg_method_e method, uint8_t *device_id, uint8_t *parameters);
+uint32_t build_msg(uint8_t *buf, msg_type_e msg_type,
+                   msg_method_e method, uint8_t *device_id, 
+                   uint8_t *parameters);
 
 #define get_msg_con(payload) (((msg_header_t *)payload)->con)
 
@@ -70,6 +69,8 @@ uint32_t build_msg(uint8_t *buf, uint32_t len, msg_type_e msg_type,
 #define get_msg_method(payload) (((msg_header_t *)payload)->method)
 
 #define get_msg_id(payload) (((msg_header_t *)payload)->msg_id)
+
+#define get_msg_len(payload) (((msg_header_t *)payload)->len)
 
 #define get_msg_device_id(payload) (((msg_header_t *)payload)->device_id)
 

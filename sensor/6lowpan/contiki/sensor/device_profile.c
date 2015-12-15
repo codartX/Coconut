@@ -24,10 +24,8 @@ bool create_device()
     object_instance_t *obj_instance = NULL;
     subscriber_t *sub = NULL;
     resource_value_u value;
-    uint8_t device_id[] = {1,2,3,4,
-                           5,6,7,8};
        
-    retval = device_init(device_id);
+    retval = device_init(uip_lladdr.addr);
     if (retval == FAIL) {
         PRINTF("device init fail\n");
         return false;

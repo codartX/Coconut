@@ -92,7 +92,7 @@ typedef struct _security_server_hello_msg_t {
 
 typedef struct __attribute__((__packed__)) _security_error_msg_t {
     security_header_t security_header;
-    uint32_t error_code;
+    uint16_t error_code;
 } security_error_msg_t;
 
 uint8_t generate_master_key(sensor_session *session);
