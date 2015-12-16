@@ -25,6 +25,8 @@ clients = dict()
 
 MAX_TRANSACTION_ID = 1 << 16
 
+current_milli_time = lambda: int(round(time.time() * 1000))
+
 class WebSocketHandler(websocket.WebSocketHandler):
     @gen.coroutine
     def device_new(self, device_id, parameters):
@@ -55,15 +57,19 @@ class WebSocketHandler(websocket.WebSocketHandler):
         
         update_device_info = {}
         update_device_info['objects'] = {}
-        for object in parameters[0]:
-            update_device_info['objects'][object[1]] = {'id': object[0], 'resources': {}}
-            for resource in object[2]:
-                update_device_info['objects'][object[1]]['resources'][str(resource[0])] = resource[1]
+        try:
+            for object in parameters[0]:
+                update_device_info['objects'][object[1]] = {'id': object[0], 'resources': {}}
+                for resource in object[2]:
+                    update_device_info['objects'][object[1]]['resources'][str(resource[0])] = resource[1]
+        except Exception, e:
+            logging.error(e)
+            raise gen.Return([error.INVALID_MSG_FMT])
     
         if len(parameters) > 1:
-            update_device_info['timestamp'] = parameters[1]
+            update_device_info['timestamp'] = int(parameters[1])
         else:
-            update_device_info['timestamp'] = time.time()
+            update_device_info['timestamp'] = int(time.time())
 
         update_device_info['device_manager_id'] = self.id
         update_device_info['server_node'] = self.application.server_node
@@ -109,30 +115,31 @@ class WebSocketHandler(websocket.WebSocketHandler):
             logging.error('Device not yours')
             raise gen.Return([error.PERMISSION_DENY])
         
-        #TODO validate parameters
-        new_objects = device_info.objects
+        try:
+            stats = {}
+            for object in parameters[0]:
+                device_info['objects'][object[0]]['resources']['5700'] = object[1]
+                stats[object[0]] = object[1]
+        except Exception, e:
+            logging.error(e)
+            raise gen.Return([error.INVALID_MSG_FMT])
         
-        for object in parameters[0]:
-            for resource in object[1]:
-                device_info['objects'][object[0]]['resources'][resource[0]]['value'] = resource[1]
-        
-        if parameters[1]:
-            device_info['timestamp'] = parameters[1]
+        if len(parameters) > 1:
+            device_info['timestamp'] = int(parameters[1])
         else:
-            device_info['timestamp'] = time.time()
+            device_info['timestamp'] = current_milli_time()
 
         #write to mongodb
         #TODO check device manager owner with device owner
         device_info['device_manager_id'] = self.id
         device_info['server_node'] = self.application.server_node
-        device_info['objects'] = new_objects
 
         retval = yield self.application.device_info_model.update_device(device_id, device_info)
         if not retval:
             logging.error('Update device fail')
             raise gen.Return([error.DATABASE_ERROR])
         
-        retval = yield self.application.device_stats_model.add_new_device_stats(device_id, parameters)
+        retval = yield self.application.device_stats_model.add_new_device_stats(device_id, stats, device_info['timestamp'])
         if not retval:
             logging.error('Device history info add fail')
             raise gen.Return(error.DATABASE_ERROR)
@@ -453,9 +460,9 @@ class WebSocketHandler(websocket.WebSocketHandler):
     def on_message(self, message):
         try:
             retval = m.parse_message(message)
-        except Exception as e:
-            lib.utils.PrintException() 
-            logging.error('malformed message error: %s' % str(e))
+        except Exception, e:
+            #lib.utils.PrintException() 
+            #logging.error(e)
             return
                 
         msg_type = retval['msg_type']
@@ -465,8 +472,8 @@ class WebSocketHandler(websocket.WebSocketHandler):
         method = retval['method']
         data = retval['parameters']
 
-        logging.info('msg_type %d, msg_id %d, device_id %s, method %d',
-                     msg_type, msg_id, device_id, method)
+        logging.info('msg_type %d, msg_id %d, device_id %s, method %d, data:%s, data len:%d',
+                     msg_type, msg_id, device_id, method, data, len(data))
 
         try:
             parameters = json.loads(data)
@@ -487,6 +494,8 @@ class WebSocketHandler(websocket.WebSocketHandler):
                     result = yield self.device_log(device_id, parameters)
                 elif method == d.METHOD_AUTH:
                     result = yield self.device_auth(device_id, parameters)
+                elif method == d.METHOD_REPORT:
+                    result = yield self.device_report(device_id, parameters)
                 else:
                     logging.error('Unacceptable method:%d', method)
 

@@ -1,6 +1,7 @@
 import logging
 import msg_define as d
 import utils as u
+import socket
 
 """
     Message format:
@@ -9,16 +10,17 @@ import utils as u
     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
     |Ver|    Type   |    Method     |          Message ID           |
     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-    |      Device id[0]                                             |
+    |              len              |          Device id            |
     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-    |      Device id[1]                                             |
+    |      Device id                                                |
     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-    |      Parameters(json)                                         |
+    |      Device id                |      Parameters(json)         |
     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
     
     Ver: messgae format version
     Type: message type, Request(0)/Response(1)
     Message ID: message id in specific session
+    Len: message length
     Device ID: device mac address, etc  //it could only be existed in gateway<->server message define, device to device don't need.
     Method:<new_device(0)/get_resources(1)/set_resources(2)/report(3)/upgrade(4)/reload(5)/message(6)/
             device_auth(7)/set_policy(8)/get_policy(9)/unset_policy(10)/subscribe(11)/unsubscribe(12)>
@@ -336,7 +338,10 @@ def build_message(msgtype, message_id, device_id, method, parameters = []):
     # header
     message += [chr(msgtype << 2 | d.VERSION & 0x03)]
     message += [chr(method)]
+    message_id = socket.htons(message_id)
     message += [chr(message_id & 0xFF), chr((message_id>>8) & 0xFF)] 
+    length = len(parameters)
+    message += [chr(length & 0xFF), chr((length>>8) & 0xFF)]
     message += device_id
     if parameters:
         message += parameters
@@ -348,10 +353,10 @@ def parse_message(message):
     returnVal = {}
     
     # header
-    if len(message) < 12:
-        raise e.messageFormatError('message to short, {0} bytes: not space for header'.format(len(message)))
+    if len(message) < 14:
+        raise ValueError(('message to short, {0} bytes: not space for header'.format(len(message))))
     
-    header_string = message[:12]
+    header_string = message[:14]
     header = map(ord, header_string)
     returnVal['version'] = (header[0]>>6)&0x03
     if returnVal['version'] != d.VERSION:
@@ -363,13 +368,14 @@ def parse_message(message):
     
     returnVal['method'] = header[1]
 
-    returnVal['message_id'] = u.buf2int(header[2:4])
+    returnVal['message_id'] = socket.ntohs(u.buf2int(header[2:4]))
 
-    returnVal['device_id'] = message[4:12]
+    returnVal['len'] = socket.ntohs(u.buf2int(header[4:6]))
 
+    returnVal['device_id'] = message[6:14]
 
-    if len(message) > 12:
-        returnVal['parameters'] = message[12:]
+    if len(message) > 14:
+        returnVal['parameters'] = message[14:14 + returnVal['len']]
     else:
         returnVal['parameters'] = []
     

@@ -23,12 +23,12 @@ class DeviceInfoModel():
     
     @gen.coroutine
     def get_device_by_id(self, id):
-        device = yield self.db.device_info.find_one({'_id': id})
+        device = yield self.db.device_info.find_one({'_id': id}, {'_id': 0})
         raise gen.Return(device)
     
     @gen.coroutine
     def get_device(self, device_id):
-        device = yield self.db.device_info.find_one({'device_id': device_id})
+        device = yield self.db.device_info.find_one({'device_id': device_id}, {'_id': 0})
         raise gen.Return(device)
     
     @gen.coroutine
@@ -64,18 +64,7 @@ class DeviceInfoModel():
         raise gen.Return(object)
     
     @gen.coroutine
-    def get_device_resource(self, device_id, object_name, resource_name):
-        resource = yield self.db.device_info.find_one({
-                                                 '$and': [
-                                                          {'device_id': device_id},
-                                                          {'objects.' + str(object_name) + str(resource_name): { '$exists': True }},
-                                                         ]
-                                                 },
-                                                 {'_id': 0, 'objects.' + str(object_name) + str(resource_name): 1})
-        raise gen.Return(resource)
-    
-    @gen.coroutine
     def update_device(self, device_id, device_info):
         result = yield self.db.device_info.update({'device_id': device_id},
-                                             {'$set': device_info})
+                                                  {'$set': device_info})
         raise gen.Return(result)
