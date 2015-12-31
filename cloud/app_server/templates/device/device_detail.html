@@ -11,97 +11,73 @@
   <section class="content">
   <div class="row">
     <div class="col-md-12">
+      {{ errors|dump_errors }}
+      {{ messages|dump_messages }}
+      <form role="form" action="" method="POST">
+      {% for object in device['objects'] %}
       <div class="box box-primary">
         <div class="box-header with-border">
-          <h3 class="box-title">{{ device['objects']['DevInfo']['resources']['5105']}}</h3>
+          <h3 class="box-title">{{ objects }}</h3>
         </div><!-- /.box-header -->
-        <form role="form" action="" method="POST">
-          <div class="box-body">
-            {{ errors|dump_errors }}
-            {{ messages|dump_messages }}
-            {% for object in device['objects'] %}
-              <form class="form-horizontal style-form" action='' method="POST">
-                            {% if device.objects[object].resources%}
-                                {% for resource in device.objects[object].resources%}
-                                    {% if 'schema' in device.objects[object].resources[resource] %}
-                                        <div class="form-group">
-                                            <label class="col-sm-2 col-sm-2 control-label">{{resource}}</label>
-                                            <div class="col-sm-10">
-                                                {% if device.objects[object].resources[resource].schema.Type == 'String' %}
-                                                    {% if device.objects[object].resources[resource].schema['Access Type'] == 'ReadOnly'%}
-                                                    <input type="text" class="form-control" name={{object}}_{{resource}} value={{device.objects[object].resources[resource].value}} readonly>
-                                                    <span class="help-block">{{device.objects[object].resources[resource].schema['Description']}}</span>
-                                                    {% else %}
-                                                    <input type="text" class="form-control" name={{object}}_{{resource}} value={{device.objects[object].resources[resource].value}}>
-                                                    <a href="/device_stats/{{device.device_id}}/{{object}}/{{resource}}" data-toggle="modal">History Stats</a>
-                                                    <span class="help-block">{{device.objects[object].resources[resource].schema['Description']}}</span>
-                                                    {% endif %}
-                                                {% elif device.objects[object].resources[resource].schema.Type == 'Integer' %}
-                                                    {% if device.objects[object].resources[resource].schema['Access Type'] == 'ReadOnly'%}
-                                                    <input type="text" class="form-control" name={{object}}_{{resource}} value={{device.objects[object].resources[resource].value}} readonly>
-                                                    <span class="help-block">{{device.objects[object].resources[resource].schema['Description']}}</span>
-                                                    {% else %}
-                                                    <input type="text" class="form-control" name={{object}}_{{resource}} value={{device.objects[object].resources[resource].value}}>
-                                                    <a href="/device_stats/{{device.device_id}}/{{object}}/{{resource}}" data-toggle="modal">History Stats</a>
-                                                    <span class="help-block">{{device.objects[object].resources[resource].schema['Description']}}</span>
-                                                    {% endif %}
-                                                {% elif device.objects[object].resources[resource].schema.Type == 'Float' %}
-                                                    {% if device.objects[object].resources[resource].schema['Access Type'] == 'ReadOnly'%}
-                                                    <input type="text" class="form-control" name={{object}}_{{resource}} value={{device.objects[object].resources[resource].value}} readonly>
-                                                    <span class="help-block">{{device.objects[object].resources[resource].schema['Description']}}</span>
-                                                    {% else %}
-                                                    <input type="text" class="form-control" name={{object}}_{{resource}} value={{device.objects[object].resources[resource].value}}>
-                                                    <a href="/device_stats/{{device.device_id}}/{{object}}/{{resource}}" data-toggle="modal">History Stats</a>
-                                                    <span class="help-block">{{device.objects[object].resources[resource].schema['Description']}}</span>
-                                                    {% endif %}
-                                                {% elif device.objects[object].resources[resource].schema.Type == 'Boolean' %}
-                                                    <input type='hidden' value='false' name={{object}}_{{resource}}>
-                                                    {% if device.objects[object].resources[resource].value == True %}
-                                                        {% if device.objects[object].resources[resource].schema['Access Type'] == 'ReadOnly'%}
-                                                        <input name={{object}}_{{resource}} type="checkbox" checked value="true" data-toggle="switch" readOnly/>
-                                                        {% else %}
-                                                        <input name={{object}}_{{resource}} type="checkbox" checked value="true" data-toggle="switch"/>
-                                                        <a href="/device_stats/{{device.device_id}}/{{object}}/{{resource}}" data-toggle="modal">History Stats</a>
-                                                        {% endif %}
-                                                    {% else %}
-                                                        {% if device.objects[object].resources[resource].schema['Access Type'] == 'ReadOnly'%}
-                                                        <input name={{object}}_{{resource}} type="checkbox" value="true" data-toggle="switch" readOnly/>
-                                                        {% else %}
-                                                        <input name={{object}}_{{resource}} type="checkbox" value="true" data-toggle="switch"/>
-                                                        <a href="/device_stats/{{device.device_id}}/{{object}}/{{resource}}" data-toggle="modal">History Stats</a>
-                                                        {% endif %}
-                                                    {% endif %}
-                                                {% else device.objects[object].resources[resource].schema.Type == 'Enum' %}
-                                                    {% if device.objects[object].resources[resource].schema['Access Type'] == 'ReadOnly' %}
-                                                    <input type="hidden" name={{object}}_{{resource}} value={{device.objects[object].resources[resource].value}} />
-                                                    <select class="form-control" name={{object}}_{{resource}} disabled="disabled">
-                                                    {% else %}
-                                                    <select class="form-control" name={{object}}_{{resource}}>
-                                                    {% endif %}
-                                                        {% for item in device.objects[object].resources[resource].schema['Range or Enumeration'] %}
-                                                            {% if device.objects[object].resources[resource].value == item %}
-                                                            <option value={{item}} selected>{{item}}</option>
-                                                            {% else %}
-                                                            <option value={{item}}>{{item}}</option>
-                                                            {% endif %}
-                                                        {% endfor %}
-                                                    </select>
-                                                    {% if device.objects[object].resources[resource].schema['Access Type'] = 'ReadWrite' %}
-                                                    <a href="/device_stats/{{device.device_id}}/{{object}}/{{resource}}" data-toggle="modal">History Stats</a>
-                                                    {% endif %}
-                                                {% endif %}
-                                            </div>
-                                        </div>
-                                    {% endif %}
-                                {% endfor %}
-                            {% endif %}
-                            {{ xsrf_form_html() }}
-                        </form>
-                        {% endfor %}
-                    </div>
+        <div class="box-body">
+          {% if device.objects[object].resources%}
+            {% for resource_id in device.objects[object].resources%}
+              {% if resource_id in device.objects[object].resources.schema %}
+                <div class="form-group">
+                  <label class="col-sm-2 col-sm-2 control-label">{{device.objects[object].resources.schema[resource_id]['Resource Name']}}</label>
+                  <div class="col-sm-10">
+                    {% if device.objects[object].resources.schema[resource_id]['Type'] == 'Boolean' %}
+                      <input type='hidden' value='False' name={{object}}_{{resource_id}}>
+                      {% if device.objects[object].resources[resource_id] == True %}
+                        {% if device.objects[object].resources.schema[resource_id]['Access Type'] == 'ReadOnly'%}
+                          <input name={{object}}_{{resource_id}} type="checkbox" checked value="True" data-toggle="switch" readOnly/>
+                        {% else %}
+                          <input name={{object}}_{{resource_id}} type="checkbox" checked value="True" data-toggle="switch"/>
+                        {% endif %}
+                      {% else %}
+                        {% if device.objects[object].resources.schema[resource_id]['Access Type'] == 'ReadOnly'%}
+                          <input name={{object}}_{{resource_id}} type="checkbox" value="True" data-toggle="switch" readOnly/>
+                        {% else %}
+                          <input name={{object}}_{{resource_id}} type="checkbox" value="True" data-toggle="switch"/>
+                        {% endif %}
+                      {% endif %}
+                      <span class="help-block">{{device.objects[object].resources.schema[resource_id]['Description']}}</span>
+                    {% elif device.objects[object].resources.schema[resource_id]['Type'] == 'Enum' %}
+                      {% if device.objects[object].resources.schema[resource_id]['Access Type'] == 'ReadOnly' %}
+                        <input type="hidden" name={{object}}_{{resource_id}} value={{device.objects[object].resources[resource_id]}} />
+                        <select class="form-control" name={{object}}_{{resource_id}} disabled="disabled">
+                      {% else %}
+                        <select class="form-control" name={{object}}_{{resource_id}}>
+                      {% endif %}
+                      {% for item in device.objects[object].resources.schema[resource_id]['Range or Enumeration'] %}
+                        {% if device.objects[object].resources[resource_id] == item %}
+                          <option value={{item}} selected>{{item}}</option>
+                        {% else %}
+                          <option value={{item}}>{{item}}</option>
+                        {% endif %}
+                      {% endfor %}
+                      </select>
+                      <span class="help-block">{{device.objects[object].resources.schema[resource_id]['Description']}}</span>
+                    {% else %}
+                      {% if device.objects[object].resources.schema[resource_id]['Access Type'] == 'ReadOnly'%}
+                      <input type="text" class="form-control" name={{object}}_{{resource_id}} value={{device.objects[object].resources[resource_id]}} readonly>
+                      {% else %}
+                      <input type="text" class="form-control" name={{object}}_{{resource_id}} value={{device.objects[object].resources[resource_id]}}>
+                      {% endif %}
+                      <span class="help-block">{{device.objects[object].resources.schema[resource_id]['Description']}}</span>
+                    {% endif %}
+                  </div>
                 </div>
-            </div>
-        </div>
+              {% endif %}
+            {% endfor %}
+          {% endif %}
+        {% endfor %}
+      {% endif %}
+      </div>
+    </div>
+    {% endfor %}
+    {{ xsrf_form_html() }}
+    </form>
     </div>
   </div>
 </div>
@@ -111,19 +87,6 @@
 {% block script %}
 <script type="text/javascript">
 jQuery(document).ready(function() {
-    // Support for AJAX loaded modal window.
-    // Focuses on first input textbox after it loads the window.
-    $('[data-toggle="modal"]').click(function(e) {
-                                                       e.preventDefault();
-                                                       var url = $(this).attr('href');
-                                                       if (url.indexOf('#') == 0) {
-                                                       $(url).modal('open');
-                                                       } else {
-                                                       $.get(url, function(data) {
-                                                             $('<div class="modal hide fade">' + data + '</div>').modal();
-                                                             }).success(function() { $('input:text:visible:first').focus(); });
-                                                       }
-                                                });
 });
 
 </script>
