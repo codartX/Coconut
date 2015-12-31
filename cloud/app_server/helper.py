@@ -40,7 +40,7 @@ class Filters():
                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
                    <strong>Error!</strong>
                    {% for error in errors %}
-                   {{ ','.join(errors[error]) }}
+                   {{ ','.join(error) }}
                    {% endfor %}
                 </div>
               </div>
@@ -59,7 +59,7 @@ class Filters():
                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
                    <strong>Info:</strong>
                    {% for message in messages %}
-                   {{ ','.join(messages[message]) }}
+                   {{ ','.join(message) }}
                    {% endfor %}
                 </div>
               </div>

@@ -15,7 +15,6 @@ import re
 import urllib2
 import tornado.web
 from tornado import gen
-import lib.jsonp
 
 from base import *
 from lib.sendmail import send
@@ -35,8 +34,9 @@ def do_login(self, user_id):
     self.session['email'] = user_info['email']
     self.session['password'] = user_info['password']
     self.session.save()
-    user_info['messages_count'] = yield self.application.message_model.get_user_unread_messages_count(user_id)
-    user_info['devices'] = yield self.application.device_info_model.get_user_all_devices(user_id)
+    user_info['messages_count'] = yield self.message_model.get_user_unread_messages_count(user_id)
+    user_info['devices'] = yield self.device_info_model.get_user_all_devices(user_id)
+    print user_info
     self.update_current_user(user_info)
 
 def do_logout(self):
@@ -48,7 +48,7 @@ def do_logout(self):
     self.session.save()
 
     # destroy cookies
-    self.clear_cookie('user')
+    self.clear_current_user_cookie()
 
 class SettingsHandler(BaseHandler):
     @tornado.web.authenticated
@@ -254,8 +254,6 @@ class LoginHandler(BaseHandler):
 
     @gen.coroutine
     def post(self, template_variables = {}):
-        template_variables = {}
-
         # validate the fields
 
         form = LoginForm(self)
@@ -263,6 +261,9 @@ class LoginHandler(BaseHandler):
         if not form.validate():
             self.get({'errors': form.errors})
             return
+
+        template_variables['email'] = form.email.data   
+        template_variables['password'] = form.password.data   
 
         # continue while validate succeed
         secure_password = hashlib.sha1(form.password.data).hexdigest()

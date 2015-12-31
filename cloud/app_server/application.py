@@ -80,7 +80,7 @@ class Application(tornado.web.Application):
             (r"/device_manager/add", handler.device_manager.DeviceManagerAddHandler),
             (r"/device/add", handler.device.DeviceAddHandler),
             (r"/device/list", handler.device.DeviceListHandler),
-            (r"/device/([0-9]+)", handler.device.DeviceViewHandler),
+            (r"/device/(.*)", handler.device.DeviceViewHandler),
             #(r"/device/remove/([0-9]+)", handler.device.DeviceRemoveHandler),
             (r"/device_stats/([0-9]+)/(.*)/(.*)", handler.device_stats.DeviceStatsViewHandler),
             (r"/device_policy/add", handler.device_policy.DevicePolicyAddHandler),

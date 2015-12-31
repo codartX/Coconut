@@ -8,13 +8,11 @@
 import logging
 import tornado.web
 import json
-import lib.jsonp
 from lib.variables import gen_random
 from base import *
 import time
 from tornado import gen
 from tornado.httpclient import AsyncHTTPClient
-import uuid
 from lib.ipso.ipso_resources import IPSO_RESOURCES
 
 class DeviceManagerListHandler(BaseHandler):

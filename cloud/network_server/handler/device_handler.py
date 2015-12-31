@@ -6,7 +6,6 @@
 
 import logging
 import json
-import lib.jsonp
 import jsonschema
 
 import tornado.websocket as websocket

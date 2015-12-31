@@ -11,3 +11,4 @@ requests
 motor
 libyaml-dev
 crypto
+bson

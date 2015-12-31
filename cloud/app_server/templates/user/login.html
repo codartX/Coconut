@@ -8,14 +8,16 @@
       <a href="/"><b>Coco</b>nut</a>
     </div><!-- /.login-logo -->
     <div class="login-box-body">
+      {{ errors|dump_errors }}
+      {{ messages|dump_messages }}
       <p class="login-box-msg">Sign in to start your session</p>
       <form action="/login" method="post">
         <div class="form-group has-feedback">
-          <input type="text" class="form-control" name="username" placeholder="Username">
-          <span class="glyphicon glyphicon-user form-control-feedback"></span>
+          <input type="email" class="form-control" name="email" placeholder="Email" value="{{email}}">
+          <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
         </div>
         <div class="form-group has-feedback">
-          <input type="password" class="form-control" name="password" placeholder="Password">
+          <input type="password" class="form-control" name="password" placeholder="Password" value="{{password}}">
           <span class="glyphicon glyphicon-lock form-control-feedback"></span>
         </div>
         <div class="row">

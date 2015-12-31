@@ -63,6 +63,9 @@ class BaseHandler(tornado.web.RequestHandler):
     def update_current_user(self, user_info):
         self.set_secure_cookie('coconut_user', tornado.escape.json_encode(user_info))
 
+    def clear_current_user_cookie(self):
+        self.clear_cookie('coconut_user')
+
     def render(self, template_name, **template_vars):
         html = self.render_string(template_name, **template_vars)
         self.write(html)

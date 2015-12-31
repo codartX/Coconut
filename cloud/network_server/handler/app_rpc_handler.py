@@ -11,7 +11,6 @@ from tornadorpc.json import JSONRPCHandler
 from tornadorpc import async
 
 import json
-import lib.jsonp
 import jsonschema
 
 from device_handler import clients

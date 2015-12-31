@@ -5,6 +5,7 @@
 #  Copyright (c) 2014年 Jun Fang. All rights reserved.
 
 from tornado import gen
+from bson.objectid import ObjectId
 
 class DeviceInfoModel():
     def __init__(self, db):
@@ -34,7 +35,7 @@ class DeviceInfoModel():
     @gen.coroutine
     def get_user_all_devices(self, uid):
         devices = []
-        cursor = self.db.device_info.find({'owner_id': uid})
+        cursor = self.db.device_info.find({'owner_id': ObjectId(uid)}, {'owner_id': 0, '_id': 0})
         while (yield cursor.fetch_next):
             device = cursor.next_object()
             devices.append(device)

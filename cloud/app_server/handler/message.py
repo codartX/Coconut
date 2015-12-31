@@ -15,8 +15,6 @@ import re
 import urllib2
 import tornado.web
 from tornado import gen
-import lib.jsonp
-import pprint
 
 from base import *
 from lib.variables import *
