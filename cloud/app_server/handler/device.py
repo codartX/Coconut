@@ -14,6 +14,7 @@ import time
 from tornado import gen
 from tornado.httpclient import AsyncHTTPClient
 from lib.ipso.ipso_resources import IPSO_RESOURCES
+from lib.ipso.ipso_objects import IPSO_OBJECTS
 import lib.error_defines as error
 from bson.objectid import ObjectId
 
@@ -38,10 +39,12 @@ class DeviceAddHandler(BaseHandler):
     @tornado.web.authenticated
     @gen.coroutine
     def post(self, template_variables = {}):
+        user_info = self.current_user
+        template_variables['user_info'] = user_info
+
         try:
             template_variables['errors']=[]
             
-            user_info = self.current_user
             # validate the fields
             device_id = self.get_argument('device_id', '')
             serial_number = self.get_argument('serial_number', '')
@@ -88,45 +91,45 @@ class DeviceAddHandler(BaseHandler):
             self.redirect(self.get_argument('next', '/'))
         except Exception,e:
             logging.error('Add device fail:%s' % str(e))
-            self.render(500.html)
+            self.render('500.html', **template_variables)
 
 class DeviceViewHandler(BaseHandler):
     @tornado.web.authenticated
     @gen.coroutine
     def get(self, device_id, template_variables = {}):
-        try:
-            user_info = self.current_user
-            template_variables['user_info'] = user_info
+        user_info = self.current_user
+        template_variables['user_info'] = user_info
             
+        try:
             # get from database, avoid inconsistent
             device = yield self.application.device_info_model.get_device(device_id)
             if not device:
-                self.render('404.html')
+                self.render('404.html', **template_variables)
                 return
             
             template_variables['device'] = device
-            
-            for object in device['objects']:
-                device['objects'][object]['schema'] = IPSO_OBJECTS[device['objects'][object]['id']] 
-                for resource_id in device['objects'][object]['resources']:
-                    device.objects[object].resources['schema'][resource_id] = IPSO_RESOURCES[resource_id]
+            template_variables['objects_schema'] = IPSO_OBJECTS
+            template_variables['resources_schema'] = IPSO_RESOURCES
             
             template_variables['gen_random'] = gen_random
             self.render('device/device_detail.html', **template_variables)
         except Exception, e:
             logging.error('Device detail handle fail:%s' % str(e))
-            self.render('500.html')
+            self.render('500.html', **template_variables)
 
     @tornado.web.authenticated
     @gen.coroutine
     def post(self, device_id, template_variables = {}):
+        user_info = self.current_user
+        template_variables['user_info'] = user_info
+            
         try:
             template_variables['errors'] = []
             
             # get from database, avoid inconsistent
             device = yield self.application.device_info_model.get_device(device_id)
             if not device:
-                self.render(404.html)
+                self.render('404.html', **template_variables)
                 return
             
             config = {}
@@ -217,5 +220,5 @@ class DeviceViewHandler(BaseHandler):
             yield self.get(device_id, template_variables)
         except Exception, e:
             logging.error('Edit device fail:%s' % str(e))
-            self.render(500.html)
+            self.render('500.html', **template_variables)
 

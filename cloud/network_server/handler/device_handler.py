@@ -58,7 +58,7 @@ class WebSocketHandler(websocket.WebSocketHandler):
         update_device_info['objects'] = {}
         try:
             for object in parameters[0]:
-                update_device_info['objects'][object[1]] = {'id': object[0], 'resources': {}}
+                update_device_info['objects'][object[1]] = {'id': str(object[0]), 'resources': {}}
                 for resource in object[2]:
                     update_device_info['objects'][object[1]]['resources'][str(resource[0])] = resource[1]
         except Exception, e:
