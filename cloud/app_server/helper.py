@@ -39,9 +39,7 @@ class Filters():
                 <div class="alert alert-danger alert-dismissable">
                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
                    <strong>Error!</strong>
-                   {% for error in errors %}
-                   {{ ','.join(error) }}
-                   {% endfor %}
+                   {{ ','.join(errors) }}
                 </div>
               </div>
             </div>
@@ -58,9 +56,7 @@ class Filters():
                 <div class="alert alert-success alert-dismissable">
                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
                    <strong>Info:</strong>
-                   {% for message in messages %}
-                   {{ ','.join(message) }}
-                   {% endfor %}
+                   {{ ','.join(messages) }}
                 </div>
               </div>
             </div>
@@ -123,7 +119,7 @@ class Filters():
         elif type(time) is int:
             diff = now - datetime.fromtimestamp(time)
         elif isinstance(time, datetime):
-            diff = now - time 
+            diff = now - time
         elif not time:
             diff = now - now
         second_diff = diff.seconds
